@@ -1,0 +1,21 @@
+version: '3.8'
+
+volumes:
+   node_modules:
+
+services:
+  vue:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: pp-label-frontend:0.0.1
+    container_name: "pp-label-frontend"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    stdin_open: true
+    tty: true
+    ports:
+      - "3000:8080"
+    volumes:
+      - .:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
