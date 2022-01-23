@@ -1,6 +1,5 @@
 export default {
-  'pages.layouts.userLayout.title':
-    'PP-Labeling, all in one intelligent labeling solution',
+  'pages.layouts.userLayout.title': 'PP-Labeling, all in one intelligent labeling solution',
   'pages.login.accountLogin.tab': 'Account Login',
   'pages.login.accountLogin.errorMessage': 'Incorrect username/password(admin/pplabeling)',
   'pages.login.failure': 'Login failed, please try again!',
@@ -18,7 +17,7 @@ export default {
   'pages.login.captcha.required': 'Please input verification code!',
   'pages.login.phoneLogin.getVerificationCode': 'Get Code',
   'pages.getCaptchaSecondText': 'sec(s)',
-  'pages.login.getFakeCaptchaMessage': 'Get captcha success! It\'s 1234',
+  'pages.login.getFakeCaptchaMessage': "Get captcha success! It's 1234",
   'pages.login.rememberMe': 'Remember me',
   'pages.login.forgotPassword': 'Forgot Password ?',
   'pages.login.submit': 'Login',

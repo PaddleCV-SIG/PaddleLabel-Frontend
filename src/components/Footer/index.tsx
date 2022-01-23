@@ -5,7 +5,7 @@ import { DefaultFooter } from '@ant-design/pro-layout';
 const Footer: React.FC = () => {
   const intl = useIntl();
   const defaultMessage = intl.formatMessage({
-    id: 'app.copyright.produced'
+    id: 'app.copyright.produced',
   });
 
   const currentYear = new Date().getFullYear();
@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
         {
           key: 'github',
           title: <GithubOutlined />,
-          href:'https://github.com/PaddleCV-SIG/PP-Labeling',
+          href: 'https://github.com/PaddleCV-SIG/PP-Labeling',
           blankTarget: true,
         },
       ]}

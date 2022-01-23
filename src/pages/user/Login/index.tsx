@@ -257,9 +257,11 @@ const Login: React.FC = () => {
                   if (result === false) {
                     return;
                   }
-                  message.success(intl.formatMessage({
-                    id: 'pages.login.getFakeCaptchaMessage'
-                  }));
+                  message.success(
+                    intl.formatMessage({
+                      id: 'pages.login.getFakeCaptchaMessage',
+                    }),
+                  );
                 }}
               />
             </>
