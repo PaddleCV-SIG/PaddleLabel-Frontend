@@ -10,7 +10,7 @@ const Settings: LayoutSettings & {
   "fixedHeader": false,
   "fixSiderbar": true,
   "pwa": false,
-  "logo": "/logo.png",
+  "logo": "/logo-trans.png",
   "headerHeight": 60,
   "splitMenus": false,
   "footerRender": false,
