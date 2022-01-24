@@ -1,10 +1,12 @@
 FROM node:16
 
-WORKDIR /usr/src/app
+WORKDIR /usr/app
 
 COPY package*.json ./
-COPY yarn.lock ./
 
 RUN yarn
 
-CMD ["npm", "run", "serve"]
+COPY . ./
+
+CMD ["npm", "start"]
+# CMD ["npm", "run", "serve"]
