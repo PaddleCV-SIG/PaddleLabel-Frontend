@@ -2,11 +2,5 @@ FROM node:16
 
 WORKDIR /usr/app
 
-COPY package*.json ./
-
-RUN yarn
-
-COPY . ./
-
+# First time please override cli command to `yarn` to init node_modules.
 CMD ["npm", "start"]
-# CMD ["npm", "run", "serve"]
