@@ -1,0 +1,32 @@
+@import (reference) '~antd/es/style/themes/index';
+
+.pre {
+  margin: 12px 0;
+  padding: 12px 20px;
+  background: @input-bg;
+  box-shadow: @card-shadow;
+}
+
+.row:not(:first-child) {
+  margin-top: 20px;
+}
+
+#createBtn {
+  min-width: 220px;
+  min-height: 60px;
+  padding: 0;
+  color: @primary-color;
+  font-size: 26px;
+  line-height: 60px;
+  :global(.anticon) {
+    font-size: 18px;
+    line-height: 60px;
+    vertical-align: middle;
+  }
+  :global(.anticon + span) {
+    margin-left: 0;
+  }
+  :global(span + .anticon) {
+    margin-left: 0;
+  }
+}

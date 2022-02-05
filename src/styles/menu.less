@@ -2,17 +2,22 @@
 
 @inactive-menu-background-color: #2e3dc8;
 
+// This file overrides default antd menu style
 .ant-menu {
-  color: #ffffff;
+  color: #fff;
+  font-size: 18px;
 }
 .ant-menu-horizontal > .ant-menu-item a {
-  color: #ffffff;
+  color: #fff;
 }
 .ant-menu-horizontal > .ant-menu-item a:hover {
   color: @primary-color-hover;
 }
+.ant-menu-horizontal > .ant-menu-item a::before {
+  bottom: -2px;
+}
 .ant-menu-horizontal > .ant-menu-item-selected a {
-  color: #fff;
+  color: @primary-color;
 }
 .ant-menu-light .ant-menu-submenu-title:hover {
   color: @primary-color-hover;
@@ -31,26 +36,16 @@
   background: #fff;
 }
 
-.ant-menu-horizontal > .ant-menu-item a {
-  color: #fff;
-}
-.ant-menu-horizontal > .ant-menu-item a:hover {
-  color: @primary-color;
-}
-.ant-menu-horizontal > .ant-menu-item a::before {
-  bottom: -2px;
-}
-.ant-menu-horizontal > .ant-menu-item-selected a {
-  color: @primary-color;
-}
 .ant-menu-horizontal::after {
   display: block;
   clear: both;
   height: 0;
   content: '\20';
 }
-.ant-pro-top-nav-header-main-left {
-  min-width: 183px;
+.ant-pro-top-nav-header-main-left,
+.ant-pro-top-nav-header-logo {
+  width: 182px;
+  min-width: 182px;
 }
 .ant-pro-top-nav-header-logo img {
   margin-right: 40px;
@@ -81,6 +76,10 @@
 }
 .ant-menu-horizontal > .ant-menu-item,
 .ant-menu-horizontal > .ant-menu-submenu {
-  top: 0px;
+  top: 0;
   background-color: @inactive-menu-background-color;
+}
+.ant-menu-horizontal > .ant-menu-item::after,
+.ant-menu-horizontal > .ant-menu-submenu::after {
+  border-bottom: none;
 }
