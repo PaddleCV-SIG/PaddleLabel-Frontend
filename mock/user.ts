@@ -13,22 +13,18 @@ async function getFakeCaptcha(req: Request, res: Response) {
   return res.json('captcha-xxx');
 }
 
-const { ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION } = process.env;
-
 /**
- * 当前用户的权限，如果为空代表没登录
  * current user access， if is '', user need login
- * 如果是 pro 的预览，默认是有权限的
  */
-let access = ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site' ? 'admin' : '';
+let access = 'admin';
 
 const getAccess = () => {
   return access;
 };
 
-// 代码中会兼容本地 service mock 以及部署站点的静态数据
+// This code is compatible with local service mock and deployed static content
 export default {
-  // 支持值为 Object 和 Array
+  // Support both Object and Array
   'GET /api/currentUser': (req: Request, res: Response) => {
     if (!getAccess()) {
       res.status(401).send({
@@ -36,7 +32,7 @@ export default {
           isLogin: false,
         },
         errorCode: '401',
-        errorMessage: '请先登录！',
+        errorMessage: 'Login first',
         success: true,
       });
       return;
@@ -96,7 +92,7 @@ export default {
       },
     });
   },
-  // GET POST 可省略
+  // GET POST can be ignored
   'GET /api/users': [
     {
       key: '1',

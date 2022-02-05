@@ -6,20 +6,30 @@ This project is initialized with [Ant Design Pro](https://pro.ant.design). Follo
 
 ### Code Format
 
-- We use ESLint, Prettier and Stylelint to ensure global code formatting.
+- We use ESLint, Prettier and Stylelint to keep an uniform code format.
 - Line-Seperator is `LF`. Please make sure Git does not automatically transfer to `CRLF` on Windows:
 
 ```bash
 git config core.autocrlf false
 ```
 
-### Happy coding with VSCode, recommand Plugins:
+### Happy coding with VSCode
+
+Recommanded Plugins:
 
 1. [ESLint](dbaeumer.vscode-eslint): Strict syntex check.
-2. [Prettier](esbenp.prettier-vscode): Code Format.
-3. [Sneak Mark](wangzy.sneak-mark): Check non-ascii marks in code.
-4. [Stylelint](stylelint.vscode-stylelint): CSS Format.
-5. [_Docker_](ms-azuretools.vscode-docker): Needed if you dev with docker.
+1. [Prettier](esbenp.prettier-vscode): Code Format.
+1. [Sneak Mark](wangzy.sneak-mark): Check non-ascii marks in code.
+1. [Stylelint](stylelint.vscode-stylelint): CSS Format.
+1. [_Docker_](ms-azuretools.vscode-docker): Needed if you dev with docker.
+
+Recommanded Settings:
+
+1. Auto Save: No
+1. Default Formatter: Prettier
+1. Format On Paste: Yes
+1. Format On Save: Yes
+1. Format On Save Mode: File
 
 ### Install `node_modules`:
 
@@ -46,6 +56,17 @@ docker run -ti -v ~/gitroot/PP-Label-Frontend:/usr/app pp-label-frontend yarn
 ```bash
 docker run -ti -p 8000:8000 -p 3000:3000 -v ~/gitroot/PP-Label-Frontend:/usr/app pp-label-frontend --name pp-label-frontend
 ```
+
+### Tips for Ubuntu or WSL(Windows Subsystem Linux)
+
+- Switch default shell from `dash` to `bash` to prevent `[` issue in git hooks:
+
+```bash
+sudo dpkg-reconfigure dash
+# Then select `No`
+```
+
+- Manage multiple node environments with ease: [NVM](https://github.com/nvm-sh/nvm).
 
 ## Provided Scripts
 
