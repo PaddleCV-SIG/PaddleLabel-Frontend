@@ -1,0 +1,22 @@
+version: '3.8'
+
+volumes:
+  node_modules:
+
+services:
+  pp-label-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: pp-label-frontend:latest
+    container_name: 'pp-label-frontend'
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
+    stdin_open: true
+    tty: true
+    ports:
+      - '8000:8000'
+      - '3000:3000'
+    volumes:
+      - .:/usr/app

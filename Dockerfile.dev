@@ -1,10 +1,6 @@
 FROM node:16
 
-WORKDIR /usr/src/app
+WORKDIR /usr/app
 
-COPY package*.json ./
-COPY yarn.lock ./
-
-RUN yarn
-
-CMD ["npm", "run", "serve"]
+# First time please override cli command to `yarn` to init node_modules.
+CMD ["npm", "start"]

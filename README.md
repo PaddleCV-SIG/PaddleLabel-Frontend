@@ -10,6 +10,26 @@ Install `node_modules`:
 yarn
 ```
 
+## [Optional] Environment Prepare with Docker
+
+### Build Image
+
+```bash
+docker build -t pp-label-frontend -f Dockerfile.dev .
+```
+
+### Install node_modules
+
+```bash
+docker run -ti -v ~/gitroot/PP-Label-Frontend:/usr/app pp-label-frontend yarn
+```
+
+### Start APP
+
+```bash
+docker run -ti -p 8000:8000 -p 3000:3000 -v ~/gitroot/PP-Label-Frontend:/usr/app pp-label-frontend
+```
+
 ## Provided Scripts
 
 Ant Design Pro provides some useful script to help you quick start and build with web project, code style check and test.
