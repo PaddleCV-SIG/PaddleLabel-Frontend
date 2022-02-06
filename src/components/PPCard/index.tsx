@@ -1,24 +1,26 @@
-import type { CardProps } from 'antd';
-import { Card } from 'antd';
+import { Button } from 'antd';
+import { history } from 'umi';
 import React from 'react';
 import styles from './index.less';
 
 export type MyButtonStyles = {
   width?: number;
   height?: number;
+  imgSrc: string;
+  href?: string;
+  wording?: string;
 };
 
-const PPCard: React.FC<MyButtonStyles & CardProps> = (props) => {
+const PPCard: React.FC<MyButtonStyles> = (props) => {
   return (
-    <>
-      <Card
-        hoverable
-        className={styles.card}
-        cover={<img alt="example" src="/pics/classification.jpg" />}
-      >
-        {props.children}
-      </Card>
-    </>
+    <div className={styles.card} onClick={() => history.push(props.href ? props.href : '')}>
+      <img
+        className={styles.thumbnail}
+        alt={props.wording || styles.thumbnail}
+        src={props.imgSrc}
+      />
+      <Button className={styles.button}>{props.children}</Button>
+    </div>
   );
 };
 export default PPCard;

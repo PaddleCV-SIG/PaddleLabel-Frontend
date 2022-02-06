@@ -1,0 +1,38 @@
+@import (reference) '~antd/es/style/themes/index';
+
+@even-color: #e8eaed;
+@odd-color: #f9f9f9;
+
+.table {
+  tr:nth-child(even) {
+    background: @even-color;
+  }
+  tr:nth-child(odd) {
+    background: @odd-color;
+  }
+  :global {
+    .ant-table-tbody > tr.ant-table-row:hover > td,
+    .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+      background: none;
+    }
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td,
+    .ant-table tfoot > tr > th,
+    .ant-table tfoot > tr > td {
+      padding: 16px 0;
+    }
+    .ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+      padding: 0;
+    }
+    .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+      border-radius: 4px;
+    }
+    .ant-select-arrow {
+      right: 8px;
+      color: #000;
+    }
+    .ant-table-placeholder {
+      display: none;
+    }
+  }
+}

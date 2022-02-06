@@ -1,0 +1,45 @@
+@import (reference) '~antd/es/style/themes/index';
+
+@even-color: #e8eaed;
+@odd-color: #f9f9f9;
+
+.pagination {
+  .pageSizeSelector {
+    width: 66px;
+    height: 36px;
+    margin-top: 4px;
+    margin-right: 5px;
+    margin-left: 5px;
+    :global {
+      .ant-select-selector {
+        height: 36px;
+        .ant-select-selection-item,
+        .ant-select-selection-placeholder {
+          line-height: 32px;
+        }
+      }
+    }
+  }
+
+  margin-left: 20px;
+  :global {
+    .ant-btn {
+      width: 66px;
+      height: 36px;
+      padding: 0;
+      font-size: 14px;
+      border: 1px solid #d8d8d8;
+      border-radius: 4px;
+    }
+    .ant-pagination-item {
+      width: 40px;
+      height: 36px;
+      margin-top: 4px;
+      border: 1px solid #d8d8d8;
+      border-radius: 4px;
+      a {
+        line-height: 33px;
+      }
+    }
+  }
+}
