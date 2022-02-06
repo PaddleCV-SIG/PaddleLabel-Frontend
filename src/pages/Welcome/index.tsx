@@ -35,17 +35,17 @@ const columns: ColumnsType<ProjectInfo> = [
     width: '240px',
     render: (text, record) => (
       <Space size="middle">
+        <PPButton width="90px" height="30px" color={'rgba(241,162,0,1)'}>
+          修改信息
+        </PPButton>
         <PPButton
           width="90px"
           height="30px"
-          color={'rgba(241,162,0,1)'}
+          color={'rgba(0,100,248,1)'}
           onClick={() => {
             history.push('/label/' + record.id);
           }}
         >
-          修改信息
-        </PPButton>
-        <PPButton width="90px" height="30px" color={'rgba(0,100,248,1)'}>
           去标注
         </PPButton>
       </Space>
@@ -53,7 +53,64 @@ const columns: ColumnsType<ProjectInfo> = [
   },
 ];
 
-const data: ProjectInfo[] = [];
+const data: ProjectInfo[] = [
+  {
+    id: 1,
+    name: '项目1',
+  },
+  {
+    id: 2,
+    name: '项目2',
+  },
+  {
+    id: 3,
+    name: '项目3',
+  },
+  {
+    id: 4,
+    name: '项目4',
+  },
+  {
+    id: 5,
+    name: '项目5',
+  },
+  {
+    id: 6,
+    name: '项目6',
+  },
+  {
+    id: 7,
+    name: '项目7',
+  },
+  {
+    id: 8,
+    name: '项目8',
+  },
+  {
+    id: 9,
+    name: '项目9',
+  },
+  {
+    id: 10,
+    name: '项目10',
+  },
+  {
+    id: 11,
+    name: '基于xxx的目标检测',
+  },
+  {
+    id: 12,
+    name: '非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常长的名字',
+  },
+  {
+    id: 13,
+    name: 'Sample Project for xxx',
+  },
+  {
+    id: 13,
+    name: 'Very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long name',
+  },
+];
 
 const Welcome: React.FC = () => {
   return (
