@@ -1,0 +1,40 @@
+@import (reference) '~antd/es/style/themes/index';
+
+.labelList {
+  width: 280px;
+  border-right: 0;
+  border-bottom: 4px solid #ddd;
+  border-left: 0;
+
+  :global {
+    .ant-list-header,
+    .ant-list-footer {
+      padding: 0 !important;
+    }
+    .ant-list-item {
+      padding: 8px 13px !important;
+      font-size: 12px;
+    }
+  }
+  .listHeader {
+    height: 35px;
+    padding-left: 20px;
+    font-size: 14px;
+    line-height: 35px;
+    background-color: #e8eced;
+  }
+  .eye {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-repeat: no-repeat;
+    background-size: 24px 24px;
+  }
+  .roundBall {
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    background-size: 100% 100%;
+    border-radius: 50%;
+  }
+}

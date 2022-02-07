@@ -127,11 +127,11 @@ const Welcome: React.FC = () => {
         <Col span={17}>
           <PPBlock title="示例项目" style={{ height: 430 }}>
             <Space size={20}>
-              <PPCard imgSrc={'/pics/classification.jpg'}>图像分类标注示例</PPCard>
-              <PPCard imgSrc={'/pics/object_detection.jpg'}>目标检测标注示例</PPCard>
-              <PPCard imgSrc={'/pics/instance_segmentation.jpg'}>实例分割标注示例</PPCard>
-              <PPCard imgSrc={'/pics/semantic_segmentation.jpg'}>语义分割标注示例</PPCard>
-              <PPCard imgSrc={'/pics/keypoint_detection.jpg'}>关键点检测标注示例</PPCard>
+              <PPCard imgSrc={'./pics/classification.jpg'}>图像分类标注示例</PPCard>
+              <PPCard imgSrc={'./pics/object_detection.jpg'}>目标检测标注示例</PPCard>
+              <PPCard imgSrc={'./pics/instance_segmentation.jpg'}>实例分割标注示例</PPCard>
+              <PPCard imgSrc={'./pics/semantic_segmentation.jpg'}>语义分割标注示例</PPCard>
+              <PPCard imgSrc={'./pics/keypoint_detection.jpg'}>关键点检测标注示例</PPCard>
             </Space>
           </PPBlock>
         </Col>

@@ -1,0 +1,59 @@
+@import (reference) '~antd/es/style/themes/index';
+
+.toolBarButtonContainerWrapper {
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+  :hover {
+    background-color: #eeeff1;
+  }
+  .toolBarButtonContainer {
+    width: 100%;
+    min-height: 65px;
+
+    .toolBarButton {
+      width: 65px;
+      text-align: center;
+
+      .buttonText {
+        font-size: 12px;
+        text-align: center;
+      }
+    }
+  }
+}
+.toolBarButtonContainerWrapperActive {
+  background-color: #e5e5e5;
+}
+.popover {
+  padding-left: 0;
+  :global {
+    .ant-popover-arrow {
+      left: -8px;
+    }
+    .ant-input-number {
+      width: 50px;
+      line-height: 1;
+      border: 1px solid #9c9c9c;
+      border-radius: 2px;
+    }
+    .ant-input-number-input {
+      height: 15px;
+      font-size: 12px;
+      text-align: center;
+    }
+    .ant-popover-inner-content {
+      width: 104px;
+      height: 30px;
+      padding: 0;
+      text-align: center;
+    }
+    .ant-btn {
+      padding: 0 5px;
+      padding-bottom: 32px;
+      vertical-align: middle;
+    }
+  }
+}
