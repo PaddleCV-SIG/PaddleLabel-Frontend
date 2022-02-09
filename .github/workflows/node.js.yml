@@ -5,11 +5,10 @@ name: Generate gh-pages
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -18,16 +17,16 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm i --global yarn
-    - run: yarn
-    - run: npm run build:gh-pages
-    - run: mv dist ..
-    - run: git checkout gh-page
-    - run: \cp -rf ../dist/* .
-    - run: git add . && git commit -m "Auto update gh-page" && git push -f
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm i --global yarn
+      - run: yarn
+      - run: npm run build:gh-page
+      - run: mv dist ..
+      - run: git checkout gh-page
+      - run: \cp -rf ../dist/* .
+      - run: git add . && git commit -m "Auto update gh-page" && git push -f
