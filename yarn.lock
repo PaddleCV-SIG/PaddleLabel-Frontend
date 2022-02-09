@@ -2465,6 +2465,14 @@
   resolved "https://registry.npmmirror.com/@types/range-parser/download/@types/range-parser-1.2.4.tgz?cache=0&sync_timestamp=1637268455466&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40types%2Frange-parser%2Fdownload%2F%40types%2Frange-parser-1.2.4.tgz"
   integrity sha1-zWZ7z90CUhOq+3ylkVqTJZCs3Nw=
 
+"@types/react-color@^3.0.6":
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@types/react-color/-/react-color-3.0.6.tgz#602fed023802b2424e7cd6ff3594ccd3d5055f9a"
+  integrity sha512-OzPIO5AyRmLA7PlOyISlgabpYUa3En74LP8mTMa0veCA719SvYQov4WLMsHvCgXP+L+KI9yGhYnqZafVGG0P4w==
+  dependencies:
+    "@types/react" "*"
+    "@types/reactcss" "*"
+
 "@types/react-dom@^16.9.8":
   version "16.9.14"
   resolved "https://registry.npmmirror.com/@types/react-dom/download/@types/react-dom-16.9.14.tgz"
@@ -2565,6 +2573,13 @@
     "@types/prop-types" "*"
     "@types/scheduler" "*"
     csstype "^3.0.2"
+
+"@types/reactcss@*":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@types/reactcss/-/reactcss-1.2.6.tgz#133c1e7e896f2726370d1d5a26bf06a30a038bcc"
+  integrity sha512-qaIzpCuXNWomGR1Xq8SCFTtF4v8V27Y6f+b9+bzHiv087MylI/nTCqqdChNeWS7tslgROmYB7yeiruWX7WnqNg==
+  dependencies:
+    "@types/react" "*"
 
 "@types/sax@^1.2.1":
   version "1.2.4"
@@ -13171,22 +13186,9 @@ react-attr-converter@^0.3.1:
   resolved "https://registry.nlark.com/react-attr-converter/download/react-attr-converter-0.3.1.tgz"
   integrity sha1-Siq/bZB7fdrk2GLf7IDkic5BrW4=
 
-react-color@2.19.3:
+react-color@2.19.3, react-color@^2.19.3:
   version "2.19.3"
   resolved "https://registry.npmjs.org/react-color/-/react-color-2.19.3.tgz"
-  integrity sha512-LEeGE/ZzNLIsFWa1TMe8y5VYqr7bibneWmvJwm1pCn/eNmrabWDh659JSPn9BuaMpEfU83WTOJfnCcjDZwNQTA==
-  dependencies:
-    "@icons/material" "^0.2.4"
-    lodash "^4.17.15"
-    lodash-es "^4.17.15"
-    material-colors "^1.2.1"
-    prop-types "^15.5.10"
-    reactcss "^1.2.0"
-    tinycolor2 "^1.4.1"
-
-react-color@^2.19.3:
-  version "2.19.3"
-  resolved "https://registry.yarnpkg.com/react-color/-/react-color-2.19.3.tgz#ec6c6b4568312a3c6a18420ab0472e146aa5683d"
   integrity sha512-LEeGE/ZzNLIsFWa1TMe8y5VYqr7bibneWmvJwm1pCn/eNmrabWDh659JSPn9BuaMpEfU83WTOJfnCcjDZwNQTA==
   dependencies:
     "@icons/material" "^0.2.4"

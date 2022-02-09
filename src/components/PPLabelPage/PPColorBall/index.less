@@ -1,0 +1,23 @@
+@import (reference) '~antd/es/style/themes/index';
+
+.roundBall {
+  width: 18px;
+  height: 18px;
+  margin-left: 6px;
+  background-size: 100% 100%;
+  border-radius: 50%;
+}
+.popover {
+  top: 18px !important;
+  padding: 0;
+  :global {
+    .ant-popover-inner {
+      background: none;
+      border: none;
+      box-shadow: none;
+    }
+    .ant-popover-arrow {
+      top: 4px;
+    }
+  }
+}

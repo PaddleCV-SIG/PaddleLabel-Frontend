@@ -1,13 +1,14 @@
-import { List, Popover, Space } from 'antd';
+import { List } from 'antd';
 import { Button } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './index.less';
-import { HuePicker } from 'react-color';
+import PPLabelListItem from '../PPLabelListItem';
+import PPAddLabelModal from '../PPAddLabelModal';
 
 export type Label = {
   color: string;
   name: string;
-  invisiable?: boolean;
+  invisible?: boolean;
 };
 
 export type PPLabelListProps = {
@@ -21,6 +22,10 @@ const mockedLabels: Label[] = [
   {
     color: '#FF0000',
     name: '标签1',
+  },
+  {
+    color: '#008000',
+    name: '标签2',
   },
 ];
 
@@ -61,45 +66,41 @@ const mockedLabels: Label[] = [
 // ];
 
 const Component: React.FC<PPLabelListProps> = (props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [labels, setLabels] = useState(mockedLabels);
+  const [addModalVisible, setAddLabelModalVisible] = useState(false);
   return (
-    <List
-      className={styles.labelList}
-      size="large"
-      header={<div className={styles.listHeader}>标签列表</div>}
-      footer={
-        <div>
-          <Button style={{ height: 40 }} type="primary" block>
-            添加标签
-          </Button>
-        </div>
-      }
-      bordered
-      dataSource={mockedLabels}
-      renderItem={(item) => (
-        <List.Item>
-          <Space align="center" size={5}>
-            <a
-              className={styles.eye}
-              style={{
-                backgroundImage: item.invisiable ? 'url(/pics/hide.png)' : 'url(/pics/show.png)',
-              }}
+    <>
+      <List
+        className={styles.labelList}
+        size="large"
+        header={<div className={styles.listHeader}>标签列表</div>}
+        footer={
+          <div>
+            <Button
+              style={{ height: 40, fontSize: '12px' }}
+              type="primary"
               onClick={() => {
-                item.invisiable = !item.invisiable;
-                props.onLabelModify(item);
+                setAddLabelModalVisible(true);
               }}
-            />{' '}
-            {item.name}
-            <Popover
-              placement="bottomRight"
-              content={<HuePicker color={item.color} />}
-              trigger="click"
+              block
             >
-              <div className={styles.roundBall} style={{ backgroundColor: item.color }} />
-            </Popover>
-          </Space>
-        </List.Item>
-      )}
-    />
+              添加标签
+            </Button>
+          </div>
+        }
+        bordered
+        dataSource={labels}
+        renderItem={(item) => (
+          <PPLabelListItem
+            label={item}
+            onLabelDelete={props.onLabelDelete}
+            onLabelModify={props.onLabelModify}
+          />
+        )}
+      />
+      <PPAddLabelModal visible={addModalVisible} onLabelAdd={() => {}} />
+    </>
   );
 };
 export default Component;
