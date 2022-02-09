@@ -27,6 +27,8 @@ jobs:
       - run: yarn
       - run: npm run build:gh-page
       - run: mv dist ..
-      - run: git checkout gh-page
+      - uses: actions/checkout@v2
+        with:
+          ref: gp-page
       - run: \cp -rf ../dist/* .
       - run: git add . && git commit -m "Auto update gh-page" && git push -f
