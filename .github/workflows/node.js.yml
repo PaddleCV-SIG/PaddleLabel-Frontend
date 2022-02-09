@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+      - run: git config --global user.email "bot@github.com" && git config --global user.name "Action Bot"
       - run: npm i --global yarn
       - run: yarn
       - run: npm run build:gh-page
