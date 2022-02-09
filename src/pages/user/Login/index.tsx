@@ -83,7 +83,7 @@ const Login: React.FC = () => {
       </div>
       <div className={styles.content}>
         <LoginForm
-          logo={<img id={styles.logo} alt="logo" src="/logo.png" />}
+          logo={<img id={styles.logo} alt="logo" src="./logo.png" />}
           title=""
           subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           initialValues={{

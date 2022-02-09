@@ -20,7 +20,7 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
         <a
           className={styles.eye}
           style={{
-            backgroundImage: invisible ? 'url(/pics/hide.png)' : 'url(/pics/show.png)',
+            backgroundImage: invisible ? 'url(./pics/hide.png)' : 'url(./pics/show.png)',
           }}
           onClick={() => {
             setInvisible(!invisible);

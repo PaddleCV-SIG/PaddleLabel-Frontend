@@ -8,8 +8,12 @@ import routes from './routes';
 
 const { REACT_APP_ENV } = process.env;
 
+const baseURL = REACT_APP_ENV == 'page' ? '/PP-Label-Frontend/' : '/';
+console.log(`baseURL = ${baseURL}`);
+
 export default defineConfig({
   hash: true,
+  history: { type: 'hash' },
   antd: {},
   dva: {
     hmr: true,
@@ -41,8 +45,8 @@ export default defineConfig({
     'root-entry-name': 'variable',
     'primary-color': '#1727C2', // Global Main color
     'primary-color-hover': '#515EED',
-    'link-color': '#2e3dc8', 
-    'success-color': '#73c300', 
+    'link-color': '#2e3dc8',
+    'success-color': '#73c300',
     'warning-color': '#f1a200',
     'error-color': '#cf3f00',
     'font-size-base': '16px',
@@ -57,14 +61,16 @@ export default defineConfig({
   ignoreMomentLocale: true,
   proxy: proxy[REACT_APP_ENV || 'dev'],
   manifest: {
-    basePath: '/',
+    basePath: baseURL,
   },
-  // Fast Refresh 热更新
+  base: baseURL,
+  publicPath: baseURL,
+  // Fast Refresh
   fastRefresh: {},
   openAPI: [
     {
       requestLibPath: "import { request } from 'umi'",
-      // 或者使用在线的版本
+      // Or the online version
       // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
       schemaPath: join(__dirname, 'oneapi.json'),
       mock: false,
