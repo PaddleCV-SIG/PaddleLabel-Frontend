@@ -6,6 +6,7 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPBrush from '@/components/PPLabelPage/PPBrush';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
@@ -62,6 +63,17 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/next.png">下一步</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">清除标注</PPToolBarButton>
       </PPToolBar>
+      <MapContainer center={[51.505, -0.09]} zoom={13} className={styles.ppmap}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[51.505, -0.09]}>
+          <Popup>
+            A pretty CSS3 popup. <br /> Easily customizable.
+          </Popup>
+        </Marker>
+      </MapContainer>
       <div className={styles.mainStage} />
       <div className={styles.rightSideBar}>
         <PPLabelList onLabelModify={() => {}} onLabelDelete={() => {}} onLabelAdd={() => {}} />

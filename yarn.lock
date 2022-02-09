@@ -2167,6 +2167,11 @@
   resolved "https://registry.npm.taobao.org/@qixian.cs/path-to-regexp/download/@qixian.cs/path-to-regexp-6.1.0.tgz"
   integrity sha1-a4StAVljMqupX6KdLnAQRpjNXEU=
 
+"@react-leaflet/core@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@react-leaflet/core/-/core-1.1.1.tgz#827fd05bb542cf874116176d8ef48d5b12163f81"
+  integrity sha512-7PGLWa9MZ5x/cWy8EH2VzI4T8q5WpuHbixzCDXqixP/WyqwIrg5NDUPgYuFnB4IEIZF+6nA265mYzswFo/h1Pw==
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.npmmirror.com/@sindresorhus/is/download/@sindresorhus/is-0.14.0.tgz"
@@ -2293,6 +2298,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/geojson@*":
+  version "7946.0.8"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.8.tgz#30744afdb385e2945e22f3b033f897f76b1f12ca"
+  integrity sha512-1rkryxURpr6aWP7R786/UQOkJ3PcpQiWkAXBmdWc7ryFWqN6a4xfK7BtjXvFBKO9LjQ+MWQSWxYeZX1OApnArA==
+
 "@types/glob@^7.1.1":
   version "7.2.0"
   resolved "https://registry.npmmirror.com/@types/glob/download/@types/glob-7.2.0.tgz"
@@ -2377,6 +2387,13 @@
   version "7.0.9"
   resolved "https://registry.npmmirror.com/@types/json-schema/download/@types/json-schema-7.0.9.tgz?cache=0&sync_timestamp=1637266119442&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40types%2Fjson-schema%2Fdownload%2F%40types%2Fjson-schema-7.0.9.tgz"
   integrity sha1-l+3JA36gw4WFMgsolk3eOznkZg0=
+
+"@types/leaflet@^1.7.9":
+  version "1.7.9"
+  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.7.9.tgz#7993d34f14cfa88c45b3d490daba39a3a1be9a2b"
+  integrity sha512-H8vPgD49HKzqM41ArHGZM70g/tfhp8W+JcPxfnF+5H/Xvp+xiP+KQOUNWU8U89fqS1Jj3cpRY/+nbnaHFzwnFA==
+  dependencies:
+    "@types/geojson" "*"
 
 "@types/lodash@^4.14.0":
   version "4.14.178"
@@ -9819,6 +9836,11 @@ lcid@^3.0.0:
   dependencies:
     invert-kv "^3.0.0"
 
+leaflet@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
+  integrity sha512-/xwPEBidtg69Q3HlqPdU3DnrXQOvQU/CCHA1tcDQVzOwm91YMYaILjNp7L4Eaw5Z4sOYdbBz6koWyibppd8Zqw==
+
 leven@^3.1.0:
   version "3.1.0"
   resolved "https://registry.nlark.com/leven/download/leven-3.1.0.tgz"
@@ -13305,9 +13327,9 @@ react-dom@16.x:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
-react-dom@^17.0.0:
+react-dom@^17.0.2:
   version "17.0.2"
-  resolved "https://registry.npmmirror.com/react-dom/download/react-dom-17.0.2.tgz"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
   integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
   dependencies:
     loose-envify "^1.1.0"
@@ -13398,6 +13420,13 @@ react-is@^17.0.1, react-is@^17.0.2:
   version "17.0.2"
   resolved "https://registry.npmmirror.com/react-is/download/react-is-17.0.2.tgz"
   integrity sha1-5pHUqOnHiTZWVVOas3J2Kw77VPA=
+
+react-leaflet@^3.2.5:
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/react-leaflet/-/react-leaflet-3.2.5.tgz#bec0bfab9dd8c2b030ea630f7a0687a60322ca7d"
+  integrity sha512-Z3KZ+4SijsRbbrt2I1a3ZDY6+V6Pm91eYTdxTN18G6IOkFRsJo1BuSPLFnyFrlF3WDjQFPEcTPkEgD1VEeAoBg==
+  dependencies:
+    "@react-leaflet/core" "^1.1.1"
 
 react-lifecycles-compat@^3.0.4:
   version "3.0.4"
@@ -13558,9 +13587,9 @@ react@16.x:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
 
-react@^17.0.0:
+react@^17.0.2:
   version "17.0.2"
-  resolved "https://registry.npmmirror.com/react/download/react-17.0.2.tgz"
+  resolved "https://registry.yarnpkg.com/react/-/react-17.0.2.tgz#d0b5cc516d29eb3eee383f75b62864cfb6800037"
   integrity sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==
   dependencies:
     loose-envify "^1.1.0"
