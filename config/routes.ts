@@ -29,6 +29,11 @@
     name: 'Semantic Segmentation Sample',
     component: './SemanticSegmentation',
   },
+  {
+    path: '/remote_sensing',
+    name: 'Remote Sensing',
+    component: './RemoteSensing',
+  },
   // {
   //   path: '/admin',
   //   name: 'admin',
