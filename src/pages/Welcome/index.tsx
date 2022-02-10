@@ -1,13 +1,12 @@
 import React from 'react';
 import { Row, Col, Button, Space } from 'antd';
-import styles from './index.less';
 import PPContainer from '@/components/PPContainer';
-import { PlusOutlined } from '@ant-design/icons';
 import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
 import type { ColumnsType } from 'antd/es/table';
 import PPTable from '@/components/PPTable';
 import PPButton from '@/components/PPButton';
+import CreateButton from '@/components/CreatButton';
 import { history } from 'umi';
 
 export type ProjectInfo = {
@@ -117,10 +116,10 @@ const Welcome: React.FC = () => {
     <PPContainer>
       <Row gutter={[20, 20]}>
         <Col span={24}>
-          <Button icon={<PlusOutlined />} size="large" id={`${styles.createBtn}`}>
+          <CreateButton>
             {/* {intl.formatMessage({ id: 'welcome.createProject' })} */}
             创建项目
-          </Button>
+          </CreateButton>
         </Col>
       </Row>
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>

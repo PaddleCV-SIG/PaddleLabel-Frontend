@@ -11,7 +11,7 @@ export type PPCardProps = {
 const PPBlock: React.FC<PPCardProps> = (props) => {
   return (
     <div className={styles.ppcard} style={props.style}>
-      <Row className={styles.titleRow}>
+      <Row className={styles.titleRow} style={{ display: props.title ? undefined : 'none' }}>
         <Title className={styles.title}>{props.title}</Title>
       </Row>
       <Row style={{ marginTop: 26 }}>
