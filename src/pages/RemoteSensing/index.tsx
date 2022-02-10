@@ -7,12 +7,23 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPBrush from '@/components/PPLabelPage/PPBrush';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPMap from '@/components/PPMap';
+import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
+import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
+import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
 
-export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
+export type ToolType =
+  | 'polygon'
+  | 'brush'
+  | 'rubber'
+  | 'mover'
+  | 'boundry'
+  | 'colorgun'
+  | 'grid'
+  | undefined;
+export type ToolType2 = undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
-
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -66,6 +77,29 @@ const Page: React.FC = () => {
       <div className={styles.mainStage}>
         <PPMap />
       </div>
+      <PPRSToolBar>
+        <Popover
+          style={{ borderRadius: '50%' }}
+          placement="leftTop"
+          title={<h4>边界简化设置</h4>}
+          content={
+            <>
+              <PPBoundarySimplify />
+            </>
+          }
+          trigger={currentTool == 'boundry' ? 'click' : 'hover'}
+        >
+          {' '}
+          <PPRSToolBarButton
+            imgSrc="./pics/buttons/border_simplify.png"
+            onClick={() => {
+              setCurrentTool('boundry');
+            }}
+          >
+            边界
+          </PPRSToolBarButton>
+        </Popover>
+      </PPRSToolBar>
       <div className={styles.rightSideBar}>
         <PPLabelList onLabelModify={() => {}} onLabelDelete={() => {}} onLabelAdd={() => {}} />
       </div>
