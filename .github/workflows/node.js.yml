@@ -60,7 +60,7 @@ jobs:
           echo "$GITHUB_WORKSPACE/node_modules/.bin" >> $GITHUB_PATH
       - name: Build gh-page
         run: npm run build:gh-page
-      - run: mv dist .. && mv manifest.txt .. && git checkout . && git fetch && git checkout gh-page
-      - run: rm -rf ./* && \cp -rf ../dist/* . && \cp -rf ../manifest.txt . && git add .
+      - run: mv dist .. && git checkout . && git fetch && git checkout gh-page
+      - run: rm -rf !(.gitignore|node_modules) && \cp -rf ../dist/* . && git add .
       - name: Push to gh-page
         run: (git commit -m "Auto update gh-page" && git push -f) || true
