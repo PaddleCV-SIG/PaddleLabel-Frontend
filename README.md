@@ -13,9 +13,58 @@ This project is initialized with [Ant Design Pro](https://pro.ant.design). Follo
 git config core.autocrlf false
 ```
 
+### Locale File Key Format
+
+1. Use `-`(dash/minus) instead of camel to separate words. This also means **NO CAPITAL WORD** is allowed in keys.
+2. Write long, comma seperated key name, instead of multi-level nested key name.
+3. Arrange content that belongs to the same block together, instead of always add at the buttom.
+4. Always add a comma at the end of the json object.
+
+Good Example: 
+```json
+{
+    "app.welcome.link.fetch-blocks": "Fetch all blocks",
+    "app.welcome.link.remove-blocks": "Remove all blocks",
+}
+```
+
+Bad Example(Violates #2): 
+
+```json
+{
+    "app": {
+        "welcome": {
+            "link": {
+                "fetch-blocks": "Fetch all blocks",
+                "remove-blocks": "Remove all blocks",
+            }
+        }
+    }
+}
+```
+
+Bad Example2(Violates #1, #4): 
+
+```json
+{
+    "app.welcome.link.fetchBlocks": "Fetch all blocks"
+}
+```
+
+Bad Example3(Violates #3): 
+
+```json
+{
+    "app.welcome.link.fetch-blocks": "Fetch all blocks",
+    "app.welcome.other-function.other-wording": "Anything",
+    //...
+    "app.welcome.link.remove-locks": "Remove all blocks", // Newly added
+}
+```
+
 ### Happy coding with VSCode
 
-Recommanded Plugins:
+Recommanded Plugins in `.vscode/extensions.json`:
 
 1. [ESLint](dbaeumer.vscode-eslint): Strict syntex check.
 1. [Prettier](esbenp.prettier-vscode): Code Format.
@@ -23,7 +72,7 @@ Recommanded Plugins:
 1. [Stylelint](stylelint.vscode-stylelint): CSS Format.
 1. [_Docker_](ms-azuretools.vscode-docker): Needed if you dev with docker.
 
-Recommanded Settings:
+Recommanded Settings in `.vscode/settings.json`:
 
 1. Auto Save: No
 1. Default Formatter: Prettier
@@ -34,8 +83,11 @@ Recommanded Settings:
 ### Install `node_modules`:
 
 ```bash
+npm install -g yarn
 yarn
 ```
+
+If you're in mainland China, recommand to use `tyarn` instead.
 
 ### [Optional] Install `node_modules` with Docker
 

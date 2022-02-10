@@ -3,6 +3,8 @@
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
     "stylelint.vscode-stylelint",
-    "wangzy.sneak-mark"
+    "esbenp.prettier-vscode",
+    "wangzy.sneak-mark",
+    "ms-azuretools.vscode-docker"
   ]
 }
