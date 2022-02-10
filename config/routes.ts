@@ -25,6 +25,11 @@
     component: './Welcome',
   },
   {
+    path: '/project_creation',
+    name: 'Project Creation',
+    component: './ProjectCreation',
+  },
+  {
     path: '/semantic_segmentation',
     name: 'Semantic Segmentation Sample',
     component: './SemanticSegmentation',

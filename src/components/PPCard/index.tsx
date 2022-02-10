@@ -13,13 +13,20 @@ export type MyButtonStyles = {
 
 const PPCard: React.FC<MyButtonStyles> = (props) => {
   return (
-    <div className={styles.card} onClick={() => history.push(props.href ? props.href : '')}>
+    <div
+      className={styles.card}
+      style={{ height: props.height, width: props.width }}
+      onClick={() => history.push(props.href ? props.href : '')}
+    >
       <img
         className={styles.thumbnail}
         alt={props.wording || styles.thumbnail}
         src={props.imgSrc}
+        style={{ height: props.height, width: props.width }}
       />
-      <Button className={styles.button}>{props.children}</Button>
+      <Button className={styles.button} style={{ width: props.width }}>
+        {props.children}
+      </Button>
     </div>
   );
 };
