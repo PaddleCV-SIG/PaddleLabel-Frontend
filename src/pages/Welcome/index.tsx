@@ -32,13 +32,14 @@ const columns: ColumnsType<ProjectInfo> = [
     title: 'Actions',
     key: 'id',
     width: '240px',
+    align: 'center',
     render: (text, record) => (
       <Space size="middle">
-        <PPButton width="90px" height="30px" color={'rgba(241,162,0,1)'}>
+        <PPButton width="70px" height="30px" color={'rgba(241,162,0,1)'}>
           修改信息
         </PPButton>
         <PPButton
-          width="90px"
+          width="70px"
           height="30px"
           color={'rgba(0,100,248,1)'}
           onClick={() => {
@@ -46,6 +47,9 @@ const columns: ColumnsType<ProjectInfo> = [
           }}
         >
           去标注
+        </PPButton>
+        <PPButton width="70px" height="30px" color={'rgba(207,63,0,1)'}>
+          删除
         </PPButton>
       </Space>
     ),
