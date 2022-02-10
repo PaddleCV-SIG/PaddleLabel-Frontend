@@ -23,17 +23,28 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - name: Cache Yarn
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      # - name: Get yarn cache directory path
+      #   id: yarn-cache-dir-path
+      #   run: echo "::set-output name=dir::$(yarn cache dir)"
+      # - name: Cache Yarn
+      #   id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      #   uses: actions/cache@v2
+      #   env:
+      #     cache-name: cache-yarn
+      #   with:
+      #     # npm cache files are stored in `~/.npm` on Linux/macOS
+      #     path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+      #     key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-build-${{ env.cache-name }}-
+      - name: Cache node_modules
+        id: node-modules-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         uses: actions/cache@v2
         env:
-          cache-name: cache-yarn
+          cache-name: cache-node-modules
         with:
           # npm cache files are stored in `~/.npm` on Linux/macOS
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          path: node_modules
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
@@ -42,7 +53,7 @@ jobs:
       - name: Install yarn
         run: npm i --global yarn
       - name: Install node_modules
-        run: yarn
+        run: ${{ steps.yarn-cache.outputs.cache-hit }} != 'true' && yarn
       - name: Build gh-page
         run: npm run build:gh-page
       - run: mv dist .. && git checkout . && git fetch && git checkout gh-page
