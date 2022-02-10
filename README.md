@@ -169,5 +169,5 @@ npm test
 After:
 
 ```bash
-docker run -ti pp-label-frontend npm test
+docker run -ti pp-label-frontend npm test 
 ```
