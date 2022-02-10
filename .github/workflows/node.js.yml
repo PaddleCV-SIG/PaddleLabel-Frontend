@@ -40,7 +40,7 @@ jobs:
         id: node-modules-cache # use this to check for `cache-hit` (`steps.node-modules-cache.outputs.cache-hit != 'true'`)
         uses: actions/cache@v2
         env:
-          cache-name: cache-node_modules
+          cache-name: cache-node_modules2
         with:
           path: ./node_modules/
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
@@ -60,7 +60,7 @@ jobs:
           echo "$GITHUB_WORKSPACE/node_modules/.bin" >> $GITHUB_PATH
       - name: Build gh-page
         run: npm run build:gh-page
-      - run: mv dist .. && git checkout . && git fetch && git checkout gh-page
-      - run: rm -rf ./* && \cp -rf ../dist/* . && git add .
+      - run: mv dist .. && mv manifest.txt .. && git checkout . && git fetch && git checkout gh-page
+      - run: rm -rf ./* && \cp -rf ../dist/* . && \cp -rf ../manifest.txt . && git add .
       - name: Push to gh-page
         run: (git commit -m "Auto update gh-page" && git push -f) || true
