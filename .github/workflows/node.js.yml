@@ -53,7 +53,8 @@ jobs:
       - name: Install yarn
         run: npm i --global yarn
       - name: Install node_modules
-        run: ${{ steps.yarn-cache.outputs.cache-hit }} != 'true' && yarn
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        run: yarn
       - name: Build gh-page
         run: npm run build:gh-page
       - run: mv dist .. && git checkout . && git fetch && git checkout gh-page
