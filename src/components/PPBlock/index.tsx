@@ -9,29 +9,17 @@ export type PPCardProps = {
 };
 
 const PPBlock: React.FC<PPCardProps> = (props) => {
-  if (props.title) {
-    return (
-      <div className={styles.ppcard} style={props.style}>
-        <Row className={styles.titleRow}>
-          <Title className={styles.title}>{props.title}</Title>
-        </Row>
-        <Row style={{ marginTop: 26 }}>
-          <Col span={24} style={{ paddingLeft: 30, paddingRight: 30, textAlign: 'center' }}>
-            {props.children}
-          </Col>
-        </Row>
-      </div>
-    );
-  } else {
-    return (
-      <div className={styles.ppcard} style={props.style}>
-        <Row style={{ marginTop: 26 }}>
-          <Col span={24} style={{ paddingLeft: 30, paddingRight: 30, textAlign: 'center' }}>
-            {props.children}
-          </Col>
-        </Row>
-      </div>
-    );
-  }
+  return (
+    <div className={styles.ppcard} style={props.style}>
+      <Row className={styles.titleRow} style={{ display: props.title ? undefined : 'none' }}>
+        <Title className={styles.title}>{props.title}</Title>
+      </Row>
+      <Row style={{ marginTop: 26 }}>
+        <Col span={24} style={{ paddingLeft: 30, paddingRight: 30, textAlign: 'center' }}>
+          {props.children}
+        </Col>
+      </Row>
+    </div>
+  );
 };
 export default PPBlock;
