@@ -55,6 +55,9 @@ jobs:
         if: steps.node-modules-cache.outputs.cache-hit != 'true'
         run: yarn
       - run: |
+          ls -la
+          ls -la node_modules
+          ls -la node_modules/.bin
           echo "$GITHUB_WORKSPACE/node_modules/.bin" >> $GITHUB_PATH
       - name: Build gh-page
         run: npm run build:gh-page
