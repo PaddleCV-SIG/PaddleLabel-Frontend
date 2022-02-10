@@ -1,19 +1,16 @@
 import React from 'react';
-import { Row, Col, Button, Space } from 'antd';
-import styles from './index.less';
+import { Row, Col, Space } from 'antd';
 import PPContainer from '@/components/PPContainer';
-import { PlusOutlined } from '@ant-design/icons';
 import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
+import CreateButton from '@/components/CreatButton';
 
 const Project: React.FC = () => {
   return (
     <PPContainer>
       <Row gutter={[20, 20]} style={{ marginTop: 101 }}>
         <Col span={24}>
-          <Button icon={<PlusOutlined />} size="large" id={`${styles.createBtn}`}>
-            创建标注
-          </Button>
+          <CreateButton>创建标注</CreateButton>
         </Col>
       </Row>
       <Row style={{ marginTop: 20 }}>
