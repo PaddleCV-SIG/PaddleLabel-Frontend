@@ -1,4 +1,5 @@
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
+import styles from './index.less';
 import { Button, Col, Dropdown, Input, Menu, message, Row } from 'antd';
 import React from 'react';
 
@@ -30,38 +31,38 @@ const component: React.FC<PPBoundarySimplify> = () => {
   return (
     <div>
       <Row>
-        <Col span={12}>
+        <Col span={12} className={styles.RSPop1}>
           <span>PD参数</span>
         </Col>
-        <Col span={12}>
+        <Col span={12} className={styles.RSPop2}>
           <Dropdown overlay={menu}>
-            <Button>
-              Button <DownOutlined />
+            <Button style={{ width: '100%' }}>
+              Dropdown <DownOutlined />
             </Button>
           </Dropdown>
         </Col>
       </Row>
       <Row>
-        <Col span={12}>
+        <Col span={12} className={styles.RSPop1}>
           <span>简化距离</span>
         </Col>
-        <Col span={12}>
+        <Col span={12} className={styles.RSPop2}>
           <Input placeholder="Basic usage" />
         </Col>
       </Row>
       <Row>
-        <Col span={12}>
+        <Col span={12} className={styles.RSPop1}>
           <span>简化角度</span>
         </Col>
-        <Col span={12}>
+        <Col span={12} className={styles.RSPop2}>
           <Input placeholder="Basic usage" />
         </Col>
       </Row>
       <Row>
-        <Col span={12}>
+        <Col span={12} className={styles.RSPop1}>
           <span>建筑简化阀值</span>
         </Col>
-        <Col span={12}>
+        <Col span={12} className={styles.RSPop2}>
           <Input placeholder="Basic usage" />
         </Col>
       </Row>
