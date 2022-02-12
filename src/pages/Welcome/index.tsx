@@ -9,18 +9,17 @@ import PPButton from '@/components/PPButton';
 import CreateButton from '@/components/CreatButton';
 import { history } from 'umi';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { AnnotationApi } from '@/services/apis/AnnotationApi';
-
+import { ProjectApi } from '@/services/apis/ProjectApi';
 export type ProjectInfo = {
-  id: number;
+  projectId: number;
   name: string;
 };
 
 const columns: ColumnsType<ProjectInfo> = [
   {
     title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
+    dataIndex: 'projectId',
+    key: 'projectId',
     width: '4.5rem',
     align: 'center',
     render: (text: string) => <>{text}</>,
@@ -32,7 +31,7 @@ const columns: ColumnsType<ProjectInfo> = [
   },
   {
     title: 'Actions',
-    key: 'id',
+    key: 'projectId',
     width: '15rem',
     align: 'center',
     render: (text, record) => (
@@ -45,7 +44,7 @@ const columns: ColumnsType<ProjectInfo> = [
           height="1.875rem"
           color={'rgba(0,100,248,1)'}
           onClick={() => {
-            history.push('/label/' + record.id);
+            history.push('/label/' + record.projectId);
           }}
         >
           去标注
@@ -58,77 +57,24 @@ const columns: ColumnsType<ProjectInfo> = [
   },
 ];
 
-const data: ProjectInfo[] = [
-  {
-    id: 1,
-    name: '项目1',
-  },
-  {
-    id: 2,
-    name: '项目2',
-  },
-  {
-    id: 3,
-    name: '项目3',
-  },
-  {
-    id: 4,
-    name: '项目4',
-  },
-  {
-    id: 5,
-    name: '项目5',
-  },
-  {
-    id: 6,
-    name: '项目6',
-  },
-  {
-    id: 7,
-    name: '项目7',
-  },
-  {
-    id: 8,
-    name: '项目8',
-  },
-  {
-    id: 9,
-    name: '项目9',
-  },
-  {
-    id: 10,
-    name: '项目10',
-  },
-  {
-    id: 11,
-    name: '基于xxx的目标检测',
-  },
-  {
-    id: 12,
-    name: '非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常长的名字',
-  },
-  {
-    id: 13,
-    name: 'Sample Project for xxx',
-  },
-  {
-    id: 13,
-    name: 'Very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long name',
-  },
-];
+// moved mock project data to /mock/project.ts, had trouble commiting
 
 const Welcome: React.FC = () => {
-  // Sample Call backend API
-  const anno = new AnnotationApi();
-  anno.annotationsAnnotationIdDelete({
-    annotationId: 0,
-  });
+  // Sample backend API Call
+  const [projects, setProjects] = React.useState([]);
+  React.useEffect(() => {
+    const projectApi = new ProjectApi();
+    projectApi.projectsGet().then(function (res) {
+      setProjects(JSON.parse(JSON.stringify(res))); // TODO: get dict instead of object
+    });
+  }, []);
+
   return (
     <PPContainer>
       <Row gutter={[20, 20]}>
         <Col span={24}>
           <CreateButton>
-            {/* {intl.formatMessage({ id: 'welcome.createProject' })} */}
+            {/* {intl.formatMessage({ projectId: 'welcome.createProject' })} */}
             创建项目
           </CreateButton>
         </Col>
@@ -177,7 +123,7 @@ const Welcome: React.FC = () => {
       <Row style={{ marginTop: 20 }}>
         <Col span={24}>
           <PPBlock title="我的项目">
-            <PPTable columns={columns} dataSource={data} showHeader={false} />
+            <PPTable columns={columns} dataSource={projects} showHeader={false} />
           </PPBlock>
         </Col>
       </Row>
