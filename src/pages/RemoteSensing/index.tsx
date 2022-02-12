@@ -79,7 +79,7 @@ const Page: React.FC = () => {
       </div>
       <PPRSToolBar>
         <Popover
-          style={{ borderRadius: '50%' }}
+          overlayInnerStyle={{ borderRadius: '5%' }}
           placement="leftTop"
           title={<h4>边界简化设置</h4>}
           content={

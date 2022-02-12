@@ -130,25 +130,23 @@ const Welcome: React.FC = () => {
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>
         <Col span={17}>
           <PPBlock title="示例项目" style={{ height: 430 }}>
-            <Space size={20}>
-              <Row>
-                <PPOverlapCol span={4}>
-                  <PPCard imgSrc={'./pics/classification.jpg'}>图像分类标注示例</PPCard>
-                </PPOverlapCol>
-                <PPOverlapCol span={4}>
-                  <PPCard imgSrc={'./pics/object_detection.jpg'}>目标检测标注示例</PPCard>
-                </PPOverlapCol>
-                <PPOverlapCol span={4}>
-                  <PPCard imgSrc={'./pics/instance_segmentation.jpg'}>实例分割标注示例</PPCard>
-                </PPOverlapCol>
-                <PPOverlapCol span={4}>
-                  <PPCard imgSrc={'./pics/semantic_segmentation.jpg'}>语义分割标注示例</PPCard>
-                </PPOverlapCol>
-                <PPOverlapCol span={4}>
-                  <PPCard imgSrc={'./pics/keypoint_detection.jpg'}>关键点检测标注示例</PPCard>
-                </PPOverlapCol>
-              </Row>
-            </Space>
+            <Row>
+              <PPOverlapCol span={4}>
+                <PPCard imgSrc={'./pics/classification.jpg'}>图像分类标注示例</PPCard>
+              </PPOverlapCol>
+              <PPOverlapCol span={4}>
+                <PPCard imgSrc={'./pics/object_detection.jpg'}>目标检测标注示例</PPCard>
+              </PPOverlapCol>
+              <PPOverlapCol span={4}>
+                <PPCard imgSrc={'./pics/instance_segmentation.jpg'}>实例分割标注示例</PPCard>
+              </PPOverlapCol>
+              <PPOverlapCol span={4}>
+                <PPCard imgSrc={'./pics/semantic_segmentation.jpg'}>语义分割标注示例</PPCard>
+              </PPOverlapCol>
+              <PPOverlapCol span={4}>
+                <PPCard imgSrc={'./pics/keypoint_detection.jpg'}>关键点检测标注示例</PPCard>
+              </PPOverlapCol>
+            </Row>
           </PPBlock>
         </Col>
         <Col span={7}>
@@ -181,4 +179,4 @@ const Welcome: React.FC = () => {
   );
 };
 
-export default Welcome;
+export default await Welcome;

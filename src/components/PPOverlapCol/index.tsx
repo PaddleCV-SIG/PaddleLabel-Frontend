@@ -9,7 +9,7 @@ const PPBlock: React.FC<ColProps & React.RefAttributes<HTMLDivElement>> = (props
     <Col
       {...props}
       className={`${styles.col} ${props.className}`}
-      style={{ zIndex: hovered ? 11 : 10, width: hovered ? '100%' : '80%' }}
+      style={{ zIndex: hovered ? 11 : 10, width: hovered ? '100%' : '100%' }}
       onMouseOver={() => {
         SetHovered(true);
       }}
