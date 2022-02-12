@@ -8,6 +8,7 @@ import PPTable from '@/components/PPTable';
 import PPButton from '@/components/PPButton';
 import CreateButton from '@/components/CreatButton';
 import { history } from 'umi';
+import PPOverlapCol from '@/components/PPOverlapCol';
 
 export type ProjectInfo = {
   id: number;
@@ -128,13 +129,25 @@ const Welcome: React.FC = () => {
       </Row>
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>
         <Col span={17}>
-          <PPBlock title="示例项目" style={{ height: 430 }} innerStyle={{ overflowX: 'scroll' }}>
+          <PPBlock title="示例项目" style={{ height: 430 }}>
             <Space size={20}>
-              <PPCard imgSrc={'./pics/classification.jpg'}>图像分类标注示例</PPCard>
-              <PPCard imgSrc={'./pics/object_detection.jpg'}>目标检测标注示例</PPCard>
-              <PPCard imgSrc={'./pics/instance_segmentation.jpg'}>实例分割标注示例</PPCard>
-              <PPCard imgSrc={'./pics/semantic_segmentation.jpg'}>语义分割标注示例</PPCard>
-              <PPCard imgSrc={'./pics/keypoint_detection.jpg'}>关键点检测标注示例</PPCard>
+              <Row>
+                <PPOverlapCol span={4}>
+                  <PPCard imgSrc={'./pics/classification.jpg'}>图像分类标注示例</PPCard>
+                </PPOverlapCol>
+                <PPOverlapCol span={4}>
+                  <PPCard imgSrc={'./pics/object_detection.jpg'}>目标检测标注示例</PPCard>
+                </PPOverlapCol>
+                <PPOverlapCol span={4}>
+                  <PPCard imgSrc={'./pics/instance_segmentation.jpg'}>实例分割标注示例</PPCard>
+                </PPOverlapCol>
+                <PPOverlapCol span={4}>
+                  <PPCard imgSrc={'./pics/semantic_segmentation.jpg'}>语义分割标注示例</PPCard>
+                </PPOverlapCol>
+                <PPOverlapCol span={4}>
+                  <PPCard imgSrc={'./pics/keypoint_detection.jpg'}>关键点检测标注示例</PPCard>
+                </PPOverlapCol>
+              </Row>
             </Space>
           </PPBlock>
         </Col>
