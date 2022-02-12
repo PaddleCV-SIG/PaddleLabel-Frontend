@@ -1,14 +1,14 @@
 @import (reference) '~antd/es/style/themes/index';
 
 .list {
-  max-height: 400px;
+  max-height: 25rem;
   overflow: auto;
   &::-webkit-scrollbar {
     display: none;
   }
   .item {
-    padding-right: 24px;
-    padding-left: 24px;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
     overflow: hidden;
     cursor: pointer;
     transition: all 0.3s;
@@ -18,11 +18,11 @@
     }
 
     .avatar {
-      margin-top: 4px;
+      margin-top: 0.25rem;
       background: @component-background;
     }
     .iconElement {
-      font-size: 32px;
+      font-size: 2rem;
     }
 
     &.read {
@@ -35,28 +35,28 @@
       background: @primary-1;
     }
     .title {
-      margin-bottom: 8px;
+      margin-bottom: 0.5rem;
       font-weight: normal;
     }
     .description {
-      font-size: 12px;
+      font-size: 0.75rem;
       line-height: @line-height-base;
     }
     .datetime {
-      margin-top: 4px;
-      font-size: 12px;
+      margin-top: 0.25rem;
+      font-size: 0.75rem;
       line-height: @line-height-base;
     }
     .extra {
       float: right;
-      margin-top: -1.5px;
+      margin-top: -0.094rem;
       margin-right: 0;
       color: @text-color-secondary;
       font-weight: normal;
     }
   }
   .loadMore {
-    padding: 8px 0;
+    padding: 0.5rem 0;
     color: @primary-6;
     text-align: center;
     cursor: pointer;
@@ -68,22 +68,22 @@
 }
 
 .notFound {
-  padding: 73px 0 88px;
+  padding: 4.563rem 0 5.5rem;
   color: @text-color-secondary;
   text-align: center;
   img {
     display: inline-block;
-    height: 76px;
-    margin-bottom: 16px;
+    height: 4.75rem;
+    margin-bottom: 1rem;
   }
 }
 
 .bottomBar {
-  height: 46px;
+  height: 2.875rem;
   color: @text-color;
-  line-height: 46px;
+  line-height: 2.875rem;
   text-align: center;
-  border-top: 1px solid @border-color-split;
+  border-top: 0.063rem solid @border-color-split;
   border-radius: 0 0 @border-radius-base @border-radius-base;
   transition: all 0.3s;
   div {
@@ -97,7 +97,7 @@
       width: 100%;
     }
     &:not(:only-child):last-child {
-      border-left: 1px solid @border-color-split;
+      border-left: 0.063rem solid @border-color-split;
     }
   }
 }

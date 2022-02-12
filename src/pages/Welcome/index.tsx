@@ -19,7 +19,7 @@ const columns: ColumnsType<ProjectInfo> = [
     title: 'ID',
     dataIndex: 'id',
     key: 'id',
-    width: '72px',
+    width: '4.5rem',
     align: 'center',
     render: (text: string) => <>{text}</>,
   },
@@ -31,16 +31,16 @@ const columns: ColumnsType<ProjectInfo> = [
   {
     title: 'Actions',
     key: 'id',
-    width: '240px',
+    width: '15rem',
     align: 'center',
     render: (text, record) => (
       <Space size="middle">
-        <PPButton width="70px" height="30px" color={'rgba(241,162,0,1)'}>
+        <PPButton width="4.375rem" height="1.875rem" color={'rgba(241,162,0,1)'}>
           修改信息
         </PPButton>
         <PPButton
-          width="70px"
-          height="30px"
+          width="4.375rem"
+          height="1.875rem"
           color={'rgba(0,100,248,1)'}
           onClick={() => {
             history.push('/label/' + record.id);
@@ -48,7 +48,7 @@ const columns: ColumnsType<ProjectInfo> = [
         >
           去标注
         </PPButton>
-        <PPButton width="70px" height="30px" color={'rgba(207,63,0,1)'}>
+        <PPButton width="4.375rem" height="1.875rem" color={'rgba(207,63,0,1)'}>
           删除
         </PPButton>
       </Space>
@@ -141,16 +141,16 @@ const Welcome: React.FC = () => {
         <Col span={7}>
           <PPBlock title="模型训练知识" style={{ height: 430 }}>
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
-              <Button type="primary" style={{ height: '50px' }} block>
+              <Button type="primary" style={{ height: '3.125rem' }} block>
                 如何使用 paddleclas 训练
               </Button>
-              <Button type="primary" style={{ height: '50px' }} block>
+              <Button type="primary" style={{ height: '3.125rem' }} block>
                 如何使用 paddledet 训练
               </Button>
-              <Button type="primary" style={{ height: '50px' }} block>
+              <Button type="primary" style={{ height: '3.125rem' }} block>
                 如何使用 paddleseg 训练
               </Button>
-              <Button type="primary" style={{ height: '50px' }} block>
+              <Button type="primary" style={{ height: '3.125rem' }} block>
                 如何使用 paddlex 训练
               </Button>
             </Space>

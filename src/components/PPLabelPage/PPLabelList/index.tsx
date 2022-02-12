@@ -78,7 +78,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         footer={
           <div>
             <Button
-              style={{ height: 40, fontSize: '12px' }}
+              style={{ height: 40, fontSize: '0.75rem' }}
               type="primary"
               onClick={() => {
                 setAddLabelModalVisible(true);

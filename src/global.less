@@ -4,6 +4,11 @@ html,
 body,
 #root {
   height: 100%;
+  font-size: 16px;
+}
+#root {
+  min-width: 1024px;
+  min-height: 768px;
 }
 
 .colorWeak {
@@ -57,12 +62,20 @@ ol {
 }
 
 .ant-pro-top-nav-header-logo img {
-  margin-left: 40px;
+  margin-left: 2.5rem;
 }
 
 .ant-pro-basicLayout .ant-layout-header.ant-pro-header-light,
 .ant-pro-top-nav-header.light {
   background: @primary-color !important;
+}
+
+@media screen and(max-width: 1200px) {
+  html,
+  body,
+  #root {
+    font-size: 14px;
+  }
 }
 
 @import './styles/menu.less';

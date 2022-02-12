@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, message, Input, Drawer, PageHeader } from 'antd';
+import { Button, message, Input, Drawer } from 'antd';
 import React, { useState, useRef } from 'react';
 import { useIntl, FormattedMessage } from 'umi';
 import { PageContainer, FooterToolbar } from '@ant-design/pro-layout';
@@ -312,7 +312,7 @@ const TableList: React.FC = () => {
           id: 'pages.searchTable.createForm.newRule',
           defaultMessage: 'New rule',
         })}
-        width="400px"
+        width="25rem"
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
         onFinish={async (value) => {

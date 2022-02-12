@@ -49,10 +49,9 @@ export default defineConfig({
     'success-color': '#73c300',
     'warning-color': '#f1a200',
     'error-color': '#cf3f00',
-    'font-size-base': '16px',
     'text-color': '#333333',
     'disabled-color': '#cccccc',
-    'border-radius-base': '0px',
+    'border-radius-base': '0rem',
   },
   // esbuild is father build tools
   // https://umijs.org/plugins/plugin-esbuild

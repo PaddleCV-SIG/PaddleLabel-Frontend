@@ -30,14 +30,14 @@ const PPTable: React.FC<PPTableProps & Partial<TableProps<any>>> = (props) => {
   return (
     <div className={`${styles.table}`}>
       <Row>
-        <Col span={12} style={{ borderRight: '1px solid rgba(151,151,151,0.27)' }}>
+        <Col span={12} style={{ borderRight: '0.063rem solid rgba(151,151,151,0.27)' }}>
           <Table {...props} dataSource={dataSourceT1} pagination={false} rowSelection={undefined} />
         </Col>
         <Col span={12}>
           <Table {...props} dataSource={dataSourceT2} pagination={false} rowSelection={undefined} />
         </Col>
       </Row>
-      <Row style={{ marginTop: '28px' }}>
+      <Row style={{ marginTop: '1.75rem' }}>
         <Col span={24}>
           <Space align="center">
             <PPPagination
