@@ -128,7 +128,7 @@ const Welcome: React.FC = () => {
       </Row>
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>
         <Col span={17}>
-          <PPBlock title="示例项目" style={{ height: 430 }}>
+          <PPBlock title="示例项目" style={{ height: 430 }} innerStyle={{ overflowX: 'scroll' }}>
             <Space size={20}>
               <PPCard imgSrc={'./pics/classification.jpg'}>图像分类标注示例</PPCard>
               <PPCard imgSrc={'./pics/object_detection.jpg'}>目标检测标注示例</PPCard>

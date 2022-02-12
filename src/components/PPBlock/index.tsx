@@ -6,6 +6,7 @@ import styles from './index.less';
 export type PPCardProps = {
   title?: string;
   style?: React.CSSProperties;
+  innerStyle?: React.CSSProperties;
 };
 
 const PPBlock: React.FC<PPCardProps> = (props) => {
@@ -15,7 +16,10 @@ const PPBlock: React.FC<PPCardProps> = (props) => {
         <Title className={styles.title}>{props.title}</Title>
       </Row>
       <Row style={{ marginTop: 26 }}>
-        <Col span={24} style={{ paddingLeft: 30, paddingRight: 30, textAlign: 'center' }}>
+        <Col
+          span={24}
+          style={{ paddingLeft: 30, paddingRight: 30, textAlign: 'center', ...props.innerStyle }}
+        >
           {props.children}
         </Col>
       </Row>
