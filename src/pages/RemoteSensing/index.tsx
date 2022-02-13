@@ -113,7 +113,7 @@ const Page: React.FC = () => {
               setCurrentTool('colorgun');
             }}
           >
-            <h2>Remote sensing</h2>
+            <h2>Remote Sensing</h2>
           </PPRSToolBarButton>
         </Popover>
         <Popover
