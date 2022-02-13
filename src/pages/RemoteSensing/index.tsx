@@ -28,7 +28,7 @@ const Page: React.FC = () => {
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
-          智能交互
+          Intelligent Interaction
         </PPToolBarButton>
         <PPToolBarButton
           active={currentTool == 'polygon'}
@@ -37,7 +37,7 @@ const Page: React.FC = () => {
             setCurrentTool('polygon');
           }}
         >
-          多边形
+          Polygon
         </PPToolBarButton>
         <PPBrush
           active={currentTool == 'brush'}
@@ -61,18 +61,18 @@ const Page: React.FC = () => {
               setCurrentTool('rubber');
             }}
           >
-            橡皮擦
+            Rubber
           </PPToolBarButton>
         </Popover>
-        <PPToolBarButton imgSrc="./pics/buttons/zoom_in.png">放大</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/zoom_out.png">缩小</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/save.png">保存</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/move.png">移动</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">导出</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">数据划分</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/prev.png">上一步</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/next.png">下一步</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">清除标注</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/zoom_in.png">Zoom in</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/zoom_out.png">Zoom out</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/prev.png">Undo</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/next.png">Redo</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div className={styles.mainStage}>
         <PPMap />
@@ -81,7 +81,7 @@ const Page: React.FC = () => {
         <Popover
           overlayInnerStyle={{ borderRadius: '5%' }}
           placement="leftTop"
-          title={<h4>边界简化设置</h4>}
+          title={<h4>Setting of boundary simplification</h4>}
           content={
             <>
               <PPBoundarySimplify />
@@ -96,7 +96,41 @@ const Page: React.FC = () => {
               setCurrentTool('boundry');
             }}
           >
-            边界
+            Boundary
+          </PPRSToolBarButton>
+        </Popover>
+        <Popover
+          overlayInnerStyle={{ borderRadius: '5%' }}
+          placement="leftTop"
+          title={<h4>Setting of remote sensing</h4>}
+          content="content"
+          trigger={currentTool == 'colorgun' ? 'click' : 'hover'}
+        >
+          {' '}
+          <PPRSToolBarButton
+            imgSrc="./pics/buttons/remote_sensing_setting.png"
+            onClick={() => {
+              setCurrentTool('colorgun');
+            }}
+          >
+            Remote sensing
+          </PPRSToolBarButton>
+        </Popover>
+        <Popover
+          overlayInnerStyle={{ borderRadius: '5%' }}
+          placement="leftTop"
+          title={<h4>Switch grids</h4>}
+          content="content"
+          trigger={currentTool == 'grid' ? 'click' : 'hover'}
+        >
+          {' '}
+          <PPRSToolBarButton
+            imgSrc="./pics/buttons/switch_grid.png"
+            onClick={() => {
+              setCurrentTool('grid');
+            }}
+          >
+            Grids
           </PPRSToolBarButton>
         </Popover>
       </PPRSToolBar>
