@@ -49,4 +49,7 @@ export default {
   'menu.editor.flow': 'ویرایشگر جریان',
   'menu.editor.mind': 'ویرایشگر ذهن',
   'menu.editor.koni': 'ویرایشگر Koni',
+  'menu.project-creation': ' إنشاء المشروع ',
+  'menu.remote-sensing': ' الاستشعار عن بعد ',
+  'menu.semantic_segmentation-sample': ' تجزئة الدلالي ',
 };

@@ -49,4 +49,7 @@ export default {
   'menu.editor.flow': '流程编辑器',
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
+  'menu.project-creation': '创建工程',
+  'menu.remote-sensing': '遥感标注',
+  'menu.semantic_segmentation-sample': '语义分割',
 };

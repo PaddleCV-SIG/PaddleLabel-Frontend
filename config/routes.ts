@@ -26,17 +26,17 @@
   },
   {
     path: '/project_creation',
-    name: 'Project Creation',
+    name: 'project-creation',
     component: './ProjectCreation',
   },
   {
     path: '/semantic_segmentation',
-    name: 'Semantic Segmentation Sample',
+    name: 'semantic_segmentation-sample',
     component: './SemanticSegmentation',
   },
   {
     path: '/remote_sensing',
-    name: 'Remote Sensing',
+    name: 'remote-sensing',
     component: './RemoteSensing',
   },
   // {

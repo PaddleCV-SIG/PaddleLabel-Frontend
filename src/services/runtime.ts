@@ -12,9 +12,6 @@
  * Do not edit the class manually.
  */
 
-import { useIntl } from 'umi';
-import { message } from 'antd';
-
 export const BASE_PATH = 'http://localhost:5000/api'.replace(/\/+$/, '');
 
 const isBlob = (value: any) => typeof Blob !== 'undefined' && value instanceof Blob;
@@ -91,27 +88,19 @@ export class BaseAPI {
           })) || fetchParams;
       }
     }
-    try {
-      let response = await fetch(fetchParams.url, fetchParams.init);
-      for (const middleware of this.middleware) {
-        if (middleware.post) {
-          response =
-            (await middleware.post({
-              fetch: this.fetchApi,
-              url: fetchParams.url,
-              init: fetchParams.init,
-              response: response.clone(),
-            })) || response;
-        }
+    let response = await fetch(fetchParams.url, fetchParams.init);
+    for (const middleware of this.middleware) {
+      if (middleware.post) {
+        response =
+          (await middleware.post({
+            fetch: this.fetchApi,
+            url: fetchParams.url,
+            init: fetchParams.init,
+            response: response.clone(),
+          })) || response;
       }
-      return response;
-    } catch (error) {
-      const defaultLoginFailureMessage = useIntl().formatMessage({
-        id: 'pages.login.failure',
-        defaultMessage: '登录失败，请重试！',
-      });
-      message.error(defaultLoginFailureMessage);
     }
+    return response;
   };
 
   /**

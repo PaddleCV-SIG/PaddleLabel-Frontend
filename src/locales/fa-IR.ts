@@ -2,6 +2,7 @@ import component from './fa-IR/component';
 import globalHeader from './fa-IR/globalHeader';
 import menu from './fa-IR/menu';
 import pwa from './fa-IR/pwa';
+import services from './fa-IR/services';
 import settingDrawer from './fa-IR/settingDrawer';
 import settings from './fa-IR/settings';
 
@@ -17,4 +18,5 @@ export default {
   ...settings,
   ...pwa,
   ...component,
+  ...services,
 };

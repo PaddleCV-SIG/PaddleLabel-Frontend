@@ -49,4 +49,7 @@ export default {
   'menu.editor.flow': 'Flow Editor',
   'menu.editor.mind': 'Mind Editor',
   'menu.editor.koni': 'Koni Editor',
+  'menu.project-creation': 'Project Creation',
+  'menu.remote-sensing': 'Remote Sensing',
+  'menu.semantic_segmentation-sample': 'Semantic Segmentation Sample',
 };

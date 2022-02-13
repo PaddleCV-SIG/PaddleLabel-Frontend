@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Row, Col, Button, Space } from 'antd';
 import PPContainer from '@/components/PPContainer';
 import PPCard from '@/components/PPCard';
@@ -10,6 +10,9 @@ import CreateButton from '@/components/CreatButton';
 import { history } from 'umi';
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { AnnotationApi } from '@/services/apis/AnnotationApi';
+import { Annotation } from '@/services/models';
+
+const anno = new AnnotationApi();
 
 export type ProjectInfo = {
   id: number;
@@ -118,11 +121,19 @@ const data: ProjectInfo[] = [
 ];
 
 const Welcome: React.FC = () => {
-  // Sample Call backend API
-  const anno = new AnnotationApi();
-  anno.annotationsAnnotationIdDelete({
-    annotationId: 0,
-  });
+  // Sample Call backend API and use response
+  const [res, setRes] = useState<Annotation>({});
+  anno
+    .annotationsAnnotationIdGet({
+      annotationId: 0,
+    })
+    .then((response) => {
+      setRes(response);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  console.log(res);
   return (
     <PPContainer>
       <Row gutter={[20, 20]}>
