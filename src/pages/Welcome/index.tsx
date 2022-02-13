@@ -41,7 +41,7 @@ const columns: ColumnsType<ProjectInfo> = [
     render: (text, record) => (
       <Space size="middle">
         <PPButton width="4.375rem" height="1.875rem" color={'rgba(241,162,0,1)'}>
-          修改信息
+          Modify
         </PPButton>
         <PPButton
           width="4.375rem"
@@ -51,10 +51,10 @@ const columns: ColumnsType<ProjectInfo> = [
             history.push('/label/' + record.id);
           }}
         >
-          去标注
+          Mark
         </PPButton>
         <PPButton width="4.375rem" height="1.875rem" color={'rgba(207,63,0,1)'}>
-          删除
+          Delete
         </PPButton>
       </Space>
     ),
@@ -140,46 +140,50 @@ const Welcome: React.FC = () => {
         <Col span={24}>
           <CreateButton>
             {/* {intl.formatMessage({ id: 'welcome.createProject' })} */}
-            创建项目
+            Create Project
           </CreateButton>
         </Col>
       </Row>
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>
         <Col span={17}>
-          <PPBlock title="示例项目" style={{ height: 430 }}>
+          <PPBlock title="Sample Project" style={{ height: 430 }}>
             <Row>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/classification.jpg'}>图像分类标注示例</PPCard>
+                <PPCard imgSrc={'./pics/classification.jpg'}>Image Classification Example</PPCard>
               </PPOverlapCol>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/object_detection.jpg'}>目标检测标注示例</PPCard>
+                <PPCard imgSrc={'./pics/object_detection.jpg'}>Object Detection Example</PPCard>
               </PPOverlapCol>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/instance_segmentation.jpg'}>实例分割标注示例</PPCard>
+                <PPCard imgSrc={'./pics/instance_segmentation.jpg'}>
+                  Instance Segmentation Example
+                </PPCard>
               </PPOverlapCol>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/semantic_segmentation.jpg'}>语义分割标注示例</PPCard>
+                <PPCard imgSrc={'./pics/semantic_segmentation.jpg'}>
+                  Semantic Segmentation Example
+                </PPCard>
               </PPOverlapCol>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/keypoint_detection.jpg'}>关键点检测标注示例</PPCard>
+                <PPCard imgSrc={'./pics/keypoint_detection.jpg'}>Keypoint Detection Example</PPCard>
               </PPOverlapCol>
             </Row>
           </PPBlock>
         </Col>
         <Col span={7}>
-          <PPBlock title="模型训练知识" style={{ height: 430 }}>
+          <PPBlock title="Model Training Knowledge" style={{ height: 430 }}>
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                如何使用 paddleclas 训练
+                How to tran using paddleclas
               </Button>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                如何使用 paddledet 训练
+                How to tran using paddledet
               </Button>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                如何使用 paddleseg 训练
+                How to tran using paddleseg
               </Button>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                如何使用 paddlex 训练
+                How to tran using paddlex
               </Button>
             </Space>
           </PPBlock>

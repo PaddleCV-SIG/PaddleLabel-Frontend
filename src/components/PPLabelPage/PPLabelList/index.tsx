@@ -21,7 +21,7 @@ export type PPLabelListProps = {
 const mockedLabels: Label[] = [
   {
     color: '#FF0000',
-    name: '标签1',
+    name: 'Label 1',
   },
   {
     color: '#008000',
@@ -74,7 +74,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
       <List
         className={styles.labelList}
         size="large"
-        header={<div className={styles.listHeader}>标签列表</div>}
+        header={<div className={styles.listHeader}>Label List</div>}
         footer={
           <div>
             <Button
@@ -85,7 +85,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
               }}
               block
             >
-              添加标签
+              Add Label
             </Button>
           </div>
         }

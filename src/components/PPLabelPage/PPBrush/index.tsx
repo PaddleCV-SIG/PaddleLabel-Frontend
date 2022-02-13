@@ -67,7 +67,7 @@ const Component: React.FC<PPBrushProps> = (props) => {
         imgSrc="./pics/buttons/brush.png"
         onClick={props.onClick}
       >
-        笔刷
+        Brush
       </PPToolBarButton>
     </Popover>
   );
