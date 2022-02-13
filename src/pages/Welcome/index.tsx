@@ -10,7 +10,7 @@ import CreateButton from '@/components/CreatButton';
 import { history } from 'umi';
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { AnnotationApi } from '@/services/apis/AnnotationApi';
-import { Annotation } from '@/services/models';
+import type { Annotation } from '@/services/models';
 
 const anno = new AnnotationApi();
 
@@ -64,43 +64,43 @@ const columns: ColumnsType<ProjectInfo> = [
 const data: ProjectInfo[] = [
   {
     id: 1,
-    name: '项目1',
+    name: 'Project1',
   },
   {
     id: 2,
-    name: '项目2',
+    name: 'Project2',
   },
   {
     id: 3,
-    name: '项目3',
+    name: 'Project3',
   },
   {
     id: 4,
-    name: '项目4',
+    name: 'Project4',
   },
   {
     id: 5,
-    name: '项目5',
+    name: 'Project5',
   },
   {
     id: 6,
-    name: '项目6',
+    name: 'Project6',
   },
   {
     id: 7,
-    name: '项目7',
+    name: 'Project7',
   },
   {
     id: 8,
-    name: '项目8',
+    name: 'Project8',
   },
   {
     id: 9,
-    name: '项目9',
+    name: 'Project9',
   },
   {
     id: 10,
-    name: '项目10',
+    name: 'Project10',
   },
   {
     id: 11,
@@ -191,7 +191,7 @@ const Welcome: React.FC = () => {
       </Row>
       <Row style={{ marginTop: 20 }}>
         <Col span={24}>
-          <PPBlock title="我的项目">
+          <PPBlock title="My Projects">
             <PPTable columns={columns} dataSource={data} showHeader={false} />
           </PPBlock>
         </Col>

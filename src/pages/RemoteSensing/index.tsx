@@ -79,9 +79,9 @@ const Page: React.FC = () => {
       </div>
       <PPRSToolBar>
         <Popover
-          overlayInnerStyle={{ borderRadius: '5%' }}
+          overlayInnerStyle={{ borderRadius: '0.5rem' }}
           placement="leftTop"
-          title={<h4>Setting of boundary simplification</h4>}
+          title={'Setting of boundary simplification'}
           content={
             <>
               <PPBoundarySimplify />
@@ -96,13 +96,13 @@ const Page: React.FC = () => {
               setCurrentTool('boundry');
             }}
           >
-            Boundary
+            <h2>Boundary</h2>
           </PPRSToolBarButton>
         </Popover>
         <Popover
-          overlayInnerStyle={{ borderRadius: '5%' }}
+          overlayInnerStyle={{ borderRadius: '0.5rem' }}
           placement="leftTop"
-          title={<h4>Setting of remote sensing</h4>}
+          title={'Setting of remote sensing'}
           content="content"
           trigger={currentTool == 'colorgun' ? 'click' : 'hover'}
         >
@@ -113,13 +113,13 @@ const Page: React.FC = () => {
               setCurrentTool('colorgun');
             }}
           >
-            Remote sensing
+            <h2>Remote sensing</h2>
           </PPRSToolBarButton>
         </Popover>
         <Popover
-          overlayInnerStyle={{ borderRadius: '5%' }}
+          overlayInnerStyle={{ borderRadius: '0.5rem' }}
           placement="leftTop"
-          title={<h4>Switch grids</h4>}
+          title={'Switch grids'}
           content="content"
           trigger={currentTool == 'grid' ? 'click' : 'hover'}
         >
@@ -130,7 +130,7 @@ const Page: React.FC = () => {
               setCurrentTool('grid');
             }}
           >
-            Grids
+            <h2>Grids</h2>
           </PPRSToolBarButton>
         </Popover>
       </PPRSToolBar>

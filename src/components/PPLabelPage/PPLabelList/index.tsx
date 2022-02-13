@@ -25,7 +25,7 @@ const mockedLabels: Label[] = [
   },
   {
     color: '#008000',
-    name: '标签2',
+    name: 'Label 2',
   },
 ];
 
