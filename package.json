@@ -48,7 +48,7 @@
     "not ie <= 10"
   ],
   "dependencies": {
-    "@geoman-io/leaflet-geoman-free": "2.5.0",
+    "@geoman-io/leaflet-geoman-free": "2.9.0",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-descriptions": "^1.10.0",
     "@ant-design/pro-form": "^1.52.0",
@@ -59,7 +59,7 @@
     "@umijs/route-utils": "^2.0.0",
     "antd": "^4.17.0",
     "classnames": "^2.3.0",
-    "leaflet": "1.6.0",
+    "leaflet": "1.7.1",
     "lodash": "^4.17.0",
     "moment": "^2.29.0",
     "omit.js": "^2.0.2",
