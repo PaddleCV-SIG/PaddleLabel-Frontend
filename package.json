@@ -48,16 +48,18 @@
     "not ie <= 10"
   ],
   "dependencies": {
+    "@geoman-io/leaflet-geoman-free": "2.5.0",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/pro-descriptions": "^1.10.0",
     "@ant-design/pro-form": "^1.52.0",
     "@ant-design/pro-layout": "^6.32.0",
     "@ant-design/pro-table": "^2.61.0",
     "@types/react-color": "^3.0.6",
+    "@types/react-leaflet": "2.5.2",
     "@umijs/route-utils": "^2.0.0",
     "antd": "^4.17.0",
     "classnames": "^2.3.0",
-    "leaflet": "^1.7.1",
+    "leaflet": "1.6.0",
     "lodash": "^4.17.0",
     "moment": "^2.29.0",
     "omit.js": "^2.0.2",
@@ -68,7 +70,7 @@
     "react-dev-inspector": "^1.7.0",
     "react-dom": "^17.0.2",
     "react-helmet-async": "^1.2.0",
-    "react-leaflet": "^3.2.5",
+    "react-leaflet": "2.7.0",
     "umi": "^3.5.0"
   },
   "devDependencies": {
@@ -77,7 +79,6 @@
     "@types/express": "^4.17.0",
     "@types/history": "^4.7.0",
     "@types/jest": "^26.0.0",
-    "@types/leaflet": "^1.7.9",
     "@types/lodash": "^4.14.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
