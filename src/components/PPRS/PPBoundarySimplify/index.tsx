@@ -32,7 +32,7 @@ const component: React.FC<PPBoundarySimplify> = () => {
     <div>
       <Row>
         <Col span={12} className={styles.RSPop1}>
-          <span>PD参数</span>
+          <span>PD parameter</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
           <Dropdown overlay={menu}>
@@ -44,7 +44,7 @@ const component: React.FC<PPBoundarySimplify> = () => {
       </Row>
       <Row>
         <Col span={12} className={styles.RSPop1}>
-          <span>简化距离</span>
+          <span>Simplified distance</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
           <Input placeholder="Basic usage" />
@@ -52,7 +52,7 @@ const component: React.FC<PPBoundarySimplify> = () => {
       </Row>
       <Row>
         <Col span={12} className={styles.RSPop1}>
-          <span>简化角度</span>
+          <span>Simplified angle</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
           <Input placeholder="Basic usage" />
@@ -60,7 +60,7 @@ const component: React.FC<PPBoundarySimplify> = () => {
       </Row>
       <Row>
         <Col span={12} className={styles.RSPop1}>
-          <span>建筑简化阀值</span>
+          <span>Threshold of building simplification </span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
           <Input placeholder="Basic usage" />

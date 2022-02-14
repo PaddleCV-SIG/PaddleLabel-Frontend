@@ -1,0 +1,18 @@
+export default {
+  'component.globalHeader.search': 'بحث ',
+  'component.globalHeader.search.example1': 'مثال البحث 1',
+  'component.globalHeader.search.example2': 'مثال البحث 2',
+  'component.globalHeader.search.example3': 'مثال البحث 3',
+  'component.globalHeader.help': 'مساعدة',
+  'component.globalHeader.notification': 'إشعار',
+  'component.globalHeader.notification.empty': 'لقد رأيت كل الإخطارات.',
+  'component.globalHeader.message': 'رسالة',
+  'component.globalHeader.message.empty': 'لقد رأيت كل الرسائل.',
+  'component.globalHeader.event': 'حدث',
+  'component.globalHeader.event.empty': 'لقد رأيت كل الأحداث.',
+  'component.globalHeader.logout': 'خروج',
+  'component.noticeIcon.clear': 'حذف',
+  'component.noticeIcon.cleared': 'تم حذفه',
+  'component.noticeIcon.empty': 'لا إشعار',
+  'component.noticeIcon.view-more': 'أظهر المزيد',
+};
