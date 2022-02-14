@@ -6,10 +6,11 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPBrush from '@/components/PPLabelPage/PPBrush';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
-import PPMap from '@/components/PPMap';
+// import PPMap from '@/components/PPMap';
 import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
+import PPMapJS from '@/components/PPMapJS';
 
 export type ToolType =
   | 'polygon'
@@ -75,7 +76,8 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div className={styles.mainStage}>
-        <PPMap />
+        {/* <PPMap /> */}
+        <PPMapJS />
       </div>
       <PPRSToolBar>
         <Popover
