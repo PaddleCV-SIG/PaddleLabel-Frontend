@@ -23,6 +23,11 @@ const MapWithGeoman: React.FC<Props> = (props) => {
     if (leafletMapRef.current) {
       const mapElement: any = leafletMapRef.current.leafletElement;
 
+      // mapElement.pm.enableDraw('Polygon', {
+      //   snappable: true,
+      //   snapDistance: 20,
+      // });
+
       mapElement.pm.addControls({
         drawMarker: false,
         drawCircle: false,
@@ -33,6 +38,7 @@ const MapWithGeoman: React.FC<Props> = (props) => {
         editMode: true,
         dragMode: true,
         cutPolygon: true,
+        rotateMode: false,
       });
       mapElement.pm.setGlobalOptions({ pmIgnore: false });
 
