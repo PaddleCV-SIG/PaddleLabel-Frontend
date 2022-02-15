@@ -13,19 +13,57 @@ const defaultPosition = {
 
 const Component: React.FC = () => {
   const position: [number, number] = [defaultPosition.lat, defaultPosition.lng];
+  const [uids, setUids] = React.useState([]);
 
-  const onSelectionCircleAdded = () => console.log('circle added');
-  const onSelectionCircleMoved = () => console.log('circle moved');
-  const onSelectionCircleRemoved = () => console.log('circle removed');
+  const onShapeCreate = (e: any) => {
+    enterUid(e.layer);
+    e.layer.bindPopup('Label: ' + e.layer._uid).openPopup();
+    storeOnDb(e.layer);
+  };
+  const onShapeEdit = (e: any) => {
+    updateOnDb(e.layer);
+    console.log(e);
+  };
+
+  function enterUid(layer: any) {
+    const p = prompt('Please enter a Unique Id');
+    if (!p) {
+      alert('Nothing entered, layer deleted ...');
+      layer.remove();
+      return;
+    } else if (uids[p]) {
+      alert('Id already used, add another one');
+      enterUid(layer);
+      return;
+    } else {
+      layer._uid = p;
+      uids[p] = layer;
+      setUids(uids);
+    }
+  }
+  function storeOnDb(layer: any) {
+    const uid = layer._uid;
+    const json = layer.toGeoJSON();
+    json.properties = {
+      LabelID: Number(uid),
+    };
+    console.log('Store Layer on DB. Id:' + uid, json);
+    console.log(JSON.stringify(json));
+  }
+
+  function updateOnDb(layer: any) {
+    const uid = layer._uid;
+    const json = layer.toGeoJSON();
+    console.log('Update Layer on DB. Id:' + uid, json);
+  }
 
   return (
     <MapWithGeoman
       className={styles.map}
       center={position}
       zoom={defaultPosition.zoom}
-      onSelectionCircleAdded={onSelectionCircleAdded}
-      onSelectionCircleMoved={onSelectionCircleMoved}
-      onSelectionCircleRemoved={onSelectionCircleRemoved}
+      onShapeCreate={onShapeCreate}
+      onShapeEdit={onShapeEdit}
     >
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="OpenStreetMap.Mapnik">
