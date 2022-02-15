@@ -65,7 +65,7 @@ const MapWithGeoman: React.FC<Props> = (props) => {
         props.onShapeEdit(e);
       });
     }
-  });
+  }, []);
 
   return (
     <Map ref={leafletMapRef} {...mapProps}>
