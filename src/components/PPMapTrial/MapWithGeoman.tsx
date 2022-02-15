@@ -1,6 +1,7 @@
 import React from 'react';
 import type { MapProps } from 'react-leaflet';
 import { Map } from 'react-leaflet';
+import styles from './index.less';
 // import type L from 'leaflet';
 
 import '@geoman-io/leaflet-geoman-free';
@@ -40,7 +41,7 @@ const MapWithGeoman: React.FC<Props> = (props) => {
         name: 'StoreShapes',
         title: 'Store all shapes',
         block: 'custom',
-        className: 'custom-control-icon',
+        className: styles.customControlIcon,
         toggle: false,
         afterClick: () => {
           const saveGeoJson = JSON.stringify(mapElement.pm.getGeomanDrawLayers(true).toGeoJSON());
