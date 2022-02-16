@@ -8,7 +8,7 @@ import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 // type PMDrawCircleEvent = { layer: L.Circle & { pm: { enable: () => void } } };
 // type PMEditCircleEvent = { target: L.Circle };
-
+import { leafletMapRef } from './state';
 interface Props extends MapProps {
   onShapeCreate: (shape: any) => void;
   onShapeEdit: (shape: any) => void;
@@ -17,9 +17,11 @@ interface Props extends MapProps {
 const MapWithGeoman: React.FC<Props> = (props) => {
   const { children, ...mapProps } = props;
 
-  const leafletMapRef = React.useRef<Map>(null);
+  // const leafletMapRef = React.useRef<Map>(null);
 
   React.useEffect(() => {
+    // console.log(leafletMapRef.current);
+
     if (leafletMapRef.current) {
       const mapElement: any = leafletMapRef.current.leafletElement;
 

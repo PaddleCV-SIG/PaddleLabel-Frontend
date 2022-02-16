@@ -11,9 +11,10 @@ import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
 import PPMapTrial from '@/components/PPMapTrial';
+import { leafletMapRef } from '@/components/PPMapTrial/state';
 
 export type ToolType =
-  | 'polygon'
+  | 'Polygon'
   | 'brush'
   | 'rubber'
   | 'mover'
@@ -25,6 +26,22 @@ export type ToolType2 = undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
+  setTimeout(() => {
+    console.log(currentTool);
+  }, 5000);
+  const drawPolygon = () => {
+    // console.log(leafletMapRef.current);
+    leafletMapRef.current?.leafletElement.pm.enableDraw(currentTool, {
+      snappable: true,
+      snapDistance: 20,
+    });
+  };
+
+  const removeLastV = () => {
+    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
+    leafletMapRef.current?.leafletElement.pm.Draw.Polygon._finishShape();
+  };
+
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -32,19 +49,18 @@ const Page: React.FC = () => {
           Intelligent Interaction
         </PPToolBarButton>
         <PPToolBarButton
-          active={currentTool == 'polygon'}
+          active={currentTool == 'Polygon'}
           imgSrc="./pics/buttons/polygon.png"
           onClick={() => {
-            setCurrentTool('polygon');
+            setCurrentTool('Polygon');
+            drawPolygon();
           }}
         >
           Polygon
         </PPToolBarButton>
         <PPBrush
           active={currentTool == 'brush'}
-          onClick={() => {
-            setCurrentTool('brush');
-          }}
+          onClick={removeLastV}
           onChange={(brushSize) => {
             console.log(brushSize);
           }}
