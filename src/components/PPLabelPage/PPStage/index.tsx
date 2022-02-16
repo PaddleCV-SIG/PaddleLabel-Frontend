@@ -11,13 +11,13 @@ const Component: React.FC = () => {
 
   // Potentially performance optimize point when resizing window.
   // May limite to resize only once in 3 seconds.
-  const [stageMaxWidth, setStageMaxWidth] = useState(window.innerWidth - 330);
+  const [stageWidth, setStageWidth] = useState(window.innerWidth - 330);
+  const [stageHeight] = useState(window.innerHeight - 60);
   window.addEventListener('resize', () => {
-    setStageMaxWidth(window.innerWidth - 330);
+    setStageWidth(window.innerWidth - 330);
   });
-
-  const stageWidth = Math.min(image?.width || 0, stageMaxWidth);
-  const stageHeight = image?.height || 0;
+  const imageWidth = image?.width || 0;
+  const imageX = stageWidth / 2 - imageWidth / 2;
 
   const canvas = document.createElement('canvas');
   canvas.width = stageWidth;
@@ -25,7 +25,7 @@ const Component: React.FC = () => {
   return (
     <Stage width={stageWidth} height={stageHeight} className={styles.stage}>
       <Layer>
-        <Image image={image} />
+        <Image image={image} x={imageX} />
       </Layer>
     </Stage>
   );
