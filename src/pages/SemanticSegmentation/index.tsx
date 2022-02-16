@@ -6,6 +6,7 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPBrush from '@/components/PPLabelPage/PPBrush';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
+import PPStage from '@/components/PPLabelPage/PPStage';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
@@ -62,7 +63,9 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/next.png">Redo</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
-      <div className={styles.mainStage} />
+      <div className={styles.mainStage}>
+        <PPStage></PPStage>
+      </div>
       <div className={styles.rightSideBar}>
         <PPLabelList onLabelModify={() => {}} onLabelDelete={() => {}} onLabelAdd={() => {}} />
       </div>
