@@ -18,8 +18,6 @@ const MapWithGeoman: React.FC<Props> = (props) => {
   const { children, leafletMapRef, ...mapProps } = props;
 
   React.useEffect(() => {
-    // console.log(leafletMapRef.current);
-
     if (leafletMapRef.current) {
       const mapElement: any = leafletMapRef.current.leafletElement;
 
