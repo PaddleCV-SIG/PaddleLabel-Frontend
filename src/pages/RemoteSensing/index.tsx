@@ -11,7 +11,7 @@ import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
 import PPMapTrial from '@/components/PPMapTrial';
-import { Map } from 'react-leaflet';
+import type { Map } from 'react-leaflet';
 
 export type ToolType =
   | 'polygon'
@@ -36,6 +36,12 @@ const Page: React.FC = () => {
   // This means Page() function will always be called with currentTool's latest value.
   if (currentTool) {
     leafletMapRef.current?.leafletElement.pm.enableDraw(currentTool);
+    console.log('drawTools: ', currentTool);
+    leafletMapRef.current?.leafletElement.pm.setPathOptions({
+      color: 'orange',
+      fillColor: 'green',
+      fillOpacity: 0.4,
+    });
   }
 
   // For lines and Polygons only
@@ -44,13 +50,17 @@ const Page: React.FC = () => {
     leafletMapRef.current?.leafletElement.pm.Draw.Polygon._removeLastVertex();
   };
 
+  const moveShape = () => {
+    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
+    leafletMapRef.current?.leafletElement.pm.toggleGlobalDragMode();
+  };
+
   const finishShape = () => {
     console.log(leafletMapRef.current?.leafletElement.pm.Draw);
-    leafletMapRef.current?.leafletElement.pm.Draw.currentTool._finishShape();
+    leafletMapRef.current?.leafletElement.pm.Draw.Polygon._finishShape();
   };
 
   const removeShape = () => {
-    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
     leafletMapRef.current?.leafletElement.pm.enableGlobalRemovalMode();
   };
 
@@ -113,7 +123,6 @@ const Page: React.FC = () => {
           <PPToolBarButton
             imgSrc="./pics/buttons/rubber.png"
             onClick={() => {
-              setCurrentTool('rubber');
               removeShape();
             }}
           >
@@ -123,7 +132,9 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/zoom_in.png">Zoom in</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/zoom_out.png">Zoom out</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/move.png" onClick={() => moveShape()}>
+          Move
+        </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/prev.png">Undo</PPToolBarButton>
