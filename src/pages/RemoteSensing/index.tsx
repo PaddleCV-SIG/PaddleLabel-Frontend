@@ -14,13 +14,17 @@ import PPMapTrial from '@/components/PPMapTrial';
 import { leafletMapRef } from '@/components/PPMapTrial/state';
 
 export type ToolType =
-  | 'Polygon'
+  | 'polygon'
   | 'brush'
   | 'rubber'
   | 'mover'
   | 'boundry'
   | 'colorgun'
   | 'grid'
+  | 'Marker'
+  | 'Line'
+  | 'Rectangle'
+  | 'Polygon'
   | undefined;
 export type ToolType2 = undefined;
 
@@ -29,17 +33,29 @@ const Page: React.FC = () => {
   setTimeout(() => {
     console.log(currentTool);
   }, 5000);
-  const drawPolygon = () => {
+
+  const drawTools = () => {
     // console.log(leafletMapRef.current);
-    leafletMapRef.current?.leafletElement.pm.enableDraw(currentTool, {
-      snappable: true,
-      snapDistance: 20,
-    });
+    leafletMapRef.current?.leafletElement.pm.enableDraw(currentTool);
+    console.log('drawTools', currentTool);
+
+    // leafletMapRef.current?.leafletElement.pm.disableDraw();
   };
 
-  const removeLastV = () => {
+  // For lines and Polygons only
+  const removeLastVertex = () => {
     console.log(leafletMapRef.current?.leafletElement.pm.Draw);
-    leafletMapRef.current?.leafletElement.pm.Draw.Polygon._finishShape();
+    leafletMapRef.current?.leafletElement.pm.Draw.Polygon._removeLastVertex();
+  };
+
+  const finishShape = () => {
+    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
+    leafletMapRef.current?.leafletElement.pm.Draw.currentTool._finishShape();
+  };
+
+  const removeShape = () => {
+    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
+    leafletMapRef.current?.leafletElement.pm.enableGlobalRemovalMode();
   };
 
   return (
@@ -48,19 +64,46 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
           Intelligent Interaction
         </PPToolBarButton>
-        <PPToolBarButton
-          active={currentTool == 'Polygon'}
-          imgSrc="./pics/buttons/polygon.png"
-          onClick={() => {
-            setCurrentTool('Polygon');
-            drawPolygon();
-          }}
+        <Popover
+          placement="rightTop"
+          title="Polygon Edit"
+          defaultVisible={true}
+          content={
+            <>
+              <button
+                onClick={() => {
+                  removeLastVertex();
+                }}
+              >
+                Remove Last Vertex
+              </button>
+              <button
+                onClick={() => {
+                  finishShape();
+                }}
+              >
+                Finish
+              </button>
+            </>
+          }
+          trigger={currentTool == 'Polygon' ? 'hover' : 'click'}
         >
-          Polygon
-        </PPToolBarButton>
+          <PPToolBarButton
+            active={currentTool == 'Polygon'}
+            imgSrc="./pics/buttons/polygon.png"
+            onClick={() => {
+              setCurrentTool('Polygon');
+              drawTools();
+            }}
+          >
+            Polygon
+          </PPToolBarButton>
+        </Popover>
         <PPBrush
           active={currentTool == 'brush'}
-          onClick={removeLastV}
+          onClick={() => {
+            setCurrentTool('brush');
+          }}
           onChange={(brushSize) => {
             console.log(brushSize);
           }}
@@ -76,6 +119,7 @@ const Page: React.FC = () => {
             imgSrc="./pics/buttons/rubber.png"
             onClick={() => {
               setCurrentTool('rubber');
+              removeShape();
             }}
           >
             Rubber

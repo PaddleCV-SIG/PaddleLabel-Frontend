@@ -41,6 +41,7 @@ const MapWithGeoman: React.FC<Props> = (props) => {
         dragMode: true,
         cutPolygon: true,
         rotateMode: false,
+        removalMode: true,
       });
       mapElement.pm.setGlobalOptions({ pmIgnore: false });
 
