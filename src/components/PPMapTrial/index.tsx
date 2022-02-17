@@ -1,5 +1,6 @@
 import * as React from 'react';
 import MapWithGeoman from './MapWithGeoman';
+import type { Map } from 'react-leaflet';
 import { LayersControl, TileLayer } from 'react-leaflet';
 import styles from './index.less';
 
@@ -11,7 +12,11 @@ const defaultPosition = {
   zoom: 2,
 };
 
-const Component: React.FC = () => {
+export type PPMapProps = {
+  leafletMapRef: React.RefObject<Map>;
+};
+
+const Component: React.FC<PPMapProps> = (props) => {
   const position: [number, number] = [defaultPosition.lat, defaultPosition.lng];
   const [uids, setUids] = React.useState([]);
 
@@ -59,6 +64,7 @@ const Component: React.FC = () => {
 
   return (
     <MapWithGeoman
+      leafletMapRef={props.leafletMapRef}
       className={styles.map}
       center={position}
       zoom={defaultPosition.zoom}

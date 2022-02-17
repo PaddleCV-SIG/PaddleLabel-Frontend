@@ -11,6 +11,7 @@ import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
 import PPMapTrial from '@/components/PPMapTrial';
+import type { Map } from 'react-leaflet';
 
 export type ToolType =
   | 'polygon'
@@ -20,26 +21,89 @@ export type ToolType =
   | 'boundry'
   | 'colorgun'
   | 'grid'
+  | 'Marker'
+  | 'Line'
+  | 'Rectangle'
+  | 'Polygon'
   | undefined;
 export type ToolType2 = undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
+
+  const leafletMapRef = React.useRef<Map>(null);
+  // Everytime currentTool changes, react will rerender this component(aka re-call Page() function to generate)
+  // This means Page() function will always be called with currentTool's latest value.
+  if (currentTool) {
+    leafletMapRef.current?.leafletElement.pm.enableDraw(currentTool);
+    console.log('drawTools: ', currentTool);
+    leafletMapRef.current?.leafletElement.pm.setPathOptions({
+      color: 'orange',
+      fillColor: 'green',
+      fillOpacity: 0.4,
+    });
+  }
+
+  // For lines and Polygons only
+  const removeLastVertex = () => {
+    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
+    leafletMapRef.current?.leafletElement.pm.Draw.Polygon._removeLastVertex();
+  };
+
+  const moveShape = () => {
+    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
+    leafletMapRef.current?.leafletElement.pm.toggleGlobalDragMode();
+  };
+
+  const finishShape = () => {
+    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
+    leafletMapRef.current?.leafletElement.pm.Draw.Polygon._finishShape();
+  };
+
+  const removeShape = () => {
+    leafletMapRef.current?.leafletElement.pm.enableGlobalRemovalMode();
+  };
+
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
           Intelligent Interaction
         </PPToolBarButton>
-        <PPToolBarButton
-          active={currentTool == 'polygon'}
-          imgSrc="./pics/buttons/polygon.png"
-          onClick={() => {
-            setCurrentTool('polygon');
-          }}
+        <Popover
+          placement="rightTop"
+          title="Polygon Edit"
+          defaultVisible={true}
+          content={
+            <>
+              <button
+                onClick={() => {
+                  removeLastVertex();
+                }}
+              >
+                Remove Last Vertex
+              </button>
+              <button
+                onClick={() => {
+                  finishShape();
+                }}
+              >
+                Finish
+              </button>
+            </>
+          }
+          trigger={currentTool == 'Polygon' ? 'hover' : 'click'}
         >
-          Polygon
-        </PPToolBarButton>
+          <PPToolBarButton
+            active={currentTool == 'Polygon'}
+            imgSrc="./pics/buttons/polygon.png"
+            onClick={() => {
+              setCurrentTool('Polygon');
+            }}
+          >
+            Polygon
+          </PPToolBarButton>
+        </Popover>
         <PPBrush
           active={currentTool == 'brush'}
           onClick={() => {
@@ -59,7 +123,7 @@ const Page: React.FC = () => {
           <PPToolBarButton
             imgSrc="./pics/buttons/rubber.png"
             onClick={() => {
-              setCurrentTool('rubber');
+              removeShape();
             }}
           >
             Rubber
@@ -68,7 +132,9 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/zoom_in.png">Zoom in</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/zoom_out.png">Zoom out</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/move.png" onClick={() => moveShape()}>
+          Move
+        </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/prev.png">Undo</PPToolBarButton>
@@ -77,7 +143,7 @@ const Page: React.FC = () => {
       </PPToolBar>
       <div className={styles.mainStage}>
         {/* <PPMap /> */}
-        <PPMapTrial />
+        <PPMapTrial leafletMapRef={leafletMapRef} />
       </div>
       <PPRSToolBar>
         <Popover

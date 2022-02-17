@@ -8,16 +8,14 @@ import '@geoman-io/leaflet-geoman-free';
 import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 // type PMDrawCircleEvent = { layer: L.Circle & { pm: { enable: () => void } } };
 // type PMEditCircleEvent = { target: L.Circle };
-
 interface Props extends MapProps {
+  leafletMapRef: React.RefObject<Map>;
   onShapeCreate: (shape: any) => void;
   onShapeEdit: (shape: any) => void;
 }
 
 const MapWithGeoman: React.FC<Props> = (props) => {
-  const { children, ...mapProps } = props;
-
-  const leafletMapRef = React.useRef<Map>(null);
+  const { children, leafletMapRef, ...mapProps } = props;
 
   React.useEffect(() => {
     if (leafletMapRef.current) {
@@ -39,6 +37,7 @@ const MapWithGeoman: React.FC<Props> = (props) => {
         dragMode: true,
         cutPolygon: true,
         rotateMode: false,
+        removalMode: true,
       });
       mapElement.pm.setGlobalOptions({ pmIgnore: false });
 
