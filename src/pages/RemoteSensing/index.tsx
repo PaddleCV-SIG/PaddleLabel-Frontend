@@ -11,7 +11,7 @@ import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
 import PPMapTrial from '@/components/PPMapTrial';
-import { leafletMapRef } from '@/components/PPMapTrial/state';
+import { Map } from 'react-leaflet';
 
 export type ToolType =
   | 'polygon'
@@ -30,17 +30,13 @@ export type ToolType2 = undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
-  setTimeout(() => {
-    console.log(currentTool);
-  }, 5000);
 
-  const drawTools = () => {
-    // console.log(leafletMapRef.current);
+  const leafletMapRef = React.useRef<Map>(null);
+  // Everytime currentTool changes, react will rerender this component(aka re-call Page() function to generate)
+  // This means Page() function will always be called with currentTool's latest value.
+  if (currentTool) {
     leafletMapRef.current?.leafletElement.pm.enableDraw(currentTool);
-    console.log('drawTools', currentTool);
-
-    // leafletMapRef.current?.leafletElement.pm.disableDraw();
-  };
+  }
 
   // For lines and Polygons only
   const removeLastVertex = () => {
@@ -93,7 +89,6 @@ const Page: React.FC = () => {
             imgSrc="./pics/buttons/polygon.png"
             onClick={() => {
               setCurrentTool('Polygon');
-              drawTools();
             }}
           >
             Polygon
@@ -137,7 +132,7 @@ const Page: React.FC = () => {
       </PPToolBar>
       <div className={styles.mainStage}>
         {/* <PPMap /> */}
-        <PPMapTrial />
+        <PPMapTrial leafletMapRef={leafletMapRef} />
       </div>
       <PPRSToolBar>
         <Popover
