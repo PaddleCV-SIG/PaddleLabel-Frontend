@@ -1,5 +1,5 @@
 import { Popover } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './index.less';
 import type { ColorResult } from 'react-color';
 import { SketchPicker } from 'react-color';
@@ -11,6 +11,9 @@ export type PPColorBallProps = {
 
 const Component: React.FC<PPColorBallProps> = (props) => {
   const [color, setColor] = useState(props.color || '#FFF');
+  useEffect(() => {
+    setColor(props.color || '#FFF');
+  }, [props]);
   return (
     <Popover
       getPopupContainer={(trigger) => trigger.parentElement || document.body}

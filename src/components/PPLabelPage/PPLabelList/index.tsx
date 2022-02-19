@@ -29,46 +29,12 @@ const mockedLabels: Label[] = [
   },
 ];
 
-// const generatedColorList: string[] = [
-//   '#FF0000',
-//   '#008000',
-//   '#0000FF',
-//   '#FFFF00',
-//   '#FFA500',
-//   '#00FFFF',
-//   '#8B00FF',
-//   '#FFC0CB',
-//   '#7CFC00',
-//   '#007FFF',
-//   '#800080',
-//   '#36BF36',
-//   '#DAA520',
-//   '#800000',
-//   '#008B8B',
-//   '#B22222',
-//   '#E6D933',
-//   '#000080',
-//   '#FF00FF',
-//   '#FFFF99',
-//   '#87CEEB',
-//   '#5C50E6',
-//   '#CD5C5C',
-//   '#20B2AA',
-//   '#E680FF',
-//   '#4D1F00',
-//   '#006374',
-//   '#B399FF',
-//   '#8B4513',
-//   '#BA55D3',
-//   '#C0C0C0',
-//   '#808080',
-//   '#000000',
-// ];
-
 const Component: React.FC<PPLabelListProps> = (props) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [labels, setLabels] = useState(mockedLabels);
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
+  const [addModalDefault, setAddModalDefault] = useState('');
+
   return (
     <>
       <List
@@ -81,6 +47,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
               style={{ height: 40, fontSize: '0.75rem' }}
               type="primary"
               onClick={() => {
+                setAddModalDefault('');
                 setAddLabelModalVisible(true);
               }}
               block
@@ -99,7 +66,19 @@ const Component: React.FC<PPLabelListProps> = (props) => {
           />
         )}
       />
-      <PPAddLabelModal visible={addModalVisible} onLabelAdd={() => {}} />
+      <PPAddLabelModal
+        order={labels.length}
+        visible={addModalVisible}
+        defaultLabelName={addModalDefault}
+        onLabelAdd={(label: Label) => {
+          labels.push(label);
+          setLabels(labels);
+          setAddLabelModalVisible(false);
+        }}
+        onCancel={() => {
+          setAddLabelModalVisible(false);
+        }}
+      />
     </>
   );
 };
