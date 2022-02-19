@@ -203,7 +203,12 @@ const Page: React.FC = () => {
         </Popover>
       </PPRSToolBar>
       <div className={styles.rightSideBar}>
-        <PPLabelList onLabelModify={() => {}} onLabelDelete={() => {}} onLabelAdd={() => {}} />
+        <PPLabelList
+          onLabelSelect={() => {}}
+          onLabelModify={() => {}}
+          onLabelDelete={() => {}}
+          onLabelAdd={() => {}}
+        />
       </div>
     </PPLabelPageContainer>
   );

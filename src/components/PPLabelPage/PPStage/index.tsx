@@ -12,26 +12,6 @@ const Component: React.FC = () => {
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
 
-  // Potentially performance optimize point when resizing window.
-  // May limite to resize only once in 3 seconds.
-  // Inital stage size
-  const [stageWidth, setStageWidth] = useState(Math.max(window.innerWidth, 1024) - 330);
-  const [stageHeight, setStageHeight] = useState(
-    Math.max(window.innerHeight - 60, 708, imageHeight),
-  );
-
-  // Change stage size to prevent scrollbar
-  window.addEventListener('resize', () => {
-    if (window.innerWidth > 1024) {
-      setStageWidth(window.innerWidth - 330);
-    }
-    if (window.innerHeight > 768 && window.innerHeight > imageHeight) {
-      setStageHeight(window.innerHeight - 60);
-    }
-  });
-
-  // Image position: at the middle of stage
-
   const [points, setPoints] = useState<number[]>([]);
   const [marking, setMarking] = useState(false);
   const mode = 'brush';

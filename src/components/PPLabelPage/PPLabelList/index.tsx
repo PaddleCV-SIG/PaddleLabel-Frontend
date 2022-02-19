@@ -1,8 +1,8 @@
 import { List } from 'antd';
 import { Button } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './index.less';
-import PPLabelListItem from '../PPLabelListItem';
+import PPLabelListItem from './PPLabelListItem';
 import PPAddLabelModal from '../PPAddLabelModal';
 
 export type Label = {
@@ -16,6 +16,7 @@ export type PPLabelListProps = {
   onLabelModify: (selectedLabel: Label) => void;
   onLabelDelete: (deletedLabel: Label) => void;
   onLabelAdd: (addedLabel: Label) => void;
+  onLabelSelect: (label: Label) => void;
 };
 
 const mockedLabels: Label[] = [
@@ -30,10 +31,14 @@ const mockedLabels: Label[] = [
 ];
 
 const Component: React.FC<PPLabelListProps> = (props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [labels, setLabels] = useState(mockedLabels);
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
-  const [addModalDefault, setAddModalDefault] = useState('');
+
+  useEffect(() => {
+    if (!props.selectedLabel) {
+      props.onLabelSelect(labels[0]);
+    }
+  }, [labels, props]);
 
   return (
     <>
@@ -47,7 +52,6 @@ const Component: React.FC<PPLabelListProps> = (props) => {
               style={{ height: 40, fontSize: '0.75rem' }}
               type="primary"
               onClick={() => {
-                setAddModalDefault('');
                 setAddLabelModalVisible(true);
               }}
               block
@@ -58,18 +62,21 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         }
         bordered
         dataSource={labels}
-        renderItem={(item) => (
-          <PPLabelListItem
-            label={item}
-            onLabelDelete={props.onLabelDelete}
-            onLabelModify={props.onLabelModify}
-          />
-        )}
+        renderItem={(item) => {
+          return (
+            <PPLabelListItem
+              onClick={props.onLabelSelect}
+              label={item}
+              active={item.name == props.selectedLabel?.name}
+              onLabelDelete={props.onLabelDelete}
+              onLabelModify={props.onLabelModify}
+            />
+          );
+        }}
       />
       <PPAddLabelModal
         order={labels.length}
         visible={addModalVisible}
-        defaultLabelName={addModalDefault}
         onLabelAdd={(label: Label) => {
           labels.push(label);
           setLabels(labels);

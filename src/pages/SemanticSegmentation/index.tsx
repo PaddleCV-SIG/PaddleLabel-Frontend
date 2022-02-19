@@ -5,13 +5,14 @@ import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer'
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPBrush from '@/components/PPLabelPage/PPBrush';
-import PPLabelList from '@/components/PPLabelPage/PPLabelList';
+import PPLabelList, { Label } from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
+  const [currentLabel, setCurrentLabel] = useState<Label>();
 
   return (
     <PPLabelPageContainer className={styles.segment}>
@@ -67,7 +68,15 @@ const Page: React.FC = () => {
         <PPStage></PPStage>
       </div>
       <div className={styles.rightSideBar}>
-        <PPLabelList onLabelModify={() => {}} onLabelDelete={() => {}} onLabelAdd={() => {}} />
+        <PPLabelList
+          selectedLabel={currentLabel}
+          onLabelSelect={(label) => {
+            setCurrentLabel(label);
+          }}
+          onLabelModify={() => {}}
+          onLabelDelete={() => {}}
+          onLabelAdd={() => {}}
+        />
       </div>
     </PPLabelPageContainer>
   );
