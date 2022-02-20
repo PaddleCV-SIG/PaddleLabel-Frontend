@@ -13,6 +13,7 @@ function handleMenuClick(e: any) {
   message.info('Click on menu item.');
   console.log('click', e);
 }
+
 const menu = (
   <Menu onClick={handleMenuClick}>
     <Menu.Item key="1" icon={<UserOutlined />}>

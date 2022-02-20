@@ -10,6 +10,7 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
+import PPRGBSetting from '@/components/PPRS/PPRGBSetting';
 import PPMapTrial from '@/components/PPMapTrial';
 import type { Map } from 'react-leaflet';
 
@@ -171,7 +172,11 @@ const Page: React.FC = () => {
           overlayInnerStyle={{ borderRadius: '0.5rem' }}
           placement="leftTop"
           title={'Setting of remote sensing'}
-          content="content"
+          content={
+            <>
+              <PPRGBSetting />
+            </>
+          }
           trigger={currentTool == 'colorgun' ? 'click' : 'hover'}
         >
           {' '}
