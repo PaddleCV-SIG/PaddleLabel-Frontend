@@ -1,46 +1,43 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React, { useState } from 'react';
-import { Layer, Stage, Image, Line } from 'react-konva';
+import type Konva from 'konva';
+import React from 'react';
+import { Layer, Stage, Image } from 'react-konva';
 import useImage from 'use-image';
 import styles from './index.less';
 
 // Mock Data
 const imgSrc = './pics/basketball.jpg';
 
-const Component: React.FC = () => {
+export type PPStageProps = {
+  elements: any[];
+  onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
+  onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
+  onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
+};
+
+const Component: React.FC<PPStageProps> = (props) => {
   const [image] = useImage(imgSrc);
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
 
-  const [points, setPoints] = useState<number[]>([]);
-  const [marking, setMarking] = useState(false);
-  const mode = 'brush';
+  // console.log(`PPStage. ${JSON.stringify(props.elements)}`);
   return (
     <Stage width={imageWidth} height={imageHeight} className={styles.stage}>
       <Layer
         onMouseDown={(e) => {
-          setMarking(true);
-          // console.log(points);
-          setPoints([e.evt.offsetX, e.evt.offsetY, e.evt.offsetX, e.evt.offsetY]);
+          if (props.onMouseDown) props.onMouseDown(e);
         }}
         onMouseMove={(e) => {
-          if (!marking) return;
-          // console.log(points);
-          setPoints(points.concat([e.evt.offsetX, e.evt.offsetY]));
+          if (props.onMouseMove) props.onMouseMove(e);
         }}
-        onMouseUp={() => {
-          setMarking(false);
+        onMouseUp={(e) => {
+          if (props.onMouseUp) props.onMouseUp(e);
         }}
       >
         <Image image={image} />
-        <Line
-          stroke="#df4b26"
-          strokeWidth={10}
-          globalCompositeOperation={mode === 'brush' ? 'source-over' : 'destination-out'}
-          lineCap="round"
-          points={points}
-          tension={0.01}
-        />
+        {props.elements.map((element, i) => {
+          return element;
+        })}
       </Layer>
     </Stage>
   );

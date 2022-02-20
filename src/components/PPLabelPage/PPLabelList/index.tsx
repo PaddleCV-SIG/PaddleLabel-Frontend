@@ -4,18 +4,13 @@ import React, { useEffect, useState } from 'react';
 import styles from './index.less';
 import PPLabelListItem from './PPLabelListItem';
 import PPAddLabelModal from '../PPAddLabelModal';
-
-export type Label = {
-  color: string;
-  name: string;
-  invisible?: boolean;
-};
+import { Label } from '@/models/label';
 
 export type PPLabelListProps = {
   selectedLabel?: Label;
-  onLabelModify: (selectedLabel: Label) => void;
-  onLabelDelete: (deletedLabel: Label) => void;
-  onLabelAdd: (addedLabel: Label) => void;
+  onLabelModify: (label: Label) => void;
+  onLabelDelete: (label: Label) => void;
+  onLabelAdd: (label: Label) => void;
   onLabelSelect: (label: Label) => void;
 };
 
@@ -34,7 +29,16 @@ const Component: React.FC<PPLabelListProps> = (props) => {
   const [labels, setLabels] = useState(mockedLabels);
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
 
+  // console.log(
+  //   `PPLabelList rendered! props:${JSON.stringify(props)}, labels:${JSON.stringify(
+  //     labels,
+  //   )}, addModalVisible:${addModalVisible}`,
+  // );
+
   useEffect(() => {
+    // console.log(
+    //   `PPLabelList re-rendered! props:${JSON.stringify(props)}, labels:${JSON.stringify(labels)}`,
+    // );
     if (!props.selectedLabel) {
       props.onLabelSelect(labels[0]);
     }

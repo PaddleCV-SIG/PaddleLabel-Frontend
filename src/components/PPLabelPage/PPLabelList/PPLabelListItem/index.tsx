@@ -1,8 +1,8 @@
 import { List, Space } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.less';
-import type { Label } from '..';
 import PPColorBall from '../../PPColorBall';
+import { Label } from '@/models/label';
 
 export type PPLabelListItemProps = {
   active?: boolean;
@@ -38,6 +38,7 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
         {label.name}
         <PPColorBall
           color={label.color}
+          changeable={true}
           onChange={(targetColor) => {
             label.color = targetColor.hex;
             props.onLabelModify(label);

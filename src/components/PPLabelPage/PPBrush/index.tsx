@@ -1,10 +1,10 @@
 import { Button, InputNumber, Popover } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PPToolBarButton from '../PPToolBarButton';
 import styles from './index.less';
 
 const minSize = 1;
-const maxSize = 20;
+const maxSize = 50;
 const defaultSize = 10;
 
 export type PPBrushProps = {
@@ -23,6 +23,9 @@ function formatSize(size: number | undefined) {
 
 const Component: React.FC<PPBrushProps> = (props) => {
   const [size, setSize] = useState(formatSize(props.size));
+  useEffect(() => {
+    setSize(formatSize(props.size));
+  }, [props.size]);
   return (
     <Popover
       overlayClassName={styles.popover}
@@ -40,10 +43,12 @@ const Component: React.FC<PPBrushProps> = (props) => {
             -
           </Button>
           <InputNumber
-            min={1}
-            max={20}
+            min={minSize}
+            max={maxSize}
             value={size}
-            onChange={props.onChange}
+            onChange={(newSize) => {
+              props.onChange?.call(0, newSize);
+            }}
             controls={false}
             style={{ textAlign: 'center' }}
           />

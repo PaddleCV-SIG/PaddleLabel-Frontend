@@ -1,19 +1,26 @@
 import React, { useState } from 'react';
-import { Popover } from 'antd';
+import { Button, Popover } from 'antd';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPBrush from '@/components/PPLabelPage/PPBrush';
-import PPLabelList, { Label } from '@/components/PPLabelPage/PPLabelList';
+import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
+import type { Label } from '@/models/label';
+import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
+import type { Annotation } from '@/models/annotation';
+import draw from '@/components/PPLabelPage/PPBrush/draw';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>();
+  const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
+  const [brushSize, setBrushSize] = useState(10);
 
+  const dr = draw({ currentLabel: currentLabel, brushSize: brushSize });
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -30,12 +37,13 @@ const Page: React.FC = () => {
           Polygon
         </PPToolBarButton>
         <PPBrush
+          size={brushSize}
           active={currentTool == 'brush'}
           onClick={() => {
             setCurrentTool('brush');
           }}
-          onChange={(brushSize) => {
-            console.log(brushSize);
+          onChange={(newBrushSize) => {
+            setBrushSize(newBrushSize);
           }}
         />
         <Popover
@@ -65,9 +73,19 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div className={styles.mainStage}>
-        <PPStage></PPStage>
+        <PPStage
+          elements={dr.elements}
+          onMouseDown={dr.onMouseDown}
+          onMouseMove={dr.onMouseMove}
+          onMouseUp={dr.onMouseUp}
+        />
       </div>
       <div className={styles.rightSideBar}>
+        <div className={styles.determinOutline}>
+          <Button style={{ height: 40, fontSize: '0.75rem' }} type="primary" block>
+            Determine Outline
+          </Button>
+        </div>
         <PPLabelList
           selectedLabel={currentLabel}
           onLabelSelect={(label) => {
@@ -76,6 +94,15 @@ const Page: React.FC = () => {
           onLabelModify={() => {}}
           onLabelDelete={() => {}}
           onLabelAdd={() => {}}
+        />
+        <PPAnnotationList
+          selectedAnnotation={currentAnnotation}
+          onAnnotationSelect={(annotation) => {
+            setCurrentAnnotation(annotation);
+          }}
+          onAnnotationAdd={() => {}}
+          onAnnotationModify={() => {}}
+          onAnnotationDelete={() => {}}
         />
       </div>
     </PPLabelPageContainer>

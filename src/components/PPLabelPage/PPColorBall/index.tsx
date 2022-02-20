@@ -6,7 +6,8 @@ import { SketchPicker } from 'react-color';
 
 export type PPColorBallProps = {
   color?: string;
-  onChange: (color: ColorResult) => void;
+  changeable?: boolean;
+  onChange?: (color: ColorResult) => void;
 };
 
 const Component: React.FC<PPColorBallProps> = (props) => {
@@ -14,26 +15,30 @@ const Component: React.FC<PPColorBallProps> = (props) => {
   useEffect(() => {
     setColor(props.color || '#FFF');
   }, [props]);
-  return (
-    <Popover
-      getPopupContainer={(trigger) => trigger.parentElement || document.body}
-      overlayClassName={styles.popover}
-      openClassName={styles.popoverOpenClassName}
-      placement="bottom"
-      content={
-        <SketchPicker
-          disableAlpha
-          color={color}
-          onChange={(targetColor) => {
-            setColor(targetColor.hex);
-          }}
-          onChangeComplete={props.onChange}
-        />
-      }
-      trigger="click"
-    >
-      <div className={styles.roundBall} style={{ backgroundColor: color }} />
-    </Popover>
-  );
+  if (props.changeable) {
+    return (
+      <Popover
+        getPopupContainer={(trigger) => trigger.parentElement || document.body}
+        overlayClassName={styles.popover}
+        openClassName={styles.popoverOpenClassName}
+        placement="bottom"
+        content={
+          <SketchPicker
+            disableAlpha
+            color={color}
+            onChange={(targetColor) => {
+              setColor(targetColor.hex);
+            }}
+            onChangeComplete={props.onChange}
+          />
+        }
+        trigger="click"
+      >
+        <div className={styles.roundBall} style={{ backgroundColor: color }} />
+      </Popover>
+    );
+  } else {
+    return <div className={styles.roundBall} style={{ backgroundColor: color }} />;
+  }
 };
 export default Component;
