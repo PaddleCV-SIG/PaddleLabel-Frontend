@@ -35,14 +35,16 @@ const Page: React.FC = () => {
   const leafletMapRef = React.useRef<Map>(null);
   // Everytime currentTool changes, react will rerender this component(aka re-call Page() function to generate)
   // This means Page() function will always be called with currentTool's latest value.
-  if (currentTool) {
-    leafletMapRef.current?.leafletElement.pm.enableDraw(currentTool);
-    console.log('drawTools: ', currentTool);
-    leafletMapRef.current?.leafletElement.pm.setPathOptions({
-      color: 'orange',
-      fillColor: 'green',
-      fillOpacity: 0.4,
-    });
+  function RSDraw(RScurrentTool: any) {
+    if (RScurrentTool) {
+      leafletMapRef.current?.leafletElement.pm.enableDraw(RScurrentTool);
+      console.log('drawTools: ', currentTool);
+      leafletMapRef.current?.leafletElement.pm.setPathOptions({
+        color: 'orange',
+        fillColor: 'green',
+        fillOpacity: 0.4,
+      });
+    }
   }
 
   // For lines and Polygons only
@@ -100,6 +102,7 @@ const Page: React.FC = () => {
             imgSrc="./pics/buttons/polygon.png"
             onClick={() => {
               setCurrentTool('Polygon');
+              RSDraw('Polygon');
             }}
           >
             Polygon
