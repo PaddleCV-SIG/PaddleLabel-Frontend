@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Popover } from 'antd';
+import { Button, Popover } from 'antd';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPBrush from '@/components/PPLabelPage/PPBrush';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
+import type { Label } from '@/models/label';
+import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
+import type { Annotation } from '@/models/annotation';
+// import draw from '@/components/PPLabelPage/PPBrush/draw';
 // import PPMap from '@/components/PPMap';
 import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
@@ -31,6 +35,12 @@ export type ToolType2 = undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
+  const [currentLabel, setCurrentLabel] = useState<Label>();
+  const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
+  //const [brushSize, setBrushSize] = useState(10);
+
+  //const dr = draw({ currentLabel: currentLabel, brushSize: brushSize });
+  // TODO: How to click dr
 
   const leafletMapRef = React.useRef<Map>(null);
   // Everytime currentTool changes, react will rerender this component(aka re-call Page() function to generate)
@@ -48,6 +58,7 @@ const Page: React.FC = () => {
   }
 
   // For lines and Polygons only
+  // FIXME: The "Draw" have not attribute named "Polygon"
   const removeLastVertex = () => {
     console.log(leafletMapRef.current?.leafletElement.pm.Draw);
     leafletMapRef.current?.leafletElement.pm.Draw.Polygon._removeLastVertex();
@@ -116,6 +127,9 @@ const Page: React.FC = () => {
           onChange={(brushSize) => {
             console.log(brushSize);
           }}
+          // onChange={(newBrushSize) => {
+          //   setBrushSize(newBrushSize);
+          // }}
         />
         <Popover
           placement="rightTop"
@@ -211,11 +225,28 @@ const Page: React.FC = () => {
         </Popover>
       </PPRSToolBar>
       <div className={styles.rightSideBar}>
+        <div className={styles.determinOutline}>
+          <Button style={{ height: 40, fontSize: '0.75rem' }} type="primary" block>
+            Determine Outline
+          </Button>
+        </div>
         <PPLabelList
-          onLabelSelect={() => {}}
+          selectedLabel={currentLabel}
+          onLabelSelect={(label) => {
+            setCurrentLabel(label);
+          }}
           onLabelModify={() => {}}
           onLabelDelete={() => {}}
           onLabelAdd={() => {}}
+        />
+        <PPAnnotationList
+          selectedAnnotation={currentAnnotation}
+          onAnnotationSelect={(annotation) => {
+            setCurrentAnnotation(annotation);
+          }}
+          onAnnotationAdd={() => {}}
+          onAnnotationModify={() => {}}
+          onAnnotationDelete={() => {}}
         />
       </div>
     </PPLabelPageContainer>
