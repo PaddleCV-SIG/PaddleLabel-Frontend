@@ -5,11 +5,11 @@ import React from 'react';
 import { useState } from 'react';
 import { Line } from 'react-konva';
 
-function createLine(width: number, points: number[], key: number, tool: ToolType) {
+function createLine(width: number, color: string, points: number[], key: number, tool: ToolType) {
   return (
     <Line
       key={key}
-      stroke="#df4b26"
+      stroke={color}
       strokeWidth={width}
       globalCompositeOperation={tool === 'brush' ? 'source-over' : 'destination-out'}
       lineCap="round"
@@ -26,7 +26,7 @@ function getTool(currentTool: ToolType, mouseButton: number): ToolType {
 }
 
 export default function (props: {
-  currentLabel: Label | undefined;
+  currentLabel: Label;
   brushSize?: number;
   points?: number[];
   currentTool?: ToolType;
@@ -35,11 +35,13 @@ export default function (props: {
   const [points, setPoints] = useState<number[]>([]);
   const [currentTool, setCurrentTool] = useState<ToolType>();
 
+  // console.log(`currentLabel: ${props.currentLabel}`);
   const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    // console.log(`OnMouseDown, e.evt.button: ${e.evt.button}`);
+    console.log(`OnMouseDown, color: ${props.currentLabel.color}`);
     const tool = getTool(props.currentTool, e.evt.button);
     const line = createLine(
       props.brushSize || 10,
+      props.currentLabel?.color,
       [e.evt.offsetX, e.evt.offsetY, e.evt.offsetX, e.evt.offsetY],
       lines.length,
       tool,
@@ -54,7 +56,13 @@ export default function (props: {
     // console.log(`onMouseMove, marking: ${marking}`);
     if (!currentTool) return;
     const newPoints = points.concat([e.evt.offsetX, e.evt.offsetY]);
-    const line = createLine(props.brushSize || 10, newPoints, lines.length - 1, currentTool);
+    const line = createLine(
+      props.brushSize || 10,
+      props.currentLabel.color,
+      newPoints,
+      lines.length - 1,
+      currentTool,
+    );
     lines.pop();
     lines.push(line);
     setPoints(newPoints);
