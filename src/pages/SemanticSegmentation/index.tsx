@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Popover } from 'antd';
+import { Button } from 'antd';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -20,7 +20,7 @@ const Page: React.FC = () => {
   const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
   const [brushSize, setBrushSize] = useState(10);
 
-  const dr = draw({ currentLabel: currentLabel, brushSize: brushSize });
+  const dr = draw({ currentLabel: currentLabel, brushSize: brushSize, currentTool: currentTool });
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -45,23 +45,23 @@ const Page: React.FC = () => {
           onChange={(newBrushSize) => {
             setBrushSize(newBrushSize);
           }}
-        />
-        <Popover
-          placement="rightTop"
-          title="title"
-          content="content"
-          trigger={currentTool == 'rubber' ? 'hover' : 'click'}
         >
-          {' '}
-          <PPToolBarButton
-            imgSrc="./pics/buttons/rubber.png"
-            onClick={() => {
-              setCurrentTool('rubber');
-            }}
-          >
-            Rubber
-          </PPToolBarButton>
-        </Popover>
+          Brush
+        </PPBrush>
+
+        <PPBrush
+          size={brushSize}
+          active={currentTool == 'rubber'}
+          onClick={() => {
+            setCurrentTool('rubber');
+          }}
+          onChange={(newBrushSize) => {
+            setBrushSize(newBrushSize);
+          }}
+          imgSrc="./pics/buttons/rubber.png"
+        >
+          Rubber
+        </PPBrush>
         <PPToolBarButton imgSrc="./pics/buttons/zoom_in.png">Zoom in</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/zoom_out.png">Zoom out</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>

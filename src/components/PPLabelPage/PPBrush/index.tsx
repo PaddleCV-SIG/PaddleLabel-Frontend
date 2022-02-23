@@ -12,6 +12,7 @@ export type PPBrushProps = {
   size?: number;
   onClick?: React.MouseEventHandler<HTMLElement>;
   onChange?: (size: number) => void;
+  imgSrc?: string;
 };
 
 function formatSize(size: number | undefined) {
@@ -69,10 +70,10 @@ const Component: React.FC<PPBrushProps> = (props) => {
       {' '}
       <PPToolBarButton
         active={props.active}
-        imgSrc="./pics/buttons/brush.png"
+        imgSrc={props.imgSrc || './pics/buttons/brush.png'}
         onClick={props.onClick}
       >
-        Brush
+        {props.children || 'Brush'}
       </PPToolBarButton>
     </Popover>
   );

@@ -23,6 +23,9 @@ const Component: React.FC<PPStageProps> = (props) => {
   // console.log(`PPStage. ${JSON.stringify(props.elements)}`);
   return (
     <Stage width={imageWidth} height={imageHeight} className={styles.stage}>
+      <Layer>
+        <Image image={image} />
+      </Layer>
       <Layer
         onMouseDown={(e) => {
           if (props.onMouseDown) props.onMouseDown(e);
@@ -32,6 +35,10 @@ const Component: React.FC<PPStageProps> = (props) => {
         }}
         onMouseUp={(e) => {
           if (props.onMouseUp) props.onMouseUp(e);
+        }}
+        onContextMenu={(e) => {
+          // Prevent right-click menu
+          e.evt.preventDefault();
         }}
       >
         <Image image={image} />
