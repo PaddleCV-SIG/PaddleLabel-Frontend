@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { Button, Popover } from 'antd';
+import { Button, Popconfirm, Popover, Space } from 'antd';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
-import PPBrush from '@/components/PPLabelPage/PPBrush';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
-// import draw from '@/components/PPLabelPage/PPBrush/draw';
-// import PPMap from '@/components/PPMap';
 import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
@@ -48,34 +45,47 @@ const Page: React.FC = () => {
   function RSDraw(RScurrentTool: any) {
     if (RScurrentTool) {
       leafletMapRef.current?.leafletElement.pm.enableDraw(RScurrentTool);
-      console.log('drawTools: ', currentTool);
+      // console.log('drawTools: ', RScurrentTool);
       leafletMapRef.current?.leafletElement.pm.setPathOptions({
         color: 'orange',
         fillColor: 'green',
         fillOpacity: 0.4,
       });
+    } else {
+      leafletMapRef.current?.leafletElement.pm.disableDraw(RScurrentTool);
     }
   }
 
+  const RSDrawDisable = (RScurrentTool: any) => {
+    leafletMapRef.current?.leafletElement.pm.disableDraw(RScurrentTool);
+  };
+
   // For lines and Polygons only
   // FIXME: The "Draw" have not attribute named "Polygon"
+  const currentShape = () => {
+    return leafletMapRef.current?.leafletElement.pm.Draw.getActiveShape();
+  };
+
   const removeLastVertex = () => {
-    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
-    leafletMapRef.current?.leafletElement.pm.Draw.Polygon._removeLastVertex();
+    if (currentShape() == 'Polygon') {
+      leafletMapRef.current?.leafletElement.pm.Draw.Polygon._removeLastVertex();
+    }
   };
 
   const moveShape = () => {
-    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
     leafletMapRef.current?.leafletElement.pm.toggleGlobalDragMode();
   };
 
   const finishShape = () => {
-    console.log(leafletMapRef.current?.leafletElement.pm.Draw);
     leafletMapRef.current?.leafletElement.pm.Draw.Polygon._finishShape();
   };
 
   const removeShape = () => {
     leafletMapRef.current?.leafletElement.pm.enableGlobalRemovalMode();
+  };
+
+  const editMode = () => {
+    leafletMapRef.current?.leafletElement.pm.enableGlobalEditMode();
   };
 
   return (
@@ -87,23 +97,37 @@ const Page: React.FC = () => {
         <Popover
           placement="rightTop"
           title="Polygon Edit"
-          defaultVisible={true}
+          visible={true}
           content={
             <>
-              <button
-                onClick={() => {
-                  removeLastVertex();
-                }}
-              >
-                Remove Last Vertex
-              </button>
-              <button
-                onClick={() => {
-                  finishShape();
-                }}
-              >
-                Finish
-              </button>
+              <Space>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    finishShape();
+                  }}
+                >
+                  Finish
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    removeLastVertex();
+                  }}
+                >
+                  Remove Last Vertex
+                </Button>
+                <Popconfirm title="Are you sure cancel this task?" okText="Yes" cancelText="No">
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      RSDrawDisable(currentShape());
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </Popconfirm>
+              </Space>
             </>
           }
           trigger={currentTool == 'Polygon' ? 'hover' : 'click'}
@@ -119,18 +143,14 @@ const Page: React.FC = () => {
             Polygon
           </PPToolBarButton>
         </Popover>
-        <PPBrush
-          active={currentTool == 'brush'}
+        <PPToolBarButton
           onClick={() => {
-            setCurrentTool('brush');
+            editMode();
           }}
-          onChange={(brushSize) => {
-            console.log(brushSize);
-          }}
-          // onChange={(newBrushSize) => {
-          //   setBrushSize(newBrushSize);
-          // }}
-        />
+          imgSrc="./pics/buttons/brush.png"
+        >
+          Edit
+        </PPToolBarButton>
         <Popover
           placement="rightTop"
           title="title"
