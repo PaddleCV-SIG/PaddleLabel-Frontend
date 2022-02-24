@@ -52,4 +52,5 @@ export default {
   'menu.project-creation': '創建工程',
   'menu.remote-sensing': '遙感標注',
   'menu.semantic_segmentation-sample': '語義分割',
+  'menu.image_classification-sample': '圖像分類',
 };

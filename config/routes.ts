@@ -30,6 +30,11 @@
     component: './ProjectCreation',
   },
   {
+    path: '/image_classification',
+    name: 'image_classification-sample',
+    component: './ImageClassification',
+  },
+  {
     path: '/semantic_segmentation',
     name: 'semantic_segmentation-sample',
     component: './SemanticSegmentation',
