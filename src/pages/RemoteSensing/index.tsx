@@ -77,7 +77,9 @@ const Page: React.FC = () => {
   };
 
   const finishShape = () => {
-    leafletMapRef.current?.leafletElement.pm.Draw.Polygon._finishShape();
+    if (currentShape() == 'Polygon') {
+      leafletMapRef.current?.leafletElement.pm.Draw.Polygon._finishShape();
+    }
   };
 
   const removeShape = () => {
