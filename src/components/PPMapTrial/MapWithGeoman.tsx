@@ -30,14 +30,14 @@ const MapWithGeoman: React.FC<Props> = (props) => {
         drawMarker: false,
         drawCircle: false,
         drawCircleMarker: false,
-        drawPolyline: true,
-        drawRectangle: true,
-        drawPolygon: true,
-        editMode: true,
-        dragMode: true,
+        drawPolyline: false,
+        drawRectangle: false,
+        drawPolygon: false,
+        editMode: false,
+        dragMode: false,
         cutPolygon: true,
         rotateMode: false,
-        removalMode: true,
+        removalMode: false,
       });
       mapElement.pm.setGlobalOptions({ pmIgnore: false });
 

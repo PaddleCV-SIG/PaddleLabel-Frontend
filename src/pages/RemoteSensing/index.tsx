@@ -34,15 +34,31 @@ const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>();
   const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
+  const [polyVisable, setPolyVis] = useState(false);
   //const [brushSize, setBrushSize] = useState(10);
 
   //const dr = draw({ currentLabel: currentLabel, brushSize: brushSize });
   // TODO: How to click dr
 
   const leafletMapRef = React.useRef<Map>(null);
+
+  const toggleTest = () => {
+    const drawToggleCheck = leafletMapRef.current?.leafletElement.pm.globalDrawModeEnabled();
+    console.log(drawToggleCheck);
+  };
+
+  // const RSGGG = () => {
+  //   leafletMapRef.current?.leafletElement.on('pm:edit', (e: any) => {
+  //     setPolyVis(false);
+  //     console.log(e);
+  //     console.log('HIIIII');
+  //   });
+  // };
+
   // Everytime currentTool changes, react will rerender this component(aka re-call Page() function to generate)
   // This means Page() function will always be called with currentTool's latest value.
   function RSDraw(RScurrentTool: any) {
+    setPolyVis(true);
     if (RScurrentTool) {
       leafletMapRef.current?.leafletElement.pm.enableDraw(RScurrentTool);
       // console.log('drawTools: ', RScurrentTool);
@@ -51,13 +67,18 @@ const Page: React.FC = () => {
         fillColor: 'green',
         fillOpacity: 0.4,
       });
+      toggleTest();
     } else {
       leafletMapRef.current?.leafletElement.pm.disableDraw(RScurrentTool);
+      setPolyVis(false);
+      toggleTest();
     }
   }
 
   const RSDrawDisable = (RScurrentTool: any) => {
     leafletMapRef.current?.leafletElement.pm.disableDraw(RScurrentTool);
+    setPolyVis(false);
+    toggleTest();
   };
 
   // For lines and Polygons only
@@ -69,25 +90,43 @@ const Page: React.FC = () => {
   const removeLastVertex = () => {
     if (currentShape() == 'Polygon') {
       leafletMapRef.current?.leafletElement.pm.Draw.Polygon._removeLastVertex();
+      toggleTest();
+    } else {
+      toggleTest();
+      setPolyVis(false);
     }
   };
 
   const moveShape = () => {
     leafletMapRef.current?.leafletElement.pm.toggleGlobalDragMode();
+    toggleTest();
   };
 
   const finishShape = () => {
     if (currentShape() == 'Polygon') {
       leafletMapRef.current?.leafletElement.pm.Draw.Polygon._finishShape();
+      toggleTest();
+      setPolyVis(false);
+    } else {
+      toggleTest();
+      setPolyVis(false);
     }
   };
 
   const removeShape = () => {
     leafletMapRef.current?.leafletElement.pm.enableGlobalRemovalMode();
+    toggleTest();
   };
 
   const editMode = () => {
-    leafletMapRef.current?.leafletElement.pm.enableGlobalEditMode();
+    leafletMapRef.current?.leafletElement.pm.toggleGlobalEditMode();
+    toggleTest();
+    setPolyVis(false);
+  };
+
+  const saveGeoJson = () => {
+    console.log(leafletMapRef.current?.leafletElement.pm.getGeomanDrawLayers(true));
+    setPolyVis(false);
   };
 
   return (
@@ -98,8 +137,8 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <Popover
           placement="rightTop"
-          title="Polygon Edit"
-          visible={true}
+          // title="Polygon Edit"
+          visible={polyVisable}
           content={
             <>
               <Space>
@@ -171,7 +210,14 @@ const Page: React.FC = () => {
         </Popover>
         <PPToolBarButton imgSrc="./pics/buttons/zoom_in.png">Zoom in</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/zoom_out.png">Zoom out</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
+        <PPToolBarButton
+          onClick={() => {
+            saveGeoJson();
+          }}
+          imgSrc="./pics/buttons/save.png"
+        >
+          Save
+        </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/move.png" onClick={() => moveShape()}>
           Move
         </PPToolBarButton>
