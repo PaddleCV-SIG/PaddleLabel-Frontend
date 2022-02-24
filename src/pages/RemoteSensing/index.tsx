@@ -134,6 +134,8 @@ const Page: React.FC = () => {
   const onShapeCreate = (e: any) => {
     enterUid(e.layer);
     e.layer.bindPopup('Label: ' + e.layer._uid).openPopup();
+    setPolyVis(false);
+
     storeOnDb(e.layer);
   };
   const onShapeEdit = (e: any) => {
