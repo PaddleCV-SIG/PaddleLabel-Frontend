@@ -26,6 +26,19 @@ const Page: React.FC = () => {
     if (anno?.label) setCurrentLabel(anno.label);
   };
 
+  const onAnnotationModify = (annotation: Annotation) => {
+    const newAnnos: Annotation[] = [];
+    for (let i = 0; i < annotations.length; i++) {
+      if (annotations[i].annotationId == annotation.annotationId) {
+        newAnnos.push(annotation);
+      } else {
+        newAnnos.push(annotations[i]);
+      }
+    }
+    setCurrentAnnotation(annotation);
+    setAnnotations(newAnnos);
+  };
+
   const dr = draw({
     currentLabel: currentLabel,
     brushSize: brushSize,
@@ -36,17 +49,7 @@ const Page: React.FC = () => {
       setAnnotations(annotations.concat([annotation]));
       if (!currentAnnotation) setCurrentAnnotation(annotation);
     },
-    onAnnotationModify: (annotation) => {
-      const newAnnos: Annotation[] = [];
-      for (let i = 0; i < annotations.length; i++) {
-        if (annotations[i].annotationId == annotation.annotationId) {
-          newAnnos.push(annotation);
-        } else {
-          newAnnos.push(annotations[i]);
-        }
-      }
-      setAnnotations(newAnnos);
-    },
+    onAnnotationModify: onAnnotationModify,
   });
   return (
     <PPLabelPageContainer className={styles.segment}>
@@ -134,11 +137,14 @@ const Page: React.FC = () => {
           selectedAnnotation={currentAnnotation}
           annotations={annotations}
           onAnnotationSelect={(selectedAnno) => {
-            setCurrentAnnotation(selectedAnno);
+            if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
           }}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
-          onAnnotationDelete={() => {}}
+          onAnnotationDelete={(annotation: Annotation) => {
+            setAnnotations(annotations.filter((x) => x.annotationId != annotation.annotationId));
+            setCurrentAnnotation(undefined);
+          }}
         />
       </div>
     </PPLabelPageContainer>

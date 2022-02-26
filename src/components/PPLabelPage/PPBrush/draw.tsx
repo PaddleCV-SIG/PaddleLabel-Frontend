@@ -76,12 +76,13 @@ export default function (props: {
   onAnnotationAdd: (annotation: Annotation) => void;
   onAnnotationModify: (annotation: Annotation) => void;
 }) {
-  const [lines, setLines] = useState<PPLineType[]>([]);
-  const [points, setPoints] = useState<number[]>([]);
   const [currentTool, setCurrentTool] = useState<ToolType>();
-
   const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    // console.log(`OnMouseDown, color: ${props.currentLabel.color}`);
+    // console.log(
+    //   `OnMouseDown, drawing on annotation: ${JSON.stringify(
+    //     props.currentAnnotation,
+    //   )}. Annotations: ${JSON.stringify(props.annotations)}`,
+    // );
     const tool = getTool(props.currentTool, e.evt.button);
     const line = createLine(
       props.brushSize || 10,
@@ -90,29 +91,37 @@ export default function (props: {
       tool,
     );
     if (!line) return;
-    lines.push(line);
     setCurrentTool(tool);
-    setPoints([e.evt.offsetX, e.evt.offsetY, e.evt.offsetX, e.evt.offsetY]);
-    setLines(lines);
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
       props.onAnnotationAdd({
         annotationId: getMaxId(props.annotations) + 1,
         label: props.currentLabel,
-        lines: lines,
+        lines: [line],
       });
     } else {
-      props.onAnnotationModify({
-        ...props.currentAnnotation,
-        lines: lines,
-      });
+      const anno = {
+        annotationId: props.currentAnnotation.annotationId,
+        label: props.currentAnnotation.label,
+        lines: props.currentAnnotation.lines?.concat([line]),
+      };
+      props.onAnnotationModify(anno);
+      console.log(anno);
     }
   };
 
   const OnMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // console.log(`onMouseMove, marking: ${marking}`);
     if (!currentTool || !props.currentAnnotation) return;
-    const newPoints = points.concat([e.evt.offsetX, e.evt.offsetY]);
+    let newPoints = [e.evt.offsetX, e.evt.offsetY];
+    let newLines: PPLineType[] = [];
+    if (props.currentAnnotation?.lines) {
+      newPoints =
+        props.currentAnnotation.lines[props.currentAnnotation.lines.length - 1].points.concat(
+          newPoints,
+        );
+      newLines = props.currentAnnotation.lines;
+    }
     const line = createLine(
       props.brushSize || 10,
       props.currentLabel.color,
@@ -120,23 +129,19 @@ export default function (props: {
       currentTool,
     );
     if (!line) return;
-    lines.pop();
-    lines.push(line);
-    setPoints(newPoints);
-    setLines(lines);
+    newLines.pop();
+    newLines.push(line);
     props.onAnnotationModify({
       ...props.currentAnnotation,
-      lines: lines,
+      lines: newLines,
     });
   };
 
   const OnMouseUp = () => {
     // console.log(`OnMouseUp`);
     setCurrentTool(undefined);
-    setPoints([]);
   };
   return {
-    elements: lines,
     onMouseDown: OnMouseDown,
     onMouseMove: OnMouseMove,
     onMouseUp: OnMouseUp,

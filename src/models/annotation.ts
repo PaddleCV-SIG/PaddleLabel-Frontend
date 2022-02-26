@@ -6,4 +6,5 @@ export type Annotation = {
   label: Label;
   invisible?: boolean;
   lines?: PPLineType[];
+  delete?: boolean;
 };

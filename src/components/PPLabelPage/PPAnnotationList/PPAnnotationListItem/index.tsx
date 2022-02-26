@@ -42,6 +42,14 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
         <span className={styles.labelName}>{annotation.label.name}</span>
         <PPColorBall color={annotation.label.color} />
       </Space>
+
+      <a
+        className={styles.delete}
+        onClick={() => {
+          annotation.delete = true;
+          props.onAnnotationDelete(annotation);
+        }}
+      />
     </List.Item>
   );
   return item;
