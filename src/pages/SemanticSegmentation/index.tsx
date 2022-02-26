@@ -16,11 +16,38 @@ export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
-  const [currentLabel, setCurrentLabel] = useState<Label>();
-  const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
+  const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
+  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [brushSize, setBrushSize] = useState(10);
 
-  const dr = draw({ currentLabel: currentLabel, brushSize: brushSize, currentTool: currentTool });
+  const setCurrentAnnotation = (anno?: Annotation) => {
+    setCurrentAnnotationRaw(anno);
+    if (anno?.label) setCurrentLabel(anno.label);
+  };
+
+  const dr = draw({
+    currentLabel: currentLabel,
+    brushSize: brushSize,
+    currentTool: currentTool,
+    annotations: annotations,
+    currentAnnotation: currentAnnotation,
+    onAnnotationAdd: (annotation) => {
+      setAnnotations(annotations.concat([annotation]));
+      if (!currentAnnotation) setCurrentAnnotation(annotation);
+    },
+    onAnnotationModify: (annotation) => {
+      const newAnnos: Annotation[] = [];
+      for (let i = 0; i < annotations.length; i++) {
+        if (annotations[i].annotationId == annotation.annotationId) {
+          newAnnos.push(annotation);
+        } else {
+          newAnnos.push(annotations[i]);
+        }
+      }
+      setAnnotations(newAnnos);
+    },
+  });
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -74,7 +101,7 @@ const Page: React.FC = () => {
       </PPToolBar>
       <div className={styles.mainStage}>
         <PPStage
-          elements={dr.elements}
+          annotations={annotations}
           onMouseDown={dr.onMouseDown}
           onMouseMove={dr.onMouseMove}
           onMouseUp={dr.onMouseUp}
@@ -90,6 +117,7 @@ const Page: React.FC = () => {
           selectedLabel={currentLabel}
           onLabelSelect={(label) => {
             setCurrentLabel(label);
+            setCurrentAnnotation(undefined);
           }}
           onLabelModify={() => {}}
           onLabelDelete={() => {}}
@@ -97,8 +125,9 @@ const Page: React.FC = () => {
         />
         <PPAnnotationList
           selectedAnnotation={currentAnnotation}
-          onAnnotationSelect={(annotation) => {
-            setCurrentAnnotation(annotation);
+          annotations={annotations}
+          onAnnotationSelect={(selectedAnno) => {
+            setCurrentAnnotation(selectedAnno);
           }}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}

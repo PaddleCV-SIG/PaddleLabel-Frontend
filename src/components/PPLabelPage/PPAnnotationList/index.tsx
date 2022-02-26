@@ -1,11 +1,12 @@
 import { List } from 'antd';
 import { Button } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './index.less';
 import { Annotation } from '@/models/annotation';
 import PPAnnotationListItem from './PPAnnotationListItem';
 
 export type PPLabelListProps = {
+  annotations: Annotation[];
   selectedAnnotation?: Annotation;
   onAnnotationModify: (annotation: Annotation) => void;
   onAnnotationDelete: (annotation: Annotation) => void;
@@ -14,8 +15,6 @@ export type PPLabelListProps = {
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
-  const [annotations] = useState<Annotation[]>([]);
-
   return (
     <>
       <List
@@ -23,7 +22,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         size="large"
         header={<div className={styles.listHeader}>Annotation List</div>}
         bordered
-        dataSource={annotations}
+        dataSource={props.annotations}
         renderItem={(item) => {
           return (
             <PPAnnotationListItem

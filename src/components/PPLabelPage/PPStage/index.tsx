@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { Annotation } from '@/models/annotation';
 import type Konva from 'konva';
 import React from 'react';
 import { Layer, Stage, Image } from 'react-konva';
 import useImage from 'use-image';
+import { PPLineType } from '../PPBrush/draw';
 import styles from './index.less';
 
 // Mock Data
 const imgSrc = './pics/basketball.jpg';
 
 export type PPStageProps = {
-  elements: any[];
+  annotations: Annotation[];
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
@@ -42,8 +44,10 @@ const Component: React.FC<PPStageProps> = (props) => {
         }}
       >
         <Image image={image} />
-        {props.elements.map((element, i) => {
-          return element;
+        {props.annotations.map((element, i) => {
+          return element.lines?.map((ele2, i2) => {
+            return ele2.element;
+          });
         })}
       </Layer>
     </Stage>

@@ -38,8 +38,9 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
             props.onAnnotationModify(annotation);
           }}
         />{' '}
-        {annotation.label.name}
-        <PPColorBall color={annotation.label.name} />
+        <span className={styles.annotationId}>{annotation.annotationId}</span>
+        <span className={styles.labelName}>{annotation.label.name}</span>
+        <PPColorBall color={annotation.label.color} />
       </Space>
     </List.Item>
   );
