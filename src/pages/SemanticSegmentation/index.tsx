@@ -109,7 +109,14 @@ const Page: React.FC = () => {
       </div>
       <div className={styles.rightSideBar}>
         <div className={styles.determinOutline}>
-          <Button style={{ height: 40, fontSize: '0.75rem' }} type="primary" block>
+          <Button
+            style={{ height: 40, fontSize: '0.75rem' }}
+            type="primary"
+            block
+            onClick={() => {
+              setCurrentAnnotation(undefined);
+            }}
+          >
             Determine Outline
           </Button>
         </div>
