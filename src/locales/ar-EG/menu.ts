@@ -52,4 +52,5 @@ export default {
   'menu.project-creation': 'إنشاء مشروع',
   'menu.remote-sensing': 'الاستشعار عن بعد',
   'menu.semantic_segmentation-sample': 'تحليل الحجج',
+  'menu.image_classification-sample': 'تصنيف الصور',
 };
