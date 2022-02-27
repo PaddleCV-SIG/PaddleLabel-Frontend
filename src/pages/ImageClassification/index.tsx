@@ -6,14 +6,44 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import type { Label } from '@/models/label';
+import type { Annotation } from '@/models/annotation';
 import draw from '@/components/PPLabelPage/PPBrush/draw';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
 const Page: React.FC = () => {
-  const [currentLabel, setCurrentLabel] = useState<Label>();
+  const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
+  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
 
-  const dr = draw({ currentLabel: currentLabel });
+  const setCurrentAnnotation = (anno?: Annotation) => {
+    setCurrentAnnotationRaw(anno);
+    if (anno?.label) setCurrentLabel(anno.label);
+  };
+
+  const onAnnotationModify = (annotation: Annotation) => {
+    const newAnnos: Annotation[] = [];
+    for (let i = 0; i < annotations.length; i++) {
+      if (annotations[i].annotationId == annotation.annotationId) {
+        newAnnos.push(annotation);
+      } else {
+        newAnnos.push(annotations[i]);
+      }
+    }
+    setCurrentAnnotation(annotation);
+    setAnnotations(newAnnos);
+  };
+
+  const dr = draw({
+    currentLabel: currentLabel,
+    annotations: annotations,
+    currentAnnotation: currentAnnotation,
+    onAnnotationAdd: (annotation) => {
+      setAnnotations(annotations.concat([annotation]));
+      if (!currentAnnotation) setCurrentAnnotation(annotation);
+    },
+    onAnnotationModify: onAnnotationModify,
+  });
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
@@ -29,7 +59,7 @@ const Page: React.FC = () => {
       </PPToolBar>
       <div className={styles.mainStage}>
         <PPStage
-          elements={dr.elements}
+          annotations={annotations}
           onMouseDown={dr.onMouseDown}
           onMouseMove={dr.onMouseMove}
           onMouseUp={dr.onMouseUp}
@@ -40,6 +70,7 @@ const Page: React.FC = () => {
           selectedLabel={currentLabel}
           onLabelSelect={(label) => {
             setCurrentLabel(label);
+            setCurrentAnnotation(undefined);
           }}
           onLabelModify={() => {}}
           onLabelDelete={() => {}}
