@@ -53,4 +53,5 @@ export default {
   'menu.remote-sensing': '遥感标注',
   'menu.semantic_segmentation-sample': '语义分割',
   'menu.image_classification-sample': '图像分类',
+  'menu.classification-project': '图像分类项目创建',
 };

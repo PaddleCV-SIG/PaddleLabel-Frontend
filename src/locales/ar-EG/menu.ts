@@ -53,4 +53,5 @@ export default {
   'menu.remote-sensing': 'الاستشعار عن بعد',
   'menu.semantic_segmentation-sample': 'تحليل الحجج',
   'menu.image_classification-sample': 'تصنيف الصور',
+  'menu.classification-project': 'إنشاء تصنيف الصور',
 };

@@ -30,6 +30,11 @@
     component: './ProjectCreation',
   },
   {
+    path: '/classification_project',
+    name: 'classification-project',
+    component: './ClassificationProject',
+  },
+  {
     path: '/image_classification',
     name: 'image_classification-sample',
     component: './ImageClassification',

@@ -53,4 +53,5 @@ export default {
   'menu.remote-sensing': 'Remote Sensing',
   'menu.semantic_segmentation-sample': 'Semantic Segmentation Sample',
   'menu.image_classification-sample': 'Image Classification Sample',
+  'menu.classification-project': 'Image Classification Project Creation',
 };
