@@ -1,12 +1,14 @@
 import React from 'react';
-import { Row, Col, Space } from 'antd';
-import PPCard from '@/components/PPCard';
-import PPBlock from '@/components/PPBlock';
-import CreateButton from '@/components/CreatButton';
+import PPCreater from '@/components/PPCreater';
 import PPContainer from '@/components/PPContainer';
+import styles from './index.less';
 
 const Project: React.FC = () => {
-  return <PPContainer></PPContainer>;
+  return (
+    <PPContainer>
+      <PPCreater title="Image Classification" imgSrc="./pics/illustration.jpg"></PPCreater>
+    </PPContainer>
+  );
 };
 
 export default Project;
