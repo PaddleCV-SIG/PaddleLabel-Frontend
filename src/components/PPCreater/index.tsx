@@ -1,7 +1,8 @@
-import { Col, Row } from 'antd';
+import { Col, Form, Input, Row } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React from 'react';
 import styles from './index.less';
+import { Button } from 'antd';
 
 export type _PPCardProps = {
   title?: string;
@@ -35,14 +36,109 @@ export type PPCardProps = {
 };
 
 const PPCreater: React.FC<PPCardProps> = (props) => {
+  const [form] = Form.useForm();
   return (
     <div className={styles.shadow} style={props.style}>
-      <div id="left" className={styles.block}>
-        <_PPBlock title={props.title} style={{ marginTop: 112, height: 608 }}></_PPBlock>
+      <div id="left" className={styles.block_l}>
+        <_PPBlock title={props.title} style={{ height: 760, padding: '1.25rem 0' }}>
+          <Form form={form} layout="horizontal" size="large" style={{ marginTop: '5.69rem' }}>
+            <Form.Item
+              name="project name"
+              label="Project Name"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+              style={{ height: '3.13rem', fontSize: '1.5rem' }}
+            >
+              <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
+            </Form.Item>
+            <Form.Item
+              name="dataset path"
+              label="Dataset Path"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+              style={{ height: '3.13rem', fontSize: '1.5rem' }}
+            >
+              <Input size="large" placeholder="Path" style={{ height: '3.13rem' }} />
+            </Form.Item>
+            <Form.Item
+              name="save path"
+              label="Save Path"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+              style={{ height: '3.13rem', fontSize: '1.5rem' }}
+            >
+              <Input size="large" placeholder="Path" style={{ height: '3.13rem' }} />
+            </Form.Item>
+            <Form.Item
+              name="description"
+              label="Description"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+              style={{ height: '3.13rem', fontSize: '1.5rem' }}
+            >
+              <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
+            </Form.Item>
+            <Form.Item
+              wrapperCol={{
+                span: 16,
+                offset: 6,
+              }}
+            >
+              <Button
+                htmlType="button"
+                type="primary"
+                style={{ height: '2.5rem', width: '48%' }}
+                block
+              >
+                OK
+              </Button>
+              &nbsp;&nbsp;
+              <Button htmlType="button" style={{ height: '2.5rem', width: '48%' }} block>
+                Cancel
+              </Button>
+            </Form.Item>
+          </Form>
+        </_PPBlock>
       </div>
-      <div id="right" className={styles.block}>
-        <_PPBlock style={{ marginTop: 112, height: 608 }}>
-          <img src={props.imgSrc} style={{ height: 558, width: 768 }} />
+      <div id="right" className={styles.block_r}>
+        <_PPBlock style={{ height: 760, padding: '0.5rem 0' }}>
+          <img src={props.imgSrc} style={{ height: 698, width: 960 }} />
         </_PPBlock>
       </div>
     </div>

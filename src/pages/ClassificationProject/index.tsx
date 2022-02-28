@@ -1,7 +1,6 @@
 import React from 'react';
 import PPCreater from '@/components/PPCreater';
 import PPContainer from '@/components/PPContainer';
-import styles from './index.less';
 
 const Project: React.FC = () => {
   return (
