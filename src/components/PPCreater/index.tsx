@@ -1,4 +1,4 @@
-import { Col, Form, Input, Row } from 'antd';
+import { Col, Form, Input, Radio, Row } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React from 'react';
 import styles from './index.less';
@@ -31,6 +31,7 @@ const _PPBlock: React.FC<_PPCardProps> = (props) => {
 export type PPCardProps = {
   title?: string;
   imgSrc?: string;
+  mode?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
 };
@@ -97,6 +98,28 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               <Input size="large" placeholder="Path" style={{ height: '3.13rem' }} />
             </Form.Item>
             <Form.Item
+              name="max_points"
+              label="MaxPoints"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+              style={{
+                height: '3.13rem',
+                fontSize: '1.5rem',
+                display: props.mode == 'keypoint' ? undefined : 'none',
+              }}
+            >
+              <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
+            </Form.Item>
+            <Form.Item
               name="description"
               label="Description"
               labelCol={{
@@ -113,6 +136,33 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               style={{ height: '3.13rem', fontSize: '1.5rem' }}
             >
               <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
+            </Form.Item>
+            <Form.Item
+              name="annotation mode"
+              label="AnnotationMode"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+              style={{
+                height: '3.13rem',
+                fontSize: '1.5rem',
+                display: props.mode == 'segment' ? undefined : 'none',
+              }}
+            >
+              <div className={styles.goup}>
+                <Radio.Group defaultValue={1} size="large" style={{ height: '3.13rem' }}>
+                  <Radio value={1}>Pixel model</Radio>
+                  <Radio value={2}>Polygon mode</Radio>
+                </Radio.Group>
+              </div>
             </Form.Item>
             <Form.Item
               wrapperCol={{

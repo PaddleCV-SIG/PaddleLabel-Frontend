@@ -40,9 +40,34 @@
     component: './ImageClassification',
   },
   {
+    path: '/segmentation_project',
+    name: 'segmentation-project',
+    component: './SegmentationProject',
+  },
+  {
     path: '/semantic_segmentation',
     name: 'semantic_segmentation-sample',
     component: './SemanticSegmentation',
+  },
+  {
+    path: '/detection_project',
+    name: 'detection-project',
+    component: './DetectionProject',
+  },
+  {
+    path: '/object_detection',
+    name: 'object_detection-sample',
+    component: './ObjectDetection',
+  },
+  {
+    path: '/keypoint_project',
+    name: 'keypoint-project',
+    component: './KeypointProject',
+  },
+  {
+    path: '/keypoint_detection',
+    name: 'keypoint_detection-sample',
+    component: './KeypointDetection',
   },
   {
     path: '/remote_sensing',
