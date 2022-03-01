@@ -10,24 +10,26 @@ import PPStage from '@/components/PPLabelPage/PPStage';
 import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
-import draw from '@/components/PPLabelPage/PPBrush/draw';
+import PPPolygon from '@/components/PPLabelPage/PPPolygon';
+import drawBrush from '@/components/PPLabelPage/PPBrush/drawBrush';
+import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
-  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
-  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
+  const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
   const [brushSize, setBrushSize] = useState(10);
 
-  const setCurrentAnnotation = (anno?: Annotation) => {
+  const setCurrentAnnotation = (anno?: Annotation<any>) => {
     setCurrentAnnotationRaw(anno);
     if (anno?.label) setCurrentLabel(anno.label);
   };
 
-  const onAnnotationModify = (annotation: Annotation) => {
-    const newAnnos: Annotation[] = [];
+  const onAnnotationModify = (annotation: Annotation<any>) => {
+    const newAnnos: Annotation<any>[] = [];
     for (let i = 0; i < annotations.length; i++) {
       if (annotations[i].annotationId == annotation.annotationId) {
         newAnnos.push(annotation);
@@ -39,7 +41,9 @@ const Page: React.FC = () => {
     setAnnotations(newAnnos);
   };
 
-  const dr = draw({
+  const func = currentTool == 'brush' ? drawBrush : drawPolygon;
+
+  const dr = func({
     currentLabel: currentLabel,
     brushSize: brushSize,
     currentTool: currentTool,
@@ -57,15 +61,14 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
           Intelligent Interaction
         </PPToolBarButton>
-        <PPToolBarButton
+        <PPPolygon
           active={currentTool == 'polygon'}
-          imgSrc="./pics/buttons/polygon.png"
           onClick={() => {
             setCurrentTool('polygon');
           }}
         >
           Polygon
-        </PPToolBarButton>
+        </PPPolygon>
         <PPBrush
           size={brushSize}
           active={currentTool == 'brush'}

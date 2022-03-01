@@ -10,24 +10,24 @@ import PPStage from '@/components/PPLabelPage/PPStage';
 import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
-import draw from '@/components/PPLabelPage/PPBrush/draw';
+import drawBrush from '@/components/PPLabelPage/PPBrush/drawBrush';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
-  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
-  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
+  const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
   const [brushSize, setBrushSize] = useState(10);
 
-  const setCurrentAnnotation = (anno?: Annotation) => {
+  const setCurrentAnnotation = (anno?: Annotation<any>) => {
     setCurrentAnnotationRaw(anno);
     if (anno?.label) setCurrentLabel(anno.label);
   };
 
-  const onAnnotationModify = (annotation: Annotation) => {
-    const newAnnos: Annotation[] = [];
+  const onAnnotationModify = (annotation: Annotation<any>) => {
+    const newAnnos: Annotation<any>[] = [];
     for (let i = 0; i < annotations.length; i++) {
       if (annotations[i].annotationId == annotation.annotationId) {
         newAnnos.push(annotation);
@@ -39,7 +39,7 @@ const Page: React.FC = () => {
     setAnnotations(newAnnos);
   };
 
-  const dr = draw({
+  const dr = drawBrush({
     currentLabel: currentLabel,
     brushSize: brushSize,
     currentTool: currentTool,

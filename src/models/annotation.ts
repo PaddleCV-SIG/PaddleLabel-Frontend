@@ -1,10 +1,9 @@
-import { PPLineType } from '@/components/PPLabelPage/PPBrush/draw';
 import type { Label } from './label';
 
-export type Annotation = {
+export type Annotation<T> = {
   annotationId: number;
   label: Label;
   invisible?: boolean;
-  lines?: PPLineType[];
+  lines?: T[];
   delete?: boolean;
 };

@@ -57,7 +57,7 @@ function getTool(currentTool: ToolType, mouseButton: number): ToolType {
  * @param annotations
  * @returns
  */
-function getMaxId(annotations: Annotation[]): any {
+function getMaxId(annotations: Annotation<PPLineType>[]): any {
   let maxId = 0;
   for (const annotation of annotations) {
     if (!annotation) continue;
@@ -71,11 +71,12 @@ export default function (props: {
   brushSize?: number;
   points?: number[];
   currentTool?: ToolType;
-  annotations: Annotation[];
-  currentAnnotation?: Annotation;
-  onAnnotationAdd: (annotation: Annotation) => void;
-  onAnnotationModify: (annotation: Annotation) => void;
+  annotations: Annotation<PPLineType>[];
+  currentAnnotation?: Annotation<PPLineType>;
+  onAnnotationAdd: (annotation: Annotation<PPLineType>) => void;
+  onAnnotationModify: (annotation: Annotation<PPLineType>) => void;
 }) {
+  console.log('drawBrush');
   const [currentTool, setCurrentTool] = useState<ToolType>();
   const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // console.log(
