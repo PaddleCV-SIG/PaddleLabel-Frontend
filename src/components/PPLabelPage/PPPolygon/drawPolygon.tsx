@@ -23,11 +23,7 @@ function hexToRgb(hex: string) {
     : null;
 }
 
-function createPolygon(
-  color: string,
-  points: number[],
-  closed?: boolean,
-): PPPolygonType | undefined {
+function createPolygon(color: string, points: number[]): PPPolygonType | undefined {
   console.log(color, points);
   if (!color || !points) return undefined;
   const rgb = hexToRgb(color);
@@ -60,7 +56,7 @@ function createPolygon(
           lineCap="round"
           points={points}
           tension={0.01}
-          closed={closed}
+          closed={true}
           fill={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`}
         />
         {pointElements}
