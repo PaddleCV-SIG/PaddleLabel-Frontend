@@ -41,9 +41,7 @@ const Page: React.FC = () => {
     setAnnotations(newAnnos);
   };
 
-  const func = currentTool == 'brush' ? drawBrush : drawPolygon;
-
-  const dr = func({
+  const brush = drawBrush({
     currentLabel: currentLabel,
     brushSize: brushSize,
     currentTool: currentTool,
@@ -55,6 +53,19 @@ const Page: React.FC = () => {
     },
     onAnnotationModify: onAnnotationModify,
   });
+  const polygon = drawPolygon({
+    currentLabel: currentLabel,
+    brushSize: brushSize,
+    currentTool: currentTool,
+    annotations: annotations,
+    currentAnnotation: currentAnnotation,
+    onAnnotationAdd: (annotation) => {
+      setAnnotations(annotations.concat([annotation]));
+      if (!currentAnnotation) setCurrentAnnotation(annotation);
+    },
+    onAnnotationModify: onAnnotationModify,
+  });
+  const dr = currentTool == 'brush' ? brush : polygon;
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
