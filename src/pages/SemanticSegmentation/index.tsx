@@ -65,7 +65,7 @@ const Page: React.FC = () => {
     },
     onAnnotationModify: onAnnotationModify,
   });
-  const dr = currentTool == 'brush' ? brush : polygon;
+  const dr = currentTool == 'polygon' ? polygon : brush;
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -76,6 +76,7 @@ const Page: React.FC = () => {
           active={currentTool == 'polygon'}
           onClick={() => {
             setCurrentTool('polygon');
+            setCurrentAnnotation(undefined);
           }}
         >
           Polygon
@@ -84,6 +85,9 @@ const Page: React.FC = () => {
           size={brushSize}
           active={currentTool == 'brush'}
           onClick={() => {
+            if (currentTool != 'rubber' && currentTool != 'brush') {
+              setCurrentAnnotation(undefined);
+            }
             setCurrentTool('brush');
           }}
           onChange={(newBrushSize) => {
@@ -97,6 +101,9 @@ const Page: React.FC = () => {
           size={brushSize}
           active={currentTool == 'rubber'}
           onClick={() => {
+            if (currentTool != 'rubber' && currentTool != 'brush') {
+              setCurrentAnnotation(undefined);
+            }
             setCurrentTool('rubber');
           }}
           onChange={(newBrushSize) => {

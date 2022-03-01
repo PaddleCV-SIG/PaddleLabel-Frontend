@@ -2,7 +2,7 @@ import type { Annotation } from '@/models/annotation';
 import type { Label } from '@/models/label';
 import type { ToolType } from '@/pages/SemanticSegmentation';
 import type Konva from 'konva';
-import type { ReactElement } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import React from 'react';
 import { Circle, Line } from 'react-konva';
 
@@ -94,9 +94,14 @@ export default function (props: {
   onAnnotationAdd: (annotation: Annotation<PPPolygonType>) => void;
   onAnnotationModify: (annotation: Annotation<PPPolygonType>) => void;
 }) {
-  console.log('drawPolygon');
+  const [currentTool, setCurrentTool] = useState(props.currentTool);
+  useEffect(() => {
+    setCurrentTool(props.currentTool);
+  }, [props.currentTool]);
+
   const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    console.log(props.currentAnnotation);
+    console.log(currentTool);
+    if (currentTool != 'polygon') return;
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
       const polygon = createPolygon(props.currentLabel?.color, [e.evt.offsetX, e.evt.offsetY]);
@@ -125,6 +130,7 @@ export default function (props: {
   };
 
   const OnMouseUp = () => {
+    if (currentTool != 'polygon') return;
     // console.log(`OnMouseUp`);
   };
   return {

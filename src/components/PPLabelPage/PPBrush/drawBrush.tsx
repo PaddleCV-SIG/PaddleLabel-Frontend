@@ -2,7 +2,7 @@ import { Annotation } from '@/models/annotation';
 import { Label } from '@/models/label';
 import { ToolType } from '@/pages/SemanticSegmentation';
 import Konva from 'konva';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Line } from 'react-konva';
 
@@ -76,9 +76,17 @@ export default function (props: {
   onAnnotationAdd: (annotation: Annotation<PPLineType>) => void;
   onAnnotationModify: (annotation: Annotation<PPLineType>) => void;
 }) {
-  console.log('drawBrush');
+  // console.log('drawBrush');
   const [currentTool, setCurrentTool] = useState<ToolType>();
+
+  const [propsTool, setPropsTool] = useState(props.currentTool);
+  useEffect(() => {
+    setPropsTool(props.currentTool);
+  }, [props.currentTool]);
+
   const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    console.log(propsTool);
+    if (propsTool != 'brush' && propsTool != 'rubber') return;
     // console.log(
     //   `OnMouseDown, drawing on annotation: ${JSON.stringify(
     //     props.currentAnnotation,
@@ -95,6 +103,8 @@ export default function (props: {
     setCurrentTool(tool);
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
+      // Do not start new marking with rubber
+      if (tool == 'rubber') return;
       props.onAnnotationAdd({
         annotationId: getMaxId(props.annotations) + 1,
         label: props.currentLabel,
@@ -139,6 +149,7 @@ export default function (props: {
   };
 
   const OnMouseUp = () => {
+    if (propsTool != 'brush' && propsTool != 'rubber') return;
     // console.log(`OnMouseUp`);
     setCurrentTool(undefined);
   };

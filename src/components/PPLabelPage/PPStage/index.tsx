@@ -4,14 +4,14 @@ import type Konva from 'konva';
 import React from 'react';
 import { Layer, Stage, Image } from 'react-konva';
 import useImage from 'use-image';
-import { PPLineType } from '../PPBrush/draw';
+import { PPLineType } from '../PPBrush/drawBrush';
 import styles from './index.less';
 
 // Mock Data
 const imgSrc = './pics/basketball.jpg';
 
 export type PPStageProps = {
-  annotations: Annotation[];
+  annotations: Annotation<any>[];
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
