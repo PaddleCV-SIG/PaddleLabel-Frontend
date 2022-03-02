@@ -1,7 +1,7 @@
 import * as React from 'react';
 import MapWithGeoman from './MapWithGeoman';
 import type { Map } from 'react-leaflet';
-import { LayersControl, TileLayer } from 'react-leaflet';
+import { LayersControl, TileLayer, LayerGroup } from 'react-leaflet';
 import styles from './index.less';
 
 import 'leaflet/dist/leaflet.css';
@@ -31,26 +31,24 @@ const Component: React.FC<PPMapProps> = (props) => {
       onShapeEdit={props.onShapeEdit}
     >
       <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="OpenStreetMap.Mapnik">
+        <LayersControl.BaseLayer checked name="TianDiTu.Vector">
+          <LayerGroup attribution='&copy; <a href="https://www.tianditu.gov.cn/">TianDiTu</a> GS(2021)3715'>
+            <TileLayer url="https://t2.tianditu.gov.cn/DataServer?T=vec_w&X={x}&Y={y}&L={z}&tk=8e879a4cad078fd3ce7456f2737fc4cc" />
+
+            <TileLayer url="https://t2.tianditu.gov.cn/DataServer?T=cva_w&X={x}&Y={y}&L={z}&tk=8e879a4cad078fd3ce7456f2737fc4cc" />
+          </LayerGroup>
+        </LayersControl.BaseLayer>
+        <LayersControl.BaseLayer name="OpenStreetMap.Mapnik">
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
         </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="TianDiTu.Satellite">
-          <TileLayer
-            attribution="&copy; TianDiTu"
-            url="https://t2.tianditu.gov.cn/DataServer?T=img_w&X={x}&Y={y}&L={z}&tk=174705aebfe31b79b3587279e211cb9a"
-          />
-        </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="Esri.WorldImagery">
+        <LayersControl.Overlay name="Esri.WorldImagery">
           <TileLayer
             attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
           />
-        </LayersControl.BaseLayer>
-        <LayersControl.Overlay name="Annotion.TianDiTu">
-          <TileLayer url="https://t2.tianditu.gov.cn/DataServer?T=cia_w&X={x}&Y={y}&L={z}&tk=174705aebfe31b79b3587279e211cb9a" />
         </LayersControl.Overlay>
       </LayersControl>
     </MapWithGeoman>

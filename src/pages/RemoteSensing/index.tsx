@@ -82,7 +82,6 @@ const Page: React.FC = () => {
   };
 
   // For lines and Polygons only
-  // FIXME: The "Draw" have not attribute named "Polygon"
   const currentShape = () => {
     return leafletMapRef.current?.leafletElement.pm.Draw.getActiveShape();
   };
@@ -175,6 +174,16 @@ const Page: React.FC = () => {
     console.log('Update Layer on DB. Id:' + uid, json);
   }
 
+  const toolZoomIn = () => {
+    leafletMapRef.current?.leafletElement.zoomIn();
+    toggleTest();
+  };
+
+  const toolZoomOut = () => {
+    leafletMapRef.current?.leafletElement.zoomOut();
+    toggleTest();
+  };
+
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -254,8 +263,22 @@ const Page: React.FC = () => {
             Rubber
           </PPToolBarButton>
         </Popover>
-        <PPToolBarButton imgSrc="./pics/buttons/zoom_in.png">Zoom in</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/zoom_out.png">Zoom out</PPToolBarButton>
+        <PPToolBarButton
+          onClick={() => {
+            toolZoomIn();
+          }}
+          imgSrc="./pics/buttons/zoom_in.png"
+        >
+          Zoom in
+        </PPToolBarButton>
+        <PPToolBarButton
+          onClick={() => {
+            toolZoomOut();
+          }}
+          imgSrc="./pics/buttons/zoom_out.png"
+        >
+          Zoom out
+        </PPToolBarButton>
         <PPToolBarButton
           onClick={() => {
             saveGeoJson();

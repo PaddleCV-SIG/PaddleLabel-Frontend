@@ -23,10 +23,14 @@ function formatSize(size: number | undefined) {
 }
 
 const Component: React.FC<PPBrushProps> = (props) => {
-  const [size, setSize] = useState(formatSize(props.size));
+  const [size, setSizeRaw] = useState(formatSize(props.size));
+  const setSize = (destSize: number | undefined) => {
+    setSizeRaw(formatSize(destSize));
+  };
   useEffect(() => {
-    setSize(formatSize(props.size));
+    setSize(props.size);
   }, [props.size]);
+
   return (
     <Popover
       overlayClassName={styles.popover}

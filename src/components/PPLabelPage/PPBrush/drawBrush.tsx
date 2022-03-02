@@ -112,12 +112,10 @@ export default function (props: {
         lines: props.currentAnnotation.lines?.concat([line]),
       };
       props.onAnnotationModify(anno);
-      console.log(anno);
     }
   };
 
   const OnMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    // console.log(`onMouseMove, marking: ${marking}`);
     if (!currentTool || !props.currentAnnotation) return;
     let newPoints = [e.evt.offsetX, e.evt.offsetY];
     let newLines: PPLineType[] = [];

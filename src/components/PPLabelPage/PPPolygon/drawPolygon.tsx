@@ -24,7 +24,6 @@ function hexToRgb(hex: string) {
 }
 
 function createPolygon(color: string, points: number[]): PPPolygonType | undefined {
-  console.log(color, points);
   if (!color || !points) return undefined;
   const rgb = hexToRgb(color);
   if (!rgb) return undefined;
@@ -40,10 +39,6 @@ function createPolygon(color: string, points: number[]): PPPolygonType | undefin
     pointElements.push(<Circle x={x} y={point} radius={5} fill={color} />);
     x = undefined;
   });
-
-  console.log(rgb);
-  console.log(pointElements);
-
   return {
     color: color,
     points: points,
@@ -90,33 +85,40 @@ export default function (props: {
   onAnnotationAdd: (annotation: Annotation<PPPolygonType>) => void;
   onAnnotationModify: (annotation: Annotation<PPPolygonType>) => void;
 }) {
+  const startNewPolygon = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const polygon = createPolygon(props.currentLabel?.color, [e.evt.offsetX, e.evt.offsetY]);
+    if (!polygon) return;
+    props.onAnnotationAdd({
+      annotationId: getMaxId(props.annotations) + 1,
+      label: props.currentLabel,
+      lines: [polygon],
+    });
+  };
+
+  const addDotToPolygon = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!props.currentAnnotation) return;
+    const existLines = props.currentAnnotation.lines || [];
+    const polygon = createPolygon(
+      props.currentLabel?.color,
+      existLines[0]?.points.concat([e.evt.offsetX, e.evt.offsetY]),
+    );
+    if (!polygon) return;
+    const anno = {
+      annotationId: props.currentAnnotation.annotationId,
+      label: props.currentAnnotation.label,
+      lines: [polygon],
+    };
+    props.onAnnotationModify(anno);
+  };
+
   const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     console.log(props.currentTool);
     if (props.currentTool != 'polygon') return;
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
-      const polygon = createPolygon(props.currentLabel?.color, [e.evt.offsetX, e.evt.offsetY]);
-      if (!polygon) return;
-      props.onAnnotationAdd({
-        annotationId: getMaxId(props.annotations) + 1,
-        label: props.currentLabel,
-        lines: [polygon],
-      });
+      startNewPolygon(e);
     } else {
-      // Add a dot, add point to this line
-      const existLines = props.currentAnnotation?.lines || [];
-      const polygon = createPolygon(
-        props.currentLabel?.color,
-        existLines[0]?.points.concat([e.evt.offsetX, e.evt.offsetY]),
-      );
-      if (!polygon) return;
-      const anno = {
-        annotationId: props.currentAnnotation.annotationId,
-        label: props.currentAnnotation.label,
-        lines: [polygon],
-      };
-      props.onAnnotationModify(anno);
-      console.log(anno);
+      addDotToPolygon(e);
     }
   };
 
