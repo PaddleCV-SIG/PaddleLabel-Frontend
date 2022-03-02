@@ -6,14 +6,14 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import type { Label } from '@/models/label';
-import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
-import type { Annotation } from '@/models/annotation';
 import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
 import PPRGBSetting from '@/components/PPRS/PPRGBSetting';
 import PPMapTrial from '@/components/PPMapTrial';
 import type { Map } from 'react-leaflet';
+import PPGeoAnnotationList from '@/components/PPLabelPage/PPGeoAnnotationList';
+import operation from './operation';
 
 export type ToolType =
   | 'polygon'
@@ -28,161 +28,38 @@ export type ToolType =
   | 'Rectangle'
   | 'Polygon'
   | undefined;
-export type ToolType2 = undefined;
+
+export type GeojsonCollection = {
+  type: 'FeatureCollection';
+  features: GeojsonFeatureObject[];
+};
+
+export type GeojsonFeatureObject = {
+  type: 'Feature';
+  properties: {
+    annotationId: number;
+    labelName: string;
+    stroke: string;
+  };
+  geometry: {
+    type: ToolType;
+    coordinates: [any];
+  };
+};
 
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>();
-  const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
-  const [polyVisable, setPolyVis] = useState(false);
+  const [annotations, setAnnotations] = useState<GeojsonCollection>({
+    type: 'FeatureCollection',
+    features: [],
+  });
   //const [brushSize, setBrushSize] = useState(10);
 
-  //const dr = draw({ currentLabel: currentLabel, brushSize: brushSize });
-  // TODO: How to click dr
+  console.log(`rs is re-rendering! currentLabel: ${JSON.stringify(currentLabel)}`);
 
   const leafletMapRef = React.useRef<Map>(null);
-
-  const toggleTest = () => {
-    const drawToggleCheck = leafletMapRef.current?.leafletElement.pm.globalDrawModeEnabled();
-    console.log(drawToggleCheck);
-  };
-
-  // const RSGGG = () => {
-  //   leafletMapRef.current?.leafletElement.on('pm:edit', (e: any) => {
-  //     setPolyVis(false);
-  //     console.log(e);
-  //     console.log('HIIIII');
-  //   });
-  // };
-
-  // Everytime currentTool changes, react will rerender this component(aka re-call Page() function to generate)
-  // This means Page() function will always be called with currentTool's latest value.
-  function RSDraw(RScurrentTool: any) {
-    setPolyVis(true);
-    if (RScurrentTool) {
-      leafletMapRef.current?.leafletElement.pm.enableDraw(RScurrentTool);
-      // console.log('drawTools: ', RScurrentTool);
-      leafletMapRef.current?.leafletElement.pm.setPathOptions({
-        color: 'orange',
-        fillColor: 'green',
-        fillOpacity: 0.4,
-      });
-      toggleTest();
-    } else {
-      leafletMapRef.current?.leafletElement.pm.disableDraw(RScurrentTool);
-      setPolyVis(false);
-      toggleTest();
-    }
-  }
-
-  const RSDrawDisable = (RScurrentTool: any) => {
-    leafletMapRef.current?.leafletElement.pm.disableDraw(RScurrentTool);
-    setPolyVis(false);
-    toggleTest();
-  };
-
-  // For lines and Polygons only
-  const currentShape = () => {
-    return leafletMapRef.current?.leafletElement.pm.Draw.getActiveShape();
-  };
-
-  const removeLastVertex = () => {
-    if (currentShape() == 'Polygon') {
-      leafletMapRef.current?.leafletElement.pm.Draw.Polygon._removeLastVertex();
-      toggleTest();
-    } else {
-      toggleTest();
-      setPolyVis(false);
-    }
-  };
-
-  const moveShape = () => {
-    leafletMapRef.current?.leafletElement.pm.toggleGlobalDragMode();
-    toggleTest();
-  };
-
-  const finishShape = () => {
-    if (currentShape() == 'Polygon') {
-      leafletMapRef.current?.leafletElement.pm.Draw.Polygon._finishShape();
-      toggleTest();
-      setPolyVis(false);
-    } else {
-      toggleTest();
-      setPolyVis(false);
-    }
-  };
-
-  const removeShape = () => {
-    leafletMapRef.current?.leafletElement.pm.enableGlobalRemovalMode();
-    toggleTest();
-  };
-
-  const editMode = () => {
-    leafletMapRef.current?.leafletElement.pm.toggleGlobalEditMode();
-    toggleTest();
-    setPolyVis(false);
-  };
-
-  const saveGeoJson = () => {
-    console.log(leafletMapRef.current?.leafletElement.pm.getGeomanDrawLayers(true));
-    setPolyVis(false);
-  };
-
-  const [uids, setUids] = React.useState([]);
-
-  const onShapeCreate = (e: any) => {
-    enterUid(e.layer);
-    e.layer.bindPopup('Label: ' + e.layer._uid).openPopup();
-    setPolyVis(false);
-
-    storeOnDb(e.layer);
-  };
-  const onShapeEdit = (e: any) => {
-    updateOnDb(e.layer);
-    console.log(e);
-  };
-
-  function enterUid(layer: any) {
-    const p = prompt('Please enter a Unique Id');
-    if (!p) {
-      alert('Nothing entered, layer deleted ...');
-      layer.remove();
-      return;
-    } else if (uids[p]) {
-      alert('Id already used, add another one');
-      enterUid(layer);
-      return;
-    } else {
-      layer._uid = p;
-      uids[p] = layer;
-      setUids(uids);
-    }
-  }
-  function storeOnDb(layer: any) {
-    const uid = layer._uid;
-    const json = layer.toGeoJSON();
-    json.properties = {
-      LabelID: Number(uid),
-    };
-    console.log('Store Layer on DB. Id:' + uid, json);
-    console.log(JSON.stringify(json));
-  }
-
-  function updateOnDb(layer: any) {
-    const uid = layer._uid;
-    const json = layer.toGeoJSON();
-    console.log('Update Layer on DB. Id:' + uid, json);
-  }
-
-  const toolZoomIn = () => {
-    leafletMapRef.current?.leafletElement.zoomIn();
-    toggleTest();
-  };
-
-  const toolZoomOut = () => {
-    leafletMapRef.current?.leafletElement.zoomOut();
-    toggleTest();
-  };
+  const dr = operation({ leafletMapRef, currentLabel, setAnnotations, annotations });
 
   return (
     <PPLabelPageContainer className={styles.segment}>
@@ -193,14 +70,14 @@ const Page: React.FC = () => {
         <Popover
           placement="rightTop"
           // title="Polygon Edit"
-          visible={polyVisable}
+          visible={dr.polyVisable}
           content={
             <>
               <Space>
                 <Button
                   type="primary"
                   onClick={() => {
-                    finishShape();
+                    dr.finishShape();
                   }}
                 >
                   Finish
@@ -208,7 +85,7 @@ const Page: React.FC = () => {
                 <Button
                   type="primary"
                   onClick={() => {
-                    removeLastVertex();
+                    dr.removeLastVertex();
                   }}
                 >
                   Remove Last Vertex
@@ -217,7 +94,7 @@ const Page: React.FC = () => {
                   <Button
                     type="primary"
                     onClick={() => {
-                      RSDrawDisable(currentShape());
+                      dr.RSDrawDisable(dr.currentShape());
                     }}
                   >
                     Cancel
@@ -233,7 +110,7 @@ const Page: React.FC = () => {
             imgSrc="./pics/buttons/polygon.png"
             onClick={() => {
               setCurrentTool('Polygon');
-              RSDraw('Polygon');
+              dr.RSDraw('Polygon');
             }}
           >
             Polygon
@@ -241,7 +118,7 @@ const Page: React.FC = () => {
         </Popover>
         <PPToolBarButton
           onClick={() => {
-            editMode();
+            dr.editMode();
           }}
           imgSrc="./pics/buttons/brush.png"
         >
@@ -257,7 +134,7 @@ const Page: React.FC = () => {
           <PPToolBarButton
             imgSrc="./pics/buttons/rubber.png"
             onClick={() => {
-              removeShape();
+              dr.removeShape();
             }}
           >
             Rubber
@@ -265,7 +142,7 @@ const Page: React.FC = () => {
         </Popover>
         <PPToolBarButton
           onClick={() => {
-            toolZoomIn();
+            dr.toolZoomIn();
           }}
           imgSrc="./pics/buttons/zoom_in.png"
         >
@@ -273,7 +150,7 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton
           onClick={() => {
-            toolZoomOut();
+            dr.toolZoomOut();
           }}
           imgSrc="./pics/buttons/zoom_out.png"
         >
@@ -281,7 +158,7 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton
           onClick={() => {
-            saveGeoJson();
+            dr.saveGeoJson();
           }}
           imgSrc="./pics/buttons/save.png"
         >
@@ -300,8 +177,8 @@ const Page: React.FC = () => {
         {/* <PPMap /> */}
         <PPMapTrial
           leafletMapRef={leafletMapRef}
-          onShapeCreate={onShapeCreate}
-          onShapeEdit={onShapeEdit}
+          onShapeCreate={dr.onShapeCreate}
+          onShapeEdit={dr.onShapeEdit}
         />
       </div>
       <PPRSToolBar>
@@ -375,16 +252,15 @@ const Page: React.FC = () => {
           selectedLabel={currentLabel}
           onLabelSelect={(label) => {
             setCurrentLabel(label);
+            console.log(label);
           }}
           onLabelModify={() => {}}
           onLabelDelete={() => {}}
           onLabelAdd={() => {}}
         />
-        <PPAnnotationList
-          selectedAnnotation={currentAnnotation}
-          onAnnotationSelect={(annotation) => {
-            setCurrentAnnotation(annotation);
-          }}
+        <PPGeoAnnotationList
+          annotations={annotations}
+          onAnnotationSelect={() => {}}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
           onAnnotationDelete={() => {}}

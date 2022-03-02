@@ -1,0 +1,64 @@
+@import (reference) '~antd/es/style/themes/index';
+
+.listItem {
+  :global {
+    .ant-space-item {
+      position: relative;
+    }
+  }
+  .eye {
+    display: block;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-repeat: no-repeat;
+    background-size: 1.5rem 1.5rem;
+  }
+  .delete {
+    display: block;
+    width: 1.1rem;
+    height: 1.1rem;
+    background-image: url('../../../../../public/pics/delete.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 0.9rem 0.9rem;
+  }
+  .delete:hover {
+    background-image: url('../../../../../public/pics/delete_clicked.png');
+  }
+  .roundBall {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-left: 0.375rem;
+    background-size: 100% 100%;
+    border-radius: 50%;
+  }
+  .popover {
+    top: 1.125rem !important;
+    padding: 0;
+    :global {
+      .ant-popover-inner {
+        background: none;
+        border: none;
+        box-shadow: none;
+      }
+      .ant-popover-arrow {
+        top: 0.25rem;
+      }
+    }
+  }
+  .annotationId {
+    margin-right: 12px;
+    font-size: 12px;
+  }
+  .labelName {
+    margin-right: 6px;
+    padding-right: 6px;
+    padding-left: 6px;
+    border: 1px solid #000;
+    border-radius: 4px;
+  }
+}
+
+.listItemActive {
+  background-color: #a9aee1;
+}
