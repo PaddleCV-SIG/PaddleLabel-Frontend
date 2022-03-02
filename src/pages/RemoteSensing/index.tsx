@@ -82,7 +82,6 @@ const Page: React.FC = () => {
   };
 
   // For lines and Polygons only
-  // FIXME: The "Draw" have not attribute named "Polygon"
   const currentShape = () => {
     return leafletMapRef.current?.leafletElement.pm.Draw.getActiveShape();
   };
