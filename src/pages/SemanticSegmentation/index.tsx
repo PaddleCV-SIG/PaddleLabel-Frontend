@@ -5,6 +5,7 @@ import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer'
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPBrush from '@/components/PPLabelPage/PPBrush';
+import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import type { Label } from '@/models/label';
@@ -96,7 +97,6 @@ const Page: React.FC = () => {
         >
           Brush
         </PPBrush>
-
         <PPBrush
           size={brushSize}
           active={currentTool == 'rubber'}
@@ -122,6 +122,9 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/prev.png">Undo</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/next.png">Redo</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
+        <PPSetButton imgSrc="./pics/buttons/threshold.png">Segment Threshold</PPSetButton>
+        <PPSetButton imgSrc="./pics/buttons/alpha.png">Diaphaneity</PPSetButton>
+        <PPSetButton imgSrc="./pics/buttons/radius.png">Visual Radius</PPSetButton>
       </PPToolBar>
       <div className={styles.mainStage}>
         <PPStage
