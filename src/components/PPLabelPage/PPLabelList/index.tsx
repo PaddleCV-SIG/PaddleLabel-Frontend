@@ -1,6 +1,6 @@
 import { List } from 'antd';
 import { Button } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './index.less';
 import PPLabelListItem from './PPLabelListItem';
 import PPAddLabelModal from '../PPAddLabelModal';
@@ -28,21 +28,6 @@ const mockedLabels: Label[] = [
 const Component: React.FC<PPLabelListProps> = (props) => {
   const [labels, setLabels] = useState(mockedLabels);
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
-
-  // console.log(
-  //   `PPLabelList rendered! props:${JSON.stringify(props)}, labels:${JSON.stringify(
-  //     labels,
-  //   )}, addModalVisible:${addModalVisible}`,
-  // );
-
-  useEffect(() => {
-    // console.log(
-    //   `PPLabelList re-rendered! props:${JSON.stringify(props)}, labels:${JSON.stringify(labels)}`,
-    // );
-    if (!props.selectedLabel) {
-      props.onLabelSelect(labels[0]);
-    }
-  }, [labels, props]);
 
   return (
     <>
