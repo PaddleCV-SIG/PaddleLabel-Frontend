@@ -1,4 +1,4 @@
-import { Col, Form, Space, Row } from 'antd';
+import { Col, Form, Space, Row, Alert } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React from 'react';
 import styles from './index.less';
@@ -36,7 +36,7 @@ export type PPCardProps = {
   innerStyle?: React.CSSProperties;
 };
 
-const PPCreater: React.FC<PPCardProps> = (props) => {
+const PPSegMode: React.FC<PPCardProps> = (props) => {
   const [form] = Form.useForm();
   return (
     <div className={styles.shadow} style={props.style}>
@@ -45,17 +45,24 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
           <Form form={form} layout="horizontal" size="large" style={{ marginTop: '5.69rem' }}>
             <Form.Item
               wrapperCol={{
-                span: 20,
-                offset: 4,
+                span: 16,
+                offset: 3,
               }}
             >
-              Semantic segmentation annotation provides a variety of vertical class directions,
-              please select
+              <Space>
+                <Alert
+                  className={styles.info}
+                  message="Semantic segmentation annotation provides a variety of vertical class directions,
+                please select."
+                  type="info"
+                  style={{ height: '3.13rem', width: '38.75rem' }}
+                />
+              </Space>
             </Form.Item>
             <Form.Item
               wrapperCol={{
-                span: 20,
-                offset: 4,
+                span: 16,
+                offset: 3,
               }}
             >
               <Space size={20}>
@@ -104,4 +111,4 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
   );
 };
 
-export default PPCreater;
+export default PPSegMode;
