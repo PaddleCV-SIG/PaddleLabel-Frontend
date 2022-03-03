@@ -52,6 +52,7 @@ export default {
   'menu.project-creation': 'إنشاء مشروع',
   'menu.classification-project': 'إنشاء تصنيف الصور',
   'menu.image_classification-sample': 'تصنيف الصور عينة',
+  'menu.segmentation-mode': 'تجزئة الدلالي نمط',
   'menu.segmentation-project': 'إنشاء مشروع تجزئة الدلالي',
   'menu.semantic_segmentation-sample': 'على سبيل المثال تجزئة الدلالي',
   'menu.detection-project': 'موضوع الكشف عن إنشاء المشروع',

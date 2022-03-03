@@ -53,6 +53,7 @@ export default {
   'menu.classification-project': 'Image Classification Project Creation',
   'menu.image_classification-sample': 'Image Classification Sample',
   'menu.segmentation-project': 'Semantic Segmentation Project Creation',
+  'menu.segmentation-mode': 'Semantic Segmentation Mode',
   'menu.semantic_segmentation-sample': 'Semantic Segmentation Sample',
   'menu.detection-project': 'Object Detection Project Creation',
   'menu.object_detection-sample': 'Object Detection Sample',

@@ -53,6 +53,7 @@ export default {
   'menu.classification-project': '圖像分類項目創建',
   'menu.image_classification-sample': '圖像分類',
   'menu.segmentation-project': '語義分割項目創建',
+  'menu.segmentation-mode': '語義分割模式',
   'menu.semantic_segmentation-sample': '語義分割',
   'menu.detection-project': '目標檢測項目創建',
   'menu.object_detection-sample': '目標檢測',
