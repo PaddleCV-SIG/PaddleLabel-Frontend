@@ -117,7 +117,6 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
-            setCurrentTool(undefined);
             setScale(scale + 0.1);
           }}
         >
@@ -126,7 +125,6 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
           onClick={() => {
-            setCurrentTool(undefined);
             setScale(scale - 0.1);
           }}
         >

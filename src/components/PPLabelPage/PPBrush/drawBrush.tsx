@@ -79,7 +79,7 @@ export default function (props: {
   // console.log('drawBrush');
   const [currentTool, setCurrentTool] = useState<ToolType>();
 
-  const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
     console.log(props.currentTool);
     if (props.currentTool != 'brush' && props.currentTool != 'rubber') return;
     // console.log(
@@ -87,11 +87,13 @@ export default function (props: {
     //     props.currentAnnotation,
     //   )}. Annotations: ${JSON.stringify(props.annotations)}`,
     // );
+    const mouseX = e.evt.offsetX / scale;
+    const mouseY = e.evt.offsetY / scale;
     const tool = getTool(props.currentTool, e.evt.button);
     const line = createLine(
       props.brushSize || 10,
       props.currentLabel?.color,
-      [e.evt.offsetX, e.evt.offsetY, e.evt.offsetX, e.evt.offsetY],
+      [mouseX, mouseY, mouseX, mouseY],
       tool,
     );
     if (!line) return;
@@ -115,9 +117,11 @@ export default function (props: {
     }
   };
 
-  const OnMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const OnMouseMove = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
     if (!currentTool || !props.currentAnnotation) return;
-    let newPoints = [e.evt.offsetX, e.evt.offsetY];
+    const mouseX = e.evt.offsetX / scale;
+    const mouseY = e.evt.offsetY / scale;
+    let newPoints = [mouseX, mouseY];
     let newLines: PPLineType[] = [];
     if (props.currentAnnotation?.lines) {
       newPoints =

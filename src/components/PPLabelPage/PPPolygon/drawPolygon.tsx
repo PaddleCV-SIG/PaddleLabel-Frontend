@@ -85,8 +85,13 @@ export default function (props: {
   onAnnotationAdd: (annotation: Annotation<PPPolygonType>) => void;
   onAnnotationModify: (annotation: Annotation<PPPolygonType>) => void;
 }) {
-  const startNewPolygon = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    const polygon = createPolygon(props.currentLabel?.color, [e.evt.offsetX, e.evt.offsetY]);
+  const startNewPolygon = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
+    const mouseX = e.evt.offsetX / scale;
+    const mouseY = e.evt.offsetY / scale;
+    console.log(
+      `offsetX: ${e.evt.offsetX}, offsetY: ${e.evt.offsetY}, mouseX: ${mouseX}, mouseY: ${mouseY}`,
+    );
+    const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY]);
     if (!polygon) return;
     props.onAnnotationAdd({
       annotationId: getMaxId(props.annotations) + 1,
@@ -95,12 +100,17 @@ export default function (props: {
     });
   };
 
-  const addDotToPolygon = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const addDotToPolygon = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
     if (!props.currentAnnotation) return;
+    const mouseX = e.evt.offsetX / scale;
+    const mouseY = e.evt.offsetY / scale;
+    console.log(
+      `offsetX: ${e.evt.offsetX}, offsetY: ${e.evt.offsetY}, mouseX: ${mouseX}, mouseY: ${mouseY}`,
+    );
     const existLines = props.currentAnnotation.lines || [];
     const polygon = createPolygon(
       props.currentLabel?.color,
-      existLines[0]?.points.concat([e.evt.offsetX, e.evt.offsetY]),
+      existLines[0]?.points.concat([mouseX, mouseY]),
     );
     if (!polygon) return;
     const anno = {
@@ -111,14 +121,14 @@ export default function (props: {
     props.onAnnotationModify(anno);
   };
 
-  const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
     console.log(props.currentTool);
     if (props.currentTool != 'polygon') return;
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
-      startNewPolygon(e);
+      startNewPolygon(e, scale);
     } else {
-      addDotToPolygon(e);
+      addDotToPolygon(e, scale);
     }
   };
 

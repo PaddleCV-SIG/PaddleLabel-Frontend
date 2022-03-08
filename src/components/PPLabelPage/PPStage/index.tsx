@@ -13,9 +13,9 @@ const imgSrc = './pics/basketball.jpg';
 export type PPStageProps = {
   scale: number;
   annotations: Annotation<any>[];
-  onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
-  onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
-  onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
+  onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
+  onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
+  onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
@@ -37,13 +37,13 @@ const Component: React.FC<PPStageProps> = (props) => {
         scaleX={props.scale}
         scaleY={props.scale}
         onMouseDown={(e) => {
-          if (props.onMouseDown) props.onMouseDown(e);
+          if (props.onMouseDown) props.onMouseDown(e, props.scale);
         }}
         onMouseMove={(e) => {
-          if (props.onMouseMove) props.onMouseMove(e);
+          if (props.onMouseMove) props.onMouseMove(e, props.scale);
         }}
         onMouseUp={(e) => {
-          if (props.onMouseUp) props.onMouseUp(e);
+          if (props.onMouseUp) props.onMouseUp(e, props.scale);
         }}
         onContextMenu={(e) => {
           // Prevent right-click menu
