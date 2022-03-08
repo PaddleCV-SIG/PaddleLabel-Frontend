@@ -149,23 +149,19 @@ const Welcome: React.FC = () => {
           <PPBlock title="Sample Project" style={{ height: 430 }}>
             <Row>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/classification.jpg'}>Image Classification Example</PPCard>
+                <PPCard imgSrc={'./pics/classification.jpg'}>Image Classification</PPCard>
               </PPOverlapCol>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/object_detection.jpg'}>Object Detection Example</PPCard>
+                <PPCard imgSrc={'./pics/object_detection.jpg'}>Object Detection</PPCard>
               </PPOverlapCol>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/instance_segmentation.jpg'}>
-                  Instance Segmentation Example
-                </PPCard>
+                <PPCard imgSrc={'./pics/instance_segmentation.jpg'}>Instance Segmentation</PPCard>
               </PPOverlapCol>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/semantic_segmentation.jpg'}>
-                  Semantic Segmentation Example
-                </PPCard>
+                <PPCard imgSrc={'./pics/semantic_segmentation.jpg'}>Semantic Segmentation</PPCard>
               </PPOverlapCol>
               <PPOverlapCol span={4}>
-                <PPCard imgSrc={'./pics/keypoint_detection.jpg'}>Keypoint Detection Example</PPCard>
+                <PPCard imgSrc={'./pics/keypoint_detection.jpg'}>Keypoint Detection</PPCard>
               </PPOverlapCol>
             </Row>
           </PPBlock>
