@@ -23,6 +23,7 @@ const Page: React.FC = () => {
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
   const [brushSize, setBrushSize] = useState(10);
+  const [scale, setScale] = useState(1);
 
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
     setCurrentAnnotationRaw(anno);
@@ -113,8 +114,24 @@ const Page: React.FC = () => {
         >
           Rubber
         </PPBrush>
-        <PPToolBarButton imgSrc="./pics/buttons/zoom_in.png">Zoom in</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/zoom_out.png">Zoom out</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/zoom_in.png"
+          onClick={() => {
+            setCurrentTool(undefined);
+            setScale(scale + 0.1);
+          }}
+        >
+          Zoom in
+        </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/zoom_out.png"
+          onClick={() => {
+            setCurrentTool(undefined);
+            setScale(scale - 0.1);
+          }}
+        >
+          Zoom out
+        </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
@@ -128,6 +145,7 @@ const Page: React.FC = () => {
       </PPToolBar>
       <div className={styles.mainStage}>
         <PPStage
+          scale={scale}
           annotations={annotations}
           onMouseDown={dr.onMouseDown}
           onMouseMove={dr.onMouseMove}
@@ -165,7 +183,7 @@ const Page: React.FC = () => {
           }}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
-          onAnnotationDelete={(annotation: Annotation) => {
+          onAnnotationDelete={(annotation: Annotation<any>) => {
             setAnnotations(annotations.filter((x) => x.annotationId != annotation.annotationId));
             setCurrentAnnotation(undefined);
           }}

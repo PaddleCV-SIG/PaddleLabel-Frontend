@@ -11,6 +11,7 @@ import styles from './index.less';
 const imgSrc = './pics/basketball.jpg';
 
 export type PPStageProps = {
+  scale: number;
   annotations: Annotation<any>[];
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>) => void;
@@ -24,11 +25,17 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   // console.log(`PPStage. ${JSON.stringify(props.elements)}`);
   return (
-    <Stage width={imageWidth} height={imageHeight} className={styles.stage}>
-      <Layer>
+    <Stage
+      width={imageWidth * props.scale}
+      height={imageHeight * props.scale}
+      className={styles.stage}
+    >
+      <Layer scaleX={props.scale} scaleY={props.scale}>
         <Image image={image} />
       </Layer>
       <Layer
+        scaleX={props.scale}
+        scaleY={props.scale}
         onMouseDown={(e) => {
           if (props.onMouseDown) props.onMouseDown(e);
         }}
