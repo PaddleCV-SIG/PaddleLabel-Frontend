@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Progress } from 'antd';
+import { Button, Popover, Progress } from 'antd';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -14,6 +14,7 @@ import type { Annotation } from '@/models/annotation';
 import PPPolygon from '@/components/PPLabelPage/PPPolygon';
 import drawBrush from '@/components/PPLabelPage/PPBrush/drawBrush';
 import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
+import PPMedicalSetting from '@/components/PPMedical/PPMedicalSetting';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
@@ -23,12 +24,7 @@ const Page: React.FC = () => {
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
   const [brushSize, setBrushSize] = useState(10);
-  const [scale, setScaleRaw] = useState(1);
-  const setScale = (size: number) => {
-    if (!size) setScaleRaw(1);
-    if (size < 0.1 || size > 3.0) setScaleRaw(1);
-    else setScaleRaw(size);
-  };
+  const [scale, setScale] = useState(1);
 
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
     setCurrentAnnotationRaw(anno);
@@ -169,6 +165,18 @@ const Page: React.FC = () => {
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
           Visual Radius
         </PPSetButton>
+        <Popover
+          overlayInnerStyle={{ borderRadius: '0.5rem' }}
+          placement="leftTop"
+          title={'Setting of medical'}
+          content={<PPMedicalSetting />}
+          trigger={'hover'}
+        >
+          {' '}
+          <PPToolBarButton imgSrc="./pics/buttons/medical_setting.png">
+            Medical Setting
+          </PPToolBarButton>
+        </Popover>
       </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.determinOutline}>

@@ -9,7 +9,7 @@ import type { Label } from '@/models/label';
 // import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 // import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
-import PPRGBSetting from '@/components/PPRS/PPRGBSetting';
+import PPCDRGBSetting from '@/components/PPRS/PPCDRGBSetting';
 import PPGrids from '@/components/PPRS/PPGrids';
 import PPMapTrial from '@/components/PPMapTrial';
 import type { Map } from 'react-leaflet';
@@ -175,6 +175,7 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/next.png">Redo</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
+      {/* FIXME: split map */}
       <div className={styles.mainStage}>
         <div className={styles.draw}>
           <PPMapTrial
@@ -220,7 +221,7 @@ const Page: React.FC = () => {
           overlayInnerStyle={{ borderRadius: '0.5rem' }}
           placement="leftTop"
           title={'Setting of remote sensing'}
-          content={<PPRGBSetting />}
+          content={<PPCDRGBSetting />}
           trigger={currentTool == 'colorgun' ? 'click' : 'hover'}
         >
           {' '}
