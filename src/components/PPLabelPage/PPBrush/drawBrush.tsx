@@ -2,7 +2,7 @@ import type { Annotation } from '@/models/annotation';
 import type { Label } from '@/models/label';
 import type { ToolType } from '@/pages/SemanticSegmentation';
 import type Konva from 'konva';
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { useState } from 'react';
 import { Line } from 'react-konva';
 
@@ -11,7 +11,6 @@ export type PPLineType = {
   color: string;
   points: number[];
   tool: ToolType;
-  element?: React.ReactElement;
 };
 
 function createLine(
@@ -26,17 +25,29 @@ function createLine(
     color: color,
     points: points,
     tool: tool,
-    element: (
-      <Line
-        stroke={color}
-        strokeWidth={width}
-        globalCompositeOperation={tool === 'brush' ? 'source-over' : 'destination-out'}
-        lineCap="round"
-        points={points}
-        tension={0.01}
-      />
-    ),
   };
+}
+
+function createLines(annotations?: Annotation<PPLineType>[]): ReactElement[] {
+  if (!annotations) return [<></>];
+  const res = [];
+  for (const annotation of annotations) {
+    if (!annotation || !annotation.lines) continue;
+    for (const line of annotation.lines) {
+      if (!line.width || !line.color || !line.points || !line.tool) continue;
+      res.push(
+        <Line
+          stroke={line.color}
+          strokeWidth={line.width}
+          globalCompositeOperation={line.tool === 'brush' ? 'source-over' : 'destination-out'}
+          lineCap="round"
+          points={line.points}
+          tension={0.01}
+        />,
+      );
+    }
+  }
+  return res;
 }
 
 /**
@@ -154,5 +165,6 @@ export default function (props: {
     onMouseDown: OnMouseDown,
     onMouseMove: OnMouseMove,
     onMouseUp: OnMouseUp,
+    createElementsFunc: createLines,
   };
 }

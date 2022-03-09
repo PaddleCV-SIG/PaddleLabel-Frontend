@@ -9,7 +9,6 @@ import { Circle, Line } from 'react-konva';
 export type PPPolygonType = {
   color: string;
   points: number[];
-  element?: React.ReactElement;
 };
 
 function hexToRgb(hex: string) {
@@ -25,24 +24,35 @@ function hexToRgb(hex: string) {
 
 function createPolygon(color: string, points: number[]): PPPolygonType | undefined {
   if (!color || !points) return undefined;
-  const rgb = hexToRgb(color);
-  if (!rgb) return undefined;
-
-  // Create dots
-  let x: number | undefined = undefined;
-  const pointElements: ReactElement[] = [];
-  points.forEach((point) => {
-    if (!x) {
-      x = point;
-      return;
-    }
-    pointElements.push(<Circle x={x} y={point} radius={5} fill={color} />);
-    x = undefined;
-  });
   return {
     color: color,
     points: points,
-    element: (
+  };
+}
+
+function createPolygons(annotations?: Annotation<PPPolygonType>[]): ReactElement[] {
+  if (!annotations) return [<></>];
+  const res = [];
+  for (const annotation of annotations) {
+    if (!annotation || !annotation.lines || !annotation.lines[0]) continue;
+    const points = annotation.lines[0].points;
+    const color = annotation.lines[0].color;
+    const rgb = hexToRgb(color);
+    if (!rgb) continue;
+
+    // Create dots
+    let x: number | undefined = undefined;
+    const pointElements: ReactElement[] = [];
+    points.forEach((point) => {
+      if (!x) {
+        x = point;
+        return;
+      }
+      pointElements.push(<Circle x={x} y={point} radius={5} fill={color} />);
+      x = undefined;
+    });
+    // Create polygon
+    res.push(
       <>
         <Line
           stroke={color}
@@ -55,9 +65,10 @@ function createPolygon(color: string, points: number[]): PPPolygonType | undefin
           fill={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`}
         />
         {pointElements}
-      </>
-    ),
-  };
+      </>,
+    );
+  }
+  return res;
 }
 
 /**
@@ -88,9 +99,6 @@ export default function (props: {
   const startNewPolygon = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
     const mouseX = e.evt.offsetX / scale;
     const mouseY = e.evt.offsetY / scale;
-    console.log(
-      `offsetX: ${e.evt.offsetX}, offsetY: ${e.evt.offsetY}, mouseX: ${mouseX}, mouseY: ${mouseY}`,
-    );
     const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY]);
     if (!polygon) return;
     props.onAnnotationAdd({
@@ -104,9 +112,6 @@ export default function (props: {
     if (!props.currentAnnotation) return;
     const mouseX = e.evt.offsetX / scale;
     const mouseY = e.evt.offsetY / scale;
-    console.log(
-      `offsetX: ${e.evt.offsetX}, offsetY: ${e.evt.offsetY}, mouseX: ${mouseX}, mouseY: ${mouseY}`,
-    );
     const existLines = props.currentAnnotation.lines || [];
     const polygon = createPolygon(
       props.currentLabel?.color,
@@ -122,7 +127,6 @@ export default function (props: {
   };
 
   const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
-    console.log(props.currentTool);
     if (props.currentTool != 'polygon') return;
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
@@ -140,5 +144,6 @@ export default function (props: {
     onMouseDown: OnMouseDown,
     onMouseMove: () => {},
     onMouseUp: OnMouseUp,
+    createElementsFunc: createPolygons,
   };
 }
