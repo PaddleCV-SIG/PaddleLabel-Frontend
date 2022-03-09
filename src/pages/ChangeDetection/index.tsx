@@ -9,7 +9,7 @@ import type { Label } from '@/models/label';
 // import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 // import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
-import PPRGBSetting from '@/components/PPRS/PPRGBSetting';
+import PPCDRGBSetting from '@/components/PPRS/PPCDRGBSetting';
 import PPGrids from '@/components/PPRS/PPGrids';
 import PPMapTrial from '@/components/PPMapTrial';
 import type { Map } from 'react-leaflet';
@@ -176,12 +176,21 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div className={styles.mainStage}>
-        {/* <PPMap /> */}
+        {/* FIXME: split 2 mpa */}
+        {/* <div className={styles.halfMap}> */}
         <PPMapTrial
           leafletMapRef={leafletMapRef}
           onShapeCreate={dr.onShapeCreate}
           onShapeEdit={dr.onShapeEdit}
         />
+        {/* </div> */}
+        {/* <div className={styles.halfMap}>
+          <PPMapTrial
+            leafletMapRef={leafletMapRef}
+            onShapeCreate={dr.onShapeCreate}
+            onShapeEdit={dr.onShapeEdit}
+          />
+        </div> */}
       </div>
       <PPToolBar disLoc="right">
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
@@ -214,7 +223,7 @@ const Page: React.FC = () => {
           overlayInnerStyle={{ borderRadius: '0.5rem' }}
           placement="leftTop"
           title={'Setting of remote sensing'}
-          content={<PPRGBSetting />}
+          content={<PPCDRGBSetting />}
           trigger={currentTool == 'colorgun' ? 'click' : 'hover'}
         >
           {' '}

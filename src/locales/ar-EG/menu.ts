@@ -60,5 +60,6 @@ export default {
   'menu.keypoint-project': 'النقطة الرئيسية للكشف عن إنشاء المشروع',
   'menu.keypoint_detection': 'الكشف عن النقطة الرئيسية ',
   'menu.remote-sensing': 'الاستشعار عن بعد',
+  'menu.change-detection': 'الكشف عن التغيير',
   'menu.medical': 'الطبية',
 };

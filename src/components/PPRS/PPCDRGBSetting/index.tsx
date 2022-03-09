@@ -63,11 +63,43 @@ const component: React.FC<PPRGBSetting> = () => {
           </Dropdown>
         </Col>
       </Row>
+      <Row>
+        <Col className={styles.RSPop1}>
+          <span>R</span>
+        </Col>
+        <Col className={styles.RSPop2}>
+          <Dropdown overlay={menu}>
+            <Button style={{ width: '100%' }}>
+              Band <DownOutlined />
+            </Button>
+          </Dropdown>
+        </Col>
+        <Col className={styles.RSPop1}>
+          <span>G</span>
+        </Col>
+        <Col className={styles.RSPop2}>
+          <Dropdown overlay={menu}>
+            <Button style={{ width: '100%' }}>
+              Band <DownOutlined />
+            </Button>
+          </Dropdown>
+        </Col>
+        <Col className={styles.RSPop1}>
+          <span>B</span>
+        </Col>
+        <Col className={styles.RSPop2}>
+          <Dropdown overlay={menu}>
+            <Button style={{ width: '100%' }}>
+              Band <DownOutlined />
+            </Button>
+          </Dropdown>
+        </Col>
+      </Row>
       <Descriptions title="Data source information" column={1} bordered>
-        <Descriptions.Item label="FileName">A/XXX.tif</Descriptions.Item>
+        <Descriptions.Item label="FileName">A/XXX.tif B/XXX.tf</Descriptions.Item>
         <Descriptions.Item label="Row">1234</Descriptions.Item>
         <Descriptions.Item label="Column">897</Descriptions.Item>
-        <Descriptions.Item label="Bands">7</Descriptions.Item>
+        <Descriptions.Item label="Bands">7 7</Descriptions.Item>
         <Descriptions.Item label="DataType">UInt16</Descriptions.Item>
         <Descriptions.Item label="EPSG">7030</Descriptions.Item>
         <Descriptions.Item label="Unit">m</Descriptions.Item>

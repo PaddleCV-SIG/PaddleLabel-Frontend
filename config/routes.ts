@@ -75,14 +75,19 @@
     component: './KeypointDetection',
   },
   {
+    path: '/medical',
+    name: 'medical',
+    component: './Medical',
+  },
+  {
     path: '/remote_sensing',
     name: 'remote-sensing',
     component: './RemoteSensing',
   },
   {
-    path: '/medical',
-    name: 'medical',
-    component: './Medical',
+    path: '/change_detection',
+    name: 'change-detection',
+    component: './ChangeDetection',
   },
   // {
   //   path: '/admin',
