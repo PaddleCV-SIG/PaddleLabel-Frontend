@@ -8,11 +8,11 @@ const maxSize = 100;
 const defaultSize = 10;
 
 export type PPBrushProps = {
-  active?: boolean;
   size?: number;
   onClick?: React.MouseEventHandler<HTMLElement>;
   onChange?: (size: number) => void;
   imgSrc?: string;
+  disLoc?: string;
 };
 
 function formatSize(size: number | undefined) {
@@ -23,14 +23,18 @@ function formatSize(size: number | undefined) {
 }
 
 const Component: React.FC<PPBrushProps> = (props) => {
-  const [size, setSize] = useState(formatSize(props.size));
+  const [size, setSizeRaw] = useState(formatSize(props.size));
+  const setSize = (destSize: number | undefined) => {
+    setSizeRaw(formatSize(destSize));
+  };
   useEffect(() => {
-    setSize(formatSize(props.size));
+    setSize(props.size);
   }, [props.size]);
+
   return (
     <Popover
       overlayClassName={styles.popover}
-      placement="right"
+      placement={props.disLoc || 'right'}
       content={
         <>
           <Button
@@ -65,15 +69,11 @@ const Component: React.FC<PPBrushProps> = (props) => {
           </Button>
         </>
       }
-      trigger={props.active ? 'hover' : 'click'}
+      trigger={'hover'}
     >
       {' '}
-      <PPToolBarButton
-        active={props.active}
-        imgSrc={props.imgSrc || './pics/buttons/brush.png'}
-        onClick={props.onClick}
-      >
-        {props.children || 'Brush'}
+      <PPToolBarButton imgSrc={props.imgSrc} onClick={props.onClick}>
+        {props.children}
       </PPToolBarButton>
     </Popover>
   );

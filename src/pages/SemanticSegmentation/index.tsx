@@ -137,9 +137,6 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/prev.png">Undo</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/next.png">Redo</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
-        <PPSetButton imgSrc="./pics/buttons/threshold.png">Segment Threshold</PPSetButton>
-        <PPSetButton imgSrc="./pics/buttons/alpha.png">Diaphaneity</PPSetButton>
-        <PPSetButton imgSrc="./pics/buttons/radius.png">Visual Radius</PPSetButton>
       </PPToolBar>
       <div className={styles.mainStage}>
         <PPStage
@@ -150,6 +147,17 @@ const Page: React.FC = () => {
           onMouseUp={dr.onMouseUp}
         />
       </div>
+      <PPToolBar disLoc="right">
+        <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
+          Segment Threshold
+        </PPSetButton>
+        <PPSetButton imgSrc="./pics/buttons/alpha.png" disLoc="left">
+          Diaphaneity
+        </PPSetButton>
+        <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
+          Visual Radius
+        </PPSetButton>
+      </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.determinOutline}>
           <Button
