@@ -36,7 +36,7 @@
   },
   {
     path: '/image_classification',
-    name: 'image_classification-sample',
+    name: 'image_classification',
     component: './ImageClassification',
   },
   {
@@ -51,7 +51,7 @@
   },
   {
     path: '/semantic_segmentation',
-    name: 'semantic_segmentation-sample',
+    name: 'semantic_segmentation',
     component: './SemanticSegmentation',
   },
   {
@@ -61,7 +61,7 @@
   },
   {
     path: '/object_detection',
-    name: 'object_detection-sample',
+    name: 'object_detection',
     component: './ObjectDetection',
   },
   {
@@ -71,7 +71,7 @@
   },
   {
     path: '/keypoint_detection',
-    name: 'keypoint_detection-sample',
+    name: 'keypoint_detection',
     component: './KeypointDetection',
   },
   {
