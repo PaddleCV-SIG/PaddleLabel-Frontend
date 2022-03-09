@@ -12,7 +12,7 @@ const imgSrc = './pics/basketball.jpg';
 
 export type PPStageProps = {
   scale: number;
-  annotations: Annotation<any>[];
+  annotations?: Annotation<any>[];
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
@@ -51,7 +51,7 @@ const Component: React.FC<PPStageProps> = (props) => {
         }}
       >
         <Image image={image} />
-        {props.annotations.map((element, i) => {
+        {props.annotations?.map((element, i) => {
           return element.lines?.map((ele2, i2) => {
             return ele2.element;
           });
