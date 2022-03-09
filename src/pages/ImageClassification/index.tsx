@@ -7,6 +7,8 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import type { Label } from '@/models/label';
 
+export type ToolType = 'mover' | undefined;
+
 const Page: React.FC = () => {
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
   const [scale, setScale] = useState(1);
