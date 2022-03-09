@@ -60,4 +60,5 @@ export default {
   'menu.keypoint-project': '關鍵點檢測項目創建',
   'menu.keypoint_detection': '關鍵點檢測检测',
   'menu.remote-sensing': '遙感標注',
+  'menu.medical': '醫療標註',
 };

@@ -60,4 +60,5 @@ export default {
   'menu.keypoint-project': 'Keypoint Detection Project Creation',
   'menu.keypoint_detection': 'Keypoint Detection',
   'menu.remote-sensing': 'Remote Sensing',
+  'menu.medical': 'Medical',
 };

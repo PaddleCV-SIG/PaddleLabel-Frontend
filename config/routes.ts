@@ -79,6 +79,11 @@
     name: 'remote-sensing',
     component: './RemoteSensing',
   },
+  {
+    path: '/medical',
+    name: 'medical',
+    component: './Medical',
+  },
   // {
   //   path: '/admin',
   //   name: 'admin',
