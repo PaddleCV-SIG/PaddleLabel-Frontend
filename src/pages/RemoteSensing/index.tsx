@@ -6,14 +6,15 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import type { Label } from '@/models/label';
-import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
-import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
+// import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
+// import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
 import PPRGBSetting from '@/components/PPRS/PPRGBSetting';
 import PPMapTrial from '@/components/PPMapTrial';
 import type { Map } from 'react-leaflet';
 import PPGeoAnnotationList from '@/components/PPLabelPage/PPGeoAnnotationList';
 import operation from './operation';
+import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 
 export type ToolType =
   | 'polygon'
@@ -181,7 +182,7 @@ const Page: React.FC = () => {
           onShapeEdit={dr.onShapeEdit}
         />
       </div>
-      <PPRSToolBar>
+      {/* <PPRSToolBar>
         <Popover
           overlayInnerStyle={{ borderRadius: '0.5rem' }}
           placement="leftTop"
@@ -241,7 +242,69 @@ const Page: React.FC = () => {
             <h2>Grids</h2>
           </PPRSToolBarButton>
         </Popover>
-      </PPRSToolBar>
+      </PPRSToolBar> */}
+      <PPToolBar disLoc="right">
+        <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
+          Segment Threshold
+        </PPSetButton>
+        <PPSetButton imgSrc="./pics/buttons/alpha.png" disLoc="left">
+          Diaphaneity
+        </PPSetButton>
+        <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
+          Visual Radius
+        </PPSetButton>
+        <Popover
+          overlayInnerStyle={{ borderRadius: '0.5rem' }}
+          placement="leftTop"
+          title={'Setting of boundary simplification'}
+          content={<PPBoundarySimplify />}
+          trigger={currentTool == 'boundry' ? 'click' : 'hover'}
+        >
+          {' '}
+          <PPToolBarButton
+            imgSrc="./pics/buttons/border_simplify.png"
+            onClick={() => {
+              setCurrentTool('boundry');
+            }}
+          >
+            Boundary
+          </PPToolBarButton>
+        </Popover>
+        <Popover
+          overlayInnerStyle={{ borderRadius: '0.5rem' }}
+          placement="leftTop"
+          title={'Setting of remote sensing'}
+          content={<PPRGBSetting />}
+          trigger={currentTool == 'colorgun' ? 'click' : 'hover'}
+        >
+          {' '}
+          <PPToolBarButton
+            imgSrc="./pics/buttons/remote_sensing_setting.png"
+            onClick={() => {
+              setCurrentTool('colorgun');
+            }}
+          >
+            Remote Sensing
+          </PPToolBarButton>
+        </Popover>
+        <Popover
+          overlayInnerStyle={{ borderRadius: '0.5rem' }}
+          placement="leftTop"
+          title={'Switch grids'}
+          content="content"
+          trigger={currentTool == 'grid' ? 'click' : 'hover'}
+        >
+          {' '}
+          <PPToolBarButton
+            imgSrc="./pics/buttons/switch_grid.png"
+            onClick={() => {
+              setCurrentTool('grid');
+            }}
+          >
+            Grids
+          </PPToolBarButton>
+        </Popover>
+      </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.determinOutline}>
           <Button style={{ height: 40, fontSize: '0.75rem' }} type="primary" block>
