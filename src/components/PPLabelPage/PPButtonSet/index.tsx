@@ -33,7 +33,7 @@ const Component: React.FC<PPBrushProps> = (props) => {
 
   return (
     <Popover
-      overlayClassName={styles.popover}
+      overlayClassName={`${styles.popover} ${props.disLoc == 'left' ? styles.popoverLeft : ''}`}
       placement={props.disLoc || 'right'}
       content={
         <>
