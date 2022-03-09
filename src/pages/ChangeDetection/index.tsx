@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Popconfirm, Popover, Space } from 'antd';
+import { Button, Popconfirm, Popover, Progress, Space } from 'antd';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -175,22 +175,20 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/next.png">Redo</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
+      {/* FIXME: split map */}
       <div className={styles.mainStage}>
-        {/* FIXME: split 2 mpa */}
-        {/* <div className={styles.halfMap}> */}
-        <PPMapTrial
-          leafletMapRef={leafletMapRef}
-          onShapeCreate={dr.onShapeCreate}
-          onShapeEdit={dr.onShapeEdit}
-        />
-        {/* </div> */}
-        {/* <div className={styles.halfMap}>
+        <div className={styles.draw}>
           <PPMapTrial
             leafletMapRef={leafletMapRef}
             onShapeCreate={dr.onShapeCreate}
             onShapeEdit={dr.onShapeEdit}
           />
-        </div> */}
+        </div>
+        <div className={styles.pblock}>
+          <div className={styles.progress}>
+            <Progress percent={50} status="active" />
+          </div>
+        </div>
       </div>
       <PPToolBar disLoc="right">
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">

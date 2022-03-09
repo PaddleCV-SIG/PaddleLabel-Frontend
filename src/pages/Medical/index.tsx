@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Popover } from 'antd';
+import { Button, Popover, Progress } from 'antd';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -140,13 +140,20 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div className={styles.mainStage}>
-        <PPStage
-          scale={scale}
-          annotations={annotations}
-          onMouseDown={dr.onMouseDown}
-          onMouseMove={dr.onMouseMove}
-          onMouseUp={dr.onMouseUp}
-        />
+        <div className={styles.draw}>
+          <PPStage
+            scale={scale}
+            annotations={annotations}
+            onMouseDown={dr.onMouseDown}
+            onMouseMove={dr.onMouseMove}
+            onMouseUp={dr.onMouseUp}
+          />
+        </div>
+        <div className={styles.pblock}>
+          <div className={styles.progress}>
+            <Progress percent={50} status="active" />
+          </div>
+        </div>
       </div>
       <PPToolBar disLoc="right">
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">

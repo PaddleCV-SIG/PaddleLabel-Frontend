@@ -6,6 +6,7 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import type { Label } from '@/models/label';
+import { Progress } from 'antd';
 
 export type ToolType = 'mover' | undefined;
 
@@ -38,7 +39,14 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
       </PPToolBar>
       <div className={styles.mainStage}>
-        <PPStage scale={scale} />
+        <div className={styles.draw}>
+          <PPStage scale={scale} />
+        </div>
+        <div className={styles.pblock}>
+          <div className={styles.progress}>
+            <Progress percent={50} status="active" />
+          </div>
+        </div>
       </div>
       <div className={styles.rightSideBar}>
         <PPLabelList
