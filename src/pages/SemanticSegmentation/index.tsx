@@ -17,6 +17,8 @@ import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
+const MOST_HISTORY_STEPS = 40;
+
 type HistoryType = {
   index: number;
   items: {
@@ -45,6 +47,7 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     localStorage.removeItem('history');
+    recordHistory([]);
   }, []);
 
   function recordHistory(annos: Annotation<any>[], anno?: Annotation<any>) {
@@ -54,9 +57,16 @@ const Page: React.FC = () => {
     if (JSON.stringify(history.items[history.index]) == JSON.stringify(newItem)) {
       return;
     }
-    const itemsToKeep = history.items.splice(0, history.index == 0 ? 1 : history.index + 1);
+    const earliestIndex =
+      history.index > MOST_HISTORY_STEPS ? history.index - MOST_HISTORY_STEPS : 0;
+    const itemsToKeep = history.items.splice(
+      earliestIndex,
+      history.index == 0 ? 1 : history.index + 1,
+    );
     history.items = itemsToKeep.concat([newItem]);
-    history.index++;
+    if (history.index <= MOST_HISTORY_STEPS) history.index++;
+    else history.index = MOST_HISTORY_STEPS + 1;
+    console.log(history);
     localStorage.setItem('history', JSON.stringify(history));
   }
 
@@ -103,7 +113,6 @@ const Page: React.FC = () => {
     }
     setCurrentAnnotation(annotation);
     setAnnotations(newAnnos);
-    recordHistory(newAnnos, annotation);
   };
 
   const brush = drawBrush({
@@ -116,9 +125,11 @@ const Page: React.FC = () => {
       const newAnnos = annotations.concat([annotation]);
       setAnnotations(newAnnos);
       if (!currentAnnotation) setCurrentAnnotation(annotation);
-      recordHistory(newAnnos, annotation);
     },
     onAnnotationModify: onAnnotationModify,
+    onMouseUp: () => {
+      recordHistory(annotations, currentAnnotation);
+    },
   });
 
   const polygon = drawPolygon({
@@ -133,7 +144,10 @@ const Page: React.FC = () => {
       if (!currentAnnotation) setCurrentAnnotation(annotation);
       recordHistory(newAnnos, annotation);
     },
-    onAnnotationModify: onAnnotationModify,
+    onAnnotationModify: (annotation) => {
+      onAnnotationModify(annotation);
+      recordHistory(annotations, annotation);
+    },
   });
 
   const dr = currentTool == 'polygon' ? polygon : brush;
@@ -230,7 +244,8 @@ const Page: React.FC = () => {
             onMouseDown={dr.onMouseDown}
             onMouseMove={dr.onMouseMove}
             onMouseUp={dr.onMouseUp}
-            createElementsFunc={dr.createElementsFunc}
+            createPolygonFunc={polygon.createElementsFunc}
+            createBrushFunc={brush.createElementsFunc}
           />
         </div>
         <div className={styles.pblock}>

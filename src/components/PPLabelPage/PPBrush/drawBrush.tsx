@@ -28,24 +28,21 @@ function createLine(
   };
 }
 
-function createLines(annotations?: Annotation<PPLineType>[]): ReactElement[] {
-  if (!annotations) return [<></>];
+function drawLine(annotation?: Annotation<PPLineType>): ReactElement[] {
+  if (!annotation || !annotation.lines) return [<></>];
   const res = [];
-  for (const annotation of annotations) {
-    if (!annotation || !annotation.lines) continue;
-    for (const line of annotation.lines) {
-      if (!line.width || !line.color || !line.points || !line.tool) continue;
-      res.push(
-        <Line
-          stroke={line.color}
-          strokeWidth={line.width}
-          globalCompositeOperation={line.tool === 'brush' ? 'source-over' : 'destination-out'}
-          lineCap="round"
-          points={line.points}
-          tension={0.01}
-        />,
-      );
-    }
+  for (const line of annotation.lines) {
+    if (!line.width || !line.color || !line.points || !line.tool) continue;
+    res.push(
+      <Line
+        stroke={line.color}
+        strokeWidth={line.width}
+        globalCompositeOperation={line.tool === 'brush' ? 'source-over' : 'destination-out'}
+        lineCap="round"
+        points={line.points}
+        tension={0.01}
+      />,
+    );
   }
   return res;
 }
@@ -86,6 +83,7 @@ export default function (props: {
   currentAnnotation?: Annotation<PPLineType>;
   onAnnotationAdd: (annotation: Annotation<PPLineType>) => void;
   onAnnotationModify: (annotation: Annotation<PPLineType>) => void;
+  onMouseUp: () => void;
 }) {
   // console.log('drawBrush');
   const [currentTool, setCurrentTool] = useState<ToolType>();
@@ -114,12 +112,14 @@ export default function (props: {
       // Do not start new marking with rubber
       if (tool == 'rubber') return;
       props.onAnnotationAdd({
+        tool: 'brush',
         annotationId: getMaxId(props.annotations) + 1,
         label: props.currentLabel,
         lines: [line],
       });
     } else {
       const anno = {
+        tool: 'brush' as ToolType,
         annotationId: props.currentAnnotation.annotationId,
         label: props.currentAnnotation.label,
         lines: props.currentAnnotation.lines?.concat([line]),
@@ -160,11 +160,12 @@ export default function (props: {
     if (props.currentTool != 'brush' && props.currentTool != 'rubber') return;
     // console.log(`OnMouseUp`);
     setCurrentTool(undefined);
+    props.onMouseUp();
   };
   return {
     onMouseDown: OnMouseDown,
     onMouseMove: OnMouseMove,
     onMouseUp: OnMouseUp,
-    createElementsFunc: createLines,
+    createElementsFunc: drawLine,
   };
 }

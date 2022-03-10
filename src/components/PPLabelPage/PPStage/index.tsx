@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Annotation } from '@/models/annotation';
 import type Konva from 'konva';
-import React, { ReactElement } from 'react';
+import React, { Props, ReactElement } from 'react';
 import { Layer, Stage, Image } from 'react-konva';
 import useImage from 'use-image';
 import { PPLineType } from '../PPBrush/drawBrush';
@@ -16,13 +16,23 @@ export type PPStageProps = {
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
-  createElementsFunc?: (annotations?: Annotation<any>[]) => ReactElement[];
+  createPolygonFunc?: (annotations?: Annotation<any>) => ReactElement[];
+  createBrushFunc?: (annotations?: Annotation<any>) => ReactElement[];
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
   const [image] = useImage(imgSrc);
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
+
+  const shapes = [];
+  if (props.annotations) {
+    for (const annotation of props.annotations) {
+      if (!annotation) continue;
+      const func = annotation.tool == 'polygon' ? props.createPolygonFunc : props.createBrushFunc;
+      if (func) shapes.push(func(annotation));
+    }
+  }
 
   // console.log(`PPStage. ${JSON.stringify(props.elements)}`);
   return (
@@ -52,11 +62,7 @@ const Component: React.FC<PPStageProps> = (props) => {
         }}
       >
         <Image image={image} />
-        {props.createElementsFunc
-          ? props.createElementsFunc(props.annotations).map((element, i) => {
-              return element;
-            })
-          : undefined}
+        {shapes}
       </Layer>
     </Stage>
   );

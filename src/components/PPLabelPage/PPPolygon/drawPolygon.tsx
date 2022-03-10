@@ -30,45 +30,40 @@ function createPolygon(color: string, points: number[]): PPPolygonType | undefin
   };
 }
 
-function createPolygons(annotations?: Annotation<PPPolygonType>[]): ReactElement[] {
-  if (!annotations) return [<></>];
-  const res = [];
-  for (const annotation of annotations) {
-    if (!annotation || !annotation.lines || !annotation.lines[0]) continue;
-    const points = annotation.lines[0].points;
-    const color = annotation.lines[0].color;
-    const rgb = hexToRgb(color);
-    if (!rgb) continue;
+function drawPolygon(annotation?: Annotation<PPPolygonType>): ReactElement[] {
+  if (!annotation || !annotation.lines || !annotation.lines[0]) return [<></>];
+  const points = annotation.lines[0].points;
+  const color = annotation.lines[0].color;
+  const rgb = hexToRgb(color);
+  if (!rgb) return [<></>];
 
-    // Create dots
-    let x: number | undefined = undefined;
-    const pointElements: ReactElement[] = [];
-    points.forEach((point) => {
-      if (!x) {
-        x = point;
-        return;
-      }
-      pointElements.push(<Circle x={x} y={point} radius={5} fill={color} />);
-      x = undefined;
-    });
-    // Create polygon
-    res.push(
-      <>
-        <Line
-          stroke={color}
-          strokeWidth={2}
-          globalCompositeOperation="source-over"
-          lineCap="round"
-          points={points}
-          tension={0.01}
-          closed={true}
-          fill={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`}
-        />
-        {pointElements}
-      </>,
-    );
-  }
-  return res;
+  // Create dots
+  let x: number | undefined = undefined;
+  const pointElements: ReactElement[] = [];
+  points.forEach((point) => {
+    if (!x) {
+      x = point;
+      return;
+    }
+    pointElements.push(<Circle x={x} y={point} radius={5} fill={color} />);
+    x = undefined;
+  });
+  // Create polygon
+  return [
+    <>
+      <Line
+        stroke={color}
+        strokeWidth={2}
+        globalCompositeOperation="source-over"
+        lineCap="round"
+        points={points}
+        tension={0.01}
+        closed={true}
+        fill={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`}
+      />
+      {pointElements}
+    </>,
+  ];
 }
 
 /**
@@ -102,6 +97,7 @@ export default function (props: {
     const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY]);
     if (!polygon) return;
     props.onAnnotationAdd({
+      tool: 'polygon',
       annotationId: getMaxId(props.annotations) + 1,
       label: props.currentLabel,
       lines: [polygon],
@@ -119,6 +115,7 @@ export default function (props: {
     );
     if (!polygon) return;
     const anno = {
+      tool: 'polygon' as ToolType,
       annotationId: props.currentAnnotation.annotationId,
       label: props.currentAnnotation.label,
       lines: [polygon],
@@ -144,6 +141,6 @@ export default function (props: {
     onMouseDown: OnMouseDown,
     onMouseMove: () => {},
     onMouseUp: OnMouseUp,
-    createElementsFunc: createPolygons,
+    createElementsFunc: drawPolygon,
   };
 }
