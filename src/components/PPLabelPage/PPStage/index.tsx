@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Annotation } from '@/models/annotation';
+import { ToolType } from '@/pages/SemanticSegmentation';
 import type Konva from 'konva';
 import React, { Props, ReactElement } from 'react';
-import { Layer, Stage, Image } from 'react-konva';
+import { Layer, Stage, Image, Transformer } from 'react-konva';
 import useImage from 'use-image';
 import { PPLineType } from '../PPBrush/drawBrush';
 import styles from './index.less';
@@ -13,6 +14,7 @@ const imgSrc = './pics/basketball.jpg';
 export type PPStageProps = {
   scale: number;
   annotations?: Annotation<any>[];
+  currentTool: ToolType;
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
@@ -61,8 +63,9 @@ const Component: React.FC<PPStageProps> = (props) => {
           e.evt.preventDefault();
         }}
       >
-        <Image image={image} />
+        <Image draggable={false} image={image} />
         {shapes}
+        <Transformer />
       </Layer>
     </Stage>
   );

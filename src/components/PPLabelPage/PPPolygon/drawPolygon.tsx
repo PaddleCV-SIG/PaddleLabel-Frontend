@@ -90,6 +90,7 @@ export default function (props: {
   currentAnnotation?: Annotation<PPPolygonType>;
   onAnnotationAdd: (annotation: Annotation<PPPolygonType>) => void;
   onAnnotationModify: (annotation: Annotation<PPPolygonType>) => void;
+  onMouseUp: () => void;
 }) {
   const startNewPolygon = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
     const mouseX = e.evt.offsetX / scale;
@@ -136,6 +137,7 @@ export default function (props: {
   const OnMouseUp = () => {
     if (props.currentTool != 'polygon') return;
     // console.log(`OnMouseUp`);
+    props.onMouseUp();
   };
   return {
     onMouseDown: OnMouseDown,

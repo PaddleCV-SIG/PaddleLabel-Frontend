@@ -66,7 +66,6 @@ const Page: React.FC = () => {
     history.items = itemsToKeep.concat([newItem]);
     if (history.index <= MOST_HISTORY_STEPS) history.index++;
     else history.index = MOST_HISTORY_STEPS + 1;
-    console.log(history);
     localStorage.setItem('history', JSON.stringify(history));
   }
 
@@ -142,11 +141,10 @@ const Page: React.FC = () => {
       const newAnnos = annotations.concat([annotation]);
       setAnnotations(newAnnos);
       if (!currentAnnotation) setCurrentAnnotation(annotation);
-      recordHistory(newAnnos, annotation);
     },
-    onAnnotationModify: (annotation) => {
-      onAnnotationModify(annotation);
-      recordHistory(annotations, annotation);
+    onAnnotationModify: onAnnotationModify,
+    onMouseUp: () => {
+      recordHistory(annotations, currentAnnotation);
     },
   });
 
@@ -241,6 +239,7 @@ const Page: React.FC = () => {
           <PPStage
             scale={scale}
             annotations={annotations}
+            currentTool={currentTool}
             onMouseDown={dr.onMouseDown}
             onMouseMove={dr.onMouseMove}
             onMouseUp={dr.onMouseUp}
