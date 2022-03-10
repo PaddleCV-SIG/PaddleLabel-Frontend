@@ -10,12 +10,13 @@ import '@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css';
 // type PMEditCircleEvent = { target: L.Circle };
 interface Props extends MapProps {
   leafletMapRef: React.RefObject<Map>;
+  displayTools?: boolean;
   onShapeCreate: (shape: any) => void;
   onShapeEdit: (shape: any) => void;
 }
 
 const MapWithGeoman: React.FC<Props> = (props) => {
-  const { children, leafletMapRef, ...mapProps } = props;
+  const { children, leafletMapRef, displayTools, ...mapProps } = props;
 
   React.useEffect(() => {
     if (leafletMapRef.current) {
@@ -42,27 +43,29 @@ const MapWithGeoman: React.FC<Props> = (props) => {
       mapElement.pm.setGlobalOptions({ pmIgnore: false });
 
       // Custom button to save
-      mapElement.pm.Toolbar.createCustomControl({
-        name: 'StoreShapes',
-        title: 'Store all shapes',
-        block: 'custom',
-        className: styles.customControlIcon,
-        toggle: false,
-        afterClick: () => {
-          const saveGeoJson = JSON.stringify(mapElement.pm.getGeomanDrawLayers(true).toGeoJSON());
-          const filename = 'data.geojson';
-          const element = document.createElement('a');
-          element.setAttribute(
-            'href',
-            'data:text/plain;charset=utf-8,' + encodeURIComponent(saveGeoJson),
-          );
-          element.setAttribute('download', filename);
-          element.style.display = 'none';
-          document.body.appendChild(element);
-          element.click();
-          console.log(saveGeoJson);
-        },
-      });
+      if (props.displayTools) {
+        mapElement.pm.Toolbar.createCustomControl({
+          name: 'StoreShapes',
+          title: 'Store all shapes',
+          block: 'custom',
+          className: styles.customControlIcon,
+          toggle: false,
+          afterClick: () => {
+            const saveGeoJson = JSON.stringify(mapElement.pm.getGeomanDrawLayers(true).toGeoJSON());
+            const filename = 'data.geojson';
+            const element = document.createElement('a');
+            element.setAttribute(
+              'href',
+              'data:text/plain;charset=utf-8,' + encodeURIComponent(saveGeoJson),
+            );
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            console.log(saveGeoJson);
+          },
+        });
+      }
       mapElement.on('pm:create', (e: any) => {
         props.onShapeCreate(e);
       });

@@ -178,11 +178,22 @@ const Page: React.FC = () => {
       {/* FIXME: split map */}
       <div className={styles.mainStage}>
         <div className={styles.draw}>
-          <PPMapTrial
-            leafletMapRef={leafletMapRef}
-            onShapeCreate={dr.onShapeCreate}
-            onShapeEdit={dr.onShapeEdit}
-          />
+          <div className={styles.halfMap}>
+            <PPMapTrial
+              leafletMapRef={leafletMapRef}
+              onShapeCreate={dr.onShapeCreate}
+              onShapeEdit={dr.onShapeEdit}
+            />
+          </div>
+          <div className={styles.interval}></div>
+          <div className={styles.halfMap}>
+            <PPMapTrial
+              leafletMapRef={leafletMapRef}
+              displayTools={false}
+              onShapeCreate={dr.onShapeCreate}
+              onShapeEdit={dr.onShapeEdit}
+            />
+          </div>
         </div>
         <div className={styles.pblock}>
           <div className={styles.progress}>

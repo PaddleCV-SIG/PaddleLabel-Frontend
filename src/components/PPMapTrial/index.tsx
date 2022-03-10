@@ -14,6 +14,7 @@ const defaultPosition = {
 
 export type PPMapProps = {
   leafletMapRef: React.RefObject<Map>;
+  displayTools?: boolean;
   onShapeCreate: (e: any) => void;
   onShapeEdit: (e: any) => void;
 };
@@ -24,6 +25,7 @@ const Component: React.FC<PPMapProps> = (props) => {
   return (
     <MapWithGeoman
       leafletMapRef={props.leafletMapRef}
+      displayTools={props.displayTools}
       className={styles.map}
       center={position}
       zoom={defaultPosition.zoom}
