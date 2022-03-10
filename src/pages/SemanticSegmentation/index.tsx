@@ -74,6 +74,7 @@ const Page: React.FC = () => {
     console.log(`history after set: `);
     console.log(JSON.stringify(history));
   }
+
   const forwardHistory = () => {
     const historyStr = localStorage.getItem('history');
     if (!historyStr) {
@@ -98,6 +99,7 @@ const Page: React.FC = () => {
     setCurrentAnnotationRaw(item.currentAnnotation);
     setAnnotationsRaw(item.annotations);
   };
+
   const backwardHistory = () => {
     const historyStr = localStorage.getItem('history');
     if (!historyStr) return;
@@ -140,6 +142,7 @@ const Page: React.FC = () => {
     },
     onAnnotationModify: onAnnotationModify,
   });
+
   const polygon = drawPolygon({
     currentLabel: currentLabel,
     brushSize: brushSize,
@@ -154,7 +157,9 @@ const Page: React.FC = () => {
     },
     onAnnotationModify: onAnnotationModify,
   });
+
   const dr = currentTool == 'polygon' ? polygon : brush;
+
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
