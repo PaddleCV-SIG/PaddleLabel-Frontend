@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Popover, Progress } from 'antd';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
@@ -18,17 +18,101 @@ import PPMedicalSetting from '@/components/PPMedical/PPMedicalSetting';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
+type HistoryType = {
+  index: number;
+  items: {
+    currentAnnotation?: Annotation<any>;
+    annotations: Annotation<any>[];
+  }[];
+};
+
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
-  const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
+  const [annotations, setAnnotationsRaw] = useState<Annotation<any>[]>([]);
   const [brushSize, setBrushSize] = useState(10);
-  const [scale, setScale] = useState(1);
+  const [scale, setScaleRaw] = useState(1);
+  const setScale = (size: number) => {
+    if (!size) setScaleRaw(1);
+    if (size < 0.1 || size > 3.0) setScaleRaw(1);
+    else setScaleRaw(size);
+  };
 
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
+    // console.log('setCurrentAnnotation');
+    // recordHistory(annotations, anno);
     setCurrentAnnotationRaw(anno);
     if (anno?.label) setCurrentLabel(anno.label);
+  };
+  const setAnnotations = (annos: Annotation<any>[]) => {
+    // console.log('setAnnotations');
+    // recordHistory(annos, currentAnnotation);
+    setAnnotationsRaw(annos);
+  };
+
+  useEffect(() => {
+    localStorage.removeItem('history');
+  }, []);
+
+  function recordHistory(annos: Annotation<any>[], anno?: Annotation<any>) {
+    const historyStr = localStorage.getItem('history');
+    const history: HistoryType = historyStr ? JSON.parse(historyStr) : { index: -1, items: [] };
+    console.log(`history before set: `);
+    const beforeItem = JSON.stringify(history);
+    console.log(beforeItem);
+    const newItem = { currentAnnotation: anno, annotations: annos };
+    if (JSON.stringify(history.items[history.index]) == JSON.stringify(newItem)) {
+      console.log('equal with latest, do not add to history');
+      return;
+    }
+    const itemsToKeep = history.items.splice(0, history.index == 0 ? 1 : history.index + 1);
+    console.log(`itemsToKeep: ${JSON.stringify(itemsToKeep)}`);
+    console.log(`itemsToAdd: ${JSON.stringify(newItem)}`);
+    history.items = itemsToKeep.concat([newItem]);
+    history.index++;
+    localStorage.setItem('history', JSON.stringify(history));
+    console.log(`history after set: `);
+    console.log(JSON.stringify(history));
+  }
+
+  const forwardHistory = () => {
+    const historyStr = localStorage.getItem('history');
+    if (!historyStr) {
+      console.log('no historyStr, skip.');
+      return;
+    }
+    const history: HistoryType = JSON.parse(historyStr);
+    if (!history) {
+      return;
+    }
+    if (history.index >= history.items.length - 1) {
+      console.log(
+        `already latest, skip. history.index:${history.index} history.items.length:${history.items.length}`,
+      );
+      return;
+    }
+    history.index++;
+    localStorage.setItem('history', JSON.stringify(history));
+
+    console.log(`After forward. history:${JSON.stringify(history)}`);
+    const item = history.items[history.index];
+    setCurrentAnnotationRaw(item.currentAnnotation);
+    setAnnotationsRaw(item.annotations);
+  };
+
+  const backwardHistory = () => {
+    const historyStr = localStorage.getItem('history');
+    if (!historyStr) return;
+    const history: HistoryType = JSON.parse(historyStr);
+    if (!history || !history.index) return;
+    if (history.index <= 0) return; // already the latest
+    history.index--;
+    localStorage.setItem('history', JSON.stringify(history));
+    const item = history.items[history.index];
+    console.log(`after backward: ${JSON.stringify(history)}`);
+    setCurrentAnnotationRaw(item.currentAnnotation);
+    setAnnotationsRaw(item.annotations);
   };
 
   const onAnnotationModify = (annotation: Annotation<any>) => {
@@ -42,6 +126,7 @@ const Page: React.FC = () => {
     }
     setCurrentAnnotation(annotation);
     setAnnotations(newAnnos);
+    recordHistory(newAnnos, annotation);
   };
 
   const brush = drawBrush({
@@ -51,11 +136,14 @@ const Page: React.FC = () => {
     annotations: annotations,
     currentAnnotation: currentAnnotation,
     onAnnotationAdd: (annotation) => {
-      setAnnotations(annotations.concat([annotation]));
+      const newAnnos = annotations.concat([annotation]);
+      setAnnotations(newAnnos);
       if (!currentAnnotation) setCurrentAnnotation(annotation);
+      recordHistory(newAnnos, annotation);
     },
     onAnnotationModify: onAnnotationModify,
   });
+
   const polygon = drawPolygon({
     currentLabel: currentLabel,
     brushSize: brushSize,
@@ -63,12 +151,16 @@ const Page: React.FC = () => {
     annotations: annotations,
     currentAnnotation: currentAnnotation,
     onAnnotationAdd: (annotation) => {
-      setAnnotations(annotations.concat([annotation]));
+      const newAnnos = annotations.concat([annotation]);
+      setAnnotations(newAnnos);
       if (!currentAnnotation) setCurrentAnnotation(annotation);
+      recordHistory(newAnnos, annotation);
     },
     onAnnotationModify: onAnnotationModify,
   });
+
   const dr = currentTool == 'polygon' ? polygon : brush;
+
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -135,8 +227,22 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/prev.png">Undo</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/next.png">Redo</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/prev.png"
+          onClick={() => {
+            backwardHistory();
+          }}
+        >
+          Undo
+        </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/next.png"
+          onClick={() => {
+            forwardHistory();
+          }}
+        >
+          Redo
+        </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div className={styles.mainStage}>
@@ -147,6 +253,7 @@ const Page: React.FC = () => {
             onMouseDown={dr.onMouseDown}
             onMouseMove={dr.onMouseMove}
             onMouseUp={dr.onMouseUp}
+            createElementsFunc={dr.createElementsFunc}
           />
         </div>
         <div className={styles.pblock}>

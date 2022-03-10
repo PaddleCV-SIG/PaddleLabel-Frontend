@@ -12,7 +12,12 @@ export type ToolType = 'mover' | undefined;
 
 const Page: React.FC = () => {
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
-  const [scale, setScale] = useState(1);
+  const [scale, setScaleRaw] = useState(1);
+  const setScale = (size: number) => {
+    if (!size) setScaleRaw(1);
+    if (size < 0.1 || size > 3.0) setScaleRaw(1);
+    else setScaleRaw(size);
+  };
 
   return (
     <PPLabelPageContainer className={styles.classes}>
