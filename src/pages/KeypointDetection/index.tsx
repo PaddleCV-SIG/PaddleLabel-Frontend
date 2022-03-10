@@ -19,7 +19,12 @@ const Page: React.FC = () => {
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
-  const [scale, setScale] = useState(1);
+  const [scale, setScaleRaw] = useState(1);
+  const setScale = (size: number) => {
+    if (!size) setScaleRaw(1);
+    if (size < 0.1 || size > 3.0) setScaleRaw(1);
+    else setScaleRaw(size);
+  };
 
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
     setCurrentAnnotationRaw(anno);
@@ -97,6 +102,7 @@ const Page: React.FC = () => {
             onMouseDown={dr.onMouseDown}
             onMouseMove={dr.onMouseMove}
             onMouseUp={dr.onMouseUp}
+            createElementsFunc={dr.createElementsFunc}
           />
         </div>
         <div className={styles.pblock}>

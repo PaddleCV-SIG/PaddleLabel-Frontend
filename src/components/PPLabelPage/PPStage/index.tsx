@@ -16,7 +16,7 @@ export type PPStageProps = {
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
-  createElementsFunc: (annotations?: Annotation<any>[]) => ReactElement[];
+  createElementsFunc?: (annotations?: Annotation<any>[]) => ReactElement[];
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
@@ -52,9 +52,11 @@ const Component: React.FC<PPStageProps> = (props) => {
         }}
       >
         <Image image={image} />
-        {props.createElementsFunc(props.annotations).map((element, i) => {
-          return element;
-        })}
+        {props.createElementsFunc
+          ? props.createElementsFunc(props.annotations).map((element, i) => {
+              return element;
+            })
+          : undefined}
       </Layer>
     </Stage>
   );

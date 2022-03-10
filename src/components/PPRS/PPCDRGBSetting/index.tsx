@@ -3,7 +3,7 @@ import styles from './index.less';
 import { Button, Col, Descriptions, Dropdown, Menu, message, Row } from 'antd';
 import React from 'react';
 
-export type PPRGBSetting = {
+export type PPCDRGBSetting = {
   // imgSrc: string;
   active?: boolean;
   onClick?: React.MouseEventHandler<HTMLElement>;
@@ -28,7 +28,7 @@ const menu = (
   </Menu>
 );
 
-const component: React.FC<PPRGBSetting> = () => {
+const component: React.FC<PPCDRGBSetting> = () => {
   return (
     <div>
       <Row>
