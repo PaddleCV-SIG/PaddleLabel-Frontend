@@ -15,6 +15,10 @@ export default function (props: {
     localStorage.setItem('currentLabel', JSON.stringify(props.currentLabel || {}));
   }, [props.currentLabel]);
 
+  useEffect(() => {
+    localStorage.setItem('annotations', JSON.stringify(props.annotations || {}));
+  }, [props.annotations]);
+
   const toggleTest = () => {
     const drawToggleCheck = props.leafletMapRef.current?.leafletElement.pm.globalDrawModeEnabled();
     console.log(drawToggleCheck);
@@ -32,7 +36,7 @@ export default function (props: {
   // This means Page() function will always be called with currentTool's latest value.
   const RSDraw = (RScurrentTool: any) => {
     const LabelNew = localStorage.getItem('currentLabel');
-    console.log(LabelNew);
+    // console.log(LabelNew);
     if (LabelNew != '{}') {
       setPolyVis(true);
       const LabelNewNew = JSON.parse(LabelNew || '{}');
@@ -99,15 +103,15 @@ export default function (props: {
   };
 
   const saveGeoJson = () => {
-    console.log(props.leafletMapRef.current?.leafletElement.pm.getGeomanDrawLayers(true));
+    // console.log(props.leafletMapRef.current?.leafletElement.pm.getGeomanDrawLayers(true));
     setPolyVis(false);
   };
 
   // console.log(`operation re-rendering. currentLabel:${props.currentLabel}`);
   const storeOnDb = (layer: any) => {
-    const uid = layer._uid;
+    // const uid = layer._uid;
     const json = layer.toGeoJSON();
-    const LabelNew = JSON.parse(localStorage.getItem('currentLabel') || '');
+    const LabelNew = JSON.parse(localStorage.getItem('currentLabel') || '{}');
     setMaxId(maxId + 1);
     // console.log(`storeOnDb. currentLabel:${props.currentLabel}`);
     json.properties = {
@@ -115,37 +119,30 @@ export default function (props: {
       stroke: LabelNew?.color,
       annotationId: maxId + 1,
     };
-    console.log('Store Layer on DB. Id:' + uid, json);
-    console.log(JSON.stringify(json));
+    // console.log('Store Layer on DB. Id:' + uid, json);
+    // console.log(JSON.stringify(json));
+    const newAnnotation = JSON.parse(localStorage.getItem('annotations') || '{}');
     props.setAnnotations({
-      ...props.annotations,
-      features: props.annotations.features.concat(json),
+      ...newAnnotation,
+      features: newAnnotation.features.concat(json),
     });
     console.log({
-      ...props.annotations,
-      features: props.annotations.features.concat(json),
+      ...newAnnotation,
+      features: newAnnotation.features.concat(json),
     });
   };
 
   function onShapeCreate(e: any) {
     // console.log(props.currentLabel);
     // enterUid(e.layer);
-    e.layer.bindPopup('Label: ' + e.layer._uid).openPopup();
+    // e.layer.bindPopup('Label: ' + e.layer._uid).openPopup();
     setPolyVis(false);
 
     storeOnDb(e.layer);
   }
   const onShapeEdit = (e: any) => {
-    updateOnDb(e.layer);
-    // console.log(e);
+    console.log(e);
   };
-
-  function updateOnDb(layer: any) {
-    // console.log(props.currentLabel);
-    const uid = layer._uid;
-    const json = layer.toGeoJSON();
-    console.log('Update Layer on DB. Id:' + uid, json);
-  }
 
   const toolZoomIn = () => {
     props.leafletMapRef.current?.leafletElement.zoomIn();
