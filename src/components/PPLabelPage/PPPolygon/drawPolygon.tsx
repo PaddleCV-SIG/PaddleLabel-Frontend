@@ -3,7 +3,6 @@ import type { Label } from '@/models/label';
 import type { ToolType } from '@/pages/SemanticSegmentation';
 import type Konva from 'konva';
 import type { ReactElement } from 'react';
-import React from 'react';
 import { Circle, Line } from 'react-konva';
 
 export type PPPolygonType = {
@@ -30,7 +29,10 @@ function createPolygon(color: string, points: number[]): PPPolygonType | undefin
   };
 }
 
-function drawPolygon(annotation?: Annotation<PPPolygonType>): ReactElement[] {
+function drawPolygon(
+  annotation: Annotation<PPPolygonType>,
+  onClick: (anntation: Annotation<PPPolygonType>) => void,
+): ReactElement[] {
   if (!annotation || !annotation.lines || !annotation.lines[0]) return [<></>];
   const points = annotation.lines[0].points;
   const color = annotation.lines[0].color;
@@ -60,6 +62,8 @@ function drawPolygon(annotation?: Annotation<PPPolygonType>): ReactElement[] {
         tension={0.01}
         closed={true}
         fill={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`}
+        onClick={() => onClick(annotation)}
+        onTap={() => onClick(annotation)}
       />
       {pointElements}
     </>,

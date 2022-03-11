@@ -18,8 +18,15 @@ export type PPStageProps = {
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
-  createPolygonFunc?: (annotations?: Annotation<any>) => ReactElement[];
-  createBrushFunc?: (annotations?: Annotation<any>) => ReactElement[];
+  createPolygonFunc?: (
+    annotations?: Annotation<any>,
+    onClick?: (annotation: Annotation<any>) => void,
+  ) => ReactElement[];
+  createBrushFunc?: (
+    annotations?: Annotation<any>,
+    onClick?: (annotation: Annotation<any>) => void,
+  ) => ReactElement[];
+  setCurrentAnnotation: (annotation: Annotation<any>) => void;
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
@@ -32,7 +39,7 @@ const Component: React.FC<PPStageProps> = (props) => {
     for (const annotation of props.annotations) {
       if (!annotation) continue;
       const func = annotation.tool == 'polygon' ? props.createPolygonFunc : props.createBrushFunc;
-      if (func) shapes.push(func(annotation));
+      if (func) shapes.push(func(annotation, props.setCurrentAnnotation));
     }
   }
 
@@ -65,7 +72,6 @@ const Component: React.FC<PPStageProps> = (props) => {
       >
         <Image draggable={false} image={image} />
         {shapes}
-        <Transformer />
       </Layer>
     </Stage>
   );

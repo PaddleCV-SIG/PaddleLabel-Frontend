@@ -28,7 +28,10 @@ function createLine(
   };
 }
 
-function drawLine(annotation?: Annotation<PPLineType>): ReactElement[] {
+function drawLine(
+  annotation: Annotation<PPLineType>,
+  onClick: (anntation: Annotation<PPLineType>) => void,
+): ReactElement[] {
   if (!annotation || !annotation.lines) return [<></>];
   const res = [];
   for (const line of annotation.lines) {
@@ -41,6 +44,8 @@ function drawLine(annotation?: Annotation<PPLineType>): ReactElement[] {
         lineCap="round"
         points={line.points}
         tension={0.01}
+        onClick={() => onClick(annotation)}
+        onTap={() => onClick(annotation)}
       />,
     );
   }
