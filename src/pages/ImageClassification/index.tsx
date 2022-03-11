@@ -45,7 +45,7 @@ const Page: React.FC = () => {
       </PPToolBar>
       <div className={styles.mainStage}>
         <div className={styles.draw}>
-          <PPStage scale={scale} />
+          <PPStage scale={scale} currentTool={undefined} />
         </div>
         <div className={styles.pblock}>
           <div className={styles.progress}>

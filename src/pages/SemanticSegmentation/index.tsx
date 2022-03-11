@@ -17,9 +17,9 @@ import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
-const MOST_HISTORY_STEPS = 40;
+export const MOST_HISTORY_STEPS = 40;
 
-type HistoryType = {
+export type HistoryType = {
   index: number;
   items: {
     currentAnnotation?: Annotation<any>;

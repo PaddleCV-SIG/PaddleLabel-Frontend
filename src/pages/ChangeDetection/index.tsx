@@ -166,7 +166,7 @@ const Page: React.FC = () => {
         >
           Save
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/move.png" onClick={() => moveShape()}>
+        <PPToolBarButton imgSrc="./pics/buttons/move.png" onClick={() => dr.moveShape()}>
           Move
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>

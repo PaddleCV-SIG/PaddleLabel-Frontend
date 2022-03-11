@@ -31,6 +31,7 @@ const Component: React.FC<PPMapProps> = (props) => {
       zoom={defaultPosition.zoom}
       onShapeCreate={props.onShapeCreate}
       onShapeEdit={props.onShapeEdit}
+      zoomControl={false}
     >
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="TianDiTu.Vector">
