@@ -10,9 +10,9 @@ export default function (props: {
 }) {
   const [maxId, setMaxId] = useState(0);
   const [polyVisable, setPolyVis] = useState(false);
-  const [currentLabel, setCurrentLabel] = useState(props.currentLabel);
+  // const [currentLabel, setCurrentLabel] = useState(props.currentLabel);
   useEffect(() => {
-    setCurrentLabel(props.currentLabel);
+    localStorage.setItem('currentLabel', JSON.stringify(props.currentLabel || {}));
   }, [props.currentLabel]);
 
   const toggleTest = () => {
@@ -31,16 +31,20 @@ export default function (props: {
   // Everytime currentTool changes, react will rerender this component(aka re-call Page() function to generate)
   // This means Page() function will always be called with currentTool's latest value.
   const RSDraw = (RScurrentTool: any) => {
-    setPolyVis(true);
-    if (currentLabel) {
+    const LabelNew = localStorage.getItem('currentLabel');
+    console.log(LabelNew);
+    if (LabelNew != '{}') {
+      setPolyVis(true);
+      const LabelNewNew = JSON.parse(LabelNew || '{}');
       props.leafletMapRef.current?.leafletElement.pm.enableDraw(RScurrentTool);
       // console.log('drawTools: ', RScurrentTool);
       props.leafletMapRef.current?.leafletElement.pm.setPathOptions({
-        color: currentLabel?.color,
-        fillColor: currentLabel?.color,
+        color: LabelNewNew?.color,
+        fillColor: LabelNewNew?.color,
         fillOpacity: 0.4,
       });
     } else {
+      alert('Test');
       props.leafletMapRef.current?.leafletElement.pm.disableDraw(RScurrentTool);
       setPolyVis(false);
     }
@@ -103,11 +107,12 @@ export default function (props: {
   const storeOnDb = (layer: any) => {
     const uid = layer._uid;
     const json = layer.toGeoJSON();
+    const LabelNew = JSON.parse(localStorage.getItem('currentLabel') || '');
     setMaxId(maxId + 1);
     // console.log(`storeOnDb. currentLabel:${props.currentLabel}`);
     json.properties = {
-      labelName: currentLabel?.name,
-      stroke: currentLabel?.color,
+      labelName: LabelNew?.name,
+      stroke: LabelNew?.color,
       annotationId: maxId + 1,
     };
     console.log('Store Layer on DB. Id:' + uid, json);
