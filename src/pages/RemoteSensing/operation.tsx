@@ -7,6 +7,7 @@ export default function (props: {
   currentLabel?: Label;
   setAnnotations: (annotations: GeojsonCollection) => void;
   annotations: GeojsonCollection;
+  recordHistory: (annos: GeojsonCollection) => void;
 }) {
   const [maxId, setMaxId] = useState(0);
   const [polyVisable, setPolyVis] = useState(false);
@@ -122,14 +123,13 @@ export default function (props: {
     // console.log('Store Layer on DB. Id:' + uid, json);
     // console.log(JSON.stringify(json));
     const newAnnotation = JSON.parse(localStorage.getItem('annotations') || '{}');
-    props.setAnnotations({
+    const setanno = {
       ...newAnnotation,
       features: newAnnotation.features.concat(json),
-    });
-    console.log({
-      ...newAnnotation,
-      features: newAnnotation.features.concat(json),
-    });
+    };
+    console.log(setanno);
+    props.setAnnotations(setanno);
+    props.recordHistory(setanno);
   };
 
   function onShapeCreate(e: any) {
