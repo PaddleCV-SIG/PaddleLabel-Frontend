@@ -75,7 +75,6 @@ const Page: React.FC = () => {
 
   function recordHistory(annos: GeojsonCollection) {
     const historyStr = localStorage.getItem('history');
-    console.log(historyStr);
     const history: HistoryType = historyStr ? JSON.parse(historyStr) : { index: -1, items: [] };
     // const newItem = { annotations: annos };
     if (JSON.stringify(history.items[history.index]) == JSON.stringify(annos)) {
@@ -83,11 +82,6 @@ const Page: React.FC = () => {
     }
     const earliestIndex =
       history.index > MOST_HISTORY_STEPS ? history.index - MOST_HISTORY_STEPS : 0;
-    console.log(
-      `earliestIndex: ${earliestIndex}, history.index: ${history.index} itemNumberToKeep: ${
-        history.index == 0 ? 1 : history.index + 1
-      }`,
-    );
     const itemsToKeep = history.items.splice(
       earliestIndex,
       history.index == 0 ? 1 : history.index + 1,
@@ -96,7 +90,6 @@ const Page: React.FC = () => {
     if (history.index <= MOST_HISTORY_STEPS) history.index++;
     else history.index = MOST_HISTORY_STEPS + 1;
     localStorage.setItem('history', JSON.stringify(history));
-    console.log(JSON.stringify(history));
   }
 
   const forwardHistory = () => {
