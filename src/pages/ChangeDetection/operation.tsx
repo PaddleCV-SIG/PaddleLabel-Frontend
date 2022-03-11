@@ -1,6 +1,6 @@
 import type { Label } from '@/models/label';
 import { useEffect, useState } from 'react';
-import { GeojsonCollection } from '.';
+import type { GeojsonCollection } from '.';
 
 export default function (props: {
   leafletMapRef: React.RefObject<any>;
@@ -32,7 +32,7 @@ export default function (props: {
   // This means Page() function will always be called with currentTool's latest value.
   const RSDraw = (RScurrentTool: any) => {
     setPolyVis(true);
-    if (RScurrentTool) {
+    if (currentLabel) {
       props.leafletMapRef.current?.leafletElement.pm.enableDraw(RScurrentTool);
       // console.log('drawTools: ', RScurrentTool);
       props.leafletMapRef.current?.leafletElement.pm.setPathOptions({
@@ -40,11 +40,9 @@ export default function (props: {
         fillColor: currentLabel?.color,
         fillOpacity: 0.4,
       });
-      toggleTest();
     } else {
       props.leafletMapRef.current?.leafletElement.pm.disableDraw(RScurrentTool);
       setPolyVis(false);
-      toggleTest();
     }
   };
 
@@ -101,12 +99,12 @@ export default function (props: {
     setPolyVis(false);
   };
 
-  console.log(`operation re-rendering. currentLabel:${props.currentLabel}`);
+  // console.log(`operation re-rendering. currentLabel:${props.currentLabel}`);
   const storeOnDb = (layer: any) => {
     const uid = layer._uid;
     const json = layer.toGeoJSON();
     setMaxId(maxId + 1);
-    console.log(`storeOnDb. currentLabel:${props.currentLabel}`);
+    // console.log(`storeOnDb. currentLabel:${props.currentLabel}`);
     json.properties = {
       labelName: currentLabel?.name,
       stroke: currentLabel?.color,
@@ -125,7 +123,7 @@ export default function (props: {
   };
 
   function onShapeCreate(e: any) {
-    console.log(props.currentLabel);
+    // console.log(props.currentLabel);
     // enterUid(e.layer);
     e.layer.bindPopup('Label: ' + e.layer._uid).openPopup();
     setPolyVis(false);
@@ -134,11 +132,11 @@ export default function (props: {
   }
   const onShapeEdit = (e: any) => {
     updateOnDb(e.layer);
-    console.log(e);
+    // console.log(e);
   };
 
   function updateOnDb(layer: any) {
-    console.log(props.currentLabel);
+    // console.log(props.currentLabel);
     const uid = layer._uid;
     const json = layer.toGeoJSON();
     console.log('Update Layer on DB. Id:' + uid, json);
