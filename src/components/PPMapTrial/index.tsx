@@ -41,12 +41,6 @@ const Component: React.FC<PPMapProps> = (props) => {
             <TileLayer url="https://t2.tianditu.gov.cn/DataServer?T=cva_w&X={x}&Y={y}&L={z}&tk=8e879a4cad078fd3ce7456f2737fc4cc" />
           </LayerGroup>
         </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="OpenStreetMap.Mapnik">
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-        </LayersControl.BaseLayer>
         <LayersControl.Overlay name="Esri.WorldImagery">
           <TileLayer
             attribution="Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
