@@ -18,6 +18,8 @@ import PPMedicalSetting from '@/components/PPMedical/PPMedicalSetting';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
+export const MOST_HISTORY_STEPS = 40;
+
 type HistoryType = {
   index: number;
   items: {
@@ -53,33 +55,31 @@ const Page: React.FC = () => {
 
   useEffect(() => {
     localStorage.removeItem('history');
+    recordHistory([]);
   }, []);
 
   function recordHistory(annos: Annotation<any>[], anno?: Annotation<any>) {
     const historyStr = localStorage.getItem('history');
     const history: HistoryType = historyStr ? JSON.parse(historyStr) : { index: -1, items: [] };
-    console.log(`history before set: `);
-    const beforeItem = JSON.stringify(history);
-    console.log(beforeItem);
     const newItem = { currentAnnotation: anno, annotations: annos };
     if (JSON.stringify(history.items[history.index]) == JSON.stringify(newItem)) {
-      console.log('equal with latest, do not add to history');
       return;
     }
-    const itemsToKeep = history.items.splice(0, history.index == 0 ? 1 : history.index + 1);
-    console.log(`itemsToKeep: ${JSON.stringify(itemsToKeep)}`);
-    console.log(`itemsToAdd: ${JSON.stringify(newItem)}`);
+    const earliestIndex =
+      history.index > MOST_HISTORY_STEPS ? history.index - MOST_HISTORY_STEPS : 0;
+    const itemsToKeep = history.items.splice(
+      earliestIndex,
+      history.index == 0 ? 1 : history.index + 1,
+    );
     history.items = itemsToKeep.concat([newItem]);
-    history.index++;
+    if (history.index <= MOST_HISTORY_STEPS) history.index++;
+    else history.index = MOST_HISTORY_STEPS + 1;
     localStorage.setItem('history', JSON.stringify(history));
-    console.log(`history after set: `);
-    console.log(JSON.stringify(history));
   }
 
   const forwardHistory = () => {
     const historyStr = localStorage.getItem('history');
     if (!historyStr) {
-      console.log('no historyStr, skip.');
       return;
     }
     const history: HistoryType = JSON.parse(historyStr);
@@ -87,18 +87,13 @@ const Page: React.FC = () => {
       return;
     }
     if (history.index >= history.items.length - 1) {
-      console.log(
-        `already latest, skip. history.index:${history.index} history.items.length:${history.items.length}`,
-      );
       return;
     }
     history.index++;
     localStorage.setItem('history', JSON.stringify(history));
-
-    console.log(`After forward. history:${JSON.stringify(history)}`);
     const item = history.items[history.index];
     setCurrentAnnotationRaw(item.currentAnnotation);
-    setAnnotationsRaw(item.annotations);
+    setAnnotations(item.annotations);
   };
 
   const backwardHistory = () => {
@@ -110,9 +105,8 @@ const Page: React.FC = () => {
     history.index--;
     localStorage.setItem('history', JSON.stringify(history));
     const item = history.items[history.index];
-    console.log(`after backward: ${JSON.stringify(history)}`);
     setCurrentAnnotationRaw(item.currentAnnotation);
-    setAnnotationsRaw(item.annotations);
+    setAnnotations(item.annotations);
   };
 
   const onAnnotationModify = (annotation: Annotation<any>) => {
@@ -126,7 +120,6 @@ const Page: React.FC = () => {
     }
     setCurrentAnnotation(annotation);
     setAnnotations(newAnnos);
-    recordHistory(newAnnos, annotation);
   };
 
   const brush = drawBrush({
@@ -139,9 +132,11 @@ const Page: React.FC = () => {
       const newAnnos = annotations.concat([annotation]);
       setAnnotations(newAnnos);
       if (!currentAnnotation) setCurrentAnnotation(annotation);
-      recordHistory(newAnnos, annotation);
     },
     onAnnotationModify: onAnnotationModify,
+    onMouseUp: () => {
+      recordHistory(annotations, currentAnnotation);
+    },
   });
 
   const polygon = drawPolygon({
@@ -154,9 +149,11 @@ const Page: React.FC = () => {
       const newAnnos = annotations.concat([annotation]);
       setAnnotations(newAnnos);
       if (!currentAnnotation) setCurrentAnnotation(annotation);
-      recordHistory(newAnnos, annotation);
     },
     onAnnotationModify: onAnnotationModify,
+    onMouseUp: () => {
+      recordHistory(annotations, currentAnnotation);
+    },
   });
 
   const dr = currentTool == 'polygon' ? polygon : brush;
@@ -224,7 +221,14 @@ const Page: React.FC = () => {
           Zoom out
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/move.png"
+          onClick={() => {
+            setCurrentTool('mover');
+          }}
+        >
+          Move
+        </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton
@@ -250,10 +254,18 @@ const Page: React.FC = () => {
           <PPStage
             scale={scale}
             annotations={annotations}
+            currentTool={currentTool}
+            currentAnnotation={currentAnnotation}
+            setCurrentAnnotation={setCurrentAnnotation}
+            onAnnotationModify={onAnnotationModify}
+            onAnnotationModifyComplete={() => {
+              recordHistory(annotations, currentAnnotation);
+            }}
             onMouseDown={dr.onMouseDown}
             onMouseMove={dr.onMouseMove}
             onMouseUp={dr.onMouseUp}
-            createElementsFunc={dr.createElementsFunc}
+            createPolygonFunc={polygon.createElementsFunc}
+            createBrushFunc={brush.createElementsFunc}
           />
         </div>
         <div className={styles.pblock}>
