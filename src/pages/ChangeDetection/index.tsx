@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Popconfirm, Popover, Progress, Space } from 'antd';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
@@ -16,6 +16,8 @@ import type { Map } from 'react-leaflet';
 import PPGeoAnnotationList from '@/components/PPLabelPage/PPGeoAnnotationList';
 import operation from './operation';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
+// import type { Annotation } from '@/models/annotation';
+import { MOST_HISTORY_STEPS } from '../SemanticSegmentation';
 
 export type ToolType =
   | 'polygon'
@@ -36,6 +38,11 @@ export type GeojsonCollection = {
   features: GeojsonFeatureObject[];
 };
 
+export type HistoryType = {
+  index: number;
+  items: GeojsonCollection[];
+};
+
 export type GeojsonFeatureObject = {
   type: 'Feature';
   properties: {
@@ -52,16 +59,76 @@ export type GeojsonFeatureObject = {
 const Page: React.FC = () => {
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>();
+  // const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<GeojsonCollection>({
     type: 'FeatureCollection',
     features: [],
   });
+
+  useEffect(() => {
+    localStorage.removeItem('history');
+    recordHistory({
+      type: 'FeatureCollection',
+      features: [],
+    });
+  }, []);
+
+  function recordHistory(annos: GeojsonCollection) {
+    const historyStr = localStorage.getItem('history');
+    const history: HistoryType = historyStr ? JSON.parse(historyStr) : { index: -1, items: [] };
+    // const newItem = { annotations: annos };
+    if (JSON.stringify(history.items[history.index]) == JSON.stringify(annos)) {
+      return;
+    }
+    const earliestIndex =
+      history.index > MOST_HISTORY_STEPS ? history.index - MOST_HISTORY_STEPS : 0;
+    const itemsToKeep = history.items.splice(
+      earliestIndex,
+      history.index == 0 ? 1 : history.index + 1,
+    );
+    history.items = itemsToKeep.concat([annos]);
+    if (history.index <= MOST_HISTORY_STEPS) history.index++;
+    else history.index = MOST_HISTORY_STEPS + 1;
+    localStorage.setItem('history', JSON.stringify(history));
+  }
+
+  const forwardHistory = () => {
+    const historyStr = localStorage.getItem('history');
+    if (!historyStr) {
+      return;
+    }
+    const history: HistoryType = JSON.parse(historyStr);
+    if (!history) {
+      return;
+    }
+    if (history.index >= history.items.length - 1) {
+      return;
+    }
+    history.index++;
+    localStorage.setItem('history', JSON.stringify(history));
+    const item = history.items[history.index];
+    // setCurrentAnnotationRaw(item.currentAnnotation);
+    setAnnotations(item);
+  };
+
+  const backwardHistory = () => {
+    const historyStr = localStorage.getItem('history');
+    if (!historyStr) return;
+    const history: HistoryType = JSON.parse(historyStr);
+    if (!history || !history.index) return;
+    if (history.index <= 0) return; // already the latest
+    history.index--;
+    localStorage.setItem('history', JSON.stringify(history));
+    const item = history.items[history.index];
+    // setCurrentAnnotationRaw(item.currentAnnotation);
+    setAnnotations(item);
+  };
   //const [brushSize, setBrushSize] = useState(10);
 
   console.log(`rs is re-rendering! currentLabel: ${JSON.stringify(currentLabel)}`);
 
   const leafletMapRef = React.useRef<Map>(null);
-  const dr = operation({ leafletMapRef, currentLabel, setAnnotations, annotations });
+  const dr = operation({ leafletMapRef, currentLabel, setAnnotations, annotations, recordHistory });
 
   return (
     <PPLabelPageContainer className={styles.segment}>
@@ -171,11 +238,15 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/prev.png">Undo</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/next.png">Redo</PPToolBarButton>
+        <PPToolBarButton onClick={() => backwardHistory()} imgSrc="./pics/buttons/prev.png">
+          Undo
+        </PPToolBarButton>
+        <PPToolBarButton onClick={() => forwardHistory()} imgSrc="./pics/buttons/next.png">
+          Redo
+        </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
-      {/* FIXME: split map */}
+      {/* FIXME: how to do between 2 maps */}
       <div className={styles.mainStage}>
         <div className={styles.draw}>
           <div className={styles.halfMap}>
