@@ -46,6 +46,23 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
+    // setAnnotations([
+    //   {
+    //     annotationId: 1,
+    //     tool: 'polygon',
+    //     label: {
+    //       color: '#FF0000',
+    //       name: 'Label 1',
+    //     },
+    //     lines: [
+    //       {
+    //         color: '#FF0000',
+    //         // [476,136,715,128,724,270,482,280]
+    //         points: [521, 133, 760, 125, 769, 267, 527, 277],
+    //       },
+    //     ],
+    //   },
+    // ]);
     localStorage.removeItem('history');
     recordHistory([]);
   }, []);
@@ -213,7 +230,14 @@ const Page: React.FC = () => {
           Zoom out
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/move.png"
+          onClick={() => {
+            setCurrentTool('mover');
+          }}
+        >
+          Move
+        </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton
@@ -240,6 +264,12 @@ const Page: React.FC = () => {
             scale={scale}
             annotations={annotations}
             currentTool={currentTool}
+            currentAnnotation={currentAnnotation}
+            setCurrentAnnotation={setCurrentAnnotation}
+            onAnnotationModify={onAnnotationModify}
+            onAnnotationModifyComplete={() => {
+              recordHistory(annotations, currentAnnotation);
+            }}
             onMouseDown={dr.onMouseDown}
             onMouseMove={dr.onMouseMove}
             onMouseUp={dr.onMouseUp}

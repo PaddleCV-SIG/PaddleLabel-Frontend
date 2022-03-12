@@ -9,6 +9,4 @@ export type Annotation<T> = {
   invisible?: boolean; // Only used by frontend
   lines?: T[];
   delete?: boolean; // Only used by frontend
-  shapeRef?: LegacyRef<any>; // Only used by frontend
-  transformerRef?: LegacyRef<any>; // Only used by frontend
 };

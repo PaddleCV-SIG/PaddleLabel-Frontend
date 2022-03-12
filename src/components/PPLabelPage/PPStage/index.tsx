@@ -2,7 +2,7 @@
 import { Annotation } from '@/models/annotation';
 import { ToolType } from '@/pages/SemanticSegmentation';
 import type Konva from 'konva';
-import React, { Props, ReactElement } from 'react';
+import React, { Props, ReactElement, useState } from 'react';
 import { Layer, Stage, Image, Transformer } from 'react-konva';
 import useImage from 'use-image';
 import { PPLineType } from '../PPBrush/drawBrush';
@@ -15,18 +15,31 @@ export type PPStageProps = {
   scale: number;
   annotations?: Annotation<any>[];
   currentTool: ToolType;
+  currentAnnotation?: Annotation<any>;
+  setCurrentAnnotation: (anntation: Annotation<any>) => void;
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   createPolygonFunc?: (
-    annotations?: Annotation<any>,
-    onClick?: (annotation: Annotation<any>) => void,
+    annotations: Annotation<any>,
+    onDrag: (anntation: Annotation<any>) => void,
+    onDragEnd: () => void,
+    scale: number,
+    currentTool: ToolType,
+    onSelect: (anntation: Annotation<any>) => void,
+    currentAnnotation?: Annotation<any>,
   ) => ReactElement[];
   createBrushFunc?: (
-    annotations?: Annotation<any>,
-    onClick?: (annotation: Annotation<any>) => void,
+    annotations: Annotation<any>,
+    onDrag: (annotation: Annotation<any>) => void,
+    onDragEnd: () => void,
+    scale: number,
+    currentTool: ToolType,
+    onSelect: (anntation: Annotation<any>) => void,
+    currentAnnotation?: Annotation<any>,
   ) => ReactElement[];
-  setCurrentAnnotation: (annotation: Annotation<any>) => void;
+  onAnnotationModify: (annotation: Annotation<any>) => void;
+  onAnnotationModifyComplete: () => void;
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
@@ -39,7 +52,18 @@ const Component: React.FC<PPStageProps> = (props) => {
     for (const annotation of props.annotations) {
       if (!annotation) continue;
       const func = annotation.tool == 'polygon' ? props.createPolygonFunc : props.createBrushFunc;
-      if (func) shapes.push(func(annotation, props.setCurrentAnnotation));
+      if (func)
+        shapes.push(
+          func(
+            annotation,
+            props.onAnnotationModify,
+            props.onAnnotationModifyComplete,
+            props.scale,
+            props.currentTool,
+            props.setCurrentAnnotation,
+            props.currentAnnotation,
+          ),
+        );
     }
   }
 
@@ -50,8 +74,8 @@ const Component: React.FC<PPStageProps> = (props) => {
       height={imageHeight * props.scale}
       className={styles.stage}
     >
-      <Layer scaleX={props.scale} scaleY={props.scale}>
-        <Image image={image} />
+      <Layer scaleX={props.scale} scaleY={props.scale} draggable={false}>
+        <Image image={image} draggable={false} />
       </Layer>
       <Layer
         scaleX={props.scale}
@@ -69,6 +93,7 @@ const Component: React.FC<PPStageProps> = (props) => {
           // Prevent right-click menu
           e.evt.preventDefault();
         }}
+        draggable={false}
       >
         <Image draggable={false} image={image} />
         {shapes}

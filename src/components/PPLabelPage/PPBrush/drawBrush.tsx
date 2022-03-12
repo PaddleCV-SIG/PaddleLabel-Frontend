@@ -30,7 +30,12 @@ function createLine(
 
 function drawLine(
   annotation: Annotation<PPLineType>,
-  onClick: (anntation: Annotation<PPLineType>) => void,
+  onDrag: (anntation: Annotation<PPLineType>) => void,
+  onDragEnd: () => void,
+  scale: number,
+  dragStartMousePos: { x: number; y: number },
+  setDragStartMousePos: (pos: { x: number; y: number }) => void,
+  draggable?: boolean,
 ): ReactElement[] {
   if (!annotation || !annotation.lines) return [<></>];
   const res = [];
@@ -44,8 +49,10 @@ function drawLine(
         lineCap="round"
         points={line.points}
         tension={0.01}
-        onClick={() => onClick(annotation)}
-        onTap={() => onClick(annotation)}
+        onDragMove={() => {}}
+        onDragEnd={() => {
+          onDragEnd();
+        }}
       />,
     );
   }
@@ -94,7 +101,6 @@ export default function (props: {
   const [currentTool, setCurrentTool] = useState<ToolType>();
 
   const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
-    console.log(props.currentTool);
     if (props.currentTool != 'brush' && props.currentTool != 'rubber') return;
     // console.log(
     //   `OnMouseDown, drawing on annotation: ${JSON.stringify(

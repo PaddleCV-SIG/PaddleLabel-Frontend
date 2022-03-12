@@ -3,7 +3,7 @@ import type { Label } from '@/models/label';
 import type { ToolType } from '@/pages/SemanticSegmentation';
 import type Konva from 'konva';
 import type { ReactElement } from 'react';
-import { Circle, Line } from 'react-konva';
+import { Circle, Group, Line } from 'react-konva';
 
 export type PPPolygonType = {
   color: string;
@@ -31,7 +31,12 @@ function createPolygon(color: string, points: number[]): PPPolygonType | undefin
 
 function drawPolygon(
   annotation: Annotation<PPPolygonType>,
-  onClick: (anntation: Annotation<PPPolygonType>) => void,
+  onDrag: (anntation: Annotation<PPPolygonType>) => void,
+  onDragEnd: () => void,
+  scale: number,
+  currentTool: ToolType,
+  onSelect: (anntation: Annotation<PPPolygonType>) => void,
+  currentAnnotation?: Annotation<PPPolygonType>,
 ): ReactElement[] {
   if (!annotation || !annotation.lines || !annotation.lines[0]) return [<></>];
   const points = annotation.lines[0].points;
@@ -39,34 +44,107 @@ function drawPolygon(
   const rgb = hexToRgb(color);
   if (!rgb) return [<></>];
 
+  const selected = currentAnnotation?.annotationId == annotation.annotationId;
+  const transparency = selected ? 0.5 : 0.1;
+
   // Create dots
   let x: number | undefined = undefined;
   const pointElements: ReactElement[] = [];
-  points.forEach((point) => {
+  points.forEach((point, index) => {
     if (!x) {
       x = point;
       return;
     }
-    pointElements.push(<Circle x={x} y={point} radius={5} fill={color} />);
+    pointElements.push(
+      <Circle
+        onMouseDown={() => {
+          if (currentTool == 'mover') onSelect(annotation);
+        }}
+        draggable={currentTool == 'mover'}
+        onDragMove={(evt) => {
+          console.log(`Circle onDrageMove`);
+          const newPositionX = evt.evt.offsetX / scale;
+          const newPositionY = evt.evt.offsetY / scale;
+          points[index - 1] = newPositionX;
+          points[index] = newPositionY;
+          const newAnno = { ...annotation, lines: [{ color: color, points: points }] };
+          onDrag(newAnno);
+        }}
+        onMouseOver={() => {
+          console.log(`Circle onMouseOver`);
+          if (currentTool == 'mover') document.body.style.cursor = 'pointer';
+        }}
+        onMouseOut={() => {
+          console.log(`Circle onMouseOut`);
+          document.body.style.cursor = 'default';
+        }}
+        x={x}
+        y={point}
+        radius={5}
+        fill={color}
+      />,
+    );
     x = undefined;
   });
   // Create polygon
   return [
-    <>
+    <Group
+      key={annotation.annotationId}
+      // onDragStart={(evt) => {
+      //   const originX = evt.evt.clientX / scale;
+      //   const originY = evt.evt.clientY / scale;
+      //   setDragStartMousePos({ x: originX, y: originY });
+      // }}
+      // onDragEnd={() => {
+      //   onDragEnd();
+      // }}
+      // draggable={false}
+      // onDragMove={(evt) => {
+      //   evt.target.position();
+      //   console.log(`dragStartMousePos: ${JSON.stringify(dragStartMousePos)}, scale: ${scale}`);
+      //   const newPositionX = evt.evt.clientX / scale;
+      //   const newPositionY = evt.evt.clientY / scale;
+      //   console.log(`newPositionX: ${newPositionX}, newPositionY: ${newPositionY}`);
+      //   const offsetX = newPositionX - dragStartMousePos.x;
+      //   const offsetY = newPositionY - dragStartMousePos.y;
+      //   console.log(`offsetX: ${offsetX}, offsetY: ${offsetY}`);
+      //   const newPoints: number[] = [];
+      //   points.forEach((point, index) => {
+      //     if (index % 2 == 1) {
+      //       newPoints.push(point + offsetY);
+      //     } else {
+      //       newPoints.push(point + offsetX);
+      //     }
+      //   });
+      //   console.log(`points: ${JSON.stringify(points)}, newPoints: ${JSON.stringify(newPoints)}`);
+      //   const newAnno = { ...annotation, lines: [{ color: color, points: newPoints }] };
+      //   setDragStartMousePos({ x: newPositionX, y: newPositionY });
+      //   onDrag(newAnno);
+      // }}
+    >
       <Line
+        onMouseOver={() => {
+          if (currentTool == 'mover') {
+            document.body.style.cursor = 'pointer';
+          }
+        }}
+        onMouseOut={() => {
+          document.body.style.cursor = 'default';
+        }}
+        onClick={() => {
+          if (currentTool == 'mover') onSelect(annotation);
+        }}
         stroke={color}
         strokeWidth={2}
         globalCompositeOperation="source-over"
         lineCap="round"
         points={points}
-        tension={0.01}
+        tension={0}
         closed={true}
-        fill={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.5)`}
-        onClick={() => onClick(annotation)}
-        onTap={() => onClick(annotation)}
+        fill={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${transparency})`}
       />
       {pointElements}
-    </>,
+    </Group>,
   ];
 }
 
