@@ -16,13 +16,13 @@ export type PPStageProps = {
   annotations?: Annotation<any>[];
   currentTool: ToolType;
   currentAnnotation?: Annotation<any>;
-  setCurrentAnnotation?: (anntation: Annotation<any>) => void;
+  setCurrentAnnotation: (anntation: Annotation<any>) => void;
   onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   createPolygonFunc?: (
     annotations: Annotation<any>,
-    onDrag: (anntation: Annotation<any>) => void,
+    onDrag: (annotation: Annotation<any>) => void,
     onDragEnd: () => void,
     scale: number,
     currentTool: ToolType,
@@ -38,8 +38,8 @@ export type PPStageProps = {
     onSelect: (anntation: Annotation<any>) => void,
     currentAnnotation?: Annotation<any>,
   ) => ReactElement[];
-  onAnnotationModify?: (annotation: Annotation<any>) => void;
-  onAnnotationModifyComplete?: () => void;
+  onAnnotationModify: (annotation: Annotation<any>) => void;
+  onAnnotationModifyComplete: () => void;
 };
 
 const Component: React.FC<PPStageProps> = (props) => {

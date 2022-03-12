@@ -29,13 +29,13 @@ function createLine(
 }
 
 function drawLine(
-  annotation: Annotation<PPLineType>,
-  onDrag: (anntation: Annotation<PPLineType>) => void,
+  annotation: Annotation<any>,
+  onDrag: (annotation: Annotation<any>) => void,
   onDragEnd: () => void,
   scale: number,
   currentTool: ToolType,
-  onSelect: (anntation: Annotation<PPLineType>) => void,
-  currentAnnotation?: Annotation<PPLineType>,
+  onSelect: (annotation: Annotation<any>) => void,
+  currentAnnotation?: Annotation<any>,
 ): ReactElement {
   if (!annotation || !annotation.lines) return <></>;
 
