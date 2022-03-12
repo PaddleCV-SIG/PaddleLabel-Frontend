@@ -4,7 +4,7 @@ import type { ToolType } from '@/pages/SemanticSegmentation';
 import type Konva from 'konva';
 import React, { ReactElement } from 'react';
 import { useState } from 'react';
-import { Line } from 'react-konva';
+import { Line, Group } from 'react-konva';
 
 export type PPLineType = {
   width: number;
@@ -33,11 +33,15 @@ function drawLine(
   onDrag: (anntation: Annotation<PPLineType>) => void,
   onDragEnd: () => void,
   scale: number,
-  dragStartMousePos: { x: number; y: number },
-  setDragStartMousePos: (pos: { x: number; y: number }) => void,
-  draggable?: boolean,
-): ReactElement[] {
-  if (!annotation || !annotation.lines) return [<></>];
+  currentTool: ToolType,
+  onSelect: (anntation: Annotation<PPLineType>) => void,
+  currentAnnotation?: Annotation<PPLineType>,
+): ReactElement {
+  if (!annotation || !annotation.lines) return <></>;
+
+  const selected = currentAnnotation?.annotationId == annotation.annotationId;
+  const draggable = selected && currentTool == 'mover';
+
   const res = [];
   for (const line of annotation.lines) {
     if (!line.width || !line.color || !line.points || !line.tool) continue;
@@ -53,10 +57,14 @@ function drawLine(
         onDragEnd={() => {
           onDragEnd();
         }}
+        shadowColor="red"
+        shadowBlur={10}
+        shadowOffset={{ x: 5, y: 5 }}
+        shadowOpacity={draggable ? 1 : 0}
       />,
     );
   }
-  return res;
+  return <Group draggable={draggable}>{res}</Group>;
 }
 
 /**
