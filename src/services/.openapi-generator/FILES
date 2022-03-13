@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 apis/AnnotationApi.ts
 apis/DataApi.ts
 apis/LabelApi.ts

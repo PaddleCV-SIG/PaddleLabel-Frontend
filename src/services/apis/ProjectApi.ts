@@ -31,11 +31,6 @@ import {
   TaskToJSON,
 } from '../models';
 
-export interface DeleteRequest {
-  projectId: string;
-  requestId?: string;
-}
-
 export interface ByProjectRequest {
   projectId: string;
 }
@@ -66,6 +61,11 @@ export interface GetAllRequest {
   requestId?: string;
 }
 
+export interface RemoveRequest {
+  projectId: string;
+  requestId?: string;
+}
+
 export interface UpdateRequest {
   projectId: string;
   project: Project;
@@ -76,53 +76,6 @@ export interface UpdateRequest {
  *
  */
 export class ProjectApi extends runtime.BaseAPI {
-  /**
-   * Delete a project record and ALL TASKS RECORDS under the project. Won\'t delete file on file system
-   * Delete a project record and ALL TASKS RECORDS under the project.
-   */
-  async _deleteRaw(
-    requestParameters: DeleteRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<void>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling _delete.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
-      headerParameters['request_id'] = String(requestParameters.requestId);
-    }
-
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'DELETE',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.VoidApiResponse(response);
-  }
-
-  /**
-   * Delete a project record and ALL TASKS RECORDS under the project. Won\'t delete file on file system
-   * Delete a project record and ALL TASKS RECORDS under the project.
-   */
-  async _delete(projectId: string, requestId?: string, initOverrides?: RequestInit): Promise<void> {
-    await this._deleteRaw({ projectId: projectId, requestId: requestId }, initOverrides);
-  }
-
   /**
    * Your GET endpoint
    */
@@ -427,6 +380,53 @@ export class ProjectApi extends runtime.BaseAPI {
   async getAll(requestId?: string, initOverrides?: RequestInit): Promise<Array<Project>> {
     const response = await this.getAllRaw({ requestId: requestId }, initOverrides);
     return await response.value();
+  }
+
+  /**
+   * Delete a project record and ALL TASKS RECORDS under the project. Won\'t delete file on file system
+   * Delete a project record and ALL TASKS RECORDS under the project.
+   */
+  async removeRaw(
+    requestParameters: RemoveRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling remove.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+      headerParameters['request_id'] = String(requestParameters.requestId);
+    }
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Delete a project record and ALL TASKS RECORDS under the project. Won\'t delete file on file system
+   * Delete a project record and ALL TASKS RECORDS under the project.
+   */
+  async remove(projectId: string, requestId?: string, initOverrides?: RequestInit): Promise<void> {
+    await this.removeRaw({ projectId: projectId, requestId: requestId }, initOverrides);
   }
 
   /**
