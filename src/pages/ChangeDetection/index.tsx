@@ -186,7 +186,7 @@ const Page: React.FC = () => {
           onClick={() => {
             dr.editMode();
           }}
-          imgSrc="./pics/buttons/brush.png"
+          imgSrc="./pics/buttons/edit.png"
         >
           Edit
         </PPToolBarButton>
@@ -269,7 +269,7 @@ const Page: React.FC = () => {
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
-          Intelligent Interaction
+          Interactor
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>

@@ -179,6 +179,7 @@ const Page: React.FC = () => {
         >
           Polygon
         </PPPolygon>
+        <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
         <PPBrush
           size={brushSize}
           active={currentTool == 'brush'}
@@ -280,7 +281,7 @@ const Page: React.FC = () => {
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
-          Intelligent Interaction
+          Interactor
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>

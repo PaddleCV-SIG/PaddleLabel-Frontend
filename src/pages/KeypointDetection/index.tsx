@@ -140,6 +140,7 @@ const Page: React.FC = () => {
         >
           Polygon
         </PPPolygon>
+        <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
