@@ -3,11 +3,27 @@ import Title from 'antd/lib/typography/Title';
 import React from 'react';
 import styles from './index.less';
 import { Button } from 'antd';
+import { ProjectApi } from '@/services/apis/ProjectApi';
+import { Configuration } from '@/services';
 
 export type _PPCardProps = {
   title?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
+};
+
+export type TaskCategory =
+  | 'classification'
+  | 'detection'
+  | 'semantic_segmentation'
+  | 'instance_segmentation'
+  | 'keypoint_detection';
+
+const taskCategoryMap = {
+  classification: 1,
+  detection: 2,
+  semantic_segmentation: 3,
+  instance_segmentation: 4,
 };
 
 const _PPBlock: React.FC<_PPCardProps> = (props) => {
@@ -29,22 +45,42 @@ const _PPBlock: React.FC<_PPCardProps> = (props) => {
 };
 
 export type PPCardProps = {
+  mode: TaskCategory;
   title?: string;
   imgSrc?: string;
-  mode?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
 };
 
 const PPCreater: React.FC<PPCardProps> = (props) => {
+  const baseUrl = localStorage.getItem('basePath');
+  const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
+
+  const saveData = (values: any) => {
+    projectApi.create({
+      name: values.name,
+      dataDir: values.dataDir,
+      description: values.description,
+      taskCategoryId: taskCategoryMap[props.mode],
+    });
+  };
+
   const [form] = Form.useForm();
   return (
     <div className={styles.shadow} style={props.style}>
       <div id="left" className={styles.block_l}>
         <_PPBlock title={props.title} style={{ height: 760, padding: '1.25rem 0' }}>
-          <Form form={form} layout="horizontal" size="large" style={{ marginTop: '5.69rem' }}>
+          <Form
+            form={form}
+            layout="horizontal"
+            size="large"
+            style={{ marginTop: '5.69rem' }}
+            onFinish={(values) => {
+              saveData(values);
+            }}
+          >
             <Form.Item
-              name="project name"
+              name="name"
               label="Project Name"
               labelCol={{
                 span: 6,
@@ -55,14 +91,15 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               rules={[
                 {
                   required: true,
+                  message: 'Please input project name!',
                 },
               ]}
-              style={{ height: '3.13rem', fontSize: '1.5rem' }}
+              style={{ fontSize: '1.5rem' }}
             >
               <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
             </Form.Item>
             <Form.Item
-              name="dataset path"
+              name="dataDir"
               label="Dataset Path"
               labelCol={{
                 span: 6,
@@ -73,27 +110,10 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               rules={[
                 {
                   required: true,
+                  message: 'Please input dataset path!',
                 },
               ]}
-              style={{ height: '3.13rem', fontSize: '1.5rem' }}
-            >
-              <Input size="large" placeholder="Path" style={{ height: '3.13rem' }} />
-            </Form.Item>
-            <Form.Item
-              name="save path"
-              label="Save Path"
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-              style={{ height: '3.13rem', fontSize: '1.5rem' }}
+              style={{ fontSize: '1.5rem' }}
             >
               <Input size="large" placeholder="Path" style={{ height: '3.13rem' }} />
             </Form.Item>
@@ -108,13 +128,13 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               }}
               rules={[
                 {
-                  required: true,
+                  required: props.mode == 'keypoint_detection',
+                  message: 'Please input max points!',
                 },
               ]}
               style={{
-                height: '3.13rem',
                 fontSize: '1.5rem',
-                display: props.mode == 'keypoint' ? undefined : 'none',
+                display: props.mode == 'keypoint_detection' ? undefined : 'none',
               }}
             >
               <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
@@ -133,7 +153,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                   required: false,
                 },
               ]}
-              style={{ height: '3.13rem', fontSize: '1.5rem' }}
+              style={{ fontSize: '1.5rem' }}
             >
               <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
             </Form.Item>
@@ -148,13 +168,13 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               }}
               rules={[
                 {
-                  required: true,
+                  required: props.mode == 'semantic_segmentation',
+                  message: 'Please select annotation mode!',
                 },
               ]}
               style={{
-                height: '3.13rem',
                 fontSize: '1.5rem',
-                display: props.mode == 'segment' ? undefined : 'none',
+                display: props.mode == 'semantic_segmentation' ? undefined : 'none',
               }}
             >
               <div className={styles.goup}>
@@ -171,7 +191,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               }}
             >
               <Button
-                htmlType="button"
+                htmlType="submit"
                 type="primary"
                 style={{ height: '2.5rem', width: '48%' }}
                 block
@@ -187,8 +207,8 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
         </_PPBlock>
       </div>
       <div id="right" className={styles.block_r}>
-        <_PPBlock style={{ height: 760, padding: '0.5rem 0' }}>
-          <img src={props.imgSrc} style={{ height: 698, width: 960 }} />
+        <_PPBlock style={{ height: '43.63rem', padding: '0.5rem 0' }}>
+          <img src={props.imgSrc} style={{ height: '43.63rem', width: '60rem' }} />
         </_PPBlock>
       </div>
     </div>

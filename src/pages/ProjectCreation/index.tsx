@@ -2,24 +2,23 @@ import React from 'react';
 import { Row, Col } from 'antd';
 import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
-import CreateButton from '@/components/CreatButton';
 import PPContainer from '@/components/PPContainer';
 import PPOverlapCol from '@/components/PPOverlapCol';
 
 const Project: React.FC = () => {
   return (
     <PPContainer>
-      <Row gutter={[20, 20]} style={{ marginTop: 101 }}>
-        <Col span={24}>
-          <CreateButton>Create Label</CreateButton>
-        </Col>
-      </Row>
       <Row style={{ marginTop: 20 }}>
         <Col span={24}>
           <PPBlock style={{ height: 500 }}>
             <Row>
               <PPOverlapCol span={4}>
-                <PPCard height={360} width={310} imgSrc={'./pics/classification.jpg'}>
+                <PPCard
+                  height={360}
+                  width={310}
+                  imgSrc={'./pics/classification.jpg'}
+                  href="/classification_project"
+                >
                   Image Classification
                 </PPCard>
               </PPOverlapCol>
