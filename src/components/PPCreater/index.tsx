@@ -1,10 +1,11 @@
-import { Col, Form, Input, Radio, Row } from 'antd';
+import { Col, Form, Input, message, Radio, Row } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React from 'react';
 import styles from './index.less';
 import { Button } from 'antd';
 import { ProjectApi } from '@/services/apis/ProjectApi';
 import { Configuration } from '@/services';
+import { history } from 'umi';
 
 export type _PPCardProps = {
   title?: string;
@@ -57,12 +58,36 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
   const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
 
   const saveData = (values: any) => {
-    projectApi.create({
-      name: values.name,
-      dataDir: values.dataDir,
-      description: values.description,
-      taskCategoryId: taskCategoryMap[props.mode],
-    });
+    projectApi
+      .create({
+        name: values.name,
+        dataDir: values.dataDir,
+        description: values.description,
+        taskCategoryId: taskCategoryMap[props.mode],
+      })
+      .then((res) => {
+        //         {
+        //   "created": "2022-03-13T13:20:12.267916",
+        //   "data_dir": "/root",
+        //   "description": "desc1",
+        //   "label_dir": null,
+        //   "labels": [],
+        //   "modified": "2022-03-13T13:20:12.267920",
+        //   "name": "test project1",
+        //   "other_settings": null,
+        //   "project_id": 1,
+        //   "task_category": null,
+        //   "task_category_id": null
+        // }
+        console.log(res);
+        localStorage.setItem('projectInfo', JSON.stringify(res));
+        history.push('/image_classification');
+      })
+      .catch((err) => {
+        if (err.detail) {
+          message.error(err.detail);
+        }
+      });
   };
 
   const [form] = Form.useForm();

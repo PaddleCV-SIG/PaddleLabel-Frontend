@@ -7,6 +7,8 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import type { Label } from '@/models/label';
 import { Progress } from 'antd';
+import { useEffect } from 'react';
+import { refreshProject } from '../Welcome';
 
 export type ToolType = 'mover' | undefined;
 
@@ -18,6 +20,11 @@ const Page: React.FC = () => {
     if (size < 0.1 || size > 3.0) setScaleRaw(1);
     else setScaleRaw(size);
   };
+
+  // Init project info on refresh or direct open
+  useEffect(() => {
+    refreshProject();
+  }, []);
 
   return (
     <PPLabelPageContainer className={styles.classes}>
@@ -47,6 +54,9 @@ const Page: React.FC = () => {
             width={document.getElementById('dr')?.clientWidth}
             scale={scale}
             currentTool={undefined}
+            setCurrentAnnotation={() => {}}
+            onAnnotationModify={() => {}}
+            onAnnotationModifyComplete={() => {}}
           />
         </div>
         <div className={styles.pblock}>

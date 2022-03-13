@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Button, Space } from 'antd';
+import { Row, Col, Button, Space, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import PPContainer from '@/components/PPContainer';
 import PPCard from '@/components/PPCard';
@@ -10,11 +10,41 @@ import CreateButton from '@/components/CreatButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { ProjectApi } from '@/services/apis/ProjectApi';
 import { history } from 'umi';
-import { Configuration } from '@/services';
+import { Configuration, Project } from '@/services';
+import serviceUtils from '@/services/serviceUtils';
 
 export type ProjectInfo = {
   projectId: number;
   name: string;
+};
+
+export const PROJECT_INFO_KEY = 'projectInfo';
+
+export const refreshProject = (id?: string) => {
+  const projectId = id == undefined ? serviceUtils.getQueryVariable('id') : id;
+  if (!projectId) {
+    message.error('Cannot find projectId!');
+    history.push('/');
+  }
+
+  const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
+  if (projectInfo) return;
+
+  const projectAPI = new ProjectApi(
+    new Configuration({ basePath: localStorage.getItem('backendUrl') || '' }),
+  );
+  projectAPI
+    .get(projectId)
+    .then((res: Project) => {
+      if (!res) {
+        message.error(`Cannot find project: ${projectId}!`);
+        history.push('/');
+      }
+      localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
+    })
+    .catch((err: Response) => {
+      serviceUtils.parseError(err, message, `Cannot find project: ${projectId}`);
+    });
 };
 
 const columns: ColumnsType<ProjectInfo> = [
@@ -148,4 +178,4 @@ const Welcome: React.FC = () => {
   );
 };
 
-export default await Welcome;
+export default Welcome;
