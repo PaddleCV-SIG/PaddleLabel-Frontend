@@ -1,1 +1,0 @@
-(self.webpackChunkpp_labeling_frontend=self.webpackChunkpp_labeling_frontend||[]).push([[638],{34630:function(e,t,n){"use strict";n.r(t);var l=n(67294),a=n(59620),s=n(11428),_=n(85893),P=function(){return(0,_.jsx)(s.Z,{children:(0,_.jsx)(a.Z,{title:"Image Classification",imgSrc:"./pics/illustration.jpg"})})};t.default=P}}]);
