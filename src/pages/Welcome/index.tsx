@@ -82,7 +82,11 @@ const Welcome: React.FC = () => {
     <PPContainer>
       <Row gutter={[20, 20]}>
         <Col span={24}>
-          <CreateButton>
+          <CreateButton
+            onClick={() => {
+              history.push('/project_creation');
+            }}
+          >
             {/* {intl.formatMessage({ projectId: 'welcome.createProject' })} */}
             Create Project
           </CreateButton>
