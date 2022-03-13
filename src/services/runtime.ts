@@ -12,7 +12,11 @@
  * Do not edit the class manually.
  */
 
-export const BASE_PATH = 'http://localhost:5000/api'.replace(/\/+$/, '');
+// heroku url
+export const BASE_PATH = 'https://pplabel.herokuapp.com/api/'.replace(/\/+$/, '');
+
+// local url
+// export const BASE_PATH = 'http://localhost:17995/api'.replace(/\/+$/, '');
 
 const isBlob = (value: any) => typeof Blob !== 'undefined' && value instanceof Blob;
 

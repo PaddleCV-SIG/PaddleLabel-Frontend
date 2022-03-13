@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Row, Col, Button, Space } from 'antd';
 import PPContainer from '@/components/PPContainer';
 import PPCard from '@/components/PPCard';
@@ -9,21 +9,18 @@ import PPButton from '@/components/PPButton';
 import CreateButton from '@/components/CreatButton';
 import { history } from 'umi';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { AnnotationApi } from '@/services/apis/AnnotationApi';
-import type { Annotation } from '@/services/models';
-
-const anno = new AnnotationApi();
+import { ProjectApi } from '@/services/apis/ProjectApi';
 
 export type ProjectInfo = {
-  id: number;
+  project_id: number;
   name: string;
 };
 
 const columns: ColumnsType<ProjectInfo> = [
   {
     title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
+    dataIndex: 'project_id',
+    key: 'project_id',
     width: '4.5rem',
     align: 'center',
     render: (text: string) => <>{text}</>,
@@ -31,11 +28,11 @@ const columns: ColumnsType<ProjectInfo> = [
   {
     title: 'Name',
     dataIndex: 'name',
-    key: 'name',
+    key: 'project_id',
   },
   {
     title: 'Actions',
-    key: 'id',
+    key: 'project_id',
     width: '15rem',
     align: 'center',
     render: (text, record) => (
@@ -48,7 +45,7 @@ const columns: ColumnsType<ProjectInfo> = [
           height="1.875rem"
           color={'rgba(0,100,248,1)'}
           onClick={() => {
-            history.push('/label/' + record.id);
+            history.push('/label/' + record.project_id);
           }}
         >
           Mark
@@ -61,85 +58,22 @@ const columns: ColumnsType<ProjectInfo> = [
   },
 ];
 
-const data: ProjectInfo[] = [
-  {
-    id: 1,
-    name: 'Project1',
-  },
-  {
-    id: 2,
-    name: 'Project2',
-  },
-  {
-    id: 3,
-    name: 'Project3',
-  },
-  {
-    id: 4,
-    name: 'Project4',
-  },
-  {
-    id: 5,
-    name: 'Project5',
-  },
-  {
-    id: 6,
-    name: 'Project6',
-  },
-  {
-    id: 7,
-    name: 'Project7',
-  },
-  {
-    id: 8,
-    name: 'Project8',
-  },
-  {
-    id: 9,
-    name: 'Project9',
-  },
-  {
-    id: 10,
-    name: 'Project10',
-  },
-  {
-    id: 11,
-    name: '基于xxx的目标检测',
-  },
-  {
-    id: 12,
-    name: '非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常非常长的名字',
-  },
-  {
-    id: 13,
-    name: 'Sample Project for xxx',
-  },
-  {
-    id: 13,
-    name: 'Very very very very very very very very very very very very very very very very very very very very very very very very very very very very very very long name',
-  },
-];
-
 const Welcome: React.FC = () => {
-  // Sample Call backend API and use response
-  const [res, setRes] = useState<Annotation>({});
-  anno
-    .annotationsAnnotationIdGet({
-      annotationId: 0,
-    })
-    .then((response) => {
-      setRes(response);
-    })
-    .catch((error) => {
-      console.log(error);
+  const [projects, setProjects] = React.useState([]);
+  React.useEffect(() => {
+    const projectApi = new ProjectApi();
+    projectApi.projectsGet().then(function (res) {
+      setProjects(JSON.parse(JSON.stringify(res))); // TODO: get dict instead of object
+      console.log(JSON.parse(JSON.stringify(res)));
     });
-  console.log(res);
+  }, []);
+
   return (
     <PPContainer>
       <Row gutter={[20, 20]}>
         <Col span={24}>
           <CreateButton>
-            {/* {intl.formatMessage({ id: 'welcome.createProject' })} */}
+            {/* {intl.formatMessage({ project_id: 'welcome.createProject' })} */}
             Create Project
           </CreateButton>
         </Col>
@@ -188,7 +122,7 @@ const Welcome: React.FC = () => {
       <Row style={{ marginTop: 20 }}>
         <Col span={24}>
           <PPBlock title="My Projects">
-            <PPTable columns={columns} dataSource={data} showHeader={false} />
+            <PPTable columns={columns} dataSource={projects} showHeader={false} />
           </PPBlock>
         </Col>
       </Row>
