@@ -40,12 +40,14 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
       </PPToolBar>
-      <div className={styles.mainStage}>
+      <div id="dr" className={styles.mainStage}>
         <div className={styles.draw}>
-          <PPStage scale={scale} currentTool={undefined} />
+          <PPStage
+            width={document.getElementById('dr')?.clientWidth}
+            scale={scale}
+            currentTool={undefined}
+          />
         </div>
         <div className={styles.pblock}>
           <div className={styles.progress}>
@@ -53,6 +55,10 @@ const Page: React.FC = () => {
           </div>
         </div>
       </div>
+      <PPToolBar disLoc="right">
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
+      </PPToolBar>
       <div className={styles.rightSideBar}>
         <PPLabelList
           selectedLabel={currentLabel}
