@@ -245,9 +245,10 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
-      <div className={styles.mainStage}>
+      <div id="dr" className={styles.mainStage}>
         <div className={styles.draw}>
           <PPStage
+            width={document.getElementById('dr')?.clientWidth}
             scale={scale}
             annotations={annotations}
             currentTool={currentTool}
