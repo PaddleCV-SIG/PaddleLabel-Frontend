@@ -22,14 +22,8 @@ import {
   TagToJSON,
 } from '../models';
 
-export interface PplabelApiControllerTagAddToTaskRequest {
-  taskId: number;
-  requestId?: string;
-  inlineObject?: InlineObject;
-}
-
-export interface PplabelApiControllerTagGetByTaskRequest {
-  taskId: number;
+export interface ByTaskRequest {
+  taskId: string;
 }
 
 export interface TagsPostRequest {
@@ -38,16 +32,22 @@ export interface TagsPostRequest {
 }
 
 export interface TagsTagIdDeleteRequest {
-  tagId: number;
+  tagId: string;
 }
 
 export interface TagsTagIdGetRequest {
-  tagId: number;
+  tagId: string;
 }
 
 export interface TagsTagIdPutRequest {
-  tagId: number;
+  tagId: string;
   tag: Tag;
+}
+
+export interface ToTaskRequest {
+  taskId: string;
+  requestId?: string;
+  inlineObject?: InlineObject;
 }
 
 /**
@@ -55,71 +55,16 @@ export interface TagsTagIdPutRequest {
  */
 export class TagApi extends runtime.BaseAPI {
   /**
-   * Add a new tag to the task
-   */
-  async pplabelApiControllerTagAddToTaskRaw(
-    requestParameters: PplabelApiControllerTagAddToTaskRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Tag>>> {
-    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-      throw new runtime.RequiredError(
-        'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling pplabelApiControllerTagAddToTask.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    headerParameters['Content-Type'] = 'application/json';
-
-    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
-      headerParameters['request_id'] = String(requestParameters.requestId);
-    }
-
-    const response = await this.request(
-      {
-        path: `/tasks/{task_id}/tags`.replace(
-          `{${'task_id'}}`,
-          encodeURIComponent(String(requestParameters.taskId)),
-        ),
-        method: 'POST',
-        headers: headerParameters,
-        query: queryParameters,
-        body: InlineObjectToJSON(requestParameters.inlineObject),
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
-  }
-
-  /**
-   * Add a new tag to the task
-   */
-  async pplabelApiControllerTagAddToTask(
-    requestParameters: PplabelApiControllerTagAddToTaskRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Array<Tag>> {
-    const response = await this.pplabelApiControllerTagAddToTaskRaw(
-      requestParameters,
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
    * Get all tags of the task
    */
-  async pplabelApiControllerTagGetByTaskRaw(
-    requestParameters: PplabelApiControllerTagGetByTaskRequest,
+  async byTaskRaw(
+    requestParameters: ByTaskRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<Array<Tag>>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
         'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling pplabelApiControllerTagGetByTask.',
+        'Required parameter requestParameters.taskId was null or undefined when calling byTask.',
       );
     }
 
@@ -146,14 +91,8 @@ export class TagApi extends runtime.BaseAPI {
   /**
    * Get all tags of the task
    */
-  async pplabelApiControllerTagGetByTask(
-    requestParameters: PplabelApiControllerTagGetByTaskRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Array<Tag>> {
-    const response = await this.pplabelApiControllerTagGetByTaskRaw(
-      requestParameters,
-      initOverrides,
-    );
+  async byTask(taskId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
+    const response = await this.byTaskRaw({ taskId: taskId }, initOverrides);
     return await response.value();
   }
 
@@ -227,8 +166,8 @@ export class TagApi extends runtime.BaseAPI {
   /**
    * Create a new tag
    */
-  async tagsPost(requestParameters: TagsPostRequest, initOverrides?: RequestInit): Promise<Tag> {
-    const response = await this.tagsPostRaw(requestParameters, initOverrides);
+  async tagsPost(tag: Tag, requestId?: string, initOverrides?: RequestInit): Promise<Tag> {
+    const response = await this.tagsPostRaw({ tag: tag, requestId: requestId }, initOverrides);
     return await response.value();
   }
 
@@ -271,11 +210,8 @@ export class TagApi extends runtime.BaseAPI {
    * Delete a tag and ALL TAGGING RECORDS under this tag.
    * Delete a tag and ALL TAGGING RECORDS under this tag.
    */
-  async tagsTagIdDelete(
-    requestParameters: TagsTagIdDeleteRequest,
-    initOverrides?: RequestInit,
-  ): Promise<void> {
-    await this.tagsTagIdDeleteRaw(requestParameters, initOverrides);
+  async tagsTagIdDelete(tagId: string, initOverrides?: RequestInit): Promise<void> {
+    await this.tagsTagIdDeleteRaw({ tagId: tagId }, initOverrides);
   }
 
   /**
@@ -315,11 +251,8 @@ export class TagApi extends runtime.BaseAPI {
   /**
    * Get info of a specific tag
    */
-  async tagsTagIdGet(
-    requestParameters: TagsTagIdGetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Tag> {
-    const response = await this.tagsTagIdGetRaw(requestParameters, initOverrides);
+  async tagsTagIdGet(tagId: string, initOverrides?: RequestInit): Promise<Tag> {
+    const response = await this.tagsTagIdGetRaw({ tagId: tagId }, initOverrides);
     return await response.value();
   }
 
@@ -372,11 +305,65 @@ export class TagApi extends runtime.BaseAPI {
    * Edit tag properties. Empty strings will be set. Properties not in request body won\'t be changed
    * Edit tag properties
    */
-  async tagsTagIdPut(
-    requestParameters: TagsTagIdPutRequest,
+  async tagsTagIdPut(tagId: string, tag: Tag, initOverrides?: RequestInit): Promise<Tag> {
+    const response = await this.tagsTagIdPutRaw({ tagId: tagId, tag: tag }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Add a new tag to the task
+   */
+  async toTaskRaw(
+    requestParameters: ToTaskRequest,
     initOverrides?: RequestInit,
-  ): Promise<Tag> {
-    const response = await this.tagsTagIdPutRaw(requestParameters, initOverrides);
+  ): Promise<runtime.ApiResponse<Array<Tag>>> {
+    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+      throw new runtime.RequiredError(
+        'taskId',
+        'Required parameter requestParameters.taskId was null or undefined when calling toTask.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+      headerParameters['request_id'] = String(requestParameters.requestId);
+    }
+
+    const response = await this.request(
+      {
+        path: `/tasks/{task_id}/tags`.replace(
+          `{${'task_id'}}`,
+          encodeURIComponent(String(requestParameters.taskId)),
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: InlineObjectToJSON(requestParameters.inlineObject),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
+  }
+
+  /**
+   * Add a new tag to the task
+   */
+  async toTask(
+    taskId: string,
+    requestId?: string,
+    inlineObject?: InlineObject,
+    initOverrides?: RequestInit,
+  ): Promise<Array<Tag>> {
+    const response = await this.toTaskRaw(
+      { taskId: taskId, requestId: requestId, inlineObject: inlineObject },
+      initOverrides,
+    );
     return await response.value();
   }
 }

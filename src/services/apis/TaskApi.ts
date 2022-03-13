@@ -16,15 +16,15 @@ import * as runtime from '../runtime';
 import { Task, TaskFromJSON, TaskToJSON } from '../models';
 
 export interface TasksTaskIdDeleteRequest {
-  taskId: number;
+  taskId: string;
 }
 
 export interface TasksTaskIdGetRequest {
-  taskId: number;
+  taskId: string;
 }
 
 export interface TasksTaskIdPutRequest {
-  taskId: number;
+  taskId: string;
   task: Task;
 }
 
@@ -129,11 +129,8 @@ export class TaskApi extends runtime.BaseAPI {
    * Delete a task and ALL DATA and ANNOTATIONS under the project. Won\'t delete file on file system
    * Delete a task and ALL DATA and ANNOTATIONS under the task.
    */
-  async tasksTaskIdDelete(
-    requestParameters: TasksTaskIdDeleteRequest,
-    initOverrides?: RequestInit,
-  ): Promise<void> {
-    await this.tasksTaskIdDeleteRaw(requestParameters, initOverrides);
+  async tasksTaskIdDelete(taskId: string, initOverrides?: RequestInit): Promise<void> {
+    await this.tasksTaskIdDeleteRaw({ taskId: taskId }, initOverrides);
   }
 
   /**
@@ -173,11 +170,8 @@ export class TaskApi extends runtime.BaseAPI {
   /**
    * Get info of a specific task
    */
-  async tasksTaskIdGet(
-    requestParameters: TasksTaskIdGetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Task> {
-    const response = await this.tasksTaskIdGetRaw(requestParameters, initOverrides);
+  async tasksTaskIdGet(taskId: string, initOverrides?: RequestInit): Promise<Task> {
+    const response = await this.tasksTaskIdGetRaw({ taskId: taskId }, initOverrides);
     return await response.value();
   }
 
@@ -230,11 +224,8 @@ export class TaskApi extends runtime.BaseAPI {
    * Edit task info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
    * Edit task info
    */
-  async tasksTaskIdPut(
-    requestParameters: TasksTaskIdPutRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Task> {
-    const response = await this.tasksTaskIdPutRaw(requestParameters, initOverrides);
+  async tasksTaskIdPut(taskId: string, task: Task, initOverrides?: RequestInit): Promise<Task> {
+    const response = await this.tasksTaskIdPutRaw({ taskId: taskId, task: task }, initOverrides);
     return await response.value();
   }
 }

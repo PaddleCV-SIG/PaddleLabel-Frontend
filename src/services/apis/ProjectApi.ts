@@ -31,38 +31,45 @@ import {
   TaskToJSON,
 } from '../models';
 
-export interface PplabelApiControllerAnnotationGetByProjectRequest {
+export interface DeleteRequest {
+  projectId: string;
+  requestId?: string;
+}
+
+export interface ByProjectRequest {
   projectId: string;
 }
 
-export interface PplabelApiControllerLabelGetByProjectRequest {
+export interface ByProject0Request {
   projectId: string;
 }
 
-export interface PplabelApiControllerTagGetByProjectRequest {
+export interface ByProject1Request {
   projectId: string;
 }
 
-export interface PplabelApiControllerTaskGetByProjectRequest {
+export interface ByProject2Request {
   projectId: string;
 }
 
-export interface ProjectsPostRequest {
+export interface CreateRequest {
   project: Project;
   requestId?: string;
 }
 
-export interface ProjectsProjectIdDeleteRequest {
-  projectId: number;
+export interface GetRequest {
+  projectId: string;
+  requestId?: string;
 }
 
-export interface ProjectsProjectIdGetRequest {
-  projectId: number;
+export interface GetAllRequest {
+  requestId?: string;
 }
 
-export interface ProjectsProjectIdPutRequest {
-  projectId: number;
+export interface UpdateRequest {
+  projectId: string;
   project: Project;
+  requestId?: string;
 }
 
 /**
@@ -70,16 +77,17 @@ export interface ProjectsProjectIdPutRequest {
  */
 export class ProjectApi extends runtime.BaseAPI {
   /**
-   * Your GET endpoint
+   * Delete a project record and ALL TASKS RECORDS under the project. Won\'t delete file on file system
+   * Delete a project record and ALL TASKS RECORDS under the project.
    */
-  async pplabelApiControllerAnnotationGetByProjectRaw(
-    requestParameters: PplabelApiControllerAnnotationGetByProjectRequest,
+  async _deleteRaw(
+    requestParameters: DeleteRequest,
     initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Annotation>>> {
+  ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
         'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling pplabelApiControllerAnnotationGetByProject.',
+        'Required parameter requestParameters.projectId was null or undefined when calling _delete.',
       );
     }
 
@@ -87,143 +95,45 @@ export class ProjectApi extends runtime.BaseAPI {
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}/annotations`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AnnotationFromJSON));
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async pplabelApiControllerAnnotationGetByProject(
-    requestParameters: PplabelApiControllerAnnotationGetByProjectRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Array<Annotation>> {
-    const response = await this.pplabelApiControllerAnnotationGetByProjectRaw(
-      requestParameters,
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async pplabelApiControllerLabelGetByProjectRaw(
-    requestParameters: PplabelApiControllerLabelGetByProjectRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Label>>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling pplabelApiControllerLabelGetByProject.',
-      );
+    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+      headerParameters['request_id'] = String(requestParameters.requestId);
     }
 
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
     const response = await this.request(
       {
-        path: `/projects/{project_id}/labels`.replace(
+        path: `/projects/{project_id}`.replace(
           `{${'project_id'}}`,
           encodeURIComponent(String(requestParameters.projectId)),
         ),
-        method: 'GET',
+        method: 'DELETE',
         headers: headerParameters,
         query: queryParameters,
       },
       initOverrides,
     );
 
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LabelFromJSON));
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Delete a project record and ALL TASKS RECORDS under the project. Won\'t delete file on file system
+   * Delete a project record and ALL TASKS RECORDS under the project.
+   */
+  async _delete(projectId: string, requestId?: string, initOverrides?: RequestInit): Promise<void> {
+    await this._deleteRaw({ projectId: projectId, requestId: requestId }, initOverrides);
   }
 
   /**
    * Your GET endpoint
    */
-  async pplabelApiControllerLabelGetByProject(
-    requestParameters: PplabelApiControllerLabelGetByProjectRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Array<Label>> {
-    const response = await this.pplabelApiControllerLabelGetByProjectRaw(
-      requestParameters,
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async pplabelApiControllerTagGetByProjectRaw(
-    requestParameters: PplabelApiControllerTagGetByProjectRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Tag>>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling pplabelApiControllerTagGetByProject.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}/tags`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async pplabelApiControllerTagGetByProject(
-    requestParameters: PplabelApiControllerTagGetByProjectRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Array<Tag>> {
-    const response = await this.pplabelApiControllerTagGetByProjectRaw(
-      requestParameters,
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async pplabelApiControllerTaskGetByProjectRaw(
-    requestParameters: PplabelApiControllerTaskGetByProjectRequest,
+  async byProjectRaw(
+    requestParameters: ByProjectRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<Array<Task>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
         'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling pplabelApiControllerTaskGetByProject.',
+        'Required parameter requestParameters.projectId was null or undefined when calling byProject.',
       );
     }
 
@@ -250,28 +160,35 @@ export class ProjectApi extends runtime.BaseAPI {
   /**
    * Your GET endpoint
    */
-  async pplabelApiControllerTaskGetByProject(
-    requestParameters: PplabelApiControllerTaskGetByProjectRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Array<Task>> {
-    const response = await this.pplabelApiControllerTaskGetByProjectRaw(
-      requestParameters,
-      initOverrides,
-    );
+  async byProject(projectId: string, initOverrides?: RequestInit): Promise<Array<Task>> {
+    const response = await this.byProjectRaw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
   /**
-   * Read all projects, sort by last modify date
+   * Your GET endpoint
    */
-  async projectsGetRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Project>>> {
+  async byProject_1Raw(
+    requestParameters: ByProject0Request,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Label>>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling byProject_1.',
+      );
+    }
+
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
 
     const response = await this.request(
       {
-        path: `/projects`,
+        path: `/projects/{project_id}/labels`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
         method: 'GET',
         headers: headerParameters,
         query: queryParameters,
@@ -279,28 +196,112 @@ export class ProjectApi extends runtime.BaseAPI {
       initOverrides,
     );
 
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ProjectFromJSON));
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LabelFromJSON));
   }
 
   /**
-   * Read all projects, sort by last modify date
+   * Your GET endpoint
    */
-  async projectsGet(initOverrides?: RequestInit): Promise<Array<Project>> {
-    const response = await this.projectsGetRaw(initOverrides);
+  async byProject_1(projectId: string, initOverrides?: RequestInit): Promise<Array<Label>> {
+    const response = await this.byProject_1Raw({ projectId: projectId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async byProject_2Raw(
+    requestParameters: ByProject1Request,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Annotation>>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling byProject_2.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/annotations`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AnnotationFromJSON));
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async byProject_2(projectId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
+    const response = await this.byProject_2Raw({ projectId: projectId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async byProject_3Raw(
+    requestParameters: ByProject2Request,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Tag>>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling byProject_3.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/tags`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async byProject_3(projectId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
+    const response = await this.byProject_3Raw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
   /**
    * Create a new project
    */
-  async projectsPostRaw(
-    requestParameters: ProjectsPostRequest,
+  async createRaw(
+    requestParameters: CreateRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<Project>> {
     if (requestParameters.project === null || requestParameters.project === undefined) {
       throw new runtime.RequiredError(
         'project',
-        'Required parameter requestParameters.project was null or undefined when calling projectsPost.',
+        'Required parameter requestParameters.project was null or undefined when calling create.',
       );
     }
 
@@ -331,77 +332,39 @@ export class ProjectApi extends runtime.BaseAPI {
   /**
    * Create a new project
    */
-  async projectsPost(
-    requestParameters: ProjectsPostRequest,
+  async create(
+    project: Project,
+    requestId?: string,
     initOverrides?: RequestInit,
   ): Promise<Project> {
-    const response = await this.projectsPostRaw(requestParameters, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Delete a project record and ALL TASKS RECORDS under the project. Won\'t delete file on file system
-   * Delete a project record and ALL TASKS RECORDS under the project.
-   */
-  async projectsProjectIdDeleteRaw(
-    requestParameters: ProjectsProjectIdDeleteRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<void>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling projectsProjectIdDelete.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'DELETE',
-        headers: headerParameters,
-        query: queryParameters,
-      },
+    const response = await this.createRaw(
+      { project: project, requestId: requestId },
       initOverrides,
     );
-
-    return new runtime.VoidApiResponse(response);
-  }
-
-  /**
-   * Delete a project record and ALL TASKS RECORDS under the project. Won\'t delete file on file system
-   * Delete a project record and ALL TASKS RECORDS under the project.
-   */
-  async projectsProjectIdDelete(
-    requestParameters: ProjectsProjectIdDeleteRequest,
-    initOverrides?: RequestInit,
-  ): Promise<void> {
-    await this.projectsProjectIdDeleteRaw(requestParameters, initOverrides);
+    return await response.value();
   }
 
   /**
    * Get info of a specific project
    */
-  async projectsProjectIdGetRaw(
-    requestParameters: ProjectsProjectIdGetRequest,
+  async getRaw(
+    requestParameters: GetRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<Project>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
         'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling projectsProjectIdGet.',
+        'Required parameter requestParameters.projectId was null or undefined when calling get.',
       );
     }
 
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
+
+    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+      headerParameters['request_id'] = String(requestParameters.requestId);
+    }
 
     const response = await this.request(
       {
@@ -422,11 +385,47 @@ export class ProjectApi extends runtime.BaseAPI {
   /**
    * Get info of a specific project
    */
-  async projectsProjectIdGet(
-    requestParameters: ProjectsProjectIdGetRequest,
+  async get(projectId: string, requestId?: string, initOverrides?: RequestInit): Promise<Project> {
+    const response = await this.getRaw(
+      { projectId: projectId, requestId: requestId },
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   * Read all projects, sort by last modify date
+   */
+  async getAllRaw(
+    requestParameters: GetAllRequest,
     initOverrides?: RequestInit,
-  ): Promise<Project> {
-    const response = await this.projectsProjectIdGetRaw(requestParameters, initOverrides);
+  ): Promise<runtime.ApiResponse<Array<Project>>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+      headerParameters['request_id'] = String(requestParameters.requestId);
+    }
+
+    const response = await this.request(
+      {
+        path: `/projects`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ProjectFromJSON));
+  }
+
+  /**
+   * Read all projects, sort by last modify date
+   */
+  async getAll(requestId?: string, initOverrides?: RequestInit): Promise<Array<Project>> {
+    const response = await this.getAllRaw({ requestId: requestId }, initOverrides);
     return await response.value();
   }
 
@@ -434,21 +433,21 @@ export class ProjectApi extends runtime.BaseAPI {
    * Edit multiple project properties. Empty strings will be set. Properties not in request body won\'t be changed
    * Edit multiple project properties
    */
-  async projectsProjectIdPutRaw(
-    requestParameters: ProjectsProjectIdPutRequest,
+  async updateRaw(
+    requestParameters: UpdateRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<Project>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
         'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling projectsProjectIdPut.',
+        'Required parameter requestParameters.projectId was null or undefined when calling update.',
       );
     }
 
     if (requestParameters.project === null || requestParameters.project === undefined) {
       throw new runtime.RequiredError(
         'project',
-        'Required parameter requestParameters.project was null or undefined when calling projectsProjectIdPut.',
+        'Required parameter requestParameters.project was null or undefined when calling update.',
       );
     }
 
@@ -457,6 +456,10 @@ export class ProjectApi extends runtime.BaseAPI {
     const headerParameters: runtime.HTTPHeaders = {};
 
     headerParameters['Content-Type'] = 'application/json';
+
+    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+      headerParameters['request_id'] = String(requestParameters.requestId);
+    }
 
     const response = await this.request(
       {
@@ -479,11 +482,16 @@ export class ProjectApi extends runtime.BaseAPI {
    * Edit multiple project properties. Empty strings will be set. Properties not in request body won\'t be changed
    * Edit multiple project properties
    */
-  async projectsProjectIdPut(
-    requestParameters: ProjectsProjectIdPutRequest,
+  async update(
+    projectId: string,
+    project: Project,
+    requestId?: string,
     initOverrides?: RequestInit,
   ): Promise<Project> {
-    const response = await this.projectsProjectIdPutRaw(requestParameters, initOverrides);
+    const response = await this.updateRaw(
+      { projectId: projectId, project: project, requestId: requestId },
+      initOverrides,
+    );
     return await response.value();
   }
 }

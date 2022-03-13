@@ -12,7 +12,9 @@
  * Do not edit the class manually.
  */
 
-export const BASE_PATH = 'http://localhost:5000/api'.replace(/\/+$/, '');
+// export const BASE_PATH = "http://localhost:5000/api".replace(/\/+$/, "");
+
+export const BASE_PATH = 'https://pplabel.herokuapp.com/api'.replace(/\/+$/, '');
 
 const isBlob = (value: any) => typeof Blob !== 'undefined' && value instanceof Blob;
 
@@ -88,7 +90,7 @@ export class BaseAPI {
           })) || fetchParams;
       }
     }
-    let response = await fetch(fetchParams.url, fetchParams.init);
+    let response = await (this.configuration.fetchApi || fetch)(fetchParams.url, fetchParams.init);
     for (const middleware of this.middleware) {
       if (middleware.post) {
         response =

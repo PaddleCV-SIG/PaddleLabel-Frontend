@@ -161,9 +161,6 @@ const Page: React.FC = () => {
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
-        <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
-          Intelligent Interaction
-        </PPToolBarButton>
         <PPPolygon
           active={currentTool == 'polygon'}
           onClick={() => {
@@ -173,6 +170,7 @@ const Page: React.FC = () => {
         >
           Polygon
         </PPPolygon>
+        <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
         <PPBrush
           size={brushSize}
           active={currentTool == 'brush'}
@@ -229,8 +227,6 @@ const Page: React.FC = () => {
         >
           Move
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
@@ -249,9 +245,10 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
-      <div className={styles.mainStage}>
+      <div id="dr" className={styles.mainStage}>
         <div className={styles.draw}>
           <PPStage
+            width={document.getElementById('dr')?.clientWidth}
             scale={scale}
             annotations={annotations}
             currentTool={currentTool}
@@ -275,6 +272,11 @@ const Page: React.FC = () => {
         </div>
       </div>
       <PPToolBar disLoc="right">
+        <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
+          Interactor
+        </PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
           Segment Threshold
         </PPSetButton>

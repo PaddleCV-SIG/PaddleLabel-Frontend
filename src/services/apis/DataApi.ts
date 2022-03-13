@@ -23,24 +23,23 @@ import {
 } from '../models';
 
 export interface DatasDataIdDeleteRequest {
-  dataId: number;
+  dataId: string;
 }
 
 export interface DatasDataIdGetRequest {
-  dataId: number;
+  dataId: string;
 }
 
 export interface DatasDataIdPutRequest {
-  dataId: number;
+  dataId: string;
   data: Data;
 }
 
 export interface DatasPostRequest {
   data: Data;
-  requestId?: string;
 }
 
-export interface PplabelApiControllerDataGetImageRequest {
+export interface ImageRequest {
   dataId: string;
 }
 
@@ -69,7 +68,7 @@ export class DataApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/datas/{data_id}`.replace(
+        path: `/datas/{data_id}/`.replace(
           `{${'data_id'}}`,
           encodeURIComponent(String(requestParameters.dataId)),
         ),
@@ -87,11 +86,8 @@ export class DataApi extends runtime.BaseAPI {
    * Delete a data record, file on file system will not be deleted
    * Delete a data record
    */
-  async datasDataIdDelete(
-    requestParameters: DatasDataIdDeleteRequest,
-    initOverrides?: RequestInit,
-  ): Promise<void> {
-    await this.datasDataIdDeleteRaw(requestParameters, initOverrides);
+  async datasDataIdDelete(dataId: string, initOverrides?: RequestInit): Promise<void> {
+    await this.datasDataIdDeleteRaw({ dataId: dataId }, initOverrides);
   }
 
   /**
@@ -114,7 +110,7 @@ export class DataApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/datas/{data_id}`.replace(
+        path: `/datas/{data_id}/`.replace(
           `{${'data_id'}}`,
           encodeURIComponent(String(requestParameters.dataId)),
         ),
@@ -131,11 +127,8 @@ export class DataApi extends runtime.BaseAPI {
   /**
    * Get info of a specific data record
    */
-  async datasDataIdGet(
-    requestParameters: DatasDataIdGetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Data> {
-    const response = await this.datasDataIdGetRaw(requestParameters, initOverrides);
+  async datasDataIdGet(dataId: string, initOverrides?: RequestInit): Promise<Data> {
+    const response = await this.datasDataIdGetRaw({ dataId: dataId }, initOverrides);
     return await response.value();
   }
 
@@ -169,7 +162,7 @@ export class DataApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/datas/{data_id}`.replace(
+        path: `/datas/{data_id}/`.replace(
           `{${'data_id'}}`,
           encodeURIComponent(String(requestParameters.dataId)),
         ),
@@ -188,11 +181,8 @@ export class DataApi extends runtime.BaseAPI {
    * Edit data record. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
    * Edit data record
    */
-  async datasDataIdPut(
-    requestParameters: DatasDataIdPutRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Data> {
-    const response = await this.datasDataIdPutRaw(requestParameters, initOverrides);
+  async datasDataIdPut(dataId: string, data: Data, initOverrides?: RequestInit): Promise<Data> {
+    const response = await this.datasDataIdPutRaw({ dataId: dataId, data: data }, initOverrides);
     return await response.value();
   }
 
@@ -245,10 +235,6 @@ export class DataApi extends runtime.BaseAPI {
 
     headerParameters['Content-Type'] = 'application/json';
 
-    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
-      headerParameters['request_id'] = String(requestParameters.requestId);
-    }
-
     const response = await this.request(
       {
         path: `/datas/`,
@@ -266,22 +252,22 @@ export class DataApi extends runtime.BaseAPI {
   /**
    * Create a new data record
    */
-  async datasPost(requestParameters: DatasPostRequest, initOverrides?: RequestInit): Promise<Data> {
-    const response = await this.datasPostRaw(requestParameters, initOverrides);
+  async datasPost(data: Data, initOverrides?: RequestInit): Promise<Data> {
+    const response = await this.datasPostRaw({ data: data }, initOverrides);
     return await response.value();
   }
 
   /**
-   * Your GET endpoint
+   * Get the image of a data record
    */
-  async pplabelApiControllerDataGetImageRaw(
-    requestParameters: PplabelApiControllerDataGetImageRequest,
+  async imageRaw(
+    requestParameters: ImageRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<InlineResponse200>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
         'dataId',
-        'Required parameter requestParameters.dataId was null or undefined when calling pplabelApiControllerDataGetImage.',
+        'Required parameter requestParameters.dataId was null or undefined when calling image.',
       );
     }
 
@@ -308,16 +294,10 @@ export class DataApi extends runtime.BaseAPI {
   }
 
   /**
-   * Your GET endpoint
+   * Get the image of a data record
    */
-  async pplabelApiControllerDataGetImage(
-    requestParameters: PplabelApiControllerDataGetImageRequest,
-    initOverrides?: RequestInit,
-  ): Promise<InlineResponse200> {
-    const response = await this.pplabelApiControllerDataGetImageRaw(
-      requestParameters,
-      initOverrides,
-    );
+  async image(dataId: string, initOverrides?: RequestInit): Promise<InlineResponse200> {
+    const response = await this.imageRaw({ dataId: dataId }, initOverrides);
     return await response.value();
   }
 }

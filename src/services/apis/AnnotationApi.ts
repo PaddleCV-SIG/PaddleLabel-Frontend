@@ -77,10 +77,10 @@ export class AnnotationApi extends runtime.BaseAPI {
    * Delete an annotation
    */
   async annotationsAnnotationIdDelete(
-    requestParameters: AnnotationsAnnotationIdDeleteRequest,
+    annotationId: number,
     initOverrides?: RequestInit,
   ): Promise<void> {
-    await this.annotationsAnnotationIdDeleteRaw(requestParameters, initOverrides);
+    await this.annotationsAnnotationIdDeleteRaw({ annotationId: annotationId }, initOverrides);
   }
 
   /**
@@ -121,10 +121,13 @@ export class AnnotationApi extends runtime.BaseAPI {
    * Get info of a specific annotation
    */
   async annotationsAnnotationIdGet(
-    requestParameters: AnnotationsAnnotationIdGetRequest,
+    annotationId: number,
     initOverrides?: RequestInit,
   ): Promise<Annotation> {
-    const response = await this.annotationsAnnotationIdGetRaw(requestParameters, initOverrides);
+    const response = await this.annotationsAnnotationIdGetRaw(
+      { annotationId: annotationId },
+      initOverrides,
+    );
     return await response.value();
   }
 
@@ -178,10 +181,14 @@ export class AnnotationApi extends runtime.BaseAPI {
    * Edit annotation
    */
   async annotationsAnnotationIdPut(
-    requestParameters: AnnotationsAnnotationIdPutRequest,
+    annotationId: number,
+    annotation: Annotation,
     initOverrides?: RequestInit,
   ): Promise<Annotation> {
-    const response = await this.annotationsAnnotationIdPutRaw(requestParameters, initOverrides);
+    const response = await this.annotationsAnnotationIdPutRaw(
+      { annotationId: annotationId, annotation: annotation },
+      initOverrides,
+    );
     return await response.value();
   }
 
@@ -258,10 +265,14 @@ export class AnnotationApi extends runtime.BaseAPI {
    * Create a new annotation
    */
   async annotationsPost(
-    requestParameters: AnnotationsPostRequest,
+    annotation: Annotation,
+    requestId?: string,
     initOverrides?: RequestInit,
   ): Promise<Annotation> {
-    const response = await this.annotationsPostRaw(requestParameters, initOverrides);
+    const response = await this.annotationsPostRaw(
+      { annotation: annotation, requestId: requestId },
+      initOverrides,
+    );
     return await response.value();
   }
 }

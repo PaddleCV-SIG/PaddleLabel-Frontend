@@ -74,10 +74,10 @@ export class UserApi extends runtime.BaseAPI {
    * Login and get JWT
    */
   async pplabelApiControllerUserLogin(
-    requestParameters: PplabelApiControllerUserLoginRequest = {},
+    inlineObject1?: InlineObject1,
     initOverrides?: RequestInit,
   ): Promise<void> {
-    await this.pplabelApiControllerUserLoginRaw(requestParameters, initOverrides);
+    await this.pplabelApiControllerUserLoginRaw({ inlineObject1: inlineObject1 }, initOverrides);
   }
 
   /**
@@ -177,11 +177,8 @@ export class UserApi extends runtime.BaseAPI {
    * Delete a user
    * Delete a user
    */
-  async usersUuidDelete(
-    requestParameters: UsersUuidDeleteRequest,
-    initOverrides?: RequestInit,
-  ): Promise<void> {
-    await this.usersUuidDeleteRaw(requestParameters, initOverrides);
+  async usersUuidDelete(uuid: string, initOverrides?: RequestInit): Promise<void> {
+    await this.usersUuidDeleteRaw({ uuid: uuid }, initOverrides);
   }
 
   /**
@@ -221,11 +218,8 @@ export class UserApi extends runtime.BaseAPI {
   /**
    * Get info of a specific user
    */
-  async usersUuidGet(
-    requestParameters: UsersUuidGetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<User> {
-    const response = await this.usersUuidGetRaw(requestParameters, initOverrides);
+  async usersUuidGet(uuid: string, initOverrides?: RequestInit): Promise<User> {
+    const response = await this.usersUuidGetRaw({ uuid: uuid }, initOverrides);
     return await response.value();
   }
 
@@ -278,11 +272,8 @@ export class UserApi extends runtime.BaseAPI {
    * Edit user info.
    * Edit user info
    */
-  async usersUuidPut(
-    requestParameters: UsersUuidPutRequest,
-    initOverrides?: RequestInit,
-  ): Promise<User> {
-    const response = await this.usersUuidPutRaw(requestParameters, initOverrides);
+  async usersUuidPut(uuid: string, user: User, initOverrides?: RequestInit): Promise<User> {
+    const response = await this.usersUuidPutRaw({ uuid: uuid, user: user }, initOverrides);
     return await response.value();
   }
 }

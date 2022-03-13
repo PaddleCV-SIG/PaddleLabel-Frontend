@@ -16,15 +16,15 @@ import * as runtime from '../runtime';
 import { Label, LabelFromJSON, LabelToJSON } from '../models';
 
 export interface LabelsLabelIdDeleteRequest {
-  labelId: number;
+  labelId: string;
 }
 
 export interface LabelsLabelIdGetRequest {
-  labelId: number;
+  labelId: string;
 }
 
 export interface LabelsLabelIdPutRequest {
-  labelId: number;
+  labelId: string;
   label: Label;
 }
 
@@ -105,11 +105,8 @@ export class LabelApi extends runtime.BaseAPI {
    * Delete a label. Labels in use (have annotation pointing at them) are not allowed to be deleted.
    * Delete a label
    */
-  async labelsLabelIdDelete(
-    requestParameters: LabelsLabelIdDeleteRequest,
-    initOverrides?: RequestInit,
-  ): Promise<void> {
-    await this.labelsLabelIdDeleteRaw(requestParameters, initOverrides);
+  async labelsLabelIdDelete(labelId: string, initOverrides?: RequestInit): Promise<void> {
+    await this.labelsLabelIdDeleteRaw({ labelId: labelId }, initOverrides);
   }
 
   /**
@@ -149,11 +146,8 @@ export class LabelApi extends runtime.BaseAPI {
   /**
    * Get info about a specific label
    */
-  async labelsLabelIdGet(
-    requestParameters: LabelsLabelIdGetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Label> {
-    const response = await this.labelsLabelIdGetRaw(requestParameters, initOverrides);
+  async labelsLabelIdGet(labelId: string, initOverrides?: RequestInit): Promise<Label> {
+    const response = await this.labelsLabelIdGetRaw({ labelId: labelId }, initOverrides);
     return await response.value();
   }
 
@@ -207,10 +201,14 @@ export class LabelApi extends runtime.BaseAPI {
    * Edit label info
    */
   async labelsLabelIdPut(
-    requestParameters: LabelsLabelIdPutRequest,
+    labelId: string,
+    label: Label,
     initOverrides?: RequestInit,
   ): Promise<Label> {
-    const response = await this.labelsLabelIdPutRaw(requestParameters, initOverrides);
+    const response = await this.labelsLabelIdPutRaw(
+      { labelId: labelId, label: label },
+      initOverrides,
+    );
     return await response.value();
   }
 
@@ -255,11 +253,11 @@ export class LabelApi extends runtime.BaseAPI {
   /**
    * Create a new label
    */
-  async labelsPost(
-    requestParameters: LabelsPostRequest,
-    initOverrides?: RequestInit,
-  ): Promise<Label> {
-    const response = await this.labelsPostRaw(requestParameters, initOverrides);
+  async labelsPost(label: Label, requestId?: string, initOverrides?: RequestInit): Promise<Label> {
+    const response = await this.labelsPostRaw(
+      { label: label, requestId: requestId },
+      initOverrides,
+    );
     return await response.value();
   }
 }

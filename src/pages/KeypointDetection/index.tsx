@@ -140,6 +140,7 @@ const Page: React.FC = () => {
         >
           Polygon
         </PPPolygon>
+        <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
@@ -165,8 +166,6 @@ const Page: React.FC = () => {
         >
           Move
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
@@ -185,9 +184,10 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
-      <div className={styles.mainStage}>
+      <div id="dr" className={styles.mainStage}>
         <div className={styles.draw}>
           <PPStage
+            width={document.getElementById('dr')?.clientWidth}
             scale={scale}
             annotations={annotations}
             currentTool={currentTool}
@@ -209,6 +209,10 @@ const Page: React.FC = () => {
           </div>
         </div>
       </div>
+      <PPToolBar disLoc="right">
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
+      </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.finished}>
           <Button

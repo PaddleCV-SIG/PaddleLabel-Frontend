@@ -9,8 +9,8 @@ import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
 import PPPolygon from '@/components/PPLabelPage/PPPolygon';
-import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
-import { Progress } from 'antd';
+import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
+import { Button, Progress } from 'antd';
 
 export type ToolType = 'polygon' | 'mover' | undefined;
 
@@ -110,7 +110,7 @@ const Page: React.FC = () => {
     setAnnotations(newAnnos);
   };
 
-  const polygon = drawPolygon({
+  const polygon = drawRectangle({
     currentLabel: currentLabel,
     currentTool: currentTool,
     annotations: annotations,
@@ -140,6 +140,7 @@ const Page: React.FC = () => {
         >
           Polygon
         </PPPolygon>
+        <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
@@ -165,8 +166,6 @@ const Page: React.FC = () => {
         >
           Move
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
@@ -185,9 +184,10 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
-      <div className={styles.mainStage}>
+      <div id="dr" className={styles.mainStage}>
         <div className={styles.draw}>
           <PPStage
+            width={document.getElementById('dr')?.clientWidth}
             scale={scale}
             annotations={annotations}
             currentTool={currentTool}
@@ -209,7 +209,23 @@ const Page: React.FC = () => {
           </div>
         </div>
       </div>
+      <PPToolBar disLoc="right">
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
+      </PPToolBar>
       <div className={styles.rightSideBar}>
+        <div className={styles.determinOutline}>
+          <Button
+            style={{ height: 40, fontSize: '0.75rem' }}
+            type="primary"
+            block
+            onClick={() => {
+              setCurrentAnnotation(undefined);
+            }}
+          >
+            Determine Outline
+          </Button>
+        </div>
         <PPLabelList
           selectedLabel={currentLabel}
           onLabelSelect={(label) => {
