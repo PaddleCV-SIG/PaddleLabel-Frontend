@@ -61,7 +61,7 @@ const Projects: React.FC = () => {
   const [projects, setProjects] = React.useState([]);
   React.useEffect(() => {
     const projectApi = new ProjectApi();
-    projectApi.projectsGet().then(function (res) {
+    projectApi.getAll().then(function (res) {
       console.log('raw', res);
       setProjects(JSON.parse(JSON.stringify(res))); // TODO: get dict instead of object
       console.log(JSON.parse(JSON.stringify(res)));
