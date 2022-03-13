@@ -161,9 +161,6 @@ const Page: React.FC = () => {
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
-        <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
-          Intelligent Interaction
-        </PPToolBarButton>
         <PPPolygon
           active={currentTool == 'polygon'}
           onClick={() => {
@@ -229,8 +226,6 @@ const Page: React.FC = () => {
         >
           Move
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
@@ -275,6 +270,11 @@ const Page: React.FC = () => {
         </div>
       </div>
       <PPToolBar disLoc="right">
+        <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
+          Intelligent Interaction
+        </PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
           Segment Threshold
         </PPSetButton>
