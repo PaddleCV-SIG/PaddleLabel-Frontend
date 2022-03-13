@@ -10,6 +10,7 @@ import CreateButton from '@/components/CreatButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { ProjectApi } from '@/services/apis/ProjectApi';
 import { history } from 'umi';
+import { Configuration } from '@/services';
 
 export type ProjectInfo = {
   projectId: number;
@@ -61,7 +62,14 @@ const columns: ColumnsType<ProjectInfo> = [
 const Projects: React.FC = () => {
   const [projects, setProjects] = React.useState([]);
   React.useEffect(() => {
-    const projectApi = new ProjectApi();
+    // const projectApi = new ProjectApi();
+    const baseUrl = localStorage.getItem('basePath');
+    console.log(baseUrl);
+    const projectApi = new ProjectApi(
+      new Configuration(baseUrl ? { basePath: baseUrl } : undefined),
+    );
+
+    // const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
     projectApi.getAll().then(function (res) {
       console.log('raw', res);
       setProjects(JSON.parse(JSON.stringify(res))); // TODO: get dict instead of object
