@@ -57,6 +57,7 @@ const columns: ColumnsType<ProjectInfo> = [
     ),
   },
 ];
+
 const Projects: React.FC = () => {
   const [projects, setProjects] = React.useState([]);
   React.useEffect(() => {
@@ -77,6 +78,7 @@ const Projects: React.FC = () => {
     </Row>
   );
 };
+
 const Welcome: React.FC = () => {
   return (
     <PPContainer>
@@ -133,12 +135,5 @@ const Welcome: React.FC = () => {
     </PPContainer>
   );
 };
-// <Row style={{ marginTop: 20 }}>
-//   <Col span={24}>
-//     <PPBlock title="My Projects">
-//       <PPTable columns={columns} dataSource={projects} showHeader={false} />
-//     </PPBlock>
-//   </Col>
-// </Row>
 
 export default await Welcome;

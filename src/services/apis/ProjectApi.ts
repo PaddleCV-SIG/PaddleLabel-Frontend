@@ -31,22 +31,6 @@ import {
   TaskToJSON,
 } from '../models';
 
-export interface ByProjectRequest {
-  projectId: string;
-}
-
-export interface ByProject0Request {
-  projectId: string;
-}
-
-export interface ByProject1Request {
-  projectId: string;
-}
-
-export interface ByProject2Request {
-  projectId: string;
-}
-
 export interface CreateRequest {
   project: Project;
   requestId?: string;
@@ -59,6 +43,22 @@ export interface GetRequest {
 
 export interface GetAllRequest {
   requestId?: string;
+}
+
+export interface GetAnnotationsRequest {
+  projectId: string;
+}
+
+export interface GetProjectsRequest {
+  projectId: string;
+}
+
+export interface GetTagsRequest {
+  projectId: string;
+}
+
+export interface GetTasksRequest {
+  projectId: string;
 }
 
 export interface RemoveRequest {
@@ -76,174 +76,6 @@ export interface UpdateRequest {
  *
  */
 export class ProjectApi extends runtime.BaseAPI {
-  /**
-   * Your GET endpoint
-   */
-  async byProjectRaw(
-    requestParameters: ByProjectRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Task>>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling byProject.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}/tasks`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TaskFromJSON));
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async byProject(projectId: string, initOverrides?: RequestInit): Promise<Array<Task>> {
-    const response = await this.byProjectRaw({ projectId: projectId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async byProject_1Raw(
-    requestParameters: ByProject0Request,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Label>>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling byProject_1.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}/labels`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LabelFromJSON));
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async byProject_1(projectId: string, initOverrides?: RequestInit): Promise<Array<Label>> {
-    const response = await this.byProject_1Raw({ projectId: projectId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async byProject_2Raw(
-    requestParameters: ByProject1Request,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Annotation>>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling byProject_2.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}/annotations`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AnnotationFromJSON));
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async byProject_2(projectId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
-    const response = await this.byProject_2Raw({ projectId: projectId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async byProject_3Raw(
-    requestParameters: ByProject2Request,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Tag>>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling byProject_3.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}/tags`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async byProject_3(projectId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
-    const response = await this.byProject_3Raw({ projectId: projectId }, initOverrides);
-    return await response.value();
-  }
-
   /**
    * Create a new project
    */
@@ -379,6 +211,174 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getAll(requestId?: string, initOverrides?: RequestInit): Promise<Array<Project>> {
     const response = await this.getAllRaw({ requestId: requestId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getAnnotationsRaw(
+    requestParameters: GetAnnotationsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Annotation>>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling getAnnotations.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/annotations`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AnnotationFromJSON));
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getAnnotations(projectId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
+    const response = await this.getAnnotationsRaw({ projectId: projectId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getProjectsRaw(
+    requestParameters: GetProjectsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Label>>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling getProjects.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/labels`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LabelFromJSON));
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getProjects(projectId: string, initOverrides?: RequestInit): Promise<Array<Label>> {
+    const response = await this.getProjectsRaw({ projectId: projectId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getTagsRaw(
+    requestParameters: GetTagsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Tag>>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling getTags.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/tags`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getTags(projectId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
+    const response = await this.getTagsRaw({ projectId: projectId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getTasksRaw(
+    requestParameters: GetTasksRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Task>>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling getTasks.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/tasks`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TaskFromJSON));
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getTasks(projectId: string, initOverrides?: RequestInit): Promise<Array<Task>> {
+    const response = await this.getTasksRaw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
