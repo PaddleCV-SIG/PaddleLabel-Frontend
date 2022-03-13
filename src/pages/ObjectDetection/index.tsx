@@ -9,8 +9,8 @@ import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
 import PPPolygon from '@/components/PPLabelPage/PPPolygon';
-import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
-import { Progress } from 'antd';
+import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
+import { Button, Progress } from 'antd';
 
 export type ToolType = 'polygon' | 'mover' | undefined;
 
@@ -110,7 +110,7 @@ const Page: React.FC = () => {
     setAnnotations(newAnnos);
   };
 
-  const polygon = drawPolygon({
+  const polygon = drawRectangle({
     currentLabel: currentLabel,
     currentTool: currentTool,
     annotations: annotations,
@@ -210,6 +210,18 @@ const Page: React.FC = () => {
         </div>
       </div>
       <div className={styles.rightSideBar}>
+        <div className={styles.determinOutline}>
+          <Button
+            style={{ height: 40, fontSize: '0.75rem' }}
+            type="primary"
+            block
+            onClick={() => {
+              setCurrentAnnotation(undefined);
+            }}
+          >
+            Determine Outline
+          </Button>
+        </div>
         <PPLabelList
           selectedLabel={currentLabel}
           onLabelSelect={(label) => {
