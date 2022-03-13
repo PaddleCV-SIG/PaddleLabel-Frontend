@@ -162,3 +162,14 @@ After:
 ```bash
 docker run -ti pp-label-frontend npm test
 ```
+
+## Generate API
+
+```shell
+openapi-generator-cli generate \
+-i ../pplabel/pplabel/openapi.yml \
+-g typescript-fetch \
+-o src/services/ \
+--additional-properties=useSingleRequestParameter=false \
+--remove-operation-id-prefix
+```
