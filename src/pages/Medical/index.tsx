@@ -275,8 +275,6 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
           Interactor
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
           Segment Threshold
         </PPSetButton>
@@ -298,6 +296,8 @@ const Page: React.FC = () => {
             Medical Setting
           </PPToolBarButton>
         </Popover>
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
       </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.determinOutline}>
