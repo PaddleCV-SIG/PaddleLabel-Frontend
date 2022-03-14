@@ -8,15 +8,13 @@ import PPTable from '@/components/PPTable';
 import PPButton from '@/components/PPButton';
 import CreateButton from '@/components/CreatButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { ProjectApi } from '@/services/apis/ProjectApi';
 import { history } from 'umi';
-import { Configuration, Project } from '@/services';
+import type { Project } from '@/services';
 import serviceUtils from '@/services/serviceUtils';
 
-export const PROJECT_INFO_KEY = 'projectInfo';
+import { projectApi } from '@/services/api';
 
-const baseUrl = localStorage.getItem('basePath');
-const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
+export const PROJECT_INFO_KEY = 'projectInfo';
 
 export const refreshProject = (onProjectGet?: (res: Project) => void, id?: string) => {
   const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
