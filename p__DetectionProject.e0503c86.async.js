@@ -1,0 +1,1 @@
+(self.webpackChunkpp_label_frontend=self.webpackChunkpp_label_frontend||[]).push([[81],{42911:function(r,n,t){"use strict";t.r(n);var c=t(67294),e=t(5509),P=t(11428),_=t(85893),o=function(){return(0,_.jsx)(P.Z,{children:(0,_.jsx)(e.Z,{title:"Object Detection",imgSrc:"./pics/illustration.jpg"})})};n.default=o}}]);
