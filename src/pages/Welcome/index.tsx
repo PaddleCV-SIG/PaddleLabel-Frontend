@@ -13,11 +13,6 @@ import { history } from 'umi';
 import { Configuration, Project } from '@/services';
 import serviceUtils from '@/services/serviceUtils';
 
-export type ProjectInfo = {
-  projectId: number;
-  name: string;
-};
-
 export const PROJECT_INFO_KEY = 'projectInfo';
 
 const baseUrl = localStorage.getItem('basePath');
@@ -50,7 +45,7 @@ export const refreshProject = (onProjectGet?: (res: Project) => void, id?: strin
     });
 };
 
-const columns: ColumnsType<ProjectInfo> = [
+const columns: ColumnsType<Project> = [
   {
     title: 'ID',
     dataIndex: 'projectId',
@@ -101,6 +96,8 @@ const Projects: React.FC = () => {
       console.log(JSON.parse(JSON.stringify(res)));
     });
   }, []);
+
+  // if found no project, return create project button
   if (projects.length == 0)
     return (
       <Row style={{ marginTop: 20 }}>
@@ -139,7 +136,6 @@ const Welcome: React.FC = () => {
               history.push('/project_creation');
             }}
           >
-            {/* {intl.formatMessage({ projectId: 'welcome.createProject' })} */}
             Create Project
           </CreateButton>
         </Col>

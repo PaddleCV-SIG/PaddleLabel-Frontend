@@ -1,5 +1,5 @@
 export default {
-  'pages.layouts.userLayout.title': 'PP-Labeling, 一站式智能标注软件',
+  'pages.layouts.userLayout.title': 'PP-Label, 一站式智能标注软件',
   'pages.login.accountLogin.tab': '账户密码登录',
   'pages.login.accountLogin.errorMessage': '错误的用户名和密码(admin/pplabeling)',
   'pages.login.failure': '登录失败，请重试！',

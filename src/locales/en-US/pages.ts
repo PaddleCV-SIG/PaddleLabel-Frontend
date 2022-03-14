@@ -1,5 +1,5 @@
 export default {
-  'pages.layouts.userLayout.title': 'PP-Labeling, all in one intelligent labeling solution',
+  'pages.layouts.userLayout.title': 'PP-Label, all in one intelligent labeling solution',
   'pages.login.accountLogin.tab': 'Account Login',
   'pages.login.accountLogin.errorMessage': 'Incorrect username/password(admin/pplabeling)',
   'pages.login.failure': 'Login failed, please try again!',
