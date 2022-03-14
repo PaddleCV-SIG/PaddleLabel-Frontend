@@ -79,7 +79,8 @@ const columns: ColumnsType<ProjectInfo> = [
           height="1.875rem"
           color={'rgba(0,100,248,1)'}
           onClick={() => {
-            history.push('/label/' + record.projectId);
+            console.log('mark', record);
+            history.push(`/${record['taskCategory']['name']}?projectId=${record.projectId}`);
           }}
         >
           Mark
