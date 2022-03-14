@@ -30,10 +30,11 @@ export const refreshProject = (id?: string) => {
   const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
   if (projectInfo) return;
 
-  const projectAPI = new ProjectApi(
-    new Configuration({ basePath: localStorage.getItem('backendUrl') || '' }),
-  );
-  projectAPI
+  const baseUrl = localStorage.getItem('basePath');
+  console.log('asdef', baseUrl);
+  const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
+
+  projectApi
     .get(projectId)
     .then((res: Project) => {
       if (!res) {
@@ -92,16 +93,11 @@ const columns: ColumnsType<ProjectInfo> = [
 const Projects: React.FC = () => {
   const [projects, setProjects] = React.useState([]);
   React.useEffect(() => {
-    // const projectApi = new ProjectApi();
     const baseUrl = localStorage.getItem('basePath');
-    console.log(baseUrl);
     const projectApi = new ProjectApi(
       new Configuration(baseUrl ? { basePath: baseUrl } : undefined),
     );
-
-    // const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
     projectApi.getAll().then(function (res) {
-      console.log('raw', res);
       setProjects(JSON.parse(JSON.stringify(res))); // TODO: get dict instead of object
       console.log(JSON.parse(JSON.stringify(res)));
     });
