@@ -6,6 +6,7 @@ import { Button } from 'antd';
 import { ProjectApi } from '@/services/apis/ProjectApi';
 import { Configuration } from '@/services';
 import { history } from 'umi';
+import serviceUtils from '@/services/serviceUtils';
 
 export type _PPCardProps = {
   title?: string;
@@ -81,12 +82,10 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
         // }
         console.log(res);
         localStorage.setItem('projectInfo', JSON.stringify(res));
-        history.push('/image_classification');
+        history.push(`/image_classification?projectId=${res.projectId}`);
       })
       .catch((err) => {
-        if (err.detail) {
-          message.error(err.detail);
-        }
+        serviceUtils.parseError(err, message);
       });
   };
 

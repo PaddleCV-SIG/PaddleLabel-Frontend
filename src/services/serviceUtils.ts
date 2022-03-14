@@ -2,25 +2,28 @@ import type { MessageApi } from 'antd/lib/message';
 
 const serviceUtils = () => {
   const parseError = async (err: Response, msgComponent: MessageApi, defaultErrMsg?: string) => {
-    if (!err || !err.body) msgComponent.error(defaultErrMsg);
+    const defaultErrStr = defaultErrMsg
+      ? defaultErrMsg
+      : 'Something unexpected happened, please try again later.';
+    if (!err || !err.body) {
+      msgComponent.error(defaultErrStr);
+      return;
+    }
     const res = JSON.parse(await err.text());
-    if (!res || res.detail) msgComponent.error(defaultErrMsg);
+    if (!res || !res.detail) {
+      msgComponent.error(defaultErrStr);
+      return;
+    }
     msgComponent.error(res.detail);
   };
 
-  function getQueryVariable(variable?: string) {
-    const query = window.location.search.substring(1);
-    console.log(query); //"app=article&act=news_content&aid=160990"
-    const vars = query.split('&');
-    console.log(vars); //[ 'app=article', 'act=news_content', 'aid=160990' ]
-    for (let i = 0; i < vars.length; i++) {
-      const pair = vars[i].split('=');
-      console.log(pair); //[ 'app', 'article' ][ 'act', 'news_content' ][ 'aid', '160990' ]
-      if (pair[0] == variable) {
-        return pair[1];
-      }
-    }
-    return undefined;
+  function getQueryVariable(name: string, url = window.location.href) {
+    const filteredName = name.replace(/[\[\]]/g, '\\$&');
+    const regex = new RegExp('[?&]' + filteredName + '(=([^&#]*)|&|#|$)'),
+      results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 
   return {

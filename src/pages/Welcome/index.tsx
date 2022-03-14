@@ -20,15 +20,18 @@ export type ProjectInfo = {
 
 export const PROJECT_INFO_KEY = 'projectInfo';
 
-export const refreshProject = (id?: string) => {
-  const projectId = id == undefined ? serviceUtils.getQueryVariable('id') : id;
+export const refreshProject = (onProjectGet?: (res: Project) => void, id?: string) => {
+  const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
   if (!projectId) {
     message.error('Cannot find projectId!');
     history.push('/');
   }
 
   const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
-  if (projectInfo) return;
+  if (projectInfo) {
+    onProjectGet?.call(0, JSON.parse(projectInfo));
+    return;
+  }
 
   const baseUrl = localStorage.getItem('basePath');
   console.log('asdef', baseUrl);
@@ -42,6 +45,7 @@ export const refreshProject = (id?: string) => {
         history.push('/');
       }
       localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
+      onProjectGet?.call(0, res);
     })
     .catch((err: Response) => {
       serviceUtils.parseError(err, message, `Cannot find project: ${projectId}`);
