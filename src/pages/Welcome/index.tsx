@@ -20,6 +20,9 @@ export type ProjectInfo = {
 
 export const PROJECT_INFO_KEY = 'projectInfo';
 
+const baseUrl = localStorage.getItem('basePath');
+const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
+
 export const refreshProject = (id?: string) => {
   const projectId = id == undefined ? serviceUtils.getQueryVariable('id') : id;
   if (!projectId) {
@@ -29,10 +32,6 @@ export const refreshProject = (id?: string) => {
 
   const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
   if (projectInfo) return;
-
-  const baseUrl = localStorage.getItem('basePath');
-  console.log('asdef', baseUrl);
-  const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
 
   projectApi
     .get(projectId)
@@ -93,10 +92,6 @@ const columns: ColumnsType<ProjectInfo> = [
 const Projects: React.FC = () => {
   const [projects, setProjects] = React.useState([]);
   React.useEffect(() => {
-    const baseUrl = localStorage.getItem('basePath');
-    const projectApi = new ProjectApi(
-      new Configuration(baseUrl ? { basePath: baseUrl } : undefined),
-    );
     projectApi.getAll().then(function (res) {
       setProjects(JSON.parse(JSON.stringify(res))); // TODO: get dict instead of object
       console.log(JSON.parse(JSON.stringify(res)));
