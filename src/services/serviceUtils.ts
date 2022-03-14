@@ -26,9 +26,15 @@ const serviceUtils = () => {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 
+  function randomIntFromInterval(min: number, max: number) {
+    // min and max included
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
   return {
     parseError,
     getQueryVariable,
+    randomIntFromInterval,
   };
 };
 
