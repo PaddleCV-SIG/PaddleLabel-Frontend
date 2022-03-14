@@ -31,7 +31,10 @@ export const refreshProject = (id?: string) => {
   }
 
   const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
-  if (projectInfo) return;
+  if (projectInfo) {
+    onProjectGet?.call(0, JSON.parse(projectInfo));
+    return;
+  }
 
   projectApi
     .get(projectId)
@@ -41,6 +44,7 @@ export const refreshProject = (id?: string) => {
         history.push('/');
       }
       localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
+      onProjectGet?.call(0, res);
     })
     .catch((err: Response) => {
       serviceUtils.parseError(err, message, `Cannot find project: ${projectId}`);

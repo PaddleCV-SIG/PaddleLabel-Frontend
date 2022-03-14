@@ -7,6 +7,7 @@ import PPAddLabelModal from '../PPAddLabelModal';
 import { Label } from '@/models/label';
 
 export type PPLabelListProps = {
+  labels?: Label[];
   selectedLabel?: Label;
   onLabelModify: (label: Label) => void;
   onLabelDelete: (label: Label) => void;
@@ -14,19 +15,7 @@ export type PPLabelListProps = {
   onLabelSelect: (label: Label) => void;
 };
 
-const mockedLabels: Label[] = [
-  {
-    color: '#FF0000',
-    name: 'Label 1',
-  },
-  {
-    color: '#008000',
-    name: 'Label 2',
-  },
-];
-
 const Component: React.FC<PPLabelListProps> = (props) => {
-  const [labels, setLabels] = useState(mockedLabels);
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
 
   return (
@@ -50,7 +39,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
           </div>
         }
         bordered
-        dataSource={labels}
+        dataSource={props.labels}
         renderItem={(item) => {
           return (
             <PPLabelListItem
@@ -64,11 +53,10 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         }}
       />
       <PPAddLabelModal
-        order={labels.length}
+        order={props.labels?.length}
         visible={addModalVisible}
         onLabelAdd={(label: Label) => {
-          labels.push(label);
-          setLabels(labels);
+          props.onLabelAdd(label);
           setAddLabelModalVisible(false);
         }}
         onCancel={() => {
