@@ -15,22 +15,22 @@
 import * as runtime from '../runtime';
 import { Label, LabelFromJSON, LabelToJSON } from '../models';
 
-export interface LabelsLabelIdDeleteRequest {
-  labelId: string;
-}
-
-export interface LabelsLabelIdGetRequest {
-  labelId: string;
-}
-
-export interface LabelsLabelIdPutRequest {
-  labelId: string;
-  label: Label;
-}
-
-export interface LabelsPostRequest {
+export interface CreateRequest {
   label: Label;
   requestId?: string;
+}
+
+export interface GetRequest {
+  labelId: string;
+}
+
+export interface RemoveRequest {
+  labelId: string;
+}
+
+export interface UpdateRequest {
+  labelId: string;
+  label: Label;
 }
 
 /**
@@ -38,191 +38,16 @@ export interface LabelsPostRequest {
  */
 export class LabelApi extends runtime.BaseAPI {
   /**
-   * Read all labels, sort by last modify date
-   */
-  async labelsGetRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Label>>> {
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/labels`,
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LabelFromJSON));
-  }
-
-  /**
-   * Read all labels, sort by last modify date
-   */
-  async labelsGet(initOverrides?: RequestInit): Promise<Array<Label>> {
-    const response = await this.labelsGetRaw(initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Delete a label. Labels in use (have annotation pointing at them) are not allowed to be deleted.
-   * Delete a label
-   */
-  async labelsLabelIdDeleteRaw(
-    requestParameters: LabelsLabelIdDeleteRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<void>> {
-    if (requestParameters.labelId === null || requestParameters.labelId === undefined) {
-      throw new runtime.RequiredError(
-        'labelId',
-        'Required parameter requestParameters.labelId was null or undefined when calling labelsLabelIdDelete.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/labels/{label_id}`.replace(
-          `{${'label_id'}}`,
-          encodeURIComponent(String(requestParameters.labelId)),
-        ),
-        method: 'DELETE',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.VoidApiResponse(response);
-  }
-
-  /**
-   * Delete a label. Labels in use (have annotation pointing at them) are not allowed to be deleted.
-   * Delete a label
-   */
-  async labelsLabelIdDelete(labelId: string, initOverrides?: RequestInit): Promise<void> {
-    await this.labelsLabelIdDeleteRaw({ labelId: labelId }, initOverrides);
-  }
-
-  /**
-   * Get info about a specific label
-   */
-  async labelsLabelIdGetRaw(
-    requestParameters: LabelsLabelIdGetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Label>> {
-    if (requestParameters.labelId === null || requestParameters.labelId === undefined) {
-      throw new runtime.RequiredError(
-        'labelId',
-        'Required parameter requestParameters.labelId was null or undefined when calling labelsLabelIdGet.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/labels/{label_id}`.replace(
-          `{${'label_id'}}`,
-          encodeURIComponent(String(requestParameters.labelId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => LabelFromJSON(jsonValue));
-  }
-
-  /**
-   * Get info about a specific label
-   */
-  async labelsLabelIdGet(labelId: string, initOverrides?: RequestInit): Promise<Label> {
-    const response = await this.labelsLabelIdGetRaw({ labelId: labelId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Edit label info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
-   * Edit label info
-   */
-  async labelsLabelIdPutRaw(
-    requestParameters: LabelsLabelIdPutRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Label>> {
-    if (requestParameters.labelId === null || requestParameters.labelId === undefined) {
-      throw new runtime.RequiredError(
-        'labelId',
-        'Required parameter requestParameters.labelId was null or undefined when calling labelsLabelIdPut.',
-      );
-    }
-
-    if (requestParameters.label === null || requestParameters.label === undefined) {
-      throw new runtime.RequiredError(
-        'label',
-        'Required parameter requestParameters.label was null or undefined when calling labelsLabelIdPut.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    headerParameters['Content-Type'] = 'application/json';
-
-    const response = await this.request(
-      {
-        path: `/labels/{label_id}`.replace(
-          `{${'label_id'}}`,
-          encodeURIComponent(String(requestParameters.labelId)),
-        ),
-        method: 'PUT',
-        headers: headerParameters,
-        query: queryParameters,
-        body: LabelToJSON(requestParameters.label),
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => LabelFromJSON(jsonValue));
-  }
-
-  /**
-   * Edit label info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
-   * Edit label info
-   */
-  async labelsLabelIdPut(
-    labelId: string,
-    label: Label,
-    initOverrides?: RequestInit,
-  ): Promise<Label> {
-    const response = await this.labelsLabelIdPutRaw(
-      { labelId: labelId, label: label },
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
    * Create a new label
    */
-  async labelsPostRaw(
-    requestParameters: LabelsPostRequest,
+  async createRaw(
+    requestParameters: CreateRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<Label>> {
     if (requestParameters.label === null || requestParameters.label === undefined) {
       throw new runtime.RequiredError(
         'label',
-        'Required parameter requestParameters.label was null or undefined when calling labelsPost.',
+        'Required parameter requestParameters.label was null or undefined when calling create.',
       );
     }
 
@@ -253,11 +78,176 @@ export class LabelApi extends runtime.BaseAPI {
   /**
    * Create a new label
    */
-  async labelsPost(label: Label, requestId?: string, initOverrides?: RequestInit): Promise<Label> {
-    const response = await this.labelsPostRaw(
-      { label: label, requestId: requestId },
+  async create(label: Label, requestId?: string, initOverrides?: RequestInit): Promise<Label> {
+    const response = await this.createRaw({ label: label, requestId: requestId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Get info about a specific label
+   */
+  async getRaw(
+    requestParameters: GetRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Label>> {
+    if (requestParameters.labelId === null || requestParameters.labelId === undefined) {
+      throw new runtime.RequiredError(
+        'labelId',
+        'Required parameter requestParameters.labelId was null or undefined when calling get.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/labels/{label_id}`.replace(
+          `{${'label_id'}}`,
+          encodeURIComponent(String(requestParameters.labelId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
       initOverrides,
     );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => LabelFromJSON(jsonValue));
+  }
+
+  /**
+   * Get info about a specific label
+   */
+  async get(labelId: string, initOverrides?: RequestInit): Promise<Label> {
+    const response = await this.getRaw({ labelId: labelId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Read all labels, sort by last modify date
+   */
+  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Label>>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/labels`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LabelFromJSON));
+  }
+
+  /**
+   * Read all labels, sort by last modify date
+   */
+  async getAll(initOverrides?: RequestInit): Promise<Array<Label>> {
+    const response = await this.getAllRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Delete a label. Labels in use (have annotation pointing at them) are not allowed to be deleted.
+   * Delete a label
+   */
+  async removeRaw(
+    requestParameters: RemoveRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.labelId === null || requestParameters.labelId === undefined) {
+      throw new runtime.RequiredError(
+        'labelId',
+        'Required parameter requestParameters.labelId was null or undefined when calling remove.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/labels/{label_id}`.replace(
+          `{${'label_id'}}`,
+          encodeURIComponent(String(requestParameters.labelId)),
+        ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Delete a label. Labels in use (have annotation pointing at them) are not allowed to be deleted.
+   * Delete a label
+   */
+  async remove(labelId: string, initOverrides?: RequestInit): Promise<void> {
+    await this.removeRaw({ labelId: labelId }, initOverrides);
+  }
+
+  /**
+   * Edit label info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
+   * Edit label info
+   */
+  async updateRaw(
+    requestParameters: UpdateRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Label>> {
+    if (requestParameters.labelId === null || requestParameters.labelId === undefined) {
+      throw new runtime.RequiredError(
+        'labelId',
+        'Required parameter requestParameters.labelId was null or undefined when calling update.',
+      );
+    }
+
+    if (requestParameters.label === null || requestParameters.label === undefined) {
+      throw new runtime.RequiredError(
+        'label',
+        'Required parameter requestParameters.label was null or undefined when calling update.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/labels/{label_id}`.replace(
+          `{${'label_id'}}`,
+          encodeURIComponent(String(requestParameters.labelId)),
+        ),
+        method: 'PUT',
+        headers: headerParameters,
+        query: queryParameters,
+        body: LabelToJSON(requestParameters.label),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => LabelFromJSON(jsonValue));
+  }
+
+  /**
+   * Edit label info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
+   * Edit label info
+   */
+  async update(labelId: string, label: Label, initOverrides?: RequestInit): Promise<Label> {
+    const response = await this.updateRaw({ labelId: labelId, label: label }, initOverrides);
     return await response.value();
   }
 }

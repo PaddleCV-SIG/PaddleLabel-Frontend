@@ -15,15 +15,15 @@
 import * as runtime from '../runtime';
 import { Task, TaskFromJSON, TaskToJSON } from '../models';
 
-export interface TasksTaskIdDeleteRequest {
+export interface GetRequest {
   taskId: string;
 }
 
-export interface TasksTaskIdGetRequest {
+export interface RemoveRequest {
   taskId: string;
 }
 
-export interface TasksTaskIdPutRequest {
+export interface UpdateRequest {
   taskId: string;
   task: Task;
 }
@@ -33,38 +33,9 @@ export interface TasksTaskIdPutRequest {
  */
 export class TaskApi extends runtime.BaseAPI {
   /**
-   * Your GET endpoint
-   */
-  async tasksGetRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Task>>> {
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/tasks`,
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TaskFromJSON));
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async tasksGet(initOverrides?: RequestInit): Promise<Array<Task>> {
-    const response = await this.tasksGetRaw(initOverrides);
-    return await response.value();
-  }
-
-  /**
    * Create a new task
    */
-  async tasksPostRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Task>> {
+  async createRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Task>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -85,8 +56,79 @@ export class TaskApi extends runtime.BaseAPI {
   /**
    * Create a new task
    */
-  async tasksPost(initOverrides?: RequestInit): Promise<Task> {
-    const response = await this.tasksPostRaw(initOverrides);
+  async create(initOverrides?: RequestInit): Promise<Task> {
+    const response = await this.createRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Get info of a specific task
+   */
+  async getRaw(
+    requestParameters: GetRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Task>> {
+    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+      throw new runtime.RequiredError(
+        'taskId',
+        'Required parameter requestParameters.taskId was null or undefined when calling get.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/tasks/{task_id}`.replace(
+          `{${'task_id'}}`,
+          encodeURIComponent(String(requestParameters.taskId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
+  }
+
+  /**
+   * Get info of a specific task
+   */
+  async get(taskId: string, initOverrides?: RequestInit): Promise<Task> {
+    const response = await this.getRaw({ taskId: taskId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Task>>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/tasks`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TaskFromJSON));
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getAll(initOverrides?: RequestInit): Promise<Array<Task>> {
+    const response = await this.getAllRaw(initOverrides);
     return await response.value();
   }
 
@@ -94,14 +136,14 @@ export class TaskApi extends runtime.BaseAPI {
    * Delete a task and ALL DATA and ANNOTATIONS under the project. Won\'t delete file on file system
    * Delete a task and ALL DATA and ANNOTATIONS under the task.
    */
-  async tasksTaskIdDeleteRaw(
-    requestParameters: TasksTaskIdDeleteRequest,
+  async removeRaw(
+    requestParameters: RemoveRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
         'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling tasksTaskIdDelete.',
+        'Required parameter requestParameters.taskId was null or undefined when calling remove.',
       );
     }
 
@@ -129,71 +171,29 @@ export class TaskApi extends runtime.BaseAPI {
    * Delete a task and ALL DATA and ANNOTATIONS under the project. Won\'t delete file on file system
    * Delete a task and ALL DATA and ANNOTATIONS under the task.
    */
-  async tasksTaskIdDelete(taskId: string, initOverrides?: RequestInit): Promise<void> {
-    await this.tasksTaskIdDeleteRaw({ taskId: taskId }, initOverrides);
-  }
-
-  /**
-   * Get info of a specific task
-   */
-  async tasksTaskIdGetRaw(
-    requestParameters: TasksTaskIdGetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Task>> {
-    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-      throw new runtime.RequiredError(
-        'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling tasksTaskIdGet.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/tasks/{task_id}`.replace(
-          `{${'task_id'}}`,
-          encodeURIComponent(String(requestParameters.taskId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
-  }
-
-  /**
-   * Get info of a specific task
-   */
-  async tasksTaskIdGet(taskId: string, initOverrides?: RequestInit): Promise<Task> {
-    const response = await this.tasksTaskIdGetRaw({ taskId: taskId }, initOverrides);
-    return await response.value();
+  async remove(taskId: string, initOverrides?: RequestInit): Promise<void> {
+    await this.removeRaw({ taskId: taskId }, initOverrides);
   }
 
   /**
    * Edit task info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
    * Edit task info
    */
-  async tasksTaskIdPutRaw(
-    requestParameters: TasksTaskIdPutRequest,
+  async updateRaw(
+    requestParameters: UpdateRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<Task>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
         'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling tasksTaskIdPut.',
+        'Required parameter requestParameters.taskId was null or undefined when calling update.',
       );
     }
 
     if (requestParameters.task === null || requestParameters.task === undefined) {
       throw new runtime.RequiredError(
         'task',
-        'Required parameter requestParameters.task was null or undefined when calling tasksTaskIdPut.',
+        'Required parameter requestParameters.task was null or undefined when calling update.',
       );
     }
 
@@ -224,8 +224,8 @@ export class TaskApi extends runtime.BaseAPI {
    * Edit task info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
    * Edit task info
    */
-  async tasksTaskIdPut(taskId: string, task: Task, initOverrides?: RequestInit): Promise<Task> {
-    const response = await this.tasksTaskIdPutRaw({ taskId: taskId, task: task }, initOverrides);
+  async update(taskId: string, task: Task, initOverrides?: RequestInit): Promise<Task> {
+    const response = await this.updateRaw({ taskId: taskId, task: task }, initOverrides);
     return await response.value();
   }
 }

@@ -22,19 +22,19 @@ import {
   UserToJSON,
 } from '../models';
 
+export interface GetRequest {
+  uuid: string;
+}
+
 export interface PplabelApiControllerUserLoginRequest {
   inlineObject1?: InlineObject1;
 }
 
-export interface UsersUuidDeleteRequest {
+export interface RemoveRequest {
   uuid: string;
 }
 
-export interface UsersUuidGetRequest {
-  uuid: string;
-}
-
-export interface UsersUuidPutRequest {
+export interface UpdateRequest {
   uuid: string;
   user: User;
 }
@@ -43,6 +43,106 @@ export interface UsersUuidPutRequest {
  *
  */
 export class UserApi extends runtime.BaseAPI {
+  /**
+   * Add a new user
+   */
+  async createRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<User>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/users`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => UserFromJSON(jsonValue));
+  }
+
+  /**
+   * Add a new user
+   */
+  async create(initOverrides?: RequestInit): Promise<User> {
+    const response = await this.createRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Get info of a specific user
+   */
+  async getRaw(
+    requestParameters: GetRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<User>> {
+    if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
+      throw new runtime.RequiredError(
+        'uuid',
+        'Required parameter requestParameters.uuid was null or undefined when calling get.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/users/{uuid}`.replace(
+          `{${'uuid'}}`,
+          encodeURIComponent(String(requestParameters.uuid)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => UserFromJSON(jsonValue));
+  }
+
+  /**
+   * Get info of a specific user
+   */
+  async get(uuid: string, initOverrides?: RequestInit): Promise<User> {
+    const response = await this.getRaw({ uuid: uuid }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Get all users
+   */
+  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<User>>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/users`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(UserFromJSON));
+  }
+
+  /**
+   * Get all users
+   */
+  async getAll(initOverrides?: RequestInit): Promise<Array<User>> {
+    const response = await this.getAllRaw(initOverrides);
+    return await response.value();
+  }
+
   /**
    * Login and get JWT
    */
@@ -81,75 +181,17 @@ export class UserApi extends runtime.BaseAPI {
   }
 
   /**
-   * Get all users
-   */
-  async usersGetRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<User>>> {
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/users`,
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(UserFromJSON));
-  }
-
-  /**
-   * Get all users
-   */
-  async usersGet(initOverrides?: RequestInit): Promise<Array<User>> {
-    const response = await this.usersGetRaw(initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Add a new user
-   */
-  async usersPostRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<User>> {
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/users`,
-        method: 'POST',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => UserFromJSON(jsonValue));
-  }
-
-  /**
-   * Add a new user
-   */
-  async usersPost(initOverrides?: RequestInit): Promise<User> {
-    const response = await this.usersPostRaw(initOverrides);
-    return await response.value();
-  }
-
-  /**
    * Delete a user
    * Delete a user
    */
-  async usersUuidDeleteRaw(
-    requestParameters: UsersUuidDeleteRequest,
+  async removeRaw(
+    requestParameters: RemoveRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
       throw new runtime.RequiredError(
         'uuid',
-        'Required parameter requestParameters.uuid was null or undefined when calling usersUuidDelete.',
+        'Required parameter requestParameters.uuid was null or undefined when calling remove.',
       );
     }
 
@@ -177,71 +219,29 @@ export class UserApi extends runtime.BaseAPI {
    * Delete a user
    * Delete a user
    */
-  async usersUuidDelete(uuid: string, initOverrides?: RequestInit): Promise<void> {
-    await this.usersUuidDeleteRaw({ uuid: uuid }, initOverrides);
-  }
-
-  /**
-   * Get info of a specific user
-   */
-  async usersUuidGetRaw(
-    requestParameters: UsersUuidGetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<User>> {
-    if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
-      throw new runtime.RequiredError(
-        'uuid',
-        'Required parameter requestParameters.uuid was null or undefined when calling usersUuidGet.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/users/{uuid}`.replace(
-          `{${'uuid'}}`,
-          encodeURIComponent(String(requestParameters.uuid)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => UserFromJSON(jsonValue));
-  }
-
-  /**
-   * Get info of a specific user
-   */
-  async usersUuidGet(uuid: string, initOverrides?: RequestInit): Promise<User> {
-    const response = await this.usersUuidGetRaw({ uuid: uuid }, initOverrides);
-    return await response.value();
+  async remove(uuid: string, initOverrides?: RequestInit): Promise<void> {
+    await this.removeRaw({ uuid: uuid }, initOverrides);
   }
 
   /**
    * Edit user info.
    * Edit user info
    */
-  async usersUuidPutRaw(
-    requestParameters: UsersUuidPutRequest,
+  async updateRaw(
+    requestParameters: UpdateRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<User>> {
     if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
       throw new runtime.RequiredError(
         'uuid',
-        'Required parameter requestParameters.uuid was null or undefined when calling usersUuidPut.',
+        'Required parameter requestParameters.uuid was null or undefined when calling update.',
       );
     }
 
     if (requestParameters.user === null || requestParameters.user === undefined) {
       throw new runtime.RequiredError(
         'user',
-        'Required parameter requestParameters.user was null or undefined when calling usersUuidPut.',
+        'Required parameter requestParameters.user was null or undefined when calling update.',
       );
     }
 
@@ -272,8 +272,8 @@ export class UserApi extends runtime.BaseAPI {
    * Edit user info.
    * Edit user info
    */
-  async usersUuidPut(uuid: string, user: User, initOverrides?: RequestInit): Promise<User> {
-    const response = await this.usersUuidPutRaw({ uuid: uuid, user: user }, initOverrides);
+  async update(uuid: string, user: User, initOverrides?: RequestInit): Promise<User> {
+    const response = await this.updateRaw({ uuid: uuid, user: user }, initOverrides);
     return await response.value();
   }
 }

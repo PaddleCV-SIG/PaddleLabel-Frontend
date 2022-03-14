@@ -171,5 +171,6 @@ openapi-generator-cli generate \
 -g typescript-fetch \
 -o src/services/ \
 --additional-properties=useSingleRequestParameter=false \
---remove-operation-id-prefix
+--remove-operation-id-prefix \
+--skip-validate-spec
 ```
