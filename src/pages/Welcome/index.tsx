@@ -12,7 +12,7 @@ import { history } from 'umi';
 import type { Project } from '@/services';
 import serviceUtils from '@/services/serviceUtils';
 
-import { projectApi } from '@/services/api';
+import { projectApi, getProjects, deleteProject } from '@/services/api';
 
 export const PROJECT_INFO_KEY = 'projectInfo';
 
@@ -38,63 +38,64 @@ export const refreshProject = async (id?: string) => {
   return res;
 };
 
-const columns: ColumnsType<Project> = [
-  {
-    title: 'ID',
-    dataIndex: 'projectId',
-    key: 'projectId',
-    width: '4.5rem',
-    align: 'center',
-    render: (text: string) => <>{text}</>,
-  },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'projectId',
-  },
-  {
-    title: 'Actions',
-    key: 'projectId',
-    width: '15rem',
-    align: 'center',
-    render: (text, project) => (
-      <Space size="middle">
-        <PPButton width="4.375rem" height="1.875rem" color={'rgba(241,162,0,1)'}>
-          Modify
-        </PPButton>
-        <PPButton
-          width="4.375rem"
-          height="1.875rem"
-          color={'rgba(0,100,248,1)'}
-          onClick={() => {
-            history.push(`/${project['taskCategory']['name']}?projectId=${project.projectId}`);
-          }}
-        >
-          Label
-        </PPButton>
-        <PPButton width="4.375rem" height="1.875rem" color={'rgba(207,63,0,1)'} onClick={() => {}}>
-          Delete
-        </PPButton>
-      </Space>
-    ),
-  },
-];
-
 const Projects: React.FC = () => {
   const [projects, setProjects] = React.useState([]);
+
+  const columns: ColumnsType<Project> = [
+    {
+      title: 'ID',
+      dataIndex: 'projectId',
+      key: 'projectId',
+      width: '4.5rem',
+      align: 'center',
+      render: (text: string) => <>{text}</>,
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'projectId',
+    },
+    {
+      title: 'Actions',
+      key: 'projectId',
+      width: '15rem',
+      align: 'center',
+      render: (text, project) => (
+        <Space size="middle">
+          <PPButton width="4.375rem" height="1.875rem" color={'rgba(241,162,0,1)'}>
+            Modify
+          </PPButton>
+          <PPButton
+            width="4.375rem"
+            height="1.875rem"
+            color={'rgba(0,100,248,1)'}
+            onClick={() => {
+              history.push(`/${project['taskCategory']['name']}?projectId=${project.projectId}`);
+            }}
+          >
+            Label
+          </PPButton>
+          <PPButton
+            width="4.375rem"
+            height="1.875rem"
+            color={'rgba(207,63,0,1)'}
+            onClick={() => {
+              deleteProject(project.projectId, setProjects);
+            }}
+          >
+            Delete
+          </PPButton>
+        </Space>
+      ),
+    },
+  ];
+
   React.useEffect(() => {
-    projectApi
-      .getAll()
-      .then(function (res) {
-        setProjects(JSON.parse(JSON.stringify(res))); // TODO: get dict instead of object
-        console.log(JSON.parse(JSON.stringify(res)));
-      })
-      .catch((err) => {
-        serviceUtils.parseError(err, message);
-      });
+    getProjects(setProjects);
   }, []);
 
   // if found no project, return create project button
+  // TODO: beautify frontend
   if (projects.length == 0)
     return (
       <Row style={{ marginTop: 20 }}>

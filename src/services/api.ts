@@ -15,20 +15,34 @@ export const projectApi = new ProjectApi(config);
 export const labelApi = new LabelApi(config);
 export const dataApi = new DataApi(config);
 
-/* helper functions */
+/* helper util functions */
 // TODO: a more elegent way
 export function toDict(arr: any[]) {
   return JSON.parse(JSON.stringify(arr));
 }
+
 /* project related*/
-export function getProjects(setProjects) {
+export async function getProjects(setProjects) {
   projectApi
     .getAll()
     .then((projects) => {
-      setProjects(toDict(projects)); // TODO: get dict instead of object
       console.log('get all projects', toDict(projects));
+      setProjects(toDict(projects)); // TODO: get dict instead of object
     })
     .catch((err) => {
+      serviceUtils.parseError(err, message);
+    });
+}
+export async function deleteProject(projectId: number, setProjects) {
+  console.log('delete pj, pjid', projectId);
+  projectApi
+    .remove(projectId)
+    .then((res) => {
+      console.log('delete project', res);
+      getProjects(setProjects);
+    })
+    .catch((err) => {
+      console.log(err);
       serviceUtils.parseError(err, message);
     });
 }
