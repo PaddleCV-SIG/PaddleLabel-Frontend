@@ -13,9 +13,43 @@
  */
 
 import * as runtime from '../runtime';
-import { Task, TaskFromJSON, TaskToJSON } from '../models';
+import {
+  Annotation,
+  AnnotationFromJSON,
+  AnnotationToJSON,
+  Data,
+  DataFromJSON,
+  DataToJSON,
+  InlineObject,
+  InlineObjectFromJSON,
+  InlineObjectToJSON,
+  Tag,
+  TagFromJSON,
+  TagToJSON,
+  Task,
+  TaskFromJSON,
+  TaskToJSON,
+} from '../models';
+
+export interface AddTagRequest {
+  taskId: string;
+  requestId?: string;
+  inlineObject?: InlineObject;
+}
 
 export interface GetRequest {
+  taskId: string;
+}
+
+export interface GetAnnotationsRequest {
+  taskId: string;
+}
+
+export interface GetDatasRequest {
+  taskId: string;
+}
+
+export interface GetTagsRequest {
   taskId: string;
 }
 
@@ -32,6 +66,65 @@ export interface UpdateRequest {
  *
  */
 export class TaskApi extends runtime.BaseAPI {
+  /**
+   * Add a tag to a task, the tag has to exist.
+   * Add a new tag to the task
+   */
+  async addTagRaw(
+    requestParameters: AddTagRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Tag>>> {
+    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+      throw new runtime.RequiredError(
+        'taskId',
+        'Required parameter requestParameters.taskId was null or undefined when calling addTag.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+      headerParameters['request_id'] = String(requestParameters.requestId);
+    }
+
+    const response = await this.request(
+      {
+        path: `/tasks/{task_id}/tags`.replace(
+          `{${'task_id'}}`,
+          encodeURIComponent(String(requestParameters.taskId)),
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: InlineObjectToJSON(requestParameters.inlineObject),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
+  }
+
+  /**
+   * Add a tag to a task, the tag has to exist.
+   * Add a new tag to the task
+   */
+  async addTag(
+    taskId: string,
+    requestId?: string,
+    inlineObject?: InlineObject,
+    initOverrides?: RequestInit,
+  ): Promise<Array<Tag>> {
+    const response = await this.addTagRaw(
+      { taskId: taskId, requestId: requestId, inlineObject: inlineObject },
+      initOverrides,
+    );
+    return await response.value();
+  }
+
   /**
    * Create a new task
    */
@@ -129,6 +222,132 @@ export class TaskApi extends runtime.BaseAPI {
    */
   async getAll(initOverrides?: RequestInit): Promise<Array<Task>> {
     const response = await this.getAllRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Get all annotations of a task
+   */
+  async getAnnotationsRaw(
+    requestParameters: GetAnnotationsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Annotation>>> {
+    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+      throw new runtime.RequiredError(
+        'taskId',
+        'Required parameter requestParameters.taskId was null or undefined when calling getAnnotations.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/tasks/{task_id}/annotations`.replace(
+          `{${'task_id'}}`,
+          encodeURIComponent(String(requestParameters.taskId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AnnotationFromJSON));
+  }
+
+  /**
+   * Get all annotations of a task
+   */
+  async getAnnotations(taskId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
+    const response = await this.getAnnotationsRaw({ taskId: taskId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Get all datas of a task
+   */
+  async getDatasRaw(
+    requestParameters: GetDatasRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Data>>> {
+    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+      throw new runtime.RequiredError(
+        'taskId',
+        'Required parameter requestParameters.taskId was null or undefined when calling getDatas.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/tasks/{task_id}/datas`.replace(
+          `{${'task_id'}}`,
+          encodeURIComponent(String(requestParameters.taskId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(DataFromJSON));
+  }
+
+  /**
+   * Get all datas of a task
+   */
+  async getDatas(taskId: string, initOverrides?: RequestInit): Promise<Array<Data>> {
+    const response = await this.getDatasRaw({ taskId: taskId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Get all tags of the task
+   */
+  async getTagsRaw(
+    requestParameters: GetTagsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Tag>>> {
+    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+      throw new runtime.RequiredError(
+        'taskId',
+        'Required parameter requestParameters.taskId was null or undefined when calling getTags.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/tasks/{task_id}/tags`.replace(
+          `{${'task_id'}}`,
+          encodeURIComponent(String(requestParameters.taskId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
+  }
+
+  /**
+   * Get all tags of the task
+   */
+  async getTags(taskId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
+    const response = await this.getTagsRaw({ taskId: taskId }, initOverrides);
     return await response.value();
   }
 

@@ -14,6 +14,7 @@ import { getTasks, getProgress } from '@/services/api';
 import { projectApi } from '@/services/api';
 import type { Label, Project, Task, Data } from '@/services';
 import serviceUtils from '@/services/serviceUtils';
+import { annotationApi, taskApi, dataApi, toDict } from '@/services/api';
 
 const baseUrl = localStorage.getItem('basePath');
 
@@ -23,11 +24,15 @@ const Page: React.FC = () => {
   const [project, setProject] = useState<Project>();
   const [labels, setLabels] = useState<Label[]>();
   const [tasks, setTasks] = useState<Task[]>();
-  const [datas, setDatas] = useState<Data[]>();
+  const [taskIdx, setTaskIdx] = useState<number>(0); // This is not taskId, this is the index of current task in tasks! They are DIFFERENT! It's mainly used for turning task
+  const [task, setTask] = useState<Task>(); // current task
+  const [datas, setDatas] = useState<Data[]>(); // datas of the CURRENT TASK, not all datas in project
+  const [anns, setAnns] = useState<Annotation[]>(); // anns of the CURRENT TASK, not all anns in project
+  const [currData, setCurrData] = useState<Data>(); // The data that's currently being shown. One piece of data
+  const [currAnns, setCurrAnns] = useState<Annotation[]>(); // The anns for the current data that's being shown. One piece of data can have multiple anns
 
-  const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
-  const [currentTool, setCurrentTool] = useState<ToolType>('mover');
-  const [currentTaskId, setCurrentTaskId] = useState<number>(0);
+  const [currLabel, setCurrLabel] = useState<Label>({ color: '', name: '' });
+  const [currTool, setCurrTool] = useState<ToolType>('mover');
   const [scale, setScaleRaw] = useState(1);
   const [progress, setProgress] = useState<number>(0);
   const [imgSrc, setImgSrc] = useState<string>('');
@@ -47,24 +52,28 @@ const Page: React.FC = () => {
   };
 
   const nextTask = () => {
-    console.log('turning next ', currentTaskId, tasks.length);
-    if (currentTaskId + 1 >= tasks.length) {
+    console.log('turning next ', taskIdx, tasks.length);
+    if (taskIdx + 1 >= tasks.length) {
       message.error('This is the last task.');
       return;
     }
-    setCurrentTaskId(currentTaskId + 1);
+    setTaskIdx(taskIdx + 1);
   };
 
   const prevTask = () => {
-    console.log('turning prev ', currentTaskId, tasks.length);
-    if (currentTaskId - 1 < 0) {
+    console.log('turning prev ', taskIdx, tasks.length);
+    if (taskIdx - 1 < 0) {
       message.error('This is the first task.');
       return;
     }
-    setCurrentTaskId(currentTaskId - 1);
+    setTaskIdx(taskIdx - 1);
   };
 
-  // want to only load project and task once when open the page
+  const selectLabel = (label) => {
+    setCurrLabel(label);
+  };
+
+  // only load project and task once on page show
   useEffect(() => {
     async function update() {
       try {
@@ -74,7 +83,7 @@ const Page: React.FC = () => {
           const tasksRes = await projectApi.getTasks(projectRes.projectId);
           const labelsRes = await projectApi.getLabels(projectRes.projectId);
 
-          setLabels(serviceUtils.toDict(labelsRes));
+          setLabels(toDict(labelsRes));
           setTasks(tasksRes);
           setProject(projectRes);
           return;
@@ -82,25 +91,32 @@ const Page: React.FC = () => {
 
         console.log('after if ', project, tasks);
 
-        const progressRes = await getProgress(project.projectId);
-        setProgress(progressRes);
+        // update progress
+        getProgress(project.projectId).then((prog) => {
+          setProgress(prog);
+        });
 
-        const labelsRes = await projectApi.getLabels(project.projectId);
-        setLabels(serviceUtils.toDict(labelsRes));
-
-        let currentData = tasks[currentTaskId]['datas'];
-        currentData = currentData[0]; // TODO: for 3d, scroll wheel for changing this
-        console.log('currentData', currentData);
-
-        // TODO: nested object use snake case
-        setImgSrc(`${baseUrl}/datas/${currentData.data_id}/image`);
+        // update task, datas, anns, currData, currAnns
+        setTask(tasks[taskIdx]);
+        const taskId = tasks[taskIdx].taskId;
+        taskApi.getAnnotations(taskId).then((annotations) => {
+          setAnns(annotations);
+        });
+        const newDatas = await taskApi.getDatas(taskId);
+        setDatas(newDatas);
+        const currentData = newDatas[0];
+        setCurrData(currentData);
+        dataApi.getAnnotations(currentData.dataId).then((annotations) => {
+          setCurrAnns(annotations);
+        });
+        setImgSrc(`${baseUrl}/datas/${currentData.dataId}/image`);
       } catch (err) {
         console.log(err);
         serviceUtils.parseError(err as Response, message);
       }
     }
     update();
-  }, [currentTaskId, project]);
+  }, [taskIdx, project]); // TODO: slice change
 
   return (
     <PPLabelPageContainer className={styles.classes}>
@@ -132,7 +148,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
           onClick={() => {
-            setCurrentTool('mover');
+            setCurrTool('mover');
           }}
         >
           Move
@@ -143,7 +159,7 @@ const Page: React.FC = () => {
           <PPStage
             width={document.getElementById('dr')?.clientWidth}
             scale={scale}
-            currentTool={currentTool}
+            currentTool={currTool}
             setCurrentAnnotation={() => {}}
             onAnnotationModify={() => {}}
             onAnnotationModifyComplete={() => {}}
@@ -181,9 +197,9 @@ const Page: React.FC = () => {
       <div className={styles.rightSideBar}>
         <PPLabelList
           labels={labels}
-          selectedLabel={currentLabel}
+          selectedLabel={currLabel}
           onLabelSelect={(label) => {
-            setCurrentLabel(label);
+            selectLabel(label);
           }}
           onLabelAdd={(label) => {
             if (project?.projectId) addLabel(project.projectId, label, setLabels);

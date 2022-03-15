@@ -8,6 +8,7 @@ import { LabelFromJSON } from '@/services/models/Label';
 import type { Label } from '@/services/models/Label';
 import { DataApi } from '@/services/apis/DataApi';
 import { TaskApi } from '@/services/apis/TaskApi';
+import { AnnotationApi } from '@/services/apis/AnnotationApi';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -16,6 +17,7 @@ export const projectApi = new ProjectApi(config);
 export const labelApi = new LabelApi(config);
 export const dataApi = new DataApi(config);
 export const taskApi = new TaskApi(config);
+export const annotationApi = new AnnotationApi(config);
 
 /* helper util functions */
 // TODO: a more elegent way
@@ -123,7 +125,6 @@ export async function getTask(taskId: number, setTask) {
 
 export async function getProgress(projectId: number): number {
   if (!projectId) return 0;
-
   // TODO: switch to getTasksStat
   try {
     const tasks = await projectApi.getTasks(projectId);

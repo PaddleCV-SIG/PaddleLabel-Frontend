@@ -30,6 +30,10 @@ export interface GetRequest {
   dataId: string;
 }
 
+export interface GetAnnotationsRequest {
+  dataId: string;
+}
+
 export interface GetImageRequest {
   dataId: string;
 }
@@ -157,6 +161,50 @@ export class DataApi extends runtime.BaseAPI {
    */
   async getAll(initOverrides?: RequestInit): Promise<Data> {
     const response = await this.getAllRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Get the annotations of a data record
+   */
+  async getAnnotationsRaw(
+    requestParameters: GetAnnotationsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<InlineResponse200>> {
+    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
+      throw new runtime.RequiredError(
+        'dataId',
+        'Required parameter requestParameters.dataId was null or undefined when calling getAnnotations.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/datas/{data_id}/annotations`.replace(
+          `{${'data_id'}}`,
+          encodeURIComponent(String(requestParameters.dataId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      InlineResponse200FromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Get the annotations of a data record
+   */
+  async getAnnotations(dataId: string, initOverrides?: RequestInit): Promise<InlineResponse200> {
+    const response = await this.getAnnotationsRaw({ dataId: dataId }, initOverrides);
     return await response.value();
   }
 
