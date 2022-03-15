@@ -164,16 +164,16 @@ const Welcome: React.FC = () => {
           <PPBlock title="Model Training Knowledge" style={{ height: 430 }}>
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                How to tran using paddleclas
+                How to train using paddleclas
               </Button>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                How to tran using paddledet
+                How to train using paddledet
               </Button>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                How to tran using paddleseg
+                How to train using paddleseg
               </Button>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                How to tran using paddlex
+                How to train using paddlex
               </Button>
             </Space>
           </PPBlock>

@@ -3,10 +3,9 @@ import Title from 'antd/lib/typography/Title';
 import React from 'react';
 import styles from './index.less';
 import { Button } from 'antd';
-import { ProjectApi } from '@/services/apis/ProjectApi';
-import { Configuration } from '@/services';
 import { history } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
+import { projectApi, createInfo, camel2snake } from '@/services/api';
 
 export type _PPCardProps = {
   title?: string;
@@ -14,6 +13,7 @@ export type _PPCardProps = {
   innerStyle?: React.CSSProperties;
 };
 
+// TODO: define this from createInfo.keys() in api
 export type TaskCategory =
   | 'classification'
   | 'detection'
@@ -21,12 +21,12 @@ export type TaskCategory =
   | 'instance_segmentation'
   | 'keypoint_detection';
 
-const taskCategoryMap = {
-  classification: 1,
-  detection: 2,
-  semantic_segmentation: 3,
-  instance_segmentation: 4,
-};
+// const taskCategoryMap = {
+//   classification: 1,
+//   detection: 2,
+//   semantic_segmentation: 3,
+//   instance_segmentation: 4,
+// };
 
 const _PPBlock: React.FC<_PPCardProps> = (props) => {
   return (
@@ -47,7 +47,7 @@ const _PPBlock: React.FC<_PPCardProps> = (props) => {
 };
 
 export type PPCardProps = {
-  mode: TaskCategory;
+  taskCategory: TaskCategory;
   title?: string;
   imgSrc?: string;
   style?: React.CSSProperties;
@@ -55,34 +55,19 @@ export type PPCardProps = {
 };
 
 const PPCreater: React.FC<PPCardProps> = (props) => {
-  const baseUrl = localStorage.getItem('basePath');
-  const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
-
   const saveData = (values: any) => {
     projectApi
       .create({
         name: values.name,
-        dataDir: values.dataDir,
         description: values.description,
-        taskCategoryId: taskCategoryMap[props.mode],
+        taskCategoryId: createInfo[props.taskCategory]['id'],
+        dataDir: values.dataDir,
+        labelDir: values.labelDir,
       })
       .then((res) => {
-        //         {
-        //   "created": "2022-03-13T13:20:12.267916",
-        //   "data_dir": "/root",
-        //   "description": "desc1",
-        //   "label_dir": null,
-        //   "labels": [],
-        //   "modified": "2022-03-13T13:20:12.267920",
-        //   "name": "test project1",
-        //   "other_settings": null,
-        //   "project_id": 1,
-        //   "task_category": null,
-        //   "task_category_id": null
-        // }
-        console.log(res);
+        console.log('create res', res);
         localStorage.setItem('projectInfo', JSON.stringify(res));
-        history.push(`/classification?projectId=${res.projectId}`);
+        history.push(`/${camel2snake(props.taskCategory)}?projectId=${res.projectId}`);
       })
       .catch((err) => {
         serviceUtils.parseError(err, message);
@@ -152,13 +137,13 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               }}
               rules={[
                 {
-                  required: props.mode == 'keypoint_detection',
+                  required: props.taskCategory == 'keypoint_detection',
                   message: 'Please input max points!',
                 },
               ]}
               style={{
                 fontSize: '1.5rem',
-                display: props.mode == 'keypoint_detection' ? undefined : 'none',
+                display: props.taskCategory == 'keypoint_detection' ? undefined : 'none',
               }}
             >
               <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
@@ -192,13 +177,13 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               }}
               rules={[
                 {
-                  required: props.mode == 'semantic_segmentation',
-                  message: 'Please select annotation mode!',
+                  required: props.taskCategory == 'semantic_segmentation',
+                  message: 'Please select task category!',
                 },
               ]}
               style={{
                 fontSize: '1.5rem',
-                display: props.mode == 'semantic_segmentation' ? undefined : 'none',
+                display: props.taskCategory == 'semantic_segmentation' ? undefined : 'none',
               }}
             >
               <div className={styles.goup}>

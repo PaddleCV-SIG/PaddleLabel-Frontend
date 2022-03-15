@@ -20,6 +20,32 @@ export const dataApi = new DataApi(config);
 export function toDict(arr: any[]) {
   return JSON.parse(JSON.stringify(arr));
 }
+export function camel2snake(name: string) {
+  return name.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+}
+
+export const createInfo = {
+  classification: {
+    name: 'Image Classification',
+    avatar: './pics/classification.jpg',
+    id: 1,
+  },
+  detection: { name: 'Detection', avatar: './pics/object_detection.jpg', id: 2 },
+  semanticSegmentation: {
+    name: 'Semantic Segmentation',
+    avatar: './pics/semantic_segmentation.jpg',
+    id: 3,
+  },
+  instanceSegmentation: {
+    name: 'Instance Segmentation',
+    avatar: './pics/instance_segmentation.jpg',
+    id: 4,
+  },
+  keypoint: {
+    name: 'Keypoint Detection',
+    avatar: './pics/keypoint_detection.jpg',
+  },
+};
 
 /* project related*/
 export async function getProjects(setProjects) {

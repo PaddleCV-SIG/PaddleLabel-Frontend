@@ -31,19 +31,14 @@ export default [
     component: './ProjectCreation',
   },
   {
-    path: '/classification_project',
-    name: 'classification-project',
-    component: './ClassificationProject',
+    path: '/project_detail',
+    name: 'Project Detail',
+    component: './ProjectDetail',
   },
   {
     path: '/classification',
     name: 'classification',
     component: './Classification',
-  },
-  {
-    path: '/segmentation_project',
-    name: 'segmentation-project',
-    component: './SegmentationProject',
   },
   {
     path: '/segmentation_mode',
@@ -56,19 +51,9 @@ export default [
     component: './SemanticSegmentation',
   },
   {
-    path: '/detection_project',
-    name: 'detection-project',
-    component: './DetectionProject',
-  },
-  {
     path: '/object_detection',
     name: 'object_detection',
     component: './ObjectDetection',
-  },
-  {
-    path: '/keypoint_project',
-    name: 'keypoint-project',
-    component: './KeypointProject',
   },
   {
     path: '/keypoint_detection',
