@@ -27,7 +27,6 @@ const Page: React.FC = () => {
   const [imgSrc, setImgSrc] = useState<string>('');
   // const [taskId, setTaskId] = useState<number>(1); // TODO: 这两个是写死的，需要加切换图片
   const [dataId, setDataId] = useState<number>(1);
-  setDataId(1);
 
   const setScale = (newScale: number, range: number[] = [0.1, 3]) => {
     let s = newScale;
@@ -54,6 +53,7 @@ const Page: React.FC = () => {
     });
   }, []);
 
+// setDataId(1);
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
