@@ -51,9 +51,9 @@ export default [
     component: './SemanticSegmentation',
   },
   {
-    path: '/object_detection',
-    name: 'object_detection',
-    component: './ObjectDetection',
+    path: '/detection',
+    name: 'Detection',
+    component: './Detection',
   },
   {
     path: '/keypoint_detection',

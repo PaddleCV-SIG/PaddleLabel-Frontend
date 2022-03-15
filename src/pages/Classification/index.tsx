@@ -100,8 +100,14 @@ const Page: React.FC = () => {
         >
           Zoom out
         </PPToolBarButton>
-        {/* QUESTION: maybe we dont need a save button?*/}
-        <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/save.png"
+          onClick={() => {
+            message.info("Annotations are saved automatically. You don't need to click save.");
+          }}
+        >
+          Save
+        </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
           onClick={() => {

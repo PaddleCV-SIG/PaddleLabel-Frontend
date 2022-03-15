@@ -14,19 +14,12 @@ export type _PPCardProps = {
 };
 
 // TODO: define this from createInfo.keys() in api
-export type TaskCategory =
-  | 'classification'
-  | 'detection'
-  | 'semantic_segmentation'
-  | 'instance_segmentation'
-  | 'keypoint_detection';
-
-// const taskCategoryMap = {
-//   classification: 1,
-//   detection: 2,
-//   semantic_segmentation: 3,
-//   instance_segmentation: 4,
-// };
+// export type TaskCategory =
+//   | 'classification'
+//   | 'detection'
+//   | 'semanticSegmentation'
+//   | 'instanceSegmentation'
+//   | 'keypointDetection';
 
 const _PPBlock: React.FC<_PPCardProps> = (props) => {
   return (
@@ -47,7 +40,7 @@ const _PPBlock: React.FC<_PPCardProps> = (props) => {
 };
 
 export type PPCardProps = {
-  taskCategory: TaskCategory;
+  taskCategory: string; // TODO: stricter
   title?: string;
   imgSrc?: string;
   style?: React.CSSProperties;
@@ -55,7 +48,8 @@ export type PPCardProps = {
 };
 
 const PPCreater: React.FC<PPCardProps> = (props) => {
-  const saveData = (values: any) => {
+  console.log('creator category ', props.taskCategory);
+  const saveProject = (values: any) => {
     projectApi
       .create({
         name: values.name,
@@ -85,7 +79,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
             size="large"
             style={{ marginTop: '5.69rem' }}
             onFinish={(values) => {
-              saveData(values);
+              saveProject(values);
             }}
           >
             <Form.Item
@@ -107,6 +101,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
             >
               <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
             </Form.Item>
+
             <Form.Item
               name="dataDir"
               label="Dataset Path"
@@ -126,28 +121,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
             >
               <Input size="large" placeholder="Path" style={{ height: '3.13rem' }} />
             </Form.Item>
-            <Form.Item
-              name="max_points"
-              label="MaxPoints"
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: props.taskCategory == 'keypoint_detection',
-                  message: 'Please input max points!',
-                },
-              ]}
-              style={{
-                fontSize: '1.5rem',
-                display: props.taskCategory == 'keypoint_detection' ? undefined : 'none',
-              }}
-            >
-              <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
-            </Form.Item>
+
             <Form.Item
               name="description"
               label="Description"
@@ -166,8 +140,32 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
             >
               <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
             </Form.Item>
+
             <Form.Item
-              name="annotation mode"
+              name="maxPoints"
+              label="MaxPoints"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[
+                {
+                  required: props.taskCategory == 'keypointDetection',
+                  message: 'Please input max points!',
+                },
+              ]}
+              style={{
+                fontSize: '1.5rem',
+                display: props.taskCategory == 'keypointDetection' ? undefined : 'none',
+              }}
+            >
+              <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
+            </Form.Item>
+
+            <Form.Item
+              name="segmentationMode"
               label="AnnotationMode"
               labelCol={{
                 span: 6,
@@ -177,13 +175,13 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               }}
               rules={[
                 {
-                  required: props.taskCategory == 'semantic_segmentation',
+                  required: props.taskCategory == 'semanticSegmentation',
                   message: 'Please select task category!',
                 },
               ]}
               style={{
                 fontSize: '1.5rem',
-                display: props.taskCategory == 'semantic_segmentation' ? undefined : 'none',
+                display: props.taskCategory == 'semanticSegmentation' ? undefined : 'none',
               }}
             >
               <div className={styles.goup}>
