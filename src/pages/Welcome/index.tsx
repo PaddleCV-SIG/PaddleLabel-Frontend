@@ -62,8 +62,18 @@ const Projects: React.FC = () => {
       align: 'center',
       render: (text, project) => (
         <Space size="middle">
-          <PPButton width="4.375rem" height="1.875rem" color={'rgba(241,162,0,1)'}>
-            Modify
+          <PPButton
+            width="4.375rem"
+            height="1.875rem"
+            color={'rgba(241,162,0,1)'}
+            onClick={() => {
+              console.log('edit', project);
+              history.push(
+                `/project_detail?taskCategory=${project.taskCategory.name}&projectId=${project.projectId}`,
+              );
+            }}
+          >
+            Edit
           </PPButton>
           <PPButton
             width="4.375rem"

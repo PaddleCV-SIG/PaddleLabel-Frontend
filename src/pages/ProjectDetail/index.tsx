@@ -1,43 +1,42 @@
-import React from 'react';
+import { React, useState, useEffect } from 'react';
 import PPCreater from '@/components/PPCreater';
 import PPContainer from '@/components/PPContainer';
 import { createInfo } from '@/services/api';
 import serviceUtils from '@/services/serviceUtils';
-import { snake2camel } from '@/services/api';
+import { snake2camel, getProject } from '@/services/api';
 import { message } from 'antd';
 import { history } from 'umi';
 
 const Project: React.FC = () => {
-  let taskCategory = serviceUtils.getQueryVariable('taskCategory');
-  let mode = serviceUtils.getQueryVariable('mode'); // create | edit
-  if (!mode) mode = 'create';
+  const [taskCategory, setTaskCategory] = useState();
+  const [project, setProject] = useState();
 
-  if (!taskCategory) {
+  // 1. get taskCategory and ensure exist + valid
+  const catg = snake2camel(serviceUtils.getQueryVariable('taskCategory'));
+  if (!catg) {
     message.error('Task Category not present in url');
     history.push('/project_creation');
-    return <div />;
+    // return <div />;
   }
-  taskCategory = snake2camel(taskCategory);
-  console.log('In', taskCategory, createInfo, taskCategory in createInfo);
+  console.log('In', catg, createInfo, catg in createInfo);
   console.log('taskCategory', taskCategory);
-  if (!(taskCategory in createInfo)) {
-    message.error('Invalid task category ' + taskCategory);
+  if (!(catg in createInfo)) {
+    message.error('Invalid task category ' + catg);
     history.push('/project_creation');
-    return <div />;
+    // return <div />;
   }
+  const projectId = serviceUtils.getQueryVariable('projectId');
 
-  if (mode == 'create') {
-    const info = createInfo[taskCategory];
-    return (
-      <PPContainer>
-        <PPCreater
-          title={info['name']}
-          imgSrc="./pics/illustration.jpg"
-          taskCategory={taskCategory}
-        />
-      </PPContainer>
-    );
-  }
+  useEffect(() => {
+    setTaskCategory(catg);
+    if (projectId) getProject(projectId, setProject);
+  }, []);
+
+  return (
+    <PPContainer>
+      <PPCreater imgSrc="./pics/illustration.jpg" taskCategory={taskCategory} project={project} />
+    </PPContainer>
+  );
 };
 
 export default Project;

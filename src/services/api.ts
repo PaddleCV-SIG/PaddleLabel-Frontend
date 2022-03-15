@@ -22,10 +22,12 @@ export function toDict(arr: any[]) {
 }
 
 export function camel2snake(name: string) {
+  if (!name) return name;
   return name.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 }
 
 export function snake2camel(name: string) {
+  if (!name) return name;
   name
     .toLowerCase()
     .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''));
@@ -64,6 +66,20 @@ export async function getProjects(setProjects) {
       setProjects(toDict(projects)); // TODO: get dict instead of object
     })
     .catch((err) => {
+      serviceUtils.parseError(err, message);
+    });
+}
+export async function getProject(projectId, setProject = null) {
+  console.log('get project id ', projectId);
+  projectApi
+    .get(projectId)
+    .then((project) => {
+      console.log('getProject res', project);
+      if (setProject) setProject(project);
+      return project;
+    })
+    .catch((err) => {
+      console.log('getProject err', err);
       serviceUtils.parseError(err, message);
     });
 }

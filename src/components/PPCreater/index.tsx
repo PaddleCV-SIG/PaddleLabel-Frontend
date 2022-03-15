@@ -1,11 +1,12 @@
 import { Col, Form, Input, message, Radio, Row } from 'antd';
 import Title from 'antd/lib/typography/Title';
-import React from 'react';
+import { React, useEffect } from 'react';
 import styles from './index.less';
 import { Button } from 'antd';
 import { history } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
 import { projectApi, createInfo, camel2snake } from '@/services/api';
+import type { Project } from '@/services/models/Project';
 
 export type _PPCardProps = {
   title?: string;
@@ -41,38 +42,69 @@ const _PPBlock: React.FC<_PPCardProps> = (props) => {
 
 export type PPCardProps = {
   taskCategory: string; // TODO: stricter
-  title?: string;
   imgSrc?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
+  project: Project;
 };
 
 const PPCreater: React.FC<PPCardProps> = (props) => {
-  console.log('creator category ', props.taskCategory);
+  console.log('ppcreater props ', props);
+
   const saveProject = (values: any) => {
-    projectApi
-      .create({
-        name: values.name,
-        description: values.description,
-        taskCategoryId: createInfo[props.taskCategory]['id'],
-        dataDir: values.dataDir,
-        labelDir: values.labelDir,
-      })
-      .then((res) => {
-        console.log('create res', res);
-        localStorage.setItem('projectInfo', JSON.stringify(res));
-        history.push(`/${camel2snake(props.taskCategory)}?projectId=${res.projectId}`);
-      })
-      .catch((err) => {
-        serviceUtils.parseError(err, message);
-      });
+    if (!props.project) {
+      projectApi
+        .create({
+          name: values.name,
+          description: values.description,
+          taskCategoryId: createInfo[props.taskCategory]['id'],
+          dataDir: values.dataDir,
+          labelDir: values.labelDir,
+        })
+        .then((res) => {
+          console.log('create res', res);
+          localStorage.setItem('projectInfo', JSON.stringify(res));
+          history.push(`/${camel2snake(props.taskCategory)}?projectId=${res.projectId}`);
+        })
+        .catch((err) => {
+          serviceUtils.parseError(err, message);
+        });
+    } else {
+      projectApi
+        .update(props.project.projectId, {
+          name: values.name,
+          description: values.description,
+          dataDir: values.dataDir,
+          labelDir: values.labelDir,
+        })
+        .then((res) => {
+          console.log(res);
+          history.push('/welcome');
+        })
+        .catch((err) => {
+          console.log('update project err ', err);
+          serviceUtils.parseError(err, message);
+        });
+    }
   };
 
+  const title = props.taskCategory ? createInfo[props.taskCategory]['name'] : null;
   const [form] = Form.useForm();
+
+  const pj = props.project;
+  const initialValues = {
+    name: pj?.name,
+    description: pj?.description,
+    dataDir: pj?.dataDir,
+  };
+  useEffect(() => {
+    form.setFieldsValue(initialValues);
+  });
+
   return (
     <div className={styles.shadow} style={props.style}>
       <div id="left" className={styles.block_l}>
-        <_PPBlock title={props.title} style={{ height: 760, padding: '1.25rem 0' }}>
+        <_PPBlock title={title} style={{ height: 760, padding: '1.25rem 0' }}>
           <Form
             form={form}
             layout="horizontal"
@@ -203,10 +235,17 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                 style={{ height: '2.5rem', width: '48%' }}
                 block
               >
-                OK
+                {props.project ? 'Update' : 'Create'}
               </Button>
               &nbsp;&nbsp;
-              <Button htmlType="button" style={{ height: '2.5rem', width: '48%' }} block>
+              <Button
+                htmlType="button"
+                style={{ height: '2.5rem', width: '48%' }}
+                block
+                onClick={() => {
+                  history.push('/welcome');
+                }}
+              >
                 Cancel
               </Button>
             </Form.Item>
