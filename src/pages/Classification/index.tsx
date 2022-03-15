@@ -11,7 +11,7 @@ import type { Project, Label } from '@/models';
 import { refreshProject } from '../Welcome';
 
 import { getProgress } from '@/services/api';
-import { addLabel, getLabels } from '@/services/api';
+import { getLabels, addLabel, deleteLabel } from '@/services/api';
 
 export type ToolType = 'mover' | undefined;
 
@@ -97,11 +97,11 @@ const Page: React.FC = () => {
             setCurrentLabel(label);
           }}
           onLabelModify={() => {}}
-          onLabelDelete={() => {}}
-          onLabelAdd={(params) => {
-            addLabel(project.projectId, params, () => {
-              getLabels(project.projectId, setLabels);
-            });
+          onLabelDelete={(label) => {
+            deleteLabel(label, setLabels);
+          }}
+          onLabelAdd={(label) => {
+            addLabel(project.projectId, label, setLabels);
           }}
         />
       </div>

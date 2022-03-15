@@ -3,6 +3,7 @@ import serviceUtils from '@/services/serviceUtils';
 
 import { ProjectApi } from '@/services/apis/ProjectApi';
 import { LabelApi } from '@/services/apis/LabelApi';
+import type { Label } from '@/services/models/Label';
 import { Configuration } from '@/services';
 import { LabelFromJSON } from '@/services/models/Label';
 
@@ -14,10 +15,13 @@ export const labelApi = new LabelApi(
   new Configuration(baseUrl ? { basePath: baseUrl } : undefined),
 );
 
+/* helper functions */
 // TODO: a more elegent way
 export function toDict(arr) {
   return JSON.parse(JSON.stringify(arr));
 }
+
+/* task related*/
 
 export function getProgress(projectId: number, setProgress): number {
   if (projectId == undefined) setProgress(0);
@@ -39,22 +43,7 @@ export function getProgress(projectId: number, setProgress): number {
     });
 }
 
-// BUG: specify id type then cant use default value null, id becoms undefined
-export function addLabel(projectId: number, label, callback) {
-  console.log(projectId, label);
-  const lab = LabelFromJSON(label);
-  lab.projectId = projectId;
-
-  labelApi
-    .create(lab)
-    .then(() => {
-      callback();
-    })
-    .catch((err) => {
-      serviceUtils.parseError(err, message); // TODO: error message has a : None?
-    });
-}
-
+/* label related*/
 export function getLabels(projectId: number, setLabels) {
   console.log('getLabels projectid', projectId);
   if (!projectId) return;
@@ -68,10 +57,35 @@ export function getLabels(projectId: number, setLabels) {
       serviceUtils.parseError(err, message);
     });
 }
+
+export function addLabel(projectId: number, label, setLabels) {
+  const lab = LabelFromJSON(label);
+  lab.projectId = projectId;
+  labelApi
+    .create(lab)
+    .then(() => {
+      getLabels(projectId, setLabels);
+    })
+    .catch((err) => {
+      serviceUtils.parseError(err, message); // TODO: error message has a : None?
+    });
+}
+
 // export function updateLabel(labelId:number, name:string=undefined, color=undefined, id:number=undefined ) {
 //
 // }
 //
-// export function removeLabel(labelId:number) {
-//
-// }
+
+// TODO: refresh is in pplabel onLabelDelete
+export function deleteLabel(label: Label, setLabels) {
+  console.log('delete label', label);
+  labelApi
+    .remove(label.labelId)
+    .then(() => {
+      message.error('Label ' + label.name + ' is deleted!');
+      getLabels(label.projectId, setLabels);
+    })
+    .catch((err) => {
+      serviceUtils.parseError(err, message);
+    });
+}
