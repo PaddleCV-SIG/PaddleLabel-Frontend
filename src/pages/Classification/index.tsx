@@ -23,11 +23,13 @@ export const projectApi = new ProjectApi(config);
 export type ToolType = 'mover' | undefined;
 
 const Page: React.FC = () => {
+  const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
+  const [currentTool, setCurrentTool] = useState<ToolType>('mover');
+
   const [project, setProject] = useState<Project>();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tasks, setTasks] = useState<Task[]>();
   const [labels, setLabels] = useState<Label[]>();
-  const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
   const [scale, setScaleRaw] = useState(1);
   const [progress, setProgress] = useState<number>(0);
   const [imgSrc, setImgSrc] = useState<string>('');
@@ -100,14 +102,21 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         {/* QUESTION: maybe we dont need a save button?*/}
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/move.png"
+          onClick={() => {
+            setCurrentTool('mover');
+          }}
+        >
+          Move
+        </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className={styles.mainStage}>
         <div className={styles.draw}>
           <PPStage
             width={document.getElementById('dr')?.clientWidth}
             scale={scale}
-            currentTool={undefined}
+            currentTool={currentTool}
             setCurrentAnnotation={() => {}}
             onAnnotationModify={() => {}}
             onAnnotationModifyComplete={() => {}}
