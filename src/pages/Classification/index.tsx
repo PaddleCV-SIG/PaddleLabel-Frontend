@@ -57,6 +57,7 @@ const Page: React.FC = () => {
         setProject(projectRes);
 
         const tasksRes = await projectApi.getTasks(projectRes.projectId);
+        setTasks(tasksRes);
         const finished = tasksRes.filter((task) => task.annotations?.length != 0).length;
         let progressRes = Math.ceil((finished / tasksRes.length) * 100);
         progressRes = progressRes <= 0 ? 0 : progressRes;
@@ -132,7 +133,7 @@ const Page: React.FC = () => {
             setCurrentLabel(label);
           }}
           onLabelAdd={(label) => {
-            addLabel(project.projectId, label, setLabels);
+            if (project?.projectId) addLabel(project.projectId, label, setLabels);
           }}
           onLabelDelete={(label) => {
             deleteLabel(label, setLabels);
