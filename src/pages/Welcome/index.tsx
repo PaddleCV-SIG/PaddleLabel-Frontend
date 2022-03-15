@@ -72,11 +72,10 @@ const columns: ColumnsType<Project> = [
           height="1.875rem"
           color={'rgba(0,100,248,1)'}
           onClick={() => {
-            console.log('mark', record);
             history.push(`/${record['taskCategory']['name']}?projectId=${record.projectId}`);
           }}
         >
-          Mark
+          Label
         </PPButton>
         <PPButton width="4.375rem" height="1.875rem" color={'rgba(207,63,0,1)'}>
           Delete

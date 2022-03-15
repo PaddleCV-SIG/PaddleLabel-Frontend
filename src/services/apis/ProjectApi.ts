@@ -49,7 +49,7 @@ export interface GetAnnotationsRequest {
   projectId: string;
 }
 
-export interface GetProjectsRequest {
+export interface GetLabelsRequest {
   projectId: string;
 }
 
@@ -263,14 +263,14 @@ export class ProjectApi extends runtime.BaseAPI {
   /**
    * Get all labels under a project
    */
-  async getProjectsRaw(
-    requestParameters: GetProjectsRequest,
+  async getLabelsRaw(
+    requestParameters: GetLabelsRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<Array<Label>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
         'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling getProjects.',
+        'Required parameter requestParameters.projectId was null or undefined when calling getLabels.',
       );
     }
 
@@ -297,8 +297,8 @@ export class ProjectApi extends runtime.BaseAPI {
   /**
    * Get all labels under a project
    */
-  async getProjects(projectId: string, initOverrides?: RequestInit): Promise<Array<Label>> {
-    const response = await this.getProjectsRaw({ projectId: projectId }, initOverrides);
+  async getLabels(projectId: string, initOverrides?: RequestInit): Promise<Array<Label>> {
+    const response = await this.getLabelsRaw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
@@ -416,8 +416,7 @@ export class ProjectApi extends runtime.BaseAPI {
       },
       initOverrides,
     );
-    console.log('response', response.headers);
-    for (let ent in response.headers.entries()) console.log('ent', ent);
+
     return new runtime.VoidApiResponse(response);
   }
 
@@ -425,7 +424,6 @@ export class ProjectApi extends runtime.BaseAPI {
    * Get task statistics under a project
    */
   async getTasksStat(projectId: string, initOverrides?: RequestInit): Promise<void> {
-    console.log('id in req', projectId);
     await this.getTasksStatRaw({ projectId: projectId }, initOverrides);
   }
 

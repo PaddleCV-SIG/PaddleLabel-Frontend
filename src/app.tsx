@@ -17,6 +17,7 @@ export const initialStateConfig = {
 const BACKEND_URL_RAW = localStorage.getItem('basePath');
 const BACKEND_URL = BACKEND_URL_RAW ? BACKEND_URL_RAW : '/';
 localStorage.setItem('basePath', BACKEND_URL);
+
 localStorage.setItem('basePath', 'http://localhost:17995/api');
 // localStorage.setItem('basePath', 'https://pplabel.herokuapp.com/api');
 /**
