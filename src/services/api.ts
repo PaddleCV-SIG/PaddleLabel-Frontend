@@ -21,6 +21,19 @@ export const dataApi = new DataApi(new Configuration(baseUrl ? { basePath: baseU
 export function toDict(arr) {
   return JSON.parse(JSON.stringify(arr));
 }
+/* project related*/
+export function getProjects(setProjects) {
+  projectApi
+    .getAll()
+    .then((projects) => {
+      setProjects(toDict(projects)); // TODO: get dict instead of object
+      console.log("get all projects", toDict(projects));
+    })
+    .catch((err) => {
+      serviceUtils.parseError(err, message);
+    })
+}
+
 
 /* task related*/
 
@@ -39,12 +52,13 @@ export function getProgress(projectId: number, setProgress): number {
       setProgress(Math.ceil((finished / tasks.length) * 100));
     })
     .catch((err) => {
-      console.log(err);
+      serviceUtils.parseError(err, message);
       setProgress(0);
     });
 }
 
 /* label related*/
+
 export function getLabels(projectId: number, setLabels) {
   console.log('getLabels projectid', projectId);
   if (!projectId) return;

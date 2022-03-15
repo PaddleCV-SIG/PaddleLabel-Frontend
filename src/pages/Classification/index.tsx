@@ -53,7 +53,6 @@ const Page: React.FC = () => {
     });
   }, []);
 
-// setDataId(1);
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>

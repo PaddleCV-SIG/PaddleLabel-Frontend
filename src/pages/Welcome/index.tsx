@@ -16,6 +16,7 @@ import { projectApi } from '@/services/api';
 
 export const PROJECT_INFO_KEY = 'projectInfo';
 
+// TODO: extract this function to services/api.ts
 export const refreshProject = (onProjectGet?: (res: Project) => void, id?: string) => {
   const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
   if (!projectId) {
@@ -62,7 +63,7 @@ const columns: ColumnsType<Project> = [
     key: 'projectId',
     width: '15rem',
     align: 'center',
-    render: (text, record) => (
+    render: (text, project) => (
       <Space size="middle">
         <PPButton width="4.375rem" height="1.875rem" color={'rgba(241,162,0,1)'}>
           Modify
@@ -72,12 +73,12 @@ const columns: ColumnsType<Project> = [
           height="1.875rem"
           color={'rgba(0,100,248,1)'}
           onClick={() => {
-            history.push(`/${record['taskCategory']['name']}?projectId=${record.projectId}`);
+            history.push(`/${project['taskCategory']['name']}?projectId=${project.projectId}`);
           }}
         >
           Label
         </PPButton>
-        <PPButton width="4.375rem" height="1.875rem" color={'rgba(207,63,0,1)'}>
+        <PPButton width="4.375rem" height="1.875rem" color={'rgba(207,63,0,1)'} onClick={() => {}}>
           Delete
         </PPButton>
       </Space>
@@ -88,10 +89,15 @@ const columns: ColumnsType<Project> = [
 const Projects: React.FC = () => {
   const [projects, setProjects] = React.useState([]);
   React.useEffect(() => {
-    projectApi.getAll().then(function (res) {
+    projectApi
+      .getAll()
+      .then(function (res) {
       setProjects(JSON.parse(JSON.stringify(res))); // TODO: get dict instead of object
       console.log(JSON.parse(JSON.stringify(res)));
-    });
+    })
+    .catch((err) => {
+        serviceUtils.parseError(err, message);
+      })
   }, []);
 
   // if found no project, return create project button
