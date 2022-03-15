@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
-import { message, Progress } from 'antd';
-import { useEffect } from 'react';
-import { refreshProject } from '../Welcome';
-import { Label, Project, ProjectApi, Task } from '@/services';
-import { Configuration, LabelApi } from '@/services';
-import serviceUtils from '@/services/serviceUtils';
+import { Progress, message } from 'antd';
 
-export type ToolType = 'mover' | undefined;
+import { refreshProject } from '../Welcome';
+
+import { getProgress } from '@/services/api';
+import { getLabels, addLabel, deleteLabel } from '@/services/api';
+import { Label, Project, Task } from '@/services';
+// import { getImgSrc } from '@/services/api';
 
 const baseUrl = localStorage.getItem('basePath');
-const labelApi = new LabelApi(new Configuration({ basePath: baseUrl ? baseUrl : undefined }));
-const projectApi = new ProjectApi(new Configuration({ basePath: baseUrl ? baseUrl : undefined }));
+
+export type ToolType = 'mover' | undefined;
 
 const Page: React.FC = () => {
   const [project, setProject] = useState<Project>();
@@ -25,28 +26,37 @@ const Page: React.FC = () => {
   const [labels, setLabels] = useState<Label[]>();
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
   const [scale, setScaleRaw] = useState(1);
-  const setScale = (size: number) => {
-    if (!size) setScaleRaw(1);
-    if (size < 0.1 || size > 3.0) setScaleRaw(1);
-    else setScaleRaw(size);
+  const [progress, setProgress] = useState<number>(0);
+  const [imgSrc, setImgSrc] = useState<string>('');
+  // const [taskId, setTaskId] = useState<number>(1); // TODO: 这两个是写死的，需要加切换图片
+  const [dataId, setDataId] = useState<number>(1);
+
+  const setScale = (newScale: number, range: number[] = [0.1, 3]) => {
+    let s = newScale;
+    if (s == undefined) s = 1;
+    if (s < range[0]) {
+      s = range[0];
+      message.error('Smallest scale is ' + range[0]);
+    }
+    if (s > range[1]) {
+      s = range[1];
+      message.error('Largest scale is ' + range[1]);
+    }
+    setScaleRaw(s);
   };
 
   // Init project info on refresh or direct open
   useEffect(() => {
     refreshProject((res: Project) => {
       setProject(res);
-      setLabels(res.labels);
-      projectApi
-        .getTasks(res.projectId + '')
-        .then((tasksRes) => {
-          setTasks(tasksRes);
-        })
-        .catch((err) => {
-          serviceUtils.parseError(err, message);
-        });
+      getProgress(res.projectId, setProgress);
+      getLabels(res.projectId, setLabels);
+      console.log('img src', `${baseUrl}/data/${dataId}/image`);
+      setImgSrc(`${baseUrl}/datas/${dataId}/image`);
     });
   }, []);
 
+  // setDataId(1);
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
@@ -66,6 +76,7 @@ const Page: React.FC = () => {
         >
           Zoom out
         </PPToolBarButton>
+        {/* QUESTION: maybe we dont need a save button?*/}
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
       </PPToolBar>
@@ -78,18 +89,20 @@ const Page: React.FC = () => {
             setCurrentAnnotation={() => {}}
             onAnnotationModify={() => {}}
             onAnnotationModifyComplete={() => {}}
+            imgSrc={imgSrc}
           />
         </div>
         <div className={styles.pblock}>
           <div className={styles.progress}>
-            <Progress percent={50} status="active" />
+            <Progress percent={progress} status="active" />
           </div>
         </div>
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Split Dataset</PPToolBarButton>
       </PPToolBar>
+      {/*// TODO: move label widget out*/}
       <div className={styles.rightSideBar}>
         <PPLabelList
           labels={labels}
@@ -97,24 +110,13 @@ const Page: React.FC = () => {
           onLabelSelect={(label) => {
             setCurrentLabel(label);
           }}
-          onLabelModify={() => {}}
-          onLabelDelete={() => {}}
-          onLabelAdd={(label: Label) => {
-            labelApi
-              .create({
-                id: serviceUtils.randomIntFromInterval(0, 9999),
-                name: label.name,
-                color: label.color,
-                projectId: project?.projectId,
-              })
-              .then((newLabel: Label) => {
-                labels?.push(newLabel);
-                setLabels(labels);
-              })
-              .catch((err) => {
-                serviceUtils.parseError(err, message);
-              });
+          onLabelAdd={(label) => {
+            addLabel(project.projectId, label, setLabels);
           }}
+          onLabelDelete={(label) => {
+            deleteLabel(label, setLabels);
+          }}
+          onLabelModify={() => {}}
         />
       </div>
     </PPLabelPageContainer>

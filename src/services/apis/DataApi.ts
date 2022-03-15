@@ -30,7 +30,7 @@ export interface GetRequest {
   dataId: string;
 }
 
-export interface GetImagesRequest {
+export interface GetImageRequest {
   dataId: string;
 }
 
@@ -163,14 +163,14 @@ export class DataApi extends runtime.BaseAPI {
   /**
    * Get the image of a data record
    */
-  async getImagesRaw(
-    requestParameters: GetImagesRequest,
+  async getImageRaw(
+    requestParameters: GetImageRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<InlineResponse200>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
         'dataId',
-        'Required parameter requestParameters.dataId was null or undefined when calling getImages.',
+        'Required parameter requestParameters.dataId was null or undefined when calling getImage.',
       );
     }
 
@@ -199,8 +199,8 @@ export class DataApi extends runtime.BaseAPI {
   /**
    * Get the image of a data record
    */
-  async getImages(dataId: string, initOverrides?: RequestInit): Promise<InlineResponse200> {
-    const response = await this.getImagesRaw({ dataId: dataId }, initOverrides);
+  async getImage(dataId: string, initOverrides?: RequestInit): Promise<InlineResponse200> {
+    const response = await this.getImageRaw({ dataId: dataId }, initOverrides);
     return await response.value();
   }
 

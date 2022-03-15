@@ -82,7 +82,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
         // }
         console.log(res);
         localStorage.setItem('projectInfo', JSON.stringify(res));
-        history.push(`/image_classification?projectId=${res.projectId}`);
+        history.push(`/classification?projectId=${res.projectId}`);
       })
       .catch((err) => {
         serviceUtils.parseError(err, message);

@@ -126,7 +126,7 @@ export class LabelApi extends runtime.BaseAPI {
   }
 
   /**
-   * Read all labels, sort by last modify date
+   * Get all labels, sort by last modify
    */
   async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Label>>> {
     const queryParameters: any = {};
@@ -147,7 +147,7 @@ export class LabelApi extends runtime.BaseAPI {
   }
 
   /**
-   * Read all labels, sort by last modify date
+   * Get all labels, sort by last modify
    */
   async getAll(initOverrides?: RequestInit): Promise<Array<Label>> {
     const response = await this.getAllRaw(initOverrides);

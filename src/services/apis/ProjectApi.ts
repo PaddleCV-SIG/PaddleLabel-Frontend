@@ -49,7 +49,7 @@ export interface GetAnnotationsRequest {
   projectId: string;
 }
 
-export interface GetProjectsRequest {
+export interface GetLabelsRequest {
   projectId: string;
 }
 
@@ -58,6 +58,10 @@ export interface GetTagsRequest {
 }
 
 export interface GetTasksRequest {
+  projectId: string;
+}
+
+export interface GetTasksStatRequest {
   projectId: string;
 }
 
@@ -215,7 +219,7 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   * Your GET endpoint
+   * Get all annotations under a project
    */
   async getAnnotationsRaw(
     requestParameters: GetAnnotationsRequest,
@@ -249,7 +253,7 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   * Your GET endpoint
+   * Get all annotations under a project
    */
   async getAnnotations(projectId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
     const response = await this.getAnnotationsRaw({ projectId: projectId }, initOverrides);
@@ -257,16 +261,16 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   * Your GET endpoint
+   * Get all labels under a project
    */
-  async getProjectsRaw(
-    requestParameters: GetProjectsRequest,
+  async getLabelsRaw(
+    requestParameters: GetLabelsRequest,
     initOverrides?: RequestInit,
   ): Promise<runtime.ApiResponse<Array<Label>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
         'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling getProjects.',
+        'Required parameter requestParameters.projectId was null or undefined when calling getLabels.',
       );
     }
 
@@ -291,15 +295,15 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   * Your GET endpoint
+   * Get all labels under a project
    */
-  async getProjects(projectId: string, initOverrides?: RequestInit): Promise<Array<Label>> {
-    const response = await this.getProjectsRaw({ projectId: projectId }, initOverrides);
+  async getLabels(projectId: string, initOverrides?: RequestInit): Promise<Array<Label>> {
+    const response = await this.getLabelsRaw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
   /**
-   * Your GET endpoint
+   * Get all tags under a project
    */
   async getTagsRaw(
     requestParameters: GetTagsRequest,
@@ -333,7 +337,7 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   * Your GET endpoint
+   * Get all tags under a project
    */
   async getTags(projectId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
     const response = await this.getTagsRaw({ projectId: projectId }, initOverrides);
@@ -341,7 +345,7 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   * Your GET endpoint
+   * Get all tasks under a project
    */
   async getTasksRaw(
     requestParameters: GetTasksRequest,
@@ -375,11 +379,52 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   * Your GET endpoint
+   * Get all tasks under a project
    */
   async getTasks(projectId: string, initOverrides?: RequestInit): Promise<Array<Task>> {
     const response = await this.getTasksRaw({ projectId: projectId }, initOverrides);
     return await response.value();
+  }
+
+  /**
+   * Get task statistics under a project
+   */
+  async getTasksStatRaw(
+    requestParameters: GetTasksStatRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling getTasksStat.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/tasks`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'HEAD',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Get task statistics under a project
+   */
+  async getTasksStat(projectId: string, initOverrides?: RequestInit): Promise<void> {
+    await this.getTasksStatRaw({ projectId: projectId }, initOverrides);
   }
 
   /**

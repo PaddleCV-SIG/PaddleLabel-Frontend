@@ -8,34 +8,25 @@ import PPTable from '@/components/PPTable';
 import PPButton from '@/components/PPButton';
 import CreateButton from '@/components/CreatButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { ProjectApi } from '@/services/apis/ProjectApi';
 import { history } from 'umi';
-import { Configuration, Project } from '@/services';
+import type { Project } from '@/services';
 import serviceUtils from '@/services/serviceUtils';
 
-export type ProjectInfo = {
-  projectId: number;
-  name: string;
-};
+import { projectApi } from '@/services/api';
 
 export const PROJECT_INFO_KEY = 'projectInfo';
 
 export const refreshProject = (onProjectGet?: (res: Project) => void, id?: string) => {
   const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
   if (!projectId) {
-    message.error('Cannot find projectId!');
+    message.error("projectId isn't passed in nor present in url!");
     history.push('/');
   }
-
   const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
   if (projectInfo) {
     onProjectGet?.call(0, JSON.parse(projectInfo));
     return;
   }
-
-  const baseUrl = localStorage.getItem('basePath');
-  console.log('asdef', baseUrl);
-  const projectApi = new ProjectApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
 
   projectApi
     .get(projectId)
@@ -52,7 +43,7 @@ export const refreshProject = (onProjectGet?: (res: Project) => void, id?: strin
     });
 };
 
-const columns: ColumnsType<ProjectInfo> = [
+const columns: ColumnsType<Project> = [
   {
     title: 'ID',
     dataIndex: 'projectId',
@@ -81,10 +72,10 @@ const columns: ColumnsType<ProjectInfo> = [
           height="1.875rem"
           color={'rgba(0,100,248,1)'}
           onClick={() => {
-            history.push('/label/' + record.projectId);
+            history.push(`/${record['taskCategory']['name']}?projectId=${record.projectId}`);
           }}
         >
-          Mark
+          Label
         </PPButton>
         <PPButton width="4.375rem" height="1.875rem" color={'rgba(207,63,0,1)'}>
           Delete
@@ -97,15 +88,30 @@ const columns: ColumnsType<ProjectInfo> = [
 const Projects: React.FC = () => {
   const [projects, setProjects] = React.useState([]);
   React.useEffect(() => {
-    const baseUrl = localStorage.getItem('basePath');
-    const projectApi = new ProjectApi(
-      new Configuration(baseUrl ? { basePath: baseUrl } : undefined),
-    );
     projectApi.getAll().then(function (res) {
       setProjects(JSON.parse(JSON.stringify(res))); // TODO: get dict instead of object
       console.log(JSON.parse(JSON.stringify(res)));
     });
   }, []);
+
+  // if found no project, return create project button
+  if (projects.length == 0)
+    return (
+      <Row style={{ marginTop: 20 }}>
+        <Col span={24}>
+          <PPBlock title="My Projects">
+            <CreateButton
+              onClick={() => {
+                history.push('/project_creation');
+              }}
+            >
+              Create Project
+            </CreateButton>
+          </PPBlock>
+        </Col>
+      </Row>
+    );
+
   return (
     <Row style={{ marginTop: 20 }}>
       <Col span={24}>
@@ -127,7 +133,6 @@ const Welcome: React.FC = () => {
               history.push('/project_creation');
             }}
           >
-            {/* {intl.formatMessage({ projectId: 'welcome.createProject' })} */}
             Create Project
           </CreateButton>
         </Col>

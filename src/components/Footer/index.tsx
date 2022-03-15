@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
         {
           key: 'github',
           title: <GithubOutlined />,
-          href: 'https://github.com/PaddleCV-SIG/PP-Labeling',
+          href: 'https://github.com/PaddleCV-SIG/PP-Label',
           blankTarget: true,
         },
       ]}

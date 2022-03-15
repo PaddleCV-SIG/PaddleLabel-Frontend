@@ -1,4 +1,5 @@
-﻿export default [
+// TODO: maybe the url should in camel case
+export default [
   {
     path: '/user',
     layout: false,
@@ -35,9 +36,9 @@
     component: './ClassificationProject',
   },
   {
-    path: '/image_classification',
-    name: 'image_classification',
-    component: './ImageClassification',
+    path: '/classification',
+    name: 'classification',
+    component: './Classification',
   },
   {
     path: '/segmentation_project',

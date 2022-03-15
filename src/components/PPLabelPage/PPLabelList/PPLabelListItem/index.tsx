@@ -44,6 +44,15 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
             props.onLabelModify(label);
           }}
         />
+        <a
+          className={styles.eye}
+          style={{
+            backgroundImage: 'url(./pics/delete.png)',
+          }}
+          onClick={() => {
+            props.onLabelDelete(label);
+          }}
+        />
       </Space>
     </List.Item>
   );
