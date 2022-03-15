@@ -45,21 +45,23 @@ export function addLabel(projectId: number, label, callback) {
   const lab = LabelFromJSON(label);
   lab.projectId = projectId;
 
-  lab.color = undefined;
-  labelApi.create(lab).catch((err) => {
-    serviceUtils.parseError(err, message); // TODO: error message has a : None?
-  });
-  callback();
+  labelApi
+    .create(lab)
+    .then(() => {
+      callback();
+    })
+    .catch((err) => {
+      serviceUtils.parseError(err, message); // TODO: error message has a : None?
+    });
 }
 
 export function getLabels(projectId: number, setLabels) {
-  console.log(' getLabels ', projectId);
+  console.log('getLabels projectid', projectId);
   if (!projectId) return;
-  console.log('in');
   projectApi
     .getLabels(projectId)
     .then((res) => {
-      console.log('getLabels ', res);
+      console.log('got labels ', res);
       setLabels(toDict(res));
     })
     .catch((err) => {
