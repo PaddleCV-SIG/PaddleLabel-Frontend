@@ -12,6 +12,7 @@ import styles from './index.less';
 const imgSrc = './pics/basketball.jpg';
 
 export type PPStageProps = {
+  imgSrc?: string;
   width?: number;
   scale: number;
   annotations?: Annotation<any>[];
@@ -44,7 +45,7 @@ export type PPStageProps = {
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
-  const [image] = useImage(imgSrc);
+  const [image] = useImage(props.imgSrc);
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
   const canvasWidth = props.width || imageWidth;

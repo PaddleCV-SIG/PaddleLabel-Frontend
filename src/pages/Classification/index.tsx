@@ -12,6 +12,9 @@ import { refreshProject } from '../Welcome';
 
 import { getProgress } from '@/services/api';
 import { getLabels, addLabel, deleteLabel } from '@/services/api';
+// import { getImgSrc } from '@/services/api';
+
+const baseUrl = localStorage.getItem('basePath');
 
 export type ToolType = 'mover' | undefined;
 
@@ -21,6 +24,10 @@ const Page: React.FC = () => {
   const [labels, setLabels] = useState([]);
   const [scale, setScaleRaw] = useState(1);
   const [progress, setProgress] = useState<number>(0);
+  const [imgSrc, setImgSrc] = useState<string>('');
+  // const [taskId, setTaskId] = useState<number>(1); // TODO: 这两个是写死的，需要加切换图片
+  const [dataId, setDataId] = useState<number>(1);
+  setDataId(1);
 
   const setScale = (newScale: number, range: number[] = [0.1, 3]) => {
     let s = newScale;
@@ -42,6 +49,8 @@ const Page: React.FC = () => {
       setProject(res);
       getProgress(res.projectId, setProgress);
       getLabels(res.projectId, setLabels);
+      console.log('img src', `${baseUrl}/data/${dataId}/image`);
+      setImgSrc(`${baseUrl}/datas/${dataId}/image`);
     });
   }, []);
 
@@ -77,6 +86,7 @@ const Page: React.FC = () => {
             setCurrentAnnotation={() => {}}
             onAnnotationModify={() => {}}
             onAnnotationModifyComplete={() => {}}
+            imgSrc={imgSrc}
           />
         </div>
         <div className={styles.pblock}>
@@ -89,6 +99,7 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Split Dataset</PPToolBarButton>
       </PPToolBar>
+      {/*// TODO: move label widget out*/}
       <div className={styles.rightSideBar}>
         <PPLabelList
           labels={labels}
@@ -96,13 +107,13 @@ const Page: React.FC = () => {
           onLabelSelect={(label) => {
             setCurrentLabel(label);
           }}
-          onLabelModify={() => {}}
-          onLabelDelete={(label) => {
-            deleteLabel(label, setLabels);
-          }}
           onLabelAdd={(label) => {
             addLabel(project.projectId, label, setLabels);
           }}
+          onLabelDelete={(label) => {
+            deleteLabel(label, setLabels);
+          }}
+          onLabelModify={() => {}}
         />
       </div>
     </PPLabelPageContainer>
