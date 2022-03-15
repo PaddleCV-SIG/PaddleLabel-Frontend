@@ -51,7 +51,7 @@ export default {
   'menu.editor.koni': '拓撲編輯器',
   'menu.project-creation': '創建工程',
   'menu.classification-project': '圖像分類項目創建',
-  'menu.image_classification': '圖像分類',
+  'menu.classification': '圖像分類',
   'menu.segmentation-project': '語義分割項目創建',
   'menu.segmentation-mode': '語義分割模式',
   'menu.semantic_segmentation': '語義分割',

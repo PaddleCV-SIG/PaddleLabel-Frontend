@@ -51,7 +51,7 @@ export default {
   'menu.editor.koni': 'محرر كوني',
   'menu.project-creation': 'إنشاء مشروع',
   'menu.classification-project': 'إنشاء تصنيف الصور',
-  'menu.image_classification': 'تصنيف الصور ',
+  'menu.classification': 'تصنيف الصور ',
   'menu.segmentation-mode': 'تجزئة الدلالي نمط',
   'menu.segmentation-project': 'إنشاء مشروع تجزئة الدلالي',
   'menu.semantic_segmentation': 'تجزئة الدلالي ',

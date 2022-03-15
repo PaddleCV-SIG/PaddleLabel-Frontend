@@ -51,7 +51,7 @@ export default {
   'menu.editor.koni': '拓扑编辑器',
   'menu.project-creation': '创建工程',
   'menu.classification-project': '图像分类项目创建',
-  'menu.image_classification': '图像分类',
+  'menu.classification': '图像分类',
   'menu.segmentation-project': '语义分割项目创建',
   'menu.segmentation-mode': '语义分割模式',
   'menu.semantic_segmentation': '语义分割',

@@ -3,7 +3,7 @@ import { Annotation } from '@/models/annotation';
 import { ToolType } from '@/pages/SemanticSegmentation';
 import type Konva from 'konva';
 import React, { Props, ReactElement, useRef, useState } from 'react';
-import { Layer, Stage, Image, Transformer } from 'react-konva';
+import { Layer, Stage, Image, Transformer, Group } from 'react-konva';
 import useImage from 'use-image';
 import { PPLineType } from '../PPBrush/drawBrush';
 import styles from './index.less';
@@ -14,6 +14,7 @@ const imgSrc = './pics/basketball.jpg';
 export type PPStageProps = {
   imgSrc?: string;
   width?: number;
+  height?: number;
   scale: number;
   annotations?: Annotation<any>[];
   currentTool: ToolType;
@@ -72,14 +73,10 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   // console.log(`PPStage. ${JSON.stringify(props.elements)}`);
   return (
-    <Stage
-      width={canvasWidth} // * props.scale}
-      height={imageHeight} // * props.scale}
-      className={styles.stage}
-    >
-      <Layer scaleX={props.scale} scaleY={props.scale} draggable={false}>
+    <Stage width={canvasWidth} height={708} className={styles.stage}>
+      {/* <Layer scaleX={props.scale} scaleY={props.scale} draggable={false}>
         <Image image={image} draggable={false} />
-      </Layer>
+      </Layer> */}
       <Layer
         scaleX={props.scale}
         scaleY={props.scale}
@@ -98,8 +95,10 @@ const Component: React.FC<PPStageProps> = (props) => {
         }}
         draggable={false}
       >
-        <Image draggable={false} image={image} />
-        {shapes}
+        <Group draggable={props.currentTool == 'mover'}>
+          <Image draggable={false} image={image} />
+          {shapes}
+        </Group>
       </Layer>
     </Stage>
   );

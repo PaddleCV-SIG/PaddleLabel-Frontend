@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
@@ -6,22 +7,29 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message } from 'antd';
-
-import type { Project, Label } from '@/models';
+import { useAsync } from 'react-async';
 import { refreshProject } from '../Welcome';
-
 import { getProgress } from '@/services/api';
 import { getLabels, addLabel, deleteLabel } from '@/services/api';
+import { Configuration, Label, Project, ProjectApi, Task } from '@/services';
+import serviceUtils from '@/services/serviceUtils';
 // import { getImgSrc } from '@/services/api';
 
 const baseUrl = localStorage.getItem('basePath');
+const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
+
+export const projectApi = new ProjectApi(config);
 
 export type ToolType = 'mover' | undefined;
 
 const Page: React.FC = () => {
-  const [project, setProject] = useState<Project>();
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
-  const [labels, setLabels] = useState([]);
+  const [currentTool, setCurrentTool] = useState<ToolType>('mover');
+
+  const [project, setProject] = useState<Project>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [tasks, setTasks] = useState<Task[]>();
+  const [labels, setLabels] = useState<Label[]>();
   const [scale, setScaleRaw] = useState(1);
   const [progress, setProgress] = useState<number>(0);
   const [imgSrc, setImgSrc] = useState<string>('');
@@ -44,15 +52,35 @@ const Page: React.FC = () => {
 
   // Init project info on refresh or direct open
   useEffect(() => {
-    refreshProject((res: Project) => {
-      setProject(res);
-      getProgress(res.projectId, setProgress);
-      getLabels(res.projectId, setLabels);
-      console.log('img src', `${baseUrl}/data/${dataId}/image`);
-      setImgSrc(`${baseUrl}/datas/${dataId}/image`);
-    });
+    async function initProject() {
+      try {
+        const projectRes = await refreshProject();
+        console.log(projectRes);
+        setProject(projectRes);
+
+        const tasksRes = await projectApi.getTasks(projectRes.projectId);
+        setTasks(tasksRes);
+        const finished = tasksRes.filter((task) => task.annotations?.length != 0).length;
+        let progressRes = Math.ceil((finished / tasksRes.length) * 100);
+        progressRes = progressRes <= 0 ? 0 : progressRes;
+        console.log('res', finished, tasksRes.length, progressRes);
+        setProgress(progressRes);
+
+        const labelsRes = await projectApi.getLabels(projectRes.projectId);
+        console.log('got labels ', labelsRes);
+        setLabels(serviceUtils.toDict(labelsRes));
+
+        console.log(`img src: ${baseUrl}/data/${dataId}/image`);
+        setImgSrc(`${baseUrl}/datas/${dataId}/image`);
+      } catch (err) {
+        console.log(err);
+        serviceUtils.parseError(err as Response, message);
+      }
+    }
+    initProject();
   }, []);
 
+  // setDataId(1);
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
@@ -74,14 +102,21 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         {/* QUESTION: maybe we dont need a save button?*/}
         <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/move.png">Move</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/move.png"
+          onClick={() => {
+            setCurrentTool('mover');
+          }}
+        >
+          Move
+        </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className={styles.mainStage}>
         <div className={styles.draw}>
           <PPStage
             width={document.getElementById('dr')?.clientWidth}
             scale={scale}
-            currentTool={undefined}
+            currentTool={currentTool}
             setCurrentAnnotation={() => {}}
             onAnnotationModify={() => {}}
             onAnnotationModifyComplete={() => {}}
@@ -107,7 +142,7 @@ const Page: React.FC = () => {
             setCurrentLabel(label);
           }}
           onLabelAdd={(label) => {
-            addLabel(project.projectId, label, setLabels);
+            if (project?.projectId) addLabel(project.projectId, label, setLabels);
           }}
           onLabelDelete={(label) => {
             deleteLabel(label, setLabels);
