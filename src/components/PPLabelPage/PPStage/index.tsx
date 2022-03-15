@@ -50,7 +50,8 @@ const Component: React.FC<PPStageProps> = (props) => {
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
   const canvasWidth = props.width || imageWidth;
-  const canvasHeight = props.height || imageHeight;
+  let canvasHeight = props.height || imageHeight;
+  canvasHeight = canvasHeight < 708 ? 708 : canvasHeight;
 
   const shapes = [];
   if (props.annotations) {
