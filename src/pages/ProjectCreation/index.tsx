@@ -6,43 +6,53 @@ import PPContainer from '@/components/PPContainer';
 import PPOverlapCol from '@/components/PPOverlapCol';
 
 const Project: React.FC = () => {
+  const createInfo = [
+    {
+      taskCategory: 'classification',
+      name: 'Image Classification',
+      avatar: './pics/classification.jpg',
+    },
+    { taskCategory: 'detection', name: 'Detection', avatar: './pics/object_detection.jpg' },
+    {
+      taskCategory: 'instanceSegmentation',
+      name: 'Instance Segmentation',
+      avatar: './pics/instance_segmentation.jpg',
+    },
+    {
+      taskCategory: 'semanticSegmentation',
+      name: 'Semantic Segmentation',
+      avatar: './pics/semantic_segmentation.jpg',
+    },
+    {
+      taskCategory: 'keypoint',
+      name: 'Keypoint Detection',
+      avatar: './pics/keypoint_detection.jpg',
+    },
+  ];
+  function create() {
+    const creators = [];
+    for (const info of createInfo) {
+      creators.push(
+        <PPOverlapCol span={4}>
+          <PPCard
+            height={360}
+            width={310}
+            imgSrc={info['avatar']}
+            href={'/project_creation?taskCategory=' + info['taskCategory']}
+          >
+            {info['name']}
+          </PPCard>
+        </PPOverlapCol>,
+      );
+    }
+    return creators;
+  }
   return (
     <PPContainer>
       <Row style={{ marginTop: 20 }}>
         <Col span={24}>
           <PPBlock style={{ height: 500 }}>
-            <Row>
-              <PPOverlapCol span={4}>
-                <PPCard
-                  height={360}
-                  width={310}
-                  imgSrc={'./pics/classification.jpg'}
-                  href="/classification_project"
-                >
-                  Image Classification
-                </PPCard>
-              </PPOverlapCol>
-              <PPOverlapCol span={4}>
-                <PPCard height={360} width={310} imgSrc={'./pics/object_detection.jpg'}>
-                  Object Detection
-                </PPCard>
-              </PPOverlapCol>
-              <PPOverlapCol span={4}>
-                <PPCard height={360} width={310} imgSrc={'./pics/instance_segmentation.jpg'}>
-                  Instance Segmentation
-                </PPCard>
-              </PPOverlapCol>
-              <PPOverlapCol span={4}>
-                <PPCard height={360} width={310} imgSrc={'./pics/semantic_segmentation.jpg'}>
-                  Semantic Segmentation
-                </PPCard>
-              </PPOverlapCol>
-              <PPOverlapCol span={4}>
-                <PPCard height={360} width={310} imgSrc={'./pics/keypoint_detection.jpg'}>
-                  Keypoint detection
-                </PPCard>
-              </PPOverlapCol>
-            </Row>
+            <Row>{create()}</Row>
           </PPBlock>
         </Col>
       </Row>
