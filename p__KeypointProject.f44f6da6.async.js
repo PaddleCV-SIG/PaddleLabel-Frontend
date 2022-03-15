@@ -1,1 +1,0 @@
-(self.webpackChunkpp_label_frontend=self.webpackChunkpp_label_frontend||[]).push([[326],{88244:function(r,t,n){"use strict";n.r(t);var l=n(67294),_=n(5509),o=n(11428),e=n(85893),P=function(){return(0,e.jsx)(o.Z,{children:(0,e.jsx)(_.Z,{title:"Keypoint Detection",imgSrc:"./pics/illustration.jpg",mode:"keypoint"})})};t.default=P}}]);
