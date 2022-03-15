@@ -9,32 +9,28 @@ import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message } from 'antd';
 import { useAsync } from 'react-async';
 import { refreshProject } from '../Welcome';
-import { getProgress } from '@/services/api';
 import { getLabels, addLabel, deleteLabel } from '@/services/api';
-import { Configuration, Label, Project, ProjectApi, Task } from '@/services';
+import { getTasks, getProgress } from '@/services/api';
+import { projectApi } from '@/services/api';
+import type { Label, Project, Task, Data } from '@/services';
 import serviceUtils from '@/services/serviceUtils';
-// import { getImgSrc } from '@/services/api';
 
 const baseUrl = localStorage.getItem('basePath');
-const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
-
-export const projectApi = new ProjectApi(config);
 
 export type ToolType = 'mover' | undefined;
 
 const Page: React.FC = () => {
+  const [project, setProject] = useState<Project>();
+  const [labels, setLabels] = useState<Label[]>();
+  const [tasks, setTasks] = useState<Task[]>();
+  const [datas, setDatas] = useState<Data[]>();
+
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
   const [currentTool, setCurrentTool] = useState<ToolType>('mover');
-
-  const [project, setProject] = useState<Project>();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [tasks, setTasks] = useState<Task[]>();
-  const [labels, setLabels] = useState<Label[]>();
+  const [currentTaskId, setCurrentTaskId] = useState<number>(0);
   const [scale, setScaleRaw] = useState(1);
   const [progress, setProgress] = useState<number>(0);
   const [imgSrc, setImgSrc] = useState<string>('');
-  // const [taskId, setTaskId] = useState<number>(1); // TODO: 这两个是写死的，需要加切换图片
-  const [dataId, setDataId] = useState<number>(1);
 
   const setScale = (newScale: number, range: number[] = [0.1, 3]) => {
     let s = newScale;
@@ -50,37 +46,62 @@ const Page: React.FC = () => {
     setScaleRaw(s);
   };
 
-  // Init project info on refresh or direct open
-  useEffect(() => {
-    async function initProject() {
-      try {
-        const projectRes = await refreshProject();
-        console.log(projectRes);
-        setProject(projectRes);
+  const nextTask = () => {
+    console.log('turning next ', currentTaskId, tasks.length);
+    if (currentTaskId + 1 >= tasks.length) {
+      message.error('This is the last task.');
+      return;
+    }
+    setCurrentTaskId(currentTaskId + 1);
+  };
 
-        const tasksRes = await projectApi.getTasks(projectRes.projectId);
-        setTasks(tasksRes);
-        const finished = tasksRes.filter((task) => task.annotations?.length != 0).length;
-        let progressRes = Math.ceil((finished / tasksRes.length) * 100);
-        progressRes = progressRes <= 0 ? 0 : progressRes;
-        console.log('res', finished, tasksRes.length, progressRes);
+  const prevTask = () => {
+    console.log('turning prev ', currentTaskId, tasks.length);
+    if (currentTaskId - 1 < 0) {
+      message.error('This is the first task.');
+      return;
+    }
+    setCurrentTaskId(currentTaskId - 1);
+  };
+
+  // want to only load project and task once when open the page
+  useEffect(() => {
+    async function update() {
+      try {
+        console.log('before if', project);
+        if (!project) {
+          const projectRes = await refreshProject();
+          const tasksRes = await projectApi.getTasks(projectRes.projectId);
+          const labelsRes = await projectApi.getLabels(projectRes.projectId);
+
+          setLabels(serviceUtils.toDict(labelsRes));
+          setTasks(tasksRes);
+          setProject(projectRes);
+          return;
+        }
+
+        console.log('after if ', project, tasks);
+
+        const progressRes = await getProgress(project.projectId);
         setProgress(progressRes);
 
-        const labelsRes = await projectApi.getLabels(projectRes.projectId);
-        console.log('got labels ', labelsRes);
+        const labelsRes = await projectApi.getLabels(project.projectId);
         setLabels(serviceUtils.toDict(labelsRes));
 
-        console.log(`img src: ${baseUrl}/data/${dataId}/image`);
-        setImgSrc(`${baseUrl}/datas/${dataId}/image`);
+        let currentData = tasks[currentTaskId]['datas'];
+        currentData = currentData[0]; // TODO: for 3d, scroll wheel for changing this
+        console.log('currentData', currentData);
+
+        // TODO: nested object use snake case
+        setImgSrc(`${baseUrl}/datas/${currentData.data_id}/image`);
       } catch (err) {
         console.log(err);
         serviceUtils.parseError(err as Response, message);
       }
     }
-    initProject();
-  }, []);
+    update();
+  }, [currentTaskId, project]);
 
-  // setDataId(1);
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
@@ -138,6 +159,23 @@ const Page: React.FC = () => {
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Split Dataset</PPToolBarButton>
+
+        <PPToolBarButton
+          imgSrc="./pics/buttons/next.png"
+          onClick={() => {
+            nextTask();
+          }}
+        >
+          Next Task
+        </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/prev.png"
+          onClick={() => {
+            prevTask();
+          }}
+        >
+          Prev Task
+        </PPToolBarButton>
       </PPToolBar>
       {/*// TODO: move label widget out*/}
       <div className={styles.rightSideBar}>

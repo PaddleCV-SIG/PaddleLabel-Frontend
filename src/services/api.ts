@@ -7,6 +7,7 @@ import { LabelApi } from '@/services/apis/LabelApi';
 import { LabelFromJSON } from '@/services/models/Label';
 import type { Label } from '@/services/models/Label';
 import { DataApi } from '@/services/apis/DataApi';
+import { TaskApi } from '@/services/apis/TaskApi';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -14,6 +15,7 @@ const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
 export const projectApi = new ProjectApi(config);
 export const labelApi = new LabelApi(config);
 export const dataApi = new DataApi(config);
+export const taskApi = new TaskApi(config);
 
 /* helper util functions */
 // TODO: a more elegent way
@@ -98,25 +100,44 @@ export async function deleteProject(projectId: number, setProjects) {
 }
 
 /* task related*/
-
-export function getProgress(projectId: number, setProgress): number {
-  if (projectId == undefined) setProgress(0);
-  // TODO: switch to getTasksStat
-  projectApi
-    .getTasks(projectId)
+export async function getTasks(setTasks) {
+  taskApi
+    .getAll()
     .then((tasks) => {
-      console.log(tasks);
-      let finished = 0;
-      for (const task of tasks) {
-        if (task.annotations.length != 0) finished++;
-      }
-      console.log('res', finished, tasks.length, Math.ceil((finished / tasks.length) * 100));
-      setProgress(Math.ceil((finished / tasks.length) * 100));
+      console.log('got tasks', tasks);
+      if (setTasks) setTasks(tasks);
     })
     .catch((err) => {
+      console.log('get tasks err', err);
       serviceUtils.parseError(err, message);
-      setProgress(0);
     });
+}
+
+export async function getTask(taskId: number, setTask) {
+  console.log('get task id', taskId);
+  taskApi.get(taskId).then((task) => {
+    console.log('got task ', task);
+    if (setTask) setTask(task);
+  });
+}
+
+export async function getProgress(projectId: number): number {
+  if (!projectId) return 0;
+
+  // TODO: switch to getTasksStat
+  try {
+    const tasks = await projectApi.getTasks(projectId);
+    let finished = 0;
+    for (const task of tasks) {
+      if (task.annotations.length != 0) finished++;
+    }
+    console.log('progress', Math.ceil((finished / tasks.length) * 100));
+    return Math.ceil((finished / tasks.length) * 100);
+  } catch (err) {
+    console.log('get progress err', err);
+    serviceUtils.parseError(err, message);
+    return 0;
+  }
 }
 
 /* label related*/
@@ -167,16 +188,12 @@ export function deleteLabel(label: Label, setLabels) {
     });
 }
 
-// export function getImgSrc(dataId:number, setImgSrc) {
-//   console.log("getImages", dataId);
+// /* data related */
+// export async function getData(dataId:number, setData) {
 //   dataApi
-//     .getImage(dataId)
-//     .then((res) => {
-//       console.log("get image", res);
-//       setImgSrc();
+//     .get(dataId)
+//     .then((res)=>{
+//       if(setDataId)
+//         setDataId(res)
 //     })
-//     .catch((err) => {
-//       console.log("get image err", err);
-//       serviceUtils.parseError(err, message);
-//     });
 // }
