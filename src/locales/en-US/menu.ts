@@ -51,7 +51,7 @@ export default {
   'menu.editor.koni': 'Koni Editor',
   'menu.project-creation': 'Project Creation',
   'menu.classification-project': 'Image Classification Project Creation',
-  'menu.image_classification': 'Image Classification',
+  'menu.classification': 'Image Classification',
   'menu.segmentation-project': 'Semantic Segmentation Project Creation',
   'menu.segmentation-mode': 'Semantic Segmentation Mode',
   'menu.semantic_segmentation': 'Semantic Segmentation',

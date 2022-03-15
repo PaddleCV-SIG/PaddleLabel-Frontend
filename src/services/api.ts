@@ -9,16 +9,15 @@ import type { Label } from '@/services/models/Label';
 import { DataApi } from '@/services/apis/DataApi';
 
 const baseUrl = localStorage.getItem('basePath');
-export const projectApi = new ProjectApi(
-  new Configuration(baseUrl ? { basePath: baseUrl } : undefined),
-);
-export const labelApi = new LabelApi(
-  new Configuration(baseUrl ? { basePath: baseUrl } : undefined),
-);
-export const dataApi = new DataApi(new Configuration(baseUrl ? { basePath: baseUrl } : undefined));
+const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
+
+export const projectApi = new ProjectApi(config);
+export const labelApi = new LabelApi(config);
+export const dataApi = new DataApi(config);
+
 /* helper functions */
 // TODO: a more elegent way
-export function toDict(arr) {
+export function toDict(arr: any[]) {
   return JSON.parse(JSON.stringify(arr));
 }
 
@@ -41,21 +40,6 @@ export function getProgress(projectId: number, setProgress): number {
     .catch((err) => {
       console.log(err);
       setProgress(0);
-    });
-}
-
-/* label related*/
-export function getLabels(projectId: number, setLabels) {
-  console.log('getLabels projectid', projectId);
-  if (!projectId) return;
-  projectApi
-    .getLabels(projectId)
-    .then((res) => {
-      console.log('got labels ', res);
-      setLabels(toDict(res));
-    })
-    .catch((err) => {
-      serviceUtils.parseError(err, message);
     });
 }
 

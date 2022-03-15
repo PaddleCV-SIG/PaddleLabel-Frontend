@@ -7,15 +7,18 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message } from 'antd';
-
+import { useAsync } from 'react-async';
 import { refreshProject } from '../Welcome';
-
 import { getProgress } from '@/services/api';
 import { getLabels, addLabel, deleteLabel } from '@/services/api';
-import { Label, Project, Task } from '@/services';
+import { Configuration, Label, Project, ProjectApi, Task } from '@/services';
+import serviceUtils from '@/services/serviceUtils';
 // import { getImgSrc } from '@/services/api';
 
 const baseUrl = localStorage.getItem('basePath');
+const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
+
+export const projectApi = new ProjectApi(config);
 
 export type ToolType = 'mover' | undefined;
 
@@ -47,13 +50,31 @@ const Page: React.FC = () => {
 
   // Init project info on refresh or direct open
   useEffect(() => {
-    refreshProject((res: Project) => {
-      setProject(res);
-      getProgress(res.projectId, setProgress);
-      getLabels(res.projectId, setLabels);
-      console.log('img src', `${baseUrl}/data/${dataId}/image`);
-      setImgSrc(`${baseUrl}/datas/${dataId}/image`);
-    });
+    async function initProject() {
+      try {
+        const projectRes = await refreshProject();
+        console.log(projectRes);
+        setProject(projectRes);
+
+        const tasksRes = await projectApi.getTasks(projectRes.projectId);
+        const finished = tasksRes.filter((task) => task.annotations?.length != 0).length;
+        let progressRes = Math.ceil((finished / tasksRes.length) * 100);
+        progressRes = progressRes <= 0 ? 0 : progressRes;
+        console.log('res', finished, tasksRes.length, progressRes);
+        setProgress(progressRes);
+
+        const labelsRes = await projectApi.getLabels(projectRes.projectId);
+        console.log('got labels ', labelsRes);
+        setLabels(serviceUtils.toDict(labelsRes));
+
+        console.log(`img src: ${baseUrl}/data/${dataId}/image`);
+        setImgSrc(`${baseUrl}/datas/${dataId}/image`);
+      } catch (err) {
+        console.log(err);
+        serviceUtils.parseError(err as Response, message);
+      }
+    }
+    initProject();
   }, []);
 
   // setDataId(1);

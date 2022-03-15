@@ -16,31 +16,26 @@ import { projectApi } from '@/services/api';
 
 export const PROJECT_INFO_KEY = 'projectInfo';
 
-export const refreshProject = (onProjectGet?: (res: Project) => void, id?: string) => {
+export const refreshProject = async (id?: string) => {
   const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
   if (!projectId) {
     message.error("projectId isn't passed in nor present in url!");
     history.push('/');
+    return;
   }
   const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
   if (projectInfo) {
-    onProjectGet?.call(0, JSON.parse(projectInfo));
-    return;
+    return JSON.parse(projectInfo);
   }
 
-  projectApi
-    .get(projectId)
-    .then((res: Project) => {
-      if (!res) {
-        message.error(`Cannot find project: ${projectId}!`);
-        history.push('/');
-      }
-      localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
-      onProjectGet?.call(0, res);
-    })
-    .catch((err: Response) => {
-      serviceUtils.parseError(err, message, `Cannot find project: ${projectId}`);
-    });
+  const res = await projectApi.get(projectId);
+  if (!res) {
+    message.error(`Cannot find project: ${projectId}!`);
+    history.push('/');
+    return;
+  }
+  localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
+  return res;
 };
 
 const columns: ColumnsType<Project> = [
