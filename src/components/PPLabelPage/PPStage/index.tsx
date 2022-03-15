@@ -50,8 +50,6 @@ const Component: React.FC<PPStageProps> = (props) => {
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
   const canvasWidth = props.width || imageWidth;
-  let canvasHeight = props.height || imageHeight;
-  canvasHeight = canvasHeight < 708 ? 708 : canvasHeight;
 
   const shapes = [];
   if (props.annotations) {
@@ -75,7 +73,7 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   // console.log(`PPStage. ${JSON.stringify(props.elements)}`);
   return (
-    <Stage width={canvasWidth} height={canvasHeight} className={styles.stage}>
+    <Stage width={canvasWidth} height={708} className={styles.stage}>
       <Layer scaleX={props.scale} scaleY={props.scale} draggable={false}>
         <Image image={image} draggable={false} />
       </Layer>

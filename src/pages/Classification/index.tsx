@@ -106,7 +106,6 @@ const Page: React.FC = () => {
         <div className={styles.draw}>
           <PPStage
             width={document.getElementById('dr')?.clientWidth}
-            height={document.getElementById('dr')?.clientHeight}
             scale={scale}
             currentTool={undefined}
             setCurrentAnnotation={() => {}}
