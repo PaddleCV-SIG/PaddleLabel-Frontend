@@ -73,7 +73,7 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   // console.log(`PPStage. ${JSON.stringify(props.elements)}`);
   return (
-    <Stage width={canvasWidth} height={708} className={styles.stage}>
+    <Stage width={canvasWidth} height={783} className={styles.stage}>
       {/* <Layer scaleX={props.scale} scaleY={props.scale} draggable={false}>
         <Image image={image} draggable={false} />
       </Layer> */}

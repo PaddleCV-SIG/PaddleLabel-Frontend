@@ -6,7 +6,7 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
-import { Progress, message } from 'antd';
+import { Progress, message, Spin } from 'antd';
 import { useAsync } from 'react-async';
 import { refreshProject } from '../Welcome';
 import { getLabels, addLabel, deleteLabel } from '@/services/api';
@@ -37,6 +37,7 @@ const Page: React.FC = () => {
   const [scale, setScaleRaw] = useState(1);
   const [progress, setProgress] = useState<number>(0);
   const [imgSrc, setImgSrc] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const setScale = (newScale: number, range: number[] = [0.1, 3]) => {
     let s = newScale;
@@ -96,6 +97,7 @@ const Page: React.FC = () => {
   useEffect(() => {
     async function update() {
       try {
+        setLoading(true);
         if (!project) {
           const projectRes = await refreshProject();
           const tasksRes = await projectApi.getTasks(projectRes.projectId);
@@ -128,6 +130,8 @@ const Page: React.FC = () => {
 
         setImgSrc(`${baseUrl}/datas/${currentData.dataId}/image`);
         console.log('hereraasdf', labels);
+
+        setLoading(false);
       } catch (err) {
         console.log(err);
         serviceUtils.parseError(err as Response, message);
@@ -167,49 +171,47 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/move.png"
           onClick={() => {
             setCurrTool('mover');
+            message.info('You can move the image now.');
           }}
         >
           Move
         </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className={styles.mainStage}>
-        <div className={styles.draw}>
-          <PPStage
-            width={document.getElementById('dr')?.clientWidth}
-            scale={scale}
-            currentTool={currTool}
-            setCurrentAnnotation={() => {}}
-            onAnnotationModify={() => {}}
-            onAnnotationModifyComplete={() => {}}
-            imgSrc={imgSrc}
-          />
-        </div>
-        <div className={styles.pblock}>
-          <div className={styles.progress}>
-            <Progress percent={progress} status="active" />
+        <Spin tip="loading" spinning={loading}>
+          <div className={styles.draw}>
+            <PPStage
+              width={document.getElementById('dr')?.clientWidth}
+              scale={scale}
+              currentTool={currTool}
+              setCurrentAnnotation={() => {}}
+              onAnnotationModify={() => {}}
+              onAnnotationModifyComplete={() => {}}
+              imgSrc={imgSrc}
+            />
           </div>
-        </div>
+          <div className={styles.pblock}>
+            <div className={styles.progress}>
+              <Progress percent={progress} status="active" />
+            </div>
+          </div>
+          <div
+            className={styles.prevTask}
+            onClick={() => {
+              prevTask();
+            }}
+          />
+          <div
+            className={styles.nextTask}
+            onClick={() => {
+              nextTask();
+            }}
+          />
+        </Spin>
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Split Dataset</PPToolBarButton>
-
-        <PPToolBarButton
-          imgSrc="./pics/buttons/next.png"
-          onClick={() => {
-            nextTask();
-          }}
-        >
-          Next Task
-        </PPToolBarButton>
-        <PPToolBarButton
-          imgSrc="./pics/buttons/prev.png"
-          onClick={() => {
-            prevTask();
-          }}
-        >
-          Prev Task
-        </PPToolBarButton>
       </PPToolBar>
       {/*// TODO: move label widget out*/}
       <div className={styles.rightSideBar}>
