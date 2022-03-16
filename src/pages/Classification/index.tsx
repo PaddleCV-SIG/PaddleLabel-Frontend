@@ -105,6 +105,7 @@ const Page: React.FC = () => {
           setLabels(toDict(labelsRes));
           setTasks(tasksRes);
           setProject(projectRes);
+          setLoading(false);
           return;
         }
 
