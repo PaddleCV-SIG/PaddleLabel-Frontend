@@ -14,12 +14,17 @@
 
 import { exists, mapValues } from '../runtime';
 import {
-  Annotation,
-  AnnotationFromJSON,
-  AnnotationFromJSONTyped,
-  AnnotationToJSON,
+    Annotation,
+    AnnotationFromJSON,
+    AnnotationFromJSONTyped,
+    AnnotationToJSON,
 } from './Annotation';
-import { Project, ProjectFromJSON, ProjectFromJSONTyped, ProjectToJSON } from './Project';
+import {
+    Project,
+    ProjectFromJSON,
+    ProjectFromJSONTyped,
+    ProjectToJSON,
+} from './Project';
 
 /**
  * An annotation task
@@ -27,85 +32,83 @@ import { Project, ProjectFromJSON, ProjectFromJSONTyped, ProjectToJSON } from '.
  * @interface Task
  */
 export interface Task {
-  /**
-   *
-   * @type {number}
-   * @memberof Task
-   */
-  readonly taskId?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof Task
-   */
-  projectId: number;
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof Task
-   */
-  datas?: Array<string>;
-  /**
-   *
-   * @type {Array<Annotation>}
-   * @memberof Task
-   */
-  annotations?: Array<Annotation>;
-  /**
-   *
-   * @type {Project}
-   * @memberof Task
-   */
-  project?: Project;
-  /**
-   *
-   * @type {string}
-   * @memberof Task
-   */
-  readonly modified?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Task
-   */
-  readonly created?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Task
+     */
+    readonly taskId?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Task
+     */
+    projectId: number;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof Task
+     */
+    datas?: Array<string>;
+    /**
+     * 
+     * @type {Array<Annotation>}
+     * @memberof Task
+     */
+    annotations?: Array<Annotation>;
+    /**
+     * 
+     * @type {Project}
+     * @memberof Task
+     */
+    project?: Project;
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    readonly modified?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Task
+     */
+    readonly created?: string;
 }
 
 export function TaskFromJSON(json: any): Task {
-  return TaskFromJSONTyped(json, false);
+    return TaskFromJSONTyped(json, false);
 }
 
 export function TaskFromJSONTyped(json: any, ignoreDiscriminator: boolean): Task {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    taskId: !exists(json, 'task_id') ? undefined : json['task_id'],
-    projectId: json['project_id'],
-    datas: !exists(json, 'datas') ? undefined : json['datas'],
-    annotations: !exists(json, 'annotations')
-      ? undefined
-      : (json['annotations'] as Array<any>).map(AnnotationFromJSON),
-    project: !exists(json, 'project') ? undefined : ProjectFromJSON(json['project']),
-    modified: !exists(json, 'modified') ? undefined : json['modified'],
-    created: !exists(json, 'created') ? undefined : json['created'],
-  };
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'taskId': !exists(json, 'task_id') ? undefined : json['task_id'],
+        'projectId': json['project_id'],
+        'datas': !exists(json, 'datas') ? undefined : json['datas'],
+        'annotations': !exists(json, 'annotations') ? undefined : ((json['annotations'] as Array<any>).map(AnnotationFromJSON)),
+        'project': !exists(json, 'project') ? undefined : ProjectFromJSON(json['project']),
+        'modified': !exists(json, 'modified') ? undefined : json['modified'],
+        'created': !exists(json, 'created') ? undefined : json['created'],
+    };
 }
 
 export function TaskToJSON(value?: Task | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    project_id: value.projectId,
-    datas: value.datas,
-    annotations:
-      value.annotations === undefined
-        ? undefined
-        : (value.annotations as Array<any>).map(AnnotationToJSON),
-    project: ProjectToJSON(value.project),
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'project_id': value.projectId,
+        'datas': value.datas,
+        'annotations': value.annotations === undefined ? undefined : ((value.annotations as Array<any>).map(AnnotationToJSON)),
+        'project': ProjectToJSON(value.project),
+    };
 }
+

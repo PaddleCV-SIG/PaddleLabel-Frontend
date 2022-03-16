@@ -24,6 +24,15 @@ export const annotationApi = new AnnotationApi(config);
 export function toDict(arr: any[]) {
   return JSON.parse(JSON.stringify(arr));
 }
+export const indexOf = ( item:any, arr:any[],key:string) => {
+  if (!key)
+    return -1;
+  for(let idx=0; idx<arr.length; idx++) {
+    if( item[key] == arr[idx][key])
+      return idx;
+    }
+  return -1;
+}
 
 export function camel2snake(name: string) {
   if (!name) return name;
@@ -60,6 +69,19 @@ export const createInfo = {
     id: 5,
   },
 };
+
+export const setLabelActive = (labels, anns) => {
+  let labs = [...labels];
+  for(const idx in labels)
+    labs[idx].active=false;
+  for(const idx in labels) {
+    if(indexOf(labels[idx], anns, 'labelId') != -1) {
+      labs[idx].active = true;
+    }
+  }
+  console.log("activa labs", labs);
+  return labs;
+}
 
 /* project related*/
 export async function getProjects(setProjects) {

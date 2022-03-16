@@ -45,7 +45,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
             <PPLabelListItem
               onClick={props.onLabelSelect}
               label={item}
-              active={item.name == props.selectedLabel?.name}
+
               onLabelDelete={props.onLabelDelete}
               onLabelModify={props.onLabelModify}
             />
@@ -67,3 +67,5 @@ const Component: React.FC<PPLabelListProps> = (props) => {
   );
 };
 export default Component;
+
+// active={item.name == props.selectedLabel?.name}

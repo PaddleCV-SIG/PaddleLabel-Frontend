@@ -5,7 +5,7 @@ import PPColorBall from '../../PPColorBall';
 import { Label } from '@/models/label';
 
 export type PPLabelListItemProps = {
-  active?: boolean;
+  // active?: boolean;
   label: Label;
   // Currently, only support modify visibility and color
   onLabelModify: (label: Label) => void;
@@ -18,7 +18,7 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
   const [invisible, setInvisible] = useState(label.invisible);
   const item = (
     <List.Item
-      className={`${styles.listItem} ${props.active ? styles.listItemActive : ''}`}
+      className={`${styles.listItem} ${label.active ? styles.listItemActive : ''}`}
       unselectable="on"
       onClick={() => {
         props.onClick(label);

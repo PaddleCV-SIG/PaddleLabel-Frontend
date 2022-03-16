@@ -14,40 +14,43 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- *
+ * 
  * @export
  * @interface InlineObject
  */
 export interface InlineObject {
-  /**
-   *
-   * @type {number}
-   * @memberof InlineObject
-   */
-  tagId?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof InlineObject
+     */
+    tagId?: number;
 }
 
 export function InlineObjectFromJSON(json: any): InlineObject {
-  return InlineObjectFromJSONTyped(json, false);
+    return InlineObjectFromJSONTyped(json, false);
 }
 
 export function InlineObjectFromJSONTyped(json: any, ignoreDiscriminator: boolean): InlineObject {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    tagId: !exists(json, 'tag_id') ? undefined : json['tag_id'],
-  };
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'tagId': !exists(json, 'tag_id') ? undefined : json['tag_id'],
+    };
 }
 
 export function InlineObjectToJSON(value?: InlineObject | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    tag_id: value.tagId,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'tag_id': value.tagId,
+    };
 }
+

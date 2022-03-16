@@ -14,7 +14,8 @@ import { getTasks, getProgress } from '@/services/api';
 import { projectApi } from '@/services/api';
 import type { Label, Project, Task, Data } from '@/services';
 import serviceUtils from '@/services/serviceUtils';
-import { annotationApi, taskApi, dataApi, toDict } from '@/services/api';
+import { annotationApi, taskApi, dataApi } from '@/services/api';
+import {toDict, indexOf, setLabelActive} from '@/services/api';
 
 const baseUrl = localStorage.getItem('basePath');
 
@@ -69,27 +70,37 @@ const Page: React.FC = () => {
     setTaskIdx(taskIdx - 1);
   };
 
-  const selectLabel = (label) => {
-    setCurrLabel(label);
+  const selectLabel = (selected) => {
+    let labs = [...labels];
+    labs[indexOf(selected,labels, 'name')].active = !selected.active;
+
+    // click on active, delete ann
+    if(selected.active){
+      const ann = currAnns.filter(a => a.labelId == selected.labelId)[0]
+      console.log("filter ann ", ann);
+      annotationApi.remove(ann.annotationId)
+    } else {
+      console.log("add ann", {"taskId": task.taskId, "labelId": selected.labelId})
+      annotationApi.create({"taskId": task.taskId, "labelId": selected.labelId, "dataId":currData.dataId}).catch((err) => {console.log("err", err)})
+    }
+
+    setLabels(labs);
+    setCurrLabel(selected);
   };
 
   // only load project and task once on page show
   useEffect(() => {
     async function update() {
       try {
-        console.log('before if', project);
         if (!project) {
           const projectRes = await refreshProject();
           const tasksRes = await projectApi.getTasks(projectRes.projectId);
           const labelsRes = await projectApi.getLabels(projectRes.projectId);
-
           setLabels(toDict(labelsRes));
           setTasks(tasksRes);
           setProject(projectRes);
           return;
         }
-
-        console.log('after if ', project, tasks);
 
         // update progress
         getProgress(project.projectId).then((prog) => {
@@ -99,17 +110,23 @@ const Page: React.FC = () => {
         // update task, datas, anns, currData, currAnns
         setTask(tasks[taskIdx]);
         const taskId = tasks[taskIdx].taskId;
-        taskApi.getAnnotations(taskId).then((annotations) => {
-          setAnns(annotations);
-        });
+        taskApi
+          .getAnnotations(taskId)
+          .then((annotations) => {
+            setAnns(annotations);
+          });
         const newDatas = await taskApi.getDatas(taskId);
         setDatas(newDatas);
         const currentData = newDatas[0];
         setCurrData(currentData);
-        dataApi.getAnnotations(currentData.dataId).then((annotations) => {
-          setCurrAnns(annotations);
-        });
+
+        const currAnnotations = await dataApi.getAnnotations(currentData.dataId)
+        setCurrAnns(currAnnotations);
+        setLabels(setLabelActive(labels, currAnnotations));
+
+
         setImgSrc(`${baseUrl}/datas/${currentData.dataId}/image`);
+        console.log("hereraasdf", labels);
       } catch (err) {
         console.log(err);
         serviceUtils.parseError(err as Response, message);

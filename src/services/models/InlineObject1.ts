@@ -14,48 +14,51 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- *
+ * 
  * @export
  * @interface InlineObject1
  */
 export interface InlineObject1 {
-  /**
-   *
-   * @type {string}
-   * @memberof InlineObject1
-   */
-  username: string;
-  /**
-   *
-   * @type {string}
-   * @memberof InlineObject1
-   */
-  password: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof InlineObject1
+     */
+    username: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof InlineObject1
+     */
+    password: string;
 }
 
 export function InlineObject1FromJSON(json: any): InlineObject1 {
-  return InlineObject1FromJSONTyped(json, false);
+    return InlineObject1FromJSONTyped(json, false);
 }
 
 export function InlineObject1FromJSONTyped(json: any, ignoreDiscriminator: boolean): InlineObject1 {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    username: json['username'],
-    password: json['password'],
-  };
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'username': json['username'],
+        'password': json['password'],
+    };
 }
 
 export function InlineObject1ToJSON(value?: InlineObject1 | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    username: value.username,
-    password: value.password,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'username': value.username,
+        'password': value.password,
+    };
 }
+

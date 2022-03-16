@@ -13,104 +13,120 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import { Label, LabelFromJSON, LabelFromJSONTyped, LabelToJSON } from './Label';
+import {
+    Label,
+    LabelFromJSON,
+    LabelFromJSONTyped,
+    LabelToJSON,
+} from './Label';
 
 /**
- *
+ * 
  * @export
  * @interface Annotation
  */
 export interface Annotation {
-  /**
-   *
-   * @type {number}
-   * @memberof Annotation
-   */
-  readonly annotationId?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof Annotation
-   */
-  taskId?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof Annotation
-   */
-  labelId?: number;
-  /**
-   *
-   * @type {Label}
-   * @memberof Annotation
-   */
-  label?: Label;
-  /**
-   *
-   * @type {string}
-   * @memberof Annotation
-   */
-  projectId?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Annotation
-   */
-  result?: string;
-  /**
-   *
-   * @type {number}
-   * @memberof Annotation
-   */
-  sliceId?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof Annotation
-   */
-  readonly created?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Annotation
-   */
-  readonly modified?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Annotation
+     */
+    readonly annotationId?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Annotation
+     */
+    taskId?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Annotation
+     */
+    labelId?: number;
+    /**
+     * 
+     * @type {Label}
+     * @memberof Annotation
+     */
+    label?: Label;
+    /**
+     * 
+     * @type {number}
+     * @memberof Annotation
+     */
+    projectId?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Annotation
+     */
+    dataId?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Annotation
+     */
+    result?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Annotation
+     */
+    sliceId?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Annotation
+     */
+    readonly created?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Annotation
+     */
+    readonly modified?: string;
 }
 
 export function AnnotationFromJSON(json: any): Annotation {
-  return AnnotationFromJSONTyped(json, false);
+    return AnnotationFromJSONTyped(json, false);
 }
 
 export function AnnotationFromJSONTyped(json: any, ignoreDiscriminator: boolean): Annotation {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    annotationId: !exists(json, 'annotation_id') ? undefined : json['annotation_id'],
-    taskId: !exists(json, 'task_id') ? undefined : json['task_id'],
-    labelId: !exists(json, 'label_id') ? undefined : json['label_id'],
-    label: !exists(json, 'label') ? undefined : LabelFromJSON(json['label']),
-    projectId: !exists(json, 'project_id') ? undefined : json['project_id'],
-    result: !exists(json, 'result') ? undefined : json['result'],
-    sliceId: !exists(json, 'slice_id') ? undefined : json['slice_id'],
-    created: !exists(json, 'created') ? undefined : json['created'],
-    modified: !exists(json, 'modified') ? undefined : json['modified'],
-  };
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'annotationId': !exists(json, 'annotation_id') ? undefined : json['annotation_id'],
+        'taskId': !exists(json, 'task_id') ? undefined : json['task_id'],
+        'labelId': !exists(json, 'label_id') ? undefined : json['label_id'],
+        'label': !exists(json, 'label') ? undefined : LabelFromJSON(json['label']),
+        'projectId': !exists(json, 'project_id') ? undefined : json['project_id'],
+        'dataId': !exists(json, 'data_id') ? undefined : json['data_id'],
+        'result': !exists(json, 'result') ? undefined : json['result'],
+        'sliceId': !exists(json, 'slice_id') ? undefined : json['slice_id'],
+        'created': !exists(json, 'created') ? undefined : json['created'],
+        'modified': !exists(json, 'modified') ? undefined : json['modified'],
+    };
 }
 
 export function AnnotationToJSON(value?: Annotation | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    task_id: value.taskId,
-    label_id: value.labelId,
-    label: LabelToJSON(value.label),
-    project_id: value.projectId,
-    result: value.result,
-    slice_id: value.sliceId,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'task_id': value.taskId,
+        'label_id': value.labelId,
+        'label': LabelToJSON(value.label),
+        'project_id': value.projectId,
+        'data_id': value.dataId,
+        'result': value.result,
+        'slice_id': value.sliceId,
+    };
 }
+

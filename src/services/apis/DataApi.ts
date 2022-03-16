@@ -12,340 +12,263 @@
  * Do not edit the class manually.
  */
 
+
 import * as runtime from '../runtime';
 import {
-  Data,
-  DataFromJSON,
-  DataToJSON,
-  InlineResponse200,
-  InlineResponse200FromJSON,
-  InlineResponse200ToJSON,
+    Annotation,
+    AnnotationFromJSON,
+    AnnotationToJSON,
+    Data,
+    DataFromJSON,
+    DataToJSON,
 } from '../models';
 
 export interface CreateRequest {
-  data: Data;
+    data: Data;
 }
 
 export interface GetRequest {
-  dataId: string;
+    dataId: string;
 }
 
 export interface GetAnnotationsRequest {
-  dataId: string;
+    dataId: string;
 }
 
 export interface GetImageRequest {
-  dataId: string;
+    dataId: string;
 }
 
 export interface RemoveRequest {
-  dataId: string;
+    dataId: string;
 }
 
 export interface UpdateRequest {
-  dataId: string;
-  data: Data;
+    dataId: string;
+    data: Data;
 }
 
 /**
- *
+ * 
  */
 export class DataApi extends runtime.BaseAPI {
-  /**
-   * Create a new data record
-   */
-  async createRaw(
-    requestParameters: CreateRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Data>> {
-    if (requestParameters.data === null || requestParameters.data === undefined) {
-      throw new runtime.RequiredError(
-        'data',
-        'Required parameter requestParameters.data was null or undefined when calling create.',
-      );
+
+    /**
+     * Create a new data record
+     */
+    async createRaw(requestParameters: CreateRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Data>> {
+        if (requestParameters.data === null || requestParameters.data === undefined) {
+            throw new runtime.RequiredError('data','Required parameter requestParameters.data was null or undefined when calling create.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/datas/`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: DataToJSON(requestParameters.data),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => DataFromJSON(jsonValue));
     }
 
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    headerParameters['Content-Type'] = 'application/json';
-
-    const response = await this.request(
-      {
-        path: `/datas/`,
-        method: 'POST',
-        headers: headerParameters,
-        query: queryParameters,
-        body: DataToJSON(requestParameters.data),
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => DataFromJSON(jsonValue));
-  }
-
-  /**
-   * Create a new data record
-   */
-  async create(data: Data, initOverrides?: RequestInit): Promise<Data> {
-    const response = await this.createRaw({ data: data }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Get info of a specific data record
-   */
-  async getRaw(
-    requestParameters: GetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Data>> {
-    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
-      throw new runtime.RequiredError(
-        'dataId',
-        'Required parameter requestParameters.dataId was null or undefined when calling get.',
-      );
+    /**
+     * Create a new data record
+     */
+    async create(data: Data, initOverrides?: RequestInit): Promise<Data> {
+        const response = await this.createRaw({ data: data }, initOverrides);
+        return await response.value();
     }
 
-    const queryParameters: any = {};
+    /**
+     * Get info of a specific data record
+     */
+    async getRaw(requestParameters: GetRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Data>> {
+        if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
+            throw new runtime.RequiredError('dataId','Required parameter requestParameters.dataId was null or undefined when calling get.');
+        }
 
-    const headerParameters: runtime.HTTPHeaders = {};
+        const queryParameters: any = {};
 
-    const response = await this.request(
-      {
-        path: `/datas/{data_id}/`.replace(
-          `{${'data_id'}}`,
-          encodeURIComponent(String(requestParameters.dataId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
+        const headerParameters: runtime.HTTPHeaders = {};
 
-    return new runtime.JSONApiResponse(response, (jsonValue) => DataFromJSON(jsonValue));
-  }
+        const response = await this.request({
+            path: `/datas/{data_id}/`.replace(`{${"data_id"}}`, encodeURIComponent(String(requestParameters.dataId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
 
-  /**
-   * Get info of a specific data record
-   */
-  async get(dataId: string, initOverrides?: RequestInit): Promise<Data> {
-    const response = await this.getRaw({ dataId: dataId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Get all data, sort by last modified
-   */
-  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Data>> {
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/datas/`,
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => DataFromJSON(jsonValue));
-  }
-
-  /**
-   * Get all data, sort by last modified
-   */
-  async getAll(initOverrides?: RequestInit): Promise<Data> {
-    const response = await this.getAllRaw(initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Get the annotations of a data record
-   */
-  async getAnnotationsRaw(
-    requestParameters: GetAnnotationsRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<InlineResponse200>> {
-    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
-      throw new runtime.RequiredError(
-        'dataId',
-        'Required parameter requestParameters.dataId was null or undefined when calling getAnnotations.',
-      );
+        return new runtime.JSONApiResponse(response, (jsonValue) => DataFromJSON(jsonValue));
     }
 
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/datas/{data_id}/annotations`.replace(
-          `{${'data_id'}}`,
-          encodeURIComponent(String(requestParameters.dataId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      InlineResponse200FromJSON(jsonValue),
-    );
-  }
-
-  /**
-   * Get the annotations of a data record
-   */
-  async getAnnotations(dataId: string, initOverrides?: RequestInit): Promise<InlineResponse200> {
-    const response = await this.getAnnotationsRaw({ dataId: dataId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Get the image of a data record
-   */
-  async getImageRaw(
-    requestParameters: GetImageRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<InlineResponse200>> {
-    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
-      throw new runtime.RequiredError(
-        'dataId',
-        'Required parameter requestParameters.dataId was null or undefined when calling getImage.',
-      );
+    /**
+     * Get info of a specific data record
+     */
+    async get(dataId: string, initOverrides?: RequestInit): Promise<Data> {
+        const response = await this.getRaw({ dataId: dataId }, initOverrides);
+        return await response.value();
     }
 
-    const queryParameters: any = {};
+    /**
+     * Get all data, sort by last modified
+     */
+    async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Data>> {
+        const queryParameters: any = {};
 
-    const headerParameters: runtime.HTTPHeaders = {};
+        const headerParameters: runtime.HTTPHeaders = {};
 
-    const response = await this.request(
-      {
-        path: `/datas/{data_id}/image`.replace(
-          `{${'data_id'}}`,
-          encodeURIComponent(String(requestParameters.dataId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
+        const response = await this.request({
+            path: `/datas/`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
 
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      InlineResponse200FromJSON(jsonValue),
-    );
-  }
-
-  /**
-   * Get the image of a data record
-   */
-  async getImage(dataId: string, initOverrides?: RequestInit): Promise<InlineResponse200> {
-    const response = await this.getImageRaw({ dataId: dataId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Delete a data record, file on file system will not be deleted
-   * Delete a data record
-   */
-  async removeRaw(
-    requestParameters: RemoveRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<void>> {
-    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
-      throw new runtime.RequiredError(
-        'dataId',
-        'Required parameter requestParameters.dataId was null or undefined when calling remove.',
-      );
+        return new runtime.JSONApiResponse(response, (jsonValue) => DataFromJSON(jsonValue));
     }
 
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/datas/{data_id}/`.replace(
-          `{${'data_id'}}`,
-          encodeURIComponent(String(requestParameters.dataId)),
-        ),
-        method: 'DELETE',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.VoidApiResponse(response);
-  }
-
-  /**
-   * Delete a data record, file on file system will not be deleted
-   * Delete a data record
-   */
-  async remove(dataId: string, initOverrides?: RequestInit): Promise<void> {
-    await this.removeRaw({ dataId: dataId }, initOverrides);
-  }
-
-  /**
-   * Edit data record. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
-   * Edit data record
-   */
-  async updateRaw(
-    requestParameters: UpdateRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Data>> {
-    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
-      throw new runtime.RequiredError(
-        'dataId',
-        'Required parameter requestParameters.dataId was null or undefined when calling update.',
-      );
+    /**
+     * Get all data, sort by last modified
+     */
+    async getAll(initOverrides?: RequestInit): Promise<Data> {
+        const response = await this.getAllRaw(initOverrides);
+        return await response.value();
     }
 
-    if (requestParameters.data === null || requestParameters.data === undefined) {
-      throw new runtime.RequiredError(
-        'data',
-        'Required parameter requestParameters.data was null or undefined when calling update.',
-      );
+    /**
+     * Get the annotations of a data record
+     */
+    async getAnnotationsRaw(requestParameters: GetAnnotationsRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Annotation>>> {
+        if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
+            throw new runtime.RequiredError('dataId','Required parameter requestParameters.dataId was null or undefined when calling getAnnotations.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/datas/{data_id}/annotations`.replace(`{${"data_id"}}`, encodeURIComponent(String(requestParameters.dataId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AnnotationFromJSON));
     }
 
-    const queryParameters: any = {};
+    /**
+     * Get the annotations of a data record
+     */
+    async getAnnotations(dataId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
+        const response = await this.getAnnotationsRaw({ dataId: dataId }, initOverrides);
+        return await response.value();
+    }
 
-    const headerParameters: runtime.HTTPHeaders = {};
+    /**
+     * Get the image of a data record
+     */
+    async getImageRaw(requestParameters: GetImageRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
+            throw new runtime.RequiredError('dataId','Required parameter requestParameters.dataId was null or undefined when calling getImage.');
+        }
 
-    headerParameters['Content-Type'] = 'application/json';
+        const queryParameters: any = {};
 
-    const response = await this.request(
-      {
-        path: `/datas/{data_id}/`.replace(
-          `{${'data_id'}}`,
-          encodeURIComponent(String(requestParameters.dataId)),
-        ),
-        method: 'PUT',
-        headers: headerParameters,
-        query: queryParameters,
-        body: DataToJSON(requestParameters.data),
-      },
-      initOverrides,
-    );
+        const headerParameters: runtime.HTTPHeaders = {};
 
-    return new runtime.JSONApiResponse(response, (jsonValue) => DataFromJSON(jsonValue));
-  }
+        const response = await this.request({
+            path: `/datas/{data_id}/image`.replace(`{${"data_id"}}`, encodeURIComponent(String(requestParameters.dataId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
 
-  /**
-   * Edit data record. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
-   * Edit data record
-   */
-  async update(dataId: string, data: Data, initOverrides?: RequestInit): Promise<Data> {
-    const response = await this.updateRaw({ dataId: dataId, data: data }, initOverrides);
-    return await response.value();
-  }
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Get the image of a data record
+     */
+    async getImage(dataId: string, initOverrides?: RequestInit): Promise<void> {
+        await this.getImageRaw({ dataId: dataId }, initOverrides);
+    }
+
+    /**
+     * Delete a data record, file on file system will not be deleted
+     * Delete a data record
+     */
+    async removeRaw(requestParameters: RemoveRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
+            throw new runtime.RequiredError('dataId','Required parameter requestParameters.dataId was null or undefined when calling remove.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/datas/{data_id}/`.replace(`{${"data_id"}}`, encodeURIComponent(String(requestParameters.dataId))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete a data record, file on file system will not be deleted
+     * Delete a data record
+     */
+    async remove(dataId: string, initOverrides?: RequestInit): Promise<void> {
+        await this.removeRaw({ dataId: dataId }, initOverrides);
+    }
+
+    /**
+     * Edit data record. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
+     * Edit data record
+     */
+    async updateRaw(requestParameters: UpdateRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Data>> {
+        if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
+            throw new runtime.RequiredError('dataId','Required parameter requestParameters.dataId was null or undefined when calling update.');
+        }
+
+        if (requestParameters.data === null || requestParameters.data === undefined) {
+            throw new runtime.RequiredError('data','Required parameter requestParameters.data was null or undefined when calling update.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/datas/{data_id}/`.replace(`{${"data_id"}}`, encodeURIComponent(String(requestParameters.dataId))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: DataToJSON(requestParameters.data),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => DataFromJSON(jsonValue));
+    }
+
+    /**
+     * Edit data record. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
+     * Edit data record
+     */
+    async update(dataId: string, data: Data, initOverrides?: RequestInit): Promise<Data> {
+        const response = await this.updateRaw({ dataId: dataId, data: data }, initOverrides);
+        return await response.value();
+    }
+
 }

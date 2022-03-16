@@ -12,439 +12,341 @@
  * Do not edit the class manually.
  */
 
+
 import * as runtime from '../runtime';
 import {
-  Annotation,
-  AnnotationFromJSON,
-  AnnotationToJSON,
-  Data,
-  DataFromJSON,
-  DataToJSON,
-  InlineObject,
-  InlineObjectFromJSON,
-  InlineObjectToJSON,
-  Tag,
-  TagFromJSON,
-  TagToJSON,
-  Task,
-  TaskFromJSON,
-  TaskToJSON,
+    Annotation,
+    AnnotationFromJSON,
+    AnnotationToJSON,
+    Data,
+    DataFromJSON,
+    DataToJSON,
+    InlineObject,
+    InlineObjectFromJSON,
+    InlineObjectToJSON,
+    Tag,
+    TagFromJSON,
+    TagToJSON,
+    Task,
+    TaskFromJSON,
+    TaskToJSON,
 } from '../models';
 
 export interface AddTagRequest {
-  taskId: string;
-  requestId?: string;
-  inlineObject?: InlineObject;
+    taskId: string;
+    requestId?: string;
+    inlineObject?: InlineObject;
 }
 
 export interface GetRequest {
-  taskId: string;
+    taskId: string;
 }
 
 export interface GetAnnotationsRequest {
-  taskId: string;
+    taskId: string;
 }
 
 export interface GetDatasRequest {
-  taskId: string;
+    taskId: string;
 }
 
 export interface GetTagsRequest {
-  taskId: string;
+    taskId: string;
 }
 
 export interface RemoveRequest {
-  taskId: string;
+    taskId: string;
 }
 
 export interface UpdateRequest {
-  taskId: string;
-  task: Task;
+    taskId: string;
+    task: Task;
 }
 
 /**
- *
+ * 
  */
 export class TaskApi extends runtime.BaseAPI {
-  /**
-   * Add a tag to a task, the tag has to exist.
-   * Add a new tag to the task
-   */
-  async addTagRaw(
-    requestParameters: AddTagRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Tag>>> {
-    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-      throw new runtime.RequiredError(
-        'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling addTag.',
-      );
+
+    /**
+     * Add a tag to a task, the tag has to exist.
+     * Add a new tag to the task
+     */
+    async addTagRaw(requestParameters: AddTagRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Tag>>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling addTag.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+            headerParameters['request_id'] = String(requestParameters.requestId);
+        }
+
+        const response = await this.request({
+            path: `/tasks/{task_id}/tags`.replace(`{${"task_id"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: InlineObjectToJSON(requestParameters.inlineObject),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
     }
 
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    headerParameters['Content-Type'] = 'application/json';
-
-    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
-      headerParameters['request_id'] = String(requestParameters.requestId);
+    /**
+     * Add a tag to a task, the tag has to exist.
+     * Add a new tag to the task
+     */
+    async addTag(taskId: string, requestId?: string, inlineObject?: InlineObject, initOverrides?: RequestInit): Promise<Array<Tag>> {
+        const response = await this.addTagRaw({ taskId: taskId, requestId: requestId, inlineObject: inlineObject }, initOverrides);
+        return await response.value();
     }
 
-    const response = await this.request(
-      {
-        path: `/tasks/{task_id}/tags`.replace(
-          `{${'task_id'}}`,
-          encodeURIComponent(String(requestParameters.taskId)),
-        ),
-        method: 'POST',
-        headers: headerParameters,
-        query: queryParameters,
-        body: InlineObjectToJSON(requestParameters.inlineObject),
-      },
-      initOverrides,
-    );
+    /**
+     * Create a new task
+     */
+    async createRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Task>> {
+        const queryParameters: any = {};
 
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
-  }
+        const headerParameters: runtime.HTTPHeaders = {};
 
-  /**
-   * Add a tag to a task, the tag has to exist.
-   * Add a new tag to the task
-   */
-  async addTag(
-    taskId: string,
-    requestId?: string,
-    inlineObject?: InlineObject,
-    initOverrides?: RequestInit,
-  ): Promise<Array<Tag>> {
-    const response = await this.addTagRaw(
-      { taskId: taskId, requestId: requestId, inlineObject: inlineObject },
-      initOverrides,
-    );
-    return await response.value();
-  }
+        const response = await this.request({
+            path: `/tasks`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
 
-  /**
-   * Create a new task
-   */
-  async createRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Task>> {
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/tasks`,
-        method: 'POST',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
-  }
-
-  /**
-   * Create a new task
-   */
-  async create(initOverrides?: RequestInit): Promise<Task> {
-    const response = await this.createRaw(initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Get info of a specific task
-   */
-  async getRaw(
-    requestParameters: GetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Task>> {
-    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-      throw new runtime.RequiredError(
-        'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling get.',
-      );
+        return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
     }
 
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/tasks/{task_id}`.replace(
-          `{${'task_id'}}`,
-          encodeURIComponent(String(requestParameters.taskId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
-  }
-
-  /**
-   * Get info of a specific task
-   */
-  async get(taskId: string, initOverrides?: RequestInit): Promise<Task> {
-    const response = await this.getRaw({ taskId: taskId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Task>>> {
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/tasks`,
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TaskFromJSON));
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async getAll(initOverrides?: RequestInit): Promise<Array<Task>> {
-    const response = await this.getAllRaw(initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Get all annotations of a task
-   */
-  async getAnnotationsRaw(
-    requestParameters: GetAnnotationsRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Annotation>>> {
-    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-      throw new runtime.RequiredError(
-        'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling getAnnotations.',
-      );
+    /**
+     * Create a new task
+     */
+    async create(initOverrides?: RequestInit): Promise<Task> {
+        const response = await this.createRaw(initOverrides);
+        return await response.value();
     }
 
-    const queryParameters: any = {};
+    /**
+     * Get info of a specific task
+     */
+    async getRaw(requestParameters: GetRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Task>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling get.');
+        }
 
-    const headerParameters: runtime.HTTPHeaders = {};
+        const queryParameters: any = {};
 
-    const response = await this.request(
-      {
-        path: `/tasks/{task_id}/annotations`.replace(
-          `{${'task_id'}}`,
-          encodeURIComponent(String(requestParameters.taskId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
+        const headerParameters: runtime.HTTPHeaders = {};
 
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AnnotationFromJSON));
-  }
+        const response = await this.request({
+            path: `/tasks/{task_id}`.replace(`{${"task_id"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
 
-  /**
-   * Get all annotations of a task
-   */
-  async getAnnotations(taskId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
-    const response = await this.getAnnotationsRaw({ taskId: taskId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Get all datas of a task
-   */
-  async getDatasRaw(
-    requestParameters: GetDatasRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Data>>> {
-    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-      throw new runtime.RequiredError(
-        'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling getDatas.',
-      );
+        return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
     }
 
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/tasks/{task_id}/datas`.replace(
-          `{${'task_id'}}`,
-          encodeURIComponent(String(requestParameters.taskId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(DataFromJSON));
-  }
-
-  /**
-   * Get all datas of a task
-   */
-  async getDatas(taskId: string, initOverrides?: RequestInit): Promise<Array<Data>> {
-    const response = await this.getDatasRaw({ taskId: taskId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Get all tags of the task
-   */
-  async getTagsRaw(
-    requestParameters: GetTagsRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Array<Tag>>> {
-    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-      throw new runtime.RequiredError(
-        'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling getTags.',
-      );
+    /**
+     * Get info of a specific task
+     */
+    async get(taskId: string, initOverrides?: RequestInit): Promise<Task> {
+        const response = await this.getRaw({ taskId: taskId }, initOverrides);
+        return await response.value();
     }
 
-    const queryParameters: any = {};
+    /**
+     * Your GET endpoint
+     */
+    async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Task>>> {
+        const queryParameters: any = {};
 
-    const headerParameters: runtime.HTTPHeaders = {};
+        const headerParameters: runtime.HTTPHeaders = {};
 
-    const response = await this.request(
-      {
-        path: `/tasks/{task_id}/tags`.replace(
-          `{${'task_id'}}`,
-          encodeURIComponent(String(requestParameters.taskId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
+        const response = await this.request({
+            path: `/tasks`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
 
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
-  }
-
-  /**
-   * Get all tags of the task
-   */
-  async getTags(taskId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
-    const response = await this.getTagsRaw({ taskId: taskId }, initOverrides);
-    return await response.value();
-  }
-
-  /**
-   * Delete a task and ALL DATA and ANNOTATIONS under the project. Won\'t delete file on file system
-   * Delete a task and ALL DATA and ANNOTATIONS under the task.
-   */
-  async removeRaw(
-    requestParameters: RemoveRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<void>> {
-    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-      throw new runtime.RequiredError(
-        'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling remove.',
-      );
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TaskFromJSON));
     }
 
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/tasks/{task_id}`.replace(
-          `{${'task_id'}}`,
-          encodeURIComponent(String(requestParameters.taskId)),
-        ),
-        method: 'DELETE',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.VoidApiResponse(response);
-  }
-
-  /**
-   * Delete a task and ALL DATA and ANNOTATIONS under the project. Won\'t delete file on file system
-   * Delete a task and ALL DATA and ANNOTATIONS under the task.
-   */
-  async remove(taskId: string, initOverrides?: RequestInit): Promise<void> {
-    await this.removeRaw({ taskId: taskId }, initOverrides);
-  }
-
-  /**
-   * Edit task info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
-   * Edit task info
-   */
-  async updateRaw(
-    requestParameters: UpdateRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<Task>> {
-    if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
-      throw new runtime.RequiredError(
-        'taskId',
-        'Required parameter requestParameters.taskId was null or undefined when calling update.',
-      );
+    /**
+     * Your GET endpoint
+     */
+    async getAll(initOverrides?: RequestInit): Promise<Array<Task>> {
+        const response = await this.getAllRaw(initOverrides);
+        return await response.value();
     }
 
-    if (requestParameters.task === null || requestParameters.task === undefined) {
-      throw new runtime.RequiredError(
-        'task',
-        'Required parameter requestParameters.task was null or undefined when calling update.',
-      );
+    /**
+     * Get all annotations of a task
+     */
+    async getAnnotationsRaw(requestParameters: GetAnnotationsRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Annotation>>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling getAnnotations.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/tasks/{task_id}/annotations`.replace(`{${"task_id"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AnnotationFromJSON));
     }
 
-    const queryParameters: any = {};
+    /**
+     * Get all annotations of a task
+     */
+    async getAnnotations(taskId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
+        const response = await this.getAnnotationsRaw({ taskId: taskId }, initOverrides);
+        return await response.value();
+    }
 
-    const headerParameters: runtime.HTTPHeaders = {};
+    /**
+     * Get all datas of a task
+     */
+    async getDatasRaw(requestParameters: GetDatasRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Data>>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling getDatas.');
+        }
 
-    headerParameters['Content-Type'] = 'application/json';
+        const queryParameters: any = {};
 
-    const response = await this.request(
-      {
-        path: `/tasks/{task_id}`.replace(
-          `{${'task_id'}}`,
-          encodeURIComponent(String(requestParameters.taskId)),
-        ),
-        method: 'PUT',
-        headers: headerParameters,
-        query: queryParameters,
-        body: TaskToJSON(requestParameters.task),
-      },
-      initOverrides,
-    );
+        const headerParameters: runtime.HTTPHeaders = {};
 
-    return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
-  }
+        const response = await this.request({
+            path: `/tasks/{task_id}/datas`.replace(`{${"task_id"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
 
-  /**
-   * Edit task info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
-   * Edit task info
-   */
-  async update(taskId: string, task: Task, initOverrides?: RequestInit): Promise<Task> {
-    const response = await this.updateRaw({ taskId: taskId, task: task }, initOverrides);
-    return await response.value();
-  }
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(DataFromJSON));
+    }
+
+    /**
+     * Get all datas of a task
+     */
+    async getDatas(taskId: string, initOverrides?: RequestInit): Promise<Array<Data>> {
+        const response = await this.getDatasRaw({ taskId: taskId }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get all tags of the task
+     */
+    async getTagsRaw(requestParameters: GetTagsRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Tag>>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling getTags.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/tasks/{task_id}/tags`.replace(`{${"task_id"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
+    }
+
+    /**
+     * Get all tags of the task
+     */
+    async getTags(taskId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
+        const response = await this.getTagsRaw({ taskId: taskId }, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Delete a task and ALL DATA and ANNOTATIONS under the project. Won\'t delete file on file system
+     * Delete a task and ALL DATA and ANNOTATIONS under the task.
+     */
+    async removeRaw(requestParameters: RemoveRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<void>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling remove.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/tasks/{task_id}`.replace(`{${"task_id"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete a task and ALL DATA and ANNOTATIONS under the project. Won\'t delete file on file system
+     * Delete a task and ALL DATA and ANNOTATIONS under the task.
+     */
+    async remove(taskId: string, initOverrides?: RequestInit): Promise<void> {
+        await this.removeRaw({ taskId: taskId }, initOverrides);
+    }
+
+    /**
+     * Edit task info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
+     * Edit task info
+     */
+    async updateRaw(requestParameters: UpdateRequest, initOverrides?: RequestInit): Promise<runtime.ApiResponse<Task>> {
+        if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
+            throw new runtime.RequiredError('taskId','Required parameter requestParameters.taskId was null or undefined when calling update.');
+        }
+
+        if (requestParameters.task === null || requestParameters.task === undefined) {
+            throw new runtime.RequiredError('task','Required parameter requestParameters.task was null or undefined when calling update.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/tasks/{task_id}`.replace(`{${"task_id"}}`, encodeURIComponent(String(requestParameters.taskId))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: TaskToJSON(requestParameters.task),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => TaskFromJSON(jsonValue));
+    }
+
+    /**
+     * Edit task info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
+     * Edit task info
+     */
+    async update(taskId: string, task: Task, initOverrides?: RequestInit): Promise<Task> {
+        const response = await this.updateRaw({ taskId: taskId, task: task }, initOverrides);
+        return await response.value();
+    }
+
 }
