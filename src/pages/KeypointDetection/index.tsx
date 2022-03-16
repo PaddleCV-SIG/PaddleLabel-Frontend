@@ -210,8 +210,8 @@ const Page: React.FC = () => {
         </div>
       </div>
       <PPToolBar disLoc="right">
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
       </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.finished}>
