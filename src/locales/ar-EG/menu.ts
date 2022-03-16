@@ -56,7 +56,7 @@ export default {
   'menu.segmentation-project': 'إنشاء مشروع تجزئة الدلالي',
   'menu.semantic_segmentation': 'تجزئة الدلالي ',
   'menu.detection-project': 'موضوع الكشف عن إنشاء المشروع',
-  'menu.object_detection': 'الكشف عن الهدف ',
+  'menu.Detection': 'الكشف عن الهدف ',
   'menu.keypoint-project': 'النقطة الرئيسية للكشف عن إنشاء المشروع',
   'menu.keypoint_detection': 'الكشف عن النقطة الرئيسية ',
   'menu.remote-sensing': 'الاستشعار عن بعد',

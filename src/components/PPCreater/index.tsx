@@ -1,4 +1,4 @@
-import { Col, Form, Input, message, Radio, Row } from 'antd';
+import { Col, Form, Input, message, Radio, Row, Cascader } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import { React, useEffect } from 'react';
 import styles from './index.less';
@@ -21,6 +21,37 @@ export type _PPCardProps = {
 //   | 'semanticSegmentation'
 //   | 'instanceSegmentation'
 //   | 'keypointDetection';
+
+const paths = [
+  {
+    value: '/app',
+    label: '/app',
+    children: [
+      {
+        value: 'data',
+        label: 'data',
+        children: [
+          {
+            value: 'pplabel',
+            label: 'pplabel',
+            children: [
+              {
+                value: 'clas_single',
+                label: 'clas_single',
+                children: [
+                  {
+                    value: 'PetImages',
+                    label: 'PetImages',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+];
 
 const _PPBlock: React.FC<_PPCardProps> = (props) => {
   return (
@@ -48,6 +79,15 @@ export type PPCardProps = {
   project: Project;
 };
 
+function buildDataDir(dataDirs: string[]) {
+  let res = '';
+  for (const dataDir of dataDirs) {
+    if (dataDir.endsWith('/')) res += dataDir;
+    else res += dataDir + '/';
+  }
+  return res;
+}
+
 const PPCreater: React.FC<PPCardProps> = (props) => {
   console.log('ppcreater props ', props);
 
@@ -58,7 +98,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
           name: values.name,
           description: values.description,
           taskCategoryId: createInfo[props.taskCategory]['id'],
-          dataDir: values.dataDir,
+          dataDir: buildDataDir(values.dataDir),
           labelDir: values.labelDir,
         })
         .then((res) => {
@@ -151,7 +191,13 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               ]}
               style={{ fontSize: '1.5rem' }}
             >
-              <Input size="large" placeholder="Path" style={{ height: '3.13rem' }} />
+              <Cascader
+                options={paths}
+                onChange={(value) => {
+                  console.log(value);
+                }}
+                changeOnSelect
+              />
             </Form.Item>
 
             <Form.Item

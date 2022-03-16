@@ -35,7 +35,6 @@ export default [
   {
     path: '/classification',
     component: './Classification',
-    layout: false,
   },
   {
     path: '/segmentation_mode',

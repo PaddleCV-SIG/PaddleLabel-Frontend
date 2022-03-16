@@ -56,7 +56,7 @@ export default {
   'menu.segmentation-mode': 'Semantic Segmentation Mode',
   'menu.semantic_segmentation': 'Semantic Segmentation',
   'menu.detection-project': 'Object Detection Project Creation',
-  'menu.object_detection': 'Object Detection',
+  'menu.Detection': 'Object Detection',
   'menu.keypoint-project': 'Keypoint Detection Project Creation',
   'menu.keypoint_detection': 'Keypoint Detection',
   'menu.remote-sensing': 'Remote Sensing',

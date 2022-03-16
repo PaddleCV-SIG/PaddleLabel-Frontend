@@ -56,7 +56,7 @@ export default {
   'menu.segmentation-mode': '语义分割模式',
   'menu.semantic_segmentation': '语义分割',
   'menu.detection-project': '目标检测项目创建',
-  'menu.object_detection': '目标检测',
+  'menu.Detection': '目标检测',
   'menu.keypoint-project': '关键点检测项目创建',
   'menu.keypoint_detection': '关键点检测',
   'menu.remote-sensing': '遥感标注',
