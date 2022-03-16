@@ -78,8 +78,6 @@ const Component: React.FC<PPStageProps> = (props) => {
         <Image image={image} draggable={false} />
       </Layer> */}
       <Layer
-        scaleX={props.scale}
-        scaleY={props.scale}
         onMouseDown={(e) => {
           if (props.onMouseDown) props.onMouseDown(e, props.scale);
         }}
@@ -96,7 +94,7 @@ const Component: React.FC<PPStageProps> = (props) => {
         draggable={false}
       >
         <Group draggable={props.currentTool == 'mover'}>
-          <Image draggable={false} image={image} />
+          <Image draggable={false} image={image} scaleX={props.scale} scaleY={props.scale} />
           {shapes}
         </Group>
       </Layer>
