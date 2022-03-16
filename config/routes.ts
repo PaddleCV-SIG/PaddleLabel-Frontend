@@ -22,23 +22,20 @@ export default [
   {
     path: '/welcome',
     name: 'welcome',
-    icon: 'smile',
     component: './Welcome',
   },
   {
     path: '/project_creation',
-    name: 'project-creation',
     component: './ProjectCreation',
   },
   {
     path: '/project_detail',
-    name: 'Project Detail',
     component: './ProjectDetail',
   },
   {
     path: '/classification',
-    name: 'classification',
     component: './Classification',
+    layout: false,
   },
   {
     path: '/segmentation_mode',
