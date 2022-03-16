@@ -2,7 +2,7 @@
 import { Annotation } from '@/models/annotation';
 import { ToolType } from '@/pages/SemanticSegmentation';
 import type Konva from 'konva';
-import React, { Props, ReactElement, useRef, useState } from 'react';
+import React, { Props, ReactElement, useEffect, useRef, useState } from 'react';
 import { Layer, Stage, Image, Transformer, Group } from 'react-konva';
 import useImage from 'use-image';
 import { PPLineType } from '../PPBrush/drawBrush';
@@ -13,8 +13,6 @@ const imgSrc = './pics/basketball.jpg';
 
 export type PPStageProps = {
   imgSrc?: string;
-  width?: number;
-  height?: number;
   scale: number;
   annotations?: Annotation<any>[];
   currentTool: ToolType;
@@ -49,7 +47,40 @@ const Component: React.FC<PPStageProps> = (props) => {
   const [image] = useImage(props.imgSrc);
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
-  const canvasWidth = props.width || imageWidth;
+
+  const [canvasWidth, setCanvasWidth] = useState<number>();
+  const [canvasHeight, setCanvasHeight] = useState<number>();
+  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+
+  // Dynamically adjust canvas size, prevent content overflow
+  function handleWindowResize() {
+    const parent = document.getElementById('dr');
+    if (parent) {
+      setCanvasWidth(parent.clientWidth);
+      setCanvasHeight(parent.clientHeight);
+    }
+  }
+  useEffect(() => {
+    // Listen to window resize event
+    window.removeEventListener('resize', handleWindowResize);
+    window.addEventListener('resize', handleWindowResize);
+    // Set inital canvas size
+    const parent = document.getElementById('dr');
+    if (parent) {
+      setCanvasWidth(parent.clientWidth);
+      setCanvasHeight(parent.clientHeight);
+      // Place image at the center when init
+      setImagePosition({ x: parent.clientWidth / 2, y: parent.clientHeight / 2 });
+      console.log(
+        `parent.clientWidth: ${parent.clientWidth}, parent.clientHeight: ${
+          parent.clientHeight
+        }, imagePosition: ${JSON.stringify({
+          x: parent.clientWidth / 2,
+          y: parent.clientHeight / 2,
+        })}`,
+      );
+    }
+  }, []);
 
   const shapes = [];
   if (props.annotations) {
@@ -73,7 +104,7 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   // console.log(`PPStage. ${JSON.stringify(props.elements)}`);
   return (
-    <Stage width={canvasWidth} height={783} className={styles.stage}>
+    <Stage width={canvasWidth} height={canvasHeight} className={styles.stage}>
       {/* <Layer scaleX={props.scale} scaleY={props.scale} draggable={false}>
         <Image image={image} draggable={false} />
       </Layer> */}
@@ -93,8 +124,17 @@ const Component: React.FC<PPStageProps> = (props) => {
         }}
         draggable={false}
       >
-        <Group draggable={props.currentTool == 'mover'}>
-          <Image draggable={false} image={image} scaleX={props.scale} scaleY={props.scale} />
+        <Group draggable={props.currentTool == 'mover'} onDragEnd={(evt) => {}}>
+          <Image
+            draggable={false}
+            image={image}
+            x={imagePosition.x}
+            y={imagePosition.y}
+            offsetX={imageWidth / 2}
+            offsetY={imageHeight / 2}
+            scaleX={props.scale}
+            scaleY={props.scale}
+          />
           {shapes}
         </Group>
       </Layer>
