@@ -44,7 +44,7 @@ export type PPStageProps = {
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
-  const [image] = useImage(props.imgSrc);
+  const [image] = useImage(props.imgSrc || '');
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
 
@@ -71,14 +71,6 @@ const Component: React.FC<PPStageProps> = (props) => {
       setCanvasHeight(parent.clientHeight);
       // Place image at the center when init
       setImagePosition({ x: parent.clientWidth / 2, y: parent.clientHeight / 2 });
-      console.log(
-        `parent.clientWidth: ${parent.clientWidth}, parent.clientHeight: ${
-          parent.clientHeight
-        }, imagePosition: ${JSON.stringify({
-          x: parent.clientWidth / 2,
-          y: parent.clientHeight / 2,
-        })}`,
-      );
     }
   }, []);
 
