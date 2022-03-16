@@ -11,7 +11,7 @@ const Component: React.FC<PPBrushProps> = (props) => {
   return (
     <PPToolBarButton
       active={props.active}
-      imgSrc={props.imgSrc || './pics/buttons/polygon.png'}
+      imgSrc={props.imgSrc || './pics/buttons/rectangle.png'}
       onClick={props.onClick}
     >
       {props.children}

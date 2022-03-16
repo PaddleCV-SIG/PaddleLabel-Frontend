@@ -8,7 +8,7 @@ import PPStage from '@/components/PPLabelPage/PPStage';
 import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
-import PPPolygon from '@/components/PPLabelPage/PPPolygon';
+import PPRectangle from '@/components/PPLabelPage/PPRectangle';
 import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
 import { Button, Progress } from 'antd';
 
@@ -131,15 +131,15 @@ const Page: React.FC = () => {
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
-        <PPPolygon
+        <PPRectangle
           active={currentTool == 'polygon'}
           onClick={() => {
             setCurrentTool('polygon');
             setCurrentAnnotation(undefined);
           }}
         >
-          Polygon
-        </PPPolygon>
+          Rectangle
+        </PPRectangle>
         <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
