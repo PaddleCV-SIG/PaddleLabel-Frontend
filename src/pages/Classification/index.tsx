@@ -17,6 +17,8 @@ import serviceUtils from '@/services/serviceUtils';
 import { annotationApi, taskApi, dataApi } from '@/services/api';
 import { toDict, indexOf, setLabelActive } from '@/services/api';
 
+import getScaleUtils from '@/services/utils';
+
 const baseUrl = localStorage.getItem('basePath');
 
 export type ToolType = 'mover' | undefined;
@@ -34,24 +36,11 @@ const Page: React.FC = () => {
 
   const [currLabel, setCurrLabel] = useState<Label>({ color: '', name: '' });
   const [currTool, setCurrTool] = useState<ToolType>('mover');
-  const [scale, setScaleRaw] = useState(1);
   const [progress, setProgress] = useState<number>(0);
   const [imgSrc, setImgSrc] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const setScale = (newScale: number, range: number[] = [0.1, 3]) => {
-    let s = newScale;
-    if (s == undefined) s = 1;
-    if (s < range[0]) {
-      s = range[0];
-      message.error('Smallest scale is ' + range[0]);
-    }
-    if (s > range[1]) {
-      s = range[1];
-      message.error('Largest scale is ' + range[1]);
-    }
-    setScaleRaw(s);
-  };
+  const scaleUtils = getScaleUtils(useState);
 
   const nextTask = () => {
     console.log('turning next ', taskIdx, tasks.length);
@@ -147,7 +136,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
-            setScale(scale + 0.1);
+            scaleUtils.changeScale(0.1);
           }}
         >
           Zoom in
@@ -155,7 +144,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
           onClick={() => {
-            setScale(scale - 0.1);
+            scaleUtils.changeScale(-0.1);
           }}
         >
           Zoom out
@@ -182,7 +171,7 @@ const Page: React.FC = () => {
         <Spin tip="loading" spinning={loading}>
           <div className={styles.draw}>
             <PPStage
-              scale={scale}
+              scale={scaleUtils.scale}
               currentTool={currTool}
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
