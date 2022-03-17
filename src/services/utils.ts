@@ -82,15 +82,14 @@ export const ProjectUtils = (useState) => {
   };
 
   const create = async (values) => {
-    projectApi
-      .create(values)
-      .then((project) => {
-        console.log('project create res', project);
-      })
-      .catch((err) => {
-        console.log('project create err', err);
-        serviceUtils.parseError(err, message);
-      });
+    try {
+      const newProject = await projectApi.create(values);
+      console.log(newProject);
+      return newProject;
+    } catch (err) {
+      console.log('project create err', err);
+      serviceUtils.parseError(err, message);
+    }
   };
 
   const update = async (projectId, values) => {

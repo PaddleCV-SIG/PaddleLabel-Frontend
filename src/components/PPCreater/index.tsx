@@ -84,9 +84,11 @@ function buildDataDir(dataDirs: string[]) {
 const PPCreater: React.FC<PPCardProps> = (props) => {
   console.log('render ppcreater', props);
   const projects = ProjectUtils(useState);
+  const projectId = serviceUtils.getQueryVariable('projectId');
+  console.log('projectId', projectId);
 
   const saveProject = (values: any) => {
-    if (!props.project) {
+    if (!projectId) {
       projects
         .create({
           name: values.name,
@@ -95,15 +97,16 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
           dataDir: buildDataDir(values.dataDir),
           labelDir: values.labelDir,
         })
-        .then(() => {
-          history.push(`/${camel2snake(props.taskCategory)}?projectId=${res.projectId}`);
-        });
+        .then((project) => {
+          history.push(`/${camel2snake(props.taskCategory)}?projectId=${project.projectId}`);
+        })
+        .catch(() => {});
     } else {
       projects
-        .update(props.project.projectId, {
+        .update(projectId, {
           name: values.name,
           description: values.description,
-          dataDir: values.dataDir,
+          dataDir: buildDataDir(values.dataDir),
           labelDir: values.labelDir,
         })
         .then(() => {
@@ -112,9 +115,6 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
     }
   };
 
-  const projectId = serviceUtils.getQueryVariable('projectId');
-  console.log('projectId', projectId);
-
   const title = props.taskCategory ? createInfo[props.taskCategory]['name'] : null;
   const [form] = Form.useForm();
 
@@ -122,8 +122,8 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
     projects.getCurr(projectId).then((project) => {
       console.log('project', project);
       const initialValues = {
-        name: project.name,
-        description: project.description,
+        name: project?.name,
+        description: project?.description,
         // dataDir: project.dataDir, // TODO: value.join is not a funx
       };
       form.setFieldsValue(initialValues);
@@ -270,7 +270,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                 style={{ height: '2.5rem', width: '48%' }}
                 block
               >
-                {props.project ? 'Update' : 'Create'}
+                {projectId ? 'Update' : 'Create'}
               </Button>
               &nbsp;&nbsp;
               <Button

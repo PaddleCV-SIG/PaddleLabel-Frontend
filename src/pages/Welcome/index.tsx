@@ -10,34 +10,34 @@ import CreateButton from '@/components/CreatButton'; // TODO: start with pp?
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { history } from 'umi';
 import type { Project } from '@/services';
-// import serviceUtils from '@/services/serviceUtils';
+import serviceUtils from '@/services/serviceUtils';
 
-// import { projectApi, getProjects, deleteProject } from '@/services/api';
+import { projectApi } from '@/services/api';
 
 import { toDict, ProjectUtils } from '@/services/utils';
 
-// export const PROJECT_INFO_KEY = 'projectInfo';
-// export const refreshProject = async (id?: string) => {
-//   const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
-//   if (!projectId) {
-//     message.error("projectId isn't passed in nor present in url!");
-//     history.push('/');
-//     return;
-//   }
-//   const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
-//   if (projectInfo) {
-//     return JSON.parse(projectInfo);
-//   }
-//
-//   const res = await projectApi.get(projectId);
-//   if (!res) {
-//     message.error(`Cannot find project: ${projectId}!`);
-//     history.push('/');
-//     return;
-//   }
-//   localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
-//   return res;
-// };
+export const PROJECT_INFO_KEY = 'projectInfo';
+export const refreshProject = async (id?: string) => {
+  const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
+  if (!projectId) {
+    message.error("projectId isn't passed in nor present in url!");
+    history.push('/');
+    return;
+  }
+  const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
+  if (projectInfo) {
+    return JSON.parse(projectInfo);
+  }
+
+  const res = await projectApi.get(projectId);
+  if (!res) {
+    message.error(`Cannot find project: ${projectId}!`);
+    history.push('/');
+    return;
+  }
+  localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
+  return res;
+};
 
 const Projects: React.FC = () => {
   const projects = ProjectUtils(useState);
