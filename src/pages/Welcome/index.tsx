@@ -1,45 +1,47 @@
-import React from 'react';
-import { Row, Col, Button, Space, message } from 'antd';
+import React, { useState } from 'react';
+import { Row, Col, Button, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import PPContainer from '@/components/PPContainer';
 import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
 import PPTable from '@/components/PPTable';
 import PPButton from '@/components/PPButton';
-import CreateButton from '@/components/CreatButton';
+import CreateButton from '@/components/CreatButton'; // TODO: start with pp?
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { history } from 'umi';
 import type { Project } from '@/services';
-import serviceUtils from '@/services/serviceUtils';
+// import serviceUtils from '@/services/serviceUtils';
 
-import { projectApi, getProjects, deleteProject } from '@/services/api';
+// import { projectApi, getProjects, deleteProject } from '@/services/api';
 
-export const PROJECT_INFO_KEY = 'projectInfo';
+import { toDict, ProjectUtils } from '@/services/utils';
 
-export const refreshProject = async (id?: string) => {
-  const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
-  if (!projectId) {
-    message.error("projectId isn't passed in nor present in url!");
-    history.push('/');
-    return;
-  }
-  const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
-  if (projectInfo) {
-    return JSON.parse(projectInfo);
-  }
-
-  const res = await projectApi.get(projectId);
-  if (!res) {
-    message.error(`Cannot find project: ${projectId}!`);
-    history.push('/');
-    return;
-  }
-  localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
-  return res;
-};
+// export const PROJECT_INFO_KEY = 'projectInfo';
+// export const refreshProject = async (id?: string) => {
+//   const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
+//   if (!projectId) {
+//     message.error("projectId isn't passed in nor present in url!");
+//     history.push('/');
+//     return;
+//   }
+//   const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
+//   if (projectInfo) {
+//     return JSON.parse(projectInfo);
+//   }
+//
+//   const res = await projectApi.get(projectId);
+//   if (!res) {
+//     message.error(`Cannot find project: ${projectId}!`);
+//     history.push('/');
+//     return;
+//   }
+//   localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
+//   return res;
+// };
 
 const Projects: React.FC = () => {
-  const [projects, setProjects] = React.useState([]);
+  const projects = ProjectUtils(useState);
+  projects.getAll();
 
   const columns: ColumnsType<Project> = [
     {
@@ -67,7 +69,6 @@ const Projects: React.FC = () => {
             height="1.875rem"
             color={'rgba(241,162,0,1)'}
             onClick={() => {
-              console.log('edit', project);
               history.push(
                 `/project_detail?taskCategory=${project.taskCategory.name}&projectId=${project.projectId}`,
               );
@@ -80,7 +81,7 @@ const Projects: React.FC = () => {
             height="1.875rem"
             color={'rgba(0,100,248,1)'}
             onClick={() => {
-              history.push(`/${project['taskCategory']['name']}?projectId=${project.projectId}`);
+              history.push(`/${project.taskCategory.name}?projectId=${project.projectId}`);
             }}
           >
             Label
@@ -90,7 +91,8 @@ const Projects: React.FC = () => {
             height="1.875rem"
             color={'rgba(207,63,0,1)'}
             onClick={() => {
-              deleteProject(project.projectId, setProjects);
+              projects.remove(project);
+              // deleteProject(project.projectId, setProjects);
             }}
           >
             Delete
@@ -100,13 +102,9 @@ const Projects: React.FC = () => {
     },
   ];
 
-  React.useEffect(() => {
-    getProjects(setProjects);
-  }, []);
-
   // if found no project, return create project button
   // TODO: beautify frontend
-  if (projects.length == 0)
+  if (projects.all.length == 0)
     return (
       <Row style={{ marginTop: 20 }}>
         <Col span={24}>
@@ -127,7 +125,7 @@ const Projects: React.FC = () => {
     <Row style={{ marginTop: 20 }}>
       <Col span={24}>
         <PPBlock title="My Projects">
-          <PPTable columns={columns} dataSource={projects} showHeader={false} />
+          <PPTable columns={columns} dataSource={toDict(projects.all)} showHeader={false} />
         </PPBlock>
       </Col>
     </Row>

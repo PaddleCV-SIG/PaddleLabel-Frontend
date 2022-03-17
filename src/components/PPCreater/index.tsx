@@ -1,26 +1,19 @@
-import { Col, Form, Input, message, Radio, Row, Cascader } from 'antd';
+import { Col, Form, Input, Radio, Row, Cascader } from 'antd';
 import Title from 'antd/lib/typography/Title';
-import { React, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import { Button } from 'antd';
 import { history } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
-import { projectApi, createInfo, camel2snake } from '@/services/api';
+import { createInfo, camel2snake } from '@/services/api';
 import type { Project } from '@/services/models/Project';
+import { ProjectUtils } from '@/services/utils';
 
 export type _PPCardProps = {
   title?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
 };
-
-// TODO: define this from createInfo.keys() in api
-// export type TaskCategory =
-//   | 'classification'
-//   | 'detection'
-//   | 'semanticSegmentation'
-//   | 'instanceSegmentation'
-//   | 'keypointDetection';
 
 const paths = [
   {
@@ -89,11 +82,12 @@ function buildDataDir(dataDirs: string[]) {
 }
 
 const PPCreater: React.FC<PPCardProps> = (props) => {
-  console.log('ppcreater props ', props);
+  console.log('render ppcreater', props);
+  const projects = ProjectUtils(useState);
 
   const saveProject = (values: any) => {
     if (!props.project) {
-      projectApi
+      projects
         .create({
           name: values.name,
           description: values.description,
@@ -101,45 +95,40 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
           dataDir: buildDataDir(values.dataDir),
           labelDir: values.labelDir,
         })
-        .then((res) => {
-          console.log('create res', res);
-          localStorage.setItem('projectInfo', JSON.stringify(res));
+        .then(() => {
           history.push(`/${camel2snake(props.taskCategory)}?projectId=${res.projectId}`);
-        })
-        .catch((err) => {
-          serviceUtils.parseError(err, message);
         });
     } else {
-      projectApi
+      projects
         .update(props.project.projectId, {
           name: values.name,
           description: values.description,
           dataDir: values.dataDir,
           labelDir: values.labelDir,
         })
-        .then((res) => {
-          console.log(res);
+        .then(() => {
           history.push('/welcome');
-        })
-        .catch((err) => {
-          console.log('update project err ', err);
-          serviceUtils.parseError(err, message);
         });
     }
   };
 
+  const projectId = serviceUtils.getQueryVariable('projectId');
+  console.log('projectId', projectId);
+
   const title = props.taskCategory ? createInfo[props.taskCategory]['name'] : null;
   const [form] = Form.useForm();
 
-  const pj = props.project;
-  const initialValues = {
-    name: pj?.name,
-    description: pj?.description,
-    dataDir: pj?.dataDir,
-  };
   useEffect(() => {
-    form.setFieldsValue(initialValues);
-  });
+    projects.getCurr(projectId).then((project) => {
+      console.log('project', project);
+      const initialValues = {
+        name: project.name,
+        description: project.description,
+        // dataDir: project.dataDir, // TODO: value.join is not a funx
+      };
+      form.setFieldsValue(initialValues);
+    });
+  }, []);
 
   return (
     <div className={styles.shadow} style={props.style}>
