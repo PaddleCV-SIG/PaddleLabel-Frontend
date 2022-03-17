@@ -17,7 +17,7 @@ import serviceUtils from '@/services/serviceUtils';
 import { annotationApi, taskApi, dataApi } from '@/services/api';
 import { toDict, indexOf, setLabelActive } from '@/services/api';
 
-import getScaleUtils from '@/services/utils';
+import ScaleUtils from '@/services/utils';
 
 const baseUrl = localStorage.getItem('basePath');
 
@@ -40,7 +40,7 @@ const Page: React.FC = () => {
   const [imgSrc, setImgSrc] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const scaleUtils = getScaleUtils(useState);
+  const { scale, changeScale } = ScaleUtils(useState);
 
   const nextTask = () => {
     console.log('turning next ', taskIdx, tasks.length);
@@ -136,7 +136,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
-            scaleUtils.changeScale(0.1);
+            changeScale(0.1);
           }}
         >
           Zoom in
@@ -144,7 +144,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
           onClick={() => {
-            scaleUtils.changeScale(-0.1);
+            changeScale(-0.1);
           }}
         >
           Zoom out
@@ -171,7 +171,7 @@ const Page: React.FC = () => {
         <Spin tip="loading" spinning={loading}>
           <div className={styles.draw}>
             <PPStage
-              scale={scaleUtils.scale}
+              scale={scale}
               currentTool={currTool}
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
