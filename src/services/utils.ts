@@ -135,7 +135,7 @@ export const ProjectUtils = (useState) => {
   };
 };
 
-export const LabelUtils = (useState, { oneHot = true, pageOnSelect }) => {
+export const LabelUtils = (useState, { oneHot = true, postOnSelect }) => {
   const [all, setAll] = useState<Label[]>();
   const [currIdx, setCurrIdx] = useState<number>();
   const [isOneHot, setOneHot] = useState<bool>(oneHot);
@@ -163,7 +163,7 @@ export const LabelUtils = (useState, { oneHot = true, pageOnSelect }) => {
     } else {
       all[idx].active = !all[idx].active;
     }
-    pageOnSelect(all[idx]);
+    postOnSelect(all[idx]);
     setAll([...all]);
   };
 
@@ -345,4 +345,54 @@ export const DataUtils = (useState) => {
       return all[currIdx];
     },
   };
+};
+
+
+export const PageInit = (useState, useEffect, props = {}) => {
+  if (!props.effectTrigger) props.effectTrigger = {};
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const scale = ScaleUtils(useState);
+  const annotation = AnnotationUtils(useState);
+  const task = TaskUtils(useState);
+  const data = DataUtils(useState);
+  const project = ProjectUtils(useState);
+  const label = LabelUtils(useState, props.label);
+
+  useEffect(() => {
+    // onload, get project, label, task info
+    const projectId = serviceUtils.getQueryVariable('projectId');
+    project.getCurr(projectId);
+    label.getAll(projectId);
+    task.getAll(projectId);
+    task.getProgress(projectId);
+  }, []);
+
+  useEffect(() => {
+    // when all task is set, set current task
+    if (task.all && task.all.length != 0) task.turnTo(0);
+  }, [task.all]);
+
+  useEffect(() => {
+    // when current task is set, get task's data, data's annotation, toggle label active
+    if (task.currIdx == undefined) return;
+
+    const onTaskChange = async () => {
+      console.log('onTaskChange', task.curr, label.all, task.progress);
+      task.getProgress(task.curr.projectId);
+      const [allData, currData] = await data.getAll(task.curr.taskId, 0);
+      console.log(allData);
+      const allAnns = await annotation.getAll(currData.dataId);
+      for (const lab of label.all) {
+        lab.active = false;
+      }
+      if (props.effectTrigger.postTaskChange)
+        props.effectTrigger.postTaskChange(label.all, allAnns);
+
+      setLoading(false);
+    };
+    onTaskChange();
+  }, [task.currIdx]);
+
+  return [loading, setLoading, scale, annotation, task, data, project, label];
 };
