@@ -66,6 +66,7 @@ const Page: React.FC = () => {
     project.getCurr(projectId);
     label.getAll(projectId);
     task.getAll(projectId);
+    task.getProgress(projectId);
   }, []);
 
   useEffect(() => {
@@ -78,7 +79,8 @@ const Page: React.FC = () => {
     if (task.currIdx == undefined) return;
 
     const onTaskChange = async () => {
-      console.log('onTaskChange', task.curr, label.all);
+      console.log('onTaskChange', task.curr, label.all, task.progress);
+      task.getProgress(task.curr.projectId);
       const [allData, currData] = await data.getAll(task.curr.taskId, 0);
       const allAnns = await annotation.getAll(currData.dataId);
       for (const lab of label.all) {
@@ -94,11 +96,6 @@ const Page: React.FC = () => {
     };
     onTaskChange();
   }, [task.currIdx]);
-
-  // useEffect(()=>{
-  //   // on annotation change, re toggle label
-  //
-  // },[annotation.all])
 
   return (
     <PPLabelPageContainer className={styles.classes}>
@@ -151,7 +148,8 @@ const Page: React.FC = () => {
           </div>
           <div className={styles.pblock}>
             <div className={styles.progress}>
-              <Progress percent={50} status="active" />
+              <Progress percent={task.progress} status="active" /> {task.currIdx} {task.all?.length}{' '}
+              {Math.floor((task.all?.length * task.progress) / 100)}
             </div>
           </div>
           <div className={styles.prevTask} onClick={() => task.turnTo(task.currIdx - 1)} />
