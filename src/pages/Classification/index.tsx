@@ -9,7 +9,7 @@ import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message, Spin } from 'antd';
 import { useAsync } from 'react-async';
 import { refreshProject } from '../Welcome';
-import { getLabels, addLabel, deleteLabel } from '@/services/api';
+// import { getLabels, addLabel, deleteLabel } from '@/services/api';
 import { getTasks, getProgress } from '@/services/api';
 import { projectApi } from '@/services/api';
 import type { Label, Project, Task, Data } from '@/services';
@@ -74,7 +74,7 @@ const Page: React.FC = () => {
   }, [task.all]);
 
   useEffect(() => {
-    // when current task is set, get task's data, data's annotaton, toggle label active
+    // when current task is set, get task's data, data's annotation, toggle label active
     if (task.currIdx == undefined) return;
 
     const onTaskChange = async () => {
@@ -92,72 +92,13 @@ const Page: React.FC = () => {
       label.setAll([...label.all]);
       setLoading(false);
     };
-
     onTaskChange();
   }, [task.currIdx]);
 
-  // when all annotations are set, toggle label active
   // useEffect(()=>{
-  //   // if(!annotation.all.length || !label.all.length) return;
-  //   const toggleLabelActive = async () => {
-  //     console.log('asdfasdfasdf', annotation.all, label.all);
-  //     for (const lab of label.all) {
-  //       const annOfLabel = annotation.all.filter(ann => ann.label.labelId == lab.labelId);
-  //       if(annOfLabel.length!=0)
-  //         lab.active=true;
-  //     }
-  //     console.log("all labels", label.all);
-  //     label.setAll(label.all);
-  //   }
-  //   toggleLabelActive()
-  // }, [annotation.all])
-  // only load project and task once on page show
-  // useEffect(() => {
-  //   // async function update() {
-  //   //   try {
-  //   //     setLoading(true);
-  //   //     if (!project) {
-  //   //       const projectRes = await refreshProject();
-  //   //       const tasksRes = await projectApi.getTasks(projectRes.projectId);
-  //   //       const labelsRes = await projectApi.getLabels(projectRes.projectId);
-  //   //       setLabels(toDict(labelsRes));
-  //   //       setTasks(tasksRes);
-  //   //       setProject(projectRes);
-  //   //       setLoading(false);
-  //   //       return;
-  //   //     }
-  //   //
-  //   //     // update progress
-  //   //     getProgress(project.projectId).then((prog) => {
-  //   //       setProgress(prog);
-  //   //     });
-  //   //
-  //   //     // update task, datas, anns, currData, currAnns
-  //   //     setTask(tasks[taskIdx]);
-  //   //     const taskId = tasks[taskIdx].taskId;
-  //   //     taskApi.getAnnotations(taskId).then((annotations) => {
-  //   //       setAnns(annotations);
-  //   //     });
-  //   //     const newDatas = await taskApi.getDatas(taskId);
-  //   //     setDatas(newDatas);
-  //   //     const currentData = newDatas[0];
-  //   //     setCurrData(currentData);
-  //   //
-  //   //     const currAnnotations = await dataApi.getAnnotations(currentData.dataId);
-  //   //     setCurrAnns(currAnnotations);
-  //   //     setLabels(setLabelActive(labels, currAnnotations));
-  //   //
-  //   //     setImgSrc(`${baseUrl}/datas/${currentData.dataId}/image`);
-  //   //     console.log('hereraasdf', labels);
-  //   //
-  //   //     setLoading(false);
-  //   //   } catch (err) {
-  //   //     console.log(err);
-  //   //     serviceUtils.parseError(err as Response, message);
-  //   //   }
-  //   // }
-  //   // update();
-  // }, []); // TODO: slice change
+  //   // on annotation change, re toggle label
+  //
+  // },[annotation.all])
 
   return (
     <PPLabelPageContainer className={styles.classes}>
@@ -227,8 +168,8 @@ const Page: React.FC = () => {
           labels={label.all}
           selectedLabel={label.curr}
           onLabelSelect={label.onSelect}
-          onLabelAdd={label.onAdd}
-          onLabelDelete={label.onDelete}
+          onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
+          onLabelDelete={label.remove}
           onLabelModify={() => {}}
         />
       </div>

@@ -2,7 +2,7 @@ import { message } from 'antd';
 
 import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services';
-import { ProjectApi, TaskApi, DataApi, AnnotationApi } from '@/services';
+import { ProjectApi, TaskApi, DataApi, AnnotationApi, LabelApi } from '@/services';
 import { Configuration } from '@/services';
 
 const baseUrl = localStorage.getItem('basePath');
@@ -12,6 +12,7 @@ const projectApi = new ProjectApi(config);
 const taskApi = new TaskApi(config);
 const dataApi = new DataApi(config);
 const annotationApi = new AnnotationApi(config);
+const labelApi = new LabelApi(config);
 
 // TODO: all should default to undefined or []
 
@@ -134,7 +135,7 @@ export const ProjectUtils = (useState) => {
 };
 
 export const LabelUtils = (useState, { oneHot = true, pageOnSelect }) => {
-  const [all, setAll] = useState<Label[]>([]);
+  const [all, setAll] = useState<Label[]>();
   const [currIdx, setCurrIdx] = useState<number>();
   const [isOneHot, setOneHot] = useState<bool>(oneHot);
 
@@ -165,8 +166,29 @@ export const LabelUtils = (useState, { oneHot = true, pageOnSelect }) => {
     setAll([...all]);
   };
 
-  const onAdd = () => {};
-  const onDelete = () => {};
+  const create = async (values) => {
+    try {
+      const newLabel = await labelApi.create(values);
+      // getAll(values.projectId);
+      newLabel.active = false;
+      setAll([...all, newLabel]);
+      return newLabel;
+    } catch (err) {
+      console.log('label create err', err);
+      serviceUtils.parseError(err, message);
+    }
+  };
+  const remove = async (label) => {
+    console.log('remove label', label);
+    try {
+      await labelApi.remove(label.labelId);
+      setAll(all.filter((lab) => lab.labelId != label.labelId));
+    } catch (err) {
+      console.log('label remove err', err);
+      serviceUtils.parseError(err, message);
+    }
+  };
+
   const onModify = () => {};
   const toggleOneHot = () => {
     setOneHot(!isOneHot);
@@ -176,8 +198,8 @@ export const LabelUtils = (useState, { oneHot = true, pageOnSelect }) => {
     getAll,
     setAll,
     onSelect,
-    onAdd,
-    onDelete,
+    create,
+    remove,
     onModify,
     toggleOneHot,
     get curr() {
