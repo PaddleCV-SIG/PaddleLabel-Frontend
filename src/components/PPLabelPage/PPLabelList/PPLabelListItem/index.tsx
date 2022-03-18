@@ -49,7 +49,8 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
           style={{
             backgroundImage: 'url(./pics/delete.png)',
           }}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             props.onLabelDelete(label);
           }}
         />
