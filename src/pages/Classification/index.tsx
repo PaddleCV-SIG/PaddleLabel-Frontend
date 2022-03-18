@@ -98,7 +98,8 @@ const Page: React.FC = () => {
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
               onAnnotationModifyComplete={() => {}}
-              imgSrc={`${baseUrl}/datas/${data.curr?.dataId}/image`}
+              // imgSrc={`${baseUrl}/datas/${data.curr?.dataId}/image`}
+              imgSrc={data.imgSrc}
             />
           </div>
           <div className={styles.pblock}>
@@ -107,8 +108,8 @@ const Page: React.FC = () => {
               {Math.floor((task.all?.length * task.progress) / 100)}
             </div>
           </div>
-          <div className={styles.prevTask} onClick={() => task.turnTo(task.currIdx - 1)} />
-          <div className={styles.nextTask} onClick={() => task.turnTo(task.currIdx + 1)} />
+          <div className={styles.prevTask} onClick={task.prevTask} />
+          <div className={styles.nextTask} onClick={task.nextTask} />
         </Spin>
       </div>
       <PPToolBar disLoc="right">

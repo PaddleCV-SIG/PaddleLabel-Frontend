@@ -259,6 +259,14 @@ export const TaskUtils = (useState) => {
     }
   };
 
+  const nextTask = async () => {
+    turnTo(currIdx + 1);
+    console.log('all tasks', all);
+  };
+  const prevTask = async () => {
+    turnTo(currIdx - 1);
+  };
+
   return {
     currIdx,
     all,
@@ -266,6 +274,8 @@ export const TaskUtils = (useState) => {
     getAll,
     getProgress,
     progress,
+    nextTask,
+    prevTask,
     get curr() {
       if (currIdx == undefined || all == undefined) return undefined;
       console.log('task.curr', all[currIdx]);
@@ -343,6 +353,12 @@ export const DataUtils = (useState) => {
     get curr() {
       if (currIdx == undefined || all == undefined) return undefined;
       return all[currIdx];
+    },
+    get imgSrc() {
+      if (all && all[currIdx]) {
+        console.log('imgsrc', `${baseUrl}/datas/${all[currIdx].dataId}/image`);
+        return `${baseUrl}/datas/${all[currIdx].dataId}/image`;
+      }
     },
   };
 };

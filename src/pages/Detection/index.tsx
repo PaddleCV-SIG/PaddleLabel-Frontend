@@ -13,7 +13,7 @@ import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
 import PPRectangle from '@/components/PPLabelPage/PPRectangle';
 import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
-import { Button, Progress } from 'antd';
+import { Button, Progress, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
 
 export type ToolType = 'polygon' | 'mover' | undefined;
@@ -37,17 +37,10 @@ const Page: React.FC = () => {
       effectTrigger: {},
     },
   );
-
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
-  // const [scale, setScaleRaw] = useState(1);
-  // const setScale = (size: number) => {
-  //   if (!size) setScaleRaw(1);
-  //   if (size < 0.1 || size > 3.0) setScaleRaw(1);
-  //   else setScaleRaw(size);
-  // };
 
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
     setCurrentAnnotationRaw(anno);
@@ -198,34 +191,42 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div id="dr" className={styles.mainStage}>
-        <div className={styles.draw}>
-          <PPStage
-            width={document.getElementById('dr')?.clientWidth}
-            scale={scale.curr}
-            annotations={annotations}
-            currentTool={currentTool}
-            currentAnnotation={currentAnnotation}
-            setCurrentAnnotation={setCurrentAnnotation}
-            onAnnotationModify={onAnnotationModify}
-            onAnnotationModifyComplete={() => {
-              recordHistory(annotations, currentAnnotation);
-            }}
-            onMouseDown={dr.onMouseDown}
-            onMouseMove={dr.onMouseMove}
-            onMouseUp={dr.onMouseUp}
-            createPolygonFunc={polygon.createElementsFunc}
-            imgSrc={'/pics/background.png'}
-          />
-        </div>
-        <div className={styles.pblock}>
-          <div className={styles.progress}>
-            <Progress percent={50} status="active" />
+        <Spin tip="loading" spinning={loading}>
+          <div className={styles.draw}>
+            <PPStage
+              width={document.getElementById('dr')?.clientWidth}
+              scale={scale.curr}
+              annotations={annotations}
+              currentTool={currentTool}
+              currentAnnotation={currentAnnotation}
+              setCurrentAnnotation={setCurrentAnnotation}
+              onAnnotationModify={onAnnotationModify}
+              onAnnotationModifyComplete={() => {
+                recordHistory(annotations, currentAnnotation);
+              }}
+              onMouseDown={dr.onMouseDown}
+              onMouseMove={dr.onMouseMove}
+              onMouseUp={dr.onMouseUp}
+              createPolygonFunc={polygon.createElementsFunc}
+              imgSrc={data.imgSrc}
+            />
           </div>
-        </div>
+          <div className={styles.pblock}>
+            <div className={styles.progress}>
+              <Progress percent={50} status="active" />
+            </div>
+          </div>
+        </Spin>
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/next.png" onClick={task.nextTask}>
+          Next
+        </PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/prev.png" onClick={task.prevTask}>
+          Prev
+        </PPToolBarButton>
       </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.determinOutline}>
