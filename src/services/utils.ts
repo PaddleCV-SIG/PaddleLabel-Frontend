@@ -330,7 +330,7 @@ export const AnnotationUtils = (useState) => {
     console.log('annotation onselect', annotation);
     for (const ann of all) ann.active = false;
     const selected = all.filter((ann) => ann.annotationId == annotation.annotationId)[0];
-    selected.active = true;
+    selected.active = !annotation.active;
     const idx = indexOf(selected, all, 'annotationId');
     setCurrIdx(idx);
     setAll([...all]);
