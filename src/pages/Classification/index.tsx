@@ -8,24 +8,8 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message, Spin } from 'antd';
-// import { useAsync } from 'react-async';
-// import { refreshProject } from '../Welcome';
-// import { getLabels, addLabel, deleteLabel } from '@/services/api';
-// import { getTasks, getProgress } from '@/services/api';
-// import { projectApi } from '@/services/api';
 import type { Label, Project, Task, Data } from '@/services';
 import serviceUtils from '@/services/serviceUtils';
-// import { annotationApi, taskApi, dataApi } from '@/services/api';
-// import { toDict, indexOf, setLabelActive } from '@/services/api';
-
-// import {
-//   ScaleUtils,
-//   ProjectUtils,
-//   LabelUtils,
-//   DataUtils,
-//   TaskUtils,
-//   AnnotationUtils,
-// } from '@/services/utils';
 import { PageInit } from '@/services/utils';
 
 const baseUrl = localStorage.getItem('basePath');
@@ -34,14 +18,6 @@ export type ToolType = 'mover' | undefined;
 
 const Page: React.FC = () => {
   const [currTool, setCurrTool] = useState<ToolType>('mover');
-  // const [loading, setLoading] = useState<boolean>(false);
-
-  // const scale = ScaleUtils(useState);
-  // const annotation = AnnotationUtils(useState);
-  // const task = TaskUtils(useState);
-  // const data = DataUtils(useState);
-  // const project = ProjectUtils(useState);
-
   const selectLabel = (selected) => {
     // after toggle is active, add ann
     console.log('selectLabel', task.curr, data.curr, annotation.all);
@@ -75,45 +51,6 @@ const Page: React.FC = () => {
       effectTrigger: { postTaskChange: postTaskChange },
     },
   );
-
-  // const label = LabelUtils(useState, { oneHot: false, postOnSelect: selectLabel });
-  //
-  // useEffect(() => {
-  //   // onload, get project, label, task info
-  //   const projectId = serviceUtils.getQueryVariable('projectId');
-  //   project.getCurr(projectId);
-  //   label.getAll(projectId);
-  //   task.getAll(projectId);
-  //   task.getProgress(projectId);
-  // }, []);
-  //
-  // useEffect(() => {
-  //   // when all task is set, set current task
-  //   if (task.all && task.all.length != 0) task.turnTo(0);
-  // }, [task.all]);
-  //
-  // useEffect(() => {
-  //   // when current task is set, get task's data, data's annotation, toggle label active
-  //   if (task.currIdx == undefined) return;
-  //
-  //   const onTaskChange = async () => {
-  //     console.log('onTaskChange', task.curr, label.all, task.progress);
-  //     task.getProgress(task.curr.projectId);
-  //     const [allData, currData] = await data.getAll(task.curr.taskId, 0);
-  //     const allAnns = await annotation.getAll(currData.dataId);
-  //     for (const lab of label.all) {
-  //       lab.active = false;
-  //     }
-  //     for (const lab of label.all) {
-  //       const annOfLabel = allAnns.filter((ann) => ann.label.labelId == lab.labelId);
-  //       if (annOfLabel.length != 0) lab.active = true;
-  //     }
-  //     console.log('label.all toggled', label.all);
-  //     label.setAll([...label.all]);
-  //     setLoading(false);
-  //   };
-  //   onTaskChange();
-  // }, [task.currIdx]);
 
   return (
     <PPLabelPageContainer className={styles.classes}>
