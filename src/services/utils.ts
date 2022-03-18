@@ -15,6 +15,7 @@ const annotationApi = new AnnotationApi(config);
 const labelApi = new LabelApi(config);
 
 // TODO: all should default to undefined or []
+// TODO: check create for missing xxId
 
 /* helper functions */
 // TODO: a more elegent way
@@ -289,11 +290,12 @@ export const TaskUtils = (useState) => {
 
 export const AnnotationUtils = (useState) => {
   const [all, setAll] = useState<Annotation[]>();
-  // const [currIdx, setCurrIdx] = useState<number>();
+  const [currIdx, setCurrIdx] = useState<number>();
 
   const getAll = async (dataId: number) => {
     try {
       const annRes = await dataApi.getAnnotations(dataId);
+      for (const ann of annRes) ann.active = false;
       await setAll(annRes);
       return annRes;
     } catch (err) {
@@ -313,16 +315,37 @@ export const AnnotationUtils = (useState) => {
       serviceUtils.parseError(err, message);
     }
   };
-  const remove = async (annotationId: number) => {
+  const remove = async (annotation: number | Annotation) => {
+    let annId = annotation;
+    if (typeof annotation == 'Annotation') annId = annotation.annotationId;
     try {
-      annotationApi.remove(annotationId);
+      annotationApi.remove(annId);
     } catch (err) {
       console.log('annotation remove err', err);
       serviceUtils.parseError(err, message);
     }
   };
 
-  return { all, getAll, create, remove };
+  const onSelect = async (annotation: Annotation) => {
+    console.log('annotation onselect', annotation);
+    for (const ann of all) ann.active = false;
+    const selected = all.filter((ann) => ann.annotationId == annotation.annotationId)[0];
+    selected.active = true;
+    const idx = indexOf(selected, all, 'annotationId');
+    setCurrIdx(idx);
+    setAll([...all]);
+  };
+  return {
+    all,
+    getAll,
+    create,
+    remove,
+    onSelect,
+    get curr() {
+      if (!all) return undefined;
+      return all[currIdx];
+    },
+  };
 };
 
 export const DataUtils = (useState) => {

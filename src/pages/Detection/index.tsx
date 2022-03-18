@@ -261,11 +261,14 @@ const Page: React.FC = () => {
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
         />
         <PPAnnotationList
-          selectedAnnotation={currentAnnotation}
+          // selectedAnnotation={currentAnnotation}
           annotations={annotation.all}
-          onAnnotationSelect={(selectedAnno) => {
-            if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
-          }}
+          onAnnotationSelect={
+            //   (selectedAnno) => {
+            //   if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
+            // }
+            annotation.onSelect
+          }
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
           onAnnotationDelete={(annotation: Annotation<any>) => {
