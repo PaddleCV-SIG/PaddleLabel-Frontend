@@ -93,9 +93,7 @@ const Projects: React.FC = () => {
             width="4.375rem"
             height="1.875rem"
             color={'rgba(207,63,0,1)'}
-            onClick={() => {
-              projects.remove(project);
-            }}
+            onClick={() => projects.remove(project)}
           >
             Delete
           </PPButton>

@@ -92,8 +92,9 @@ export const ProjectUtils = (useState) => {
   };
 
   const remove = async (project: Project | number) => {
-    if (typeof project == 'number') projectApi.remove(project);
-    else projectApi.remove(project.projectId);
+    console.log('remove project', project);
+    if (typeof project == 'number') await projectApi.remove(project);
+    else await projectApi.remove(project.projectId);
     getAll();
   };
 
