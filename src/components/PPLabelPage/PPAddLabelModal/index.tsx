@@ -7,6 +7,7 @@ import type { Label } from '../PPLabelList';
 export type PPAddLabelProps = {
   order?: number;
   visible?: boolean;
+  hideColorPicker?: boolean;
   defaultLabel?: Label;
   onLabelAdd: (addedLabel: Label) => void;
   onCancel?: () => void;
@@ -56,6 +57,19 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
     setNewLabelColor(props.defaultLabel?.color || generatedColorList[props.order || 0]);
   }, [props]);
 
+  const colorPicker = props.hideColorPicker ? (
+    <></>
+  ) : (
+    <Form.Item label="Select Color" name="color">
+      <PPColorBall
+        color={newLabelColor}
+        onChange={(color) => {
+          setNewLabelColor(color.hex);
+        }}
+      />
+    </Form.Item>
+  );
+
   const [form] = Form.useForm();
 
   return (
@@ -84,14 +98,7 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
           <Input />
         </Form.Item>
 
-        <Form.Item label="Select Color" name="color">
-          <PPColorBall
-            color={newLabelColor}
-            onChange={(color) => {
-              setNewLabelColor(color.hex);
-            }}
-          />
-        </Form.Item>
+        {colorPicker}
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Space>

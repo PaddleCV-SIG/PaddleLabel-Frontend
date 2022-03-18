@@ -171,6 +171,8 @@ const Page: React.FC = () => {
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
           onLabelDelete={label.remove}
           onLabelModify={() => {}}
+          hideColorPicker={true}
+          hideEye={true}
         />
       </div>
     </PPLabelPageContainer>

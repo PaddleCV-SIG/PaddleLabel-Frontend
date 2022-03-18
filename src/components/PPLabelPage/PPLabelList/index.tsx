@@ -9,6 +9,8 @@ import { Label } from '@/services';
 export type PPLabelListProps = {
   labels?: Label[];
   selectedLabel?: Label;
+  hideEye?: boolean;
+  hideColorPicker?: boolean;
   onLabelModify: (label: Label) => void;
   onLabelDelete: (label: Label) => void;
   onLabelAdd: (label: Label) => void;
@@ -45,6 +47,8 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         renderItem={(item) => {
           return (
             <PPLabelListItem
+              hideColorPicker={props.hideColorPicker}
+              hideEye={props.hideEye}
               onClick={props.onLabelSelect}
               label={item}
               onLabelDelete={props.onLabelDelete}
@@ -54,6 +58,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         }}
       />
       <PPAddLabelModal
+        hideColorPicker={props.hideColorPicker}
         order={props.labels?.length}
         visible={addModalVisible}
         onLabelAdd={(label: Label) => {
