@@ -36,6 +36,7 @@ const Page: React.FC = () => {
     console.log('selectlabel', selected);
   };
   const postTaskChange = (labels, annotations) => {
+    if (!labels) return;
     for (const lab of labels) {
       const annOfLabel = annotations.filter((ann) => ann.label.labelId == lab.labelId);
       if (annOfLabel.length != 0) lab.active = true;
@@ -47,7 +48,7 @@ const Page: React.FC = () => {
     useState,
     useEffect,
     {
-      label: { oneHot: false, postOnSelect: selectLabel },
+      label: { oneHot: false, postSetCurr: selectLabel },
       effectTrigger: { postTaskChange: postTaskChange },
     },
   );
@@ -120,7 +121,7 @@ const Page: React.FC = () => {
       <div className={styles.rightSideBar}>
         <PPLabelList
           labels={label.all}
-          onLabelSelect={label.onSelect}
+          onLabelSelect={label.setCurr}
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
           onLabelDelete={label.remove}
           onLabelModify={() => {}}

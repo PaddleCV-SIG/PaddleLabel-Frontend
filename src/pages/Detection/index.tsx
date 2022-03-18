@@ -8,9 +8,8 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
-import type { Label } from '@/models/label';
+import type { Label, Annotation } from '@/models/';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
-import type { Annotation } from '@/models/annotation';
 import PPRectangle from '@/components/PPLabelPage/PPRectangle';
 import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
 import { Button, Progress, Spin, message } from 'antd';
@@ -23,7 +22,7 @@ const MOST_HISTORY_STEPS = 40;
 type HistoryType = {
   index: number;
   items: {
-    currentAnnotation?: Annotation<any>;
+    currentAnnotation?: Annotation<any>; // TODO: remove this
     annotations: Annotation<any>[];
   }[];
 };
@@ -37,14 +36,14 @@ const Page: React.FC = () => {
       effectTrigger: {},
     },
   );
+
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
-  const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
 
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
     setCurrentAnnotationRaw(anno);
-    if (anno?.label) setCurrentLabel(anno.label);
+    if (anno?.label) label.setCurr(anno.label);
   };
 
   useEffect(() => {
@@ -117,7 +116,7 @@ const Page: React.FC = () => {
   };
 
   const polygon = drawRectangle({
-    currentLabel: currentLabel,
+    currentLabel: label.curr,
     currentTool: currentTool,
     annotations: annotations,
     currentAnnotation: currentAnnotation,
@@ -243,7 +242,7 @@ const Page: React.FC = () => {
             type="primary"
             block
             onClick={() => {
-              setCurrentAnnotation(undefined);
+              annotation.setCurr(undefined);
             }}
           >
             Determine Outline
@@ -252,9 +251,9 @@ const Page: React.FC = () => {
         <PPLabelList
           labels={label.all}
           onLabelSelect={(selected) => {
-            label.onSelect(selected);
-            setCurrentLabel(selected);
-            setCurrentAnnotation(undefined);
+            label.setCurr(selected);
+            // setCurrentLabel(selected);
+            annotation.setCurr(undefined);
           }}
           onLabelModify={() => {}}
           onLabelDelete={label.remove}
@@ -266,7 +265,7 @@ const Page: React.FC = () => {
             //   (selectedAnno) => {
             //   if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
             // }
-            annotation.onSelect
+            annotation.setCurr
           }
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}

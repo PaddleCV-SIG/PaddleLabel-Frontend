@@ -136,7 +136,7 @@ export const ProjectUtils = (useState) => {
   };
 };
 
-export const LabelUtils = (useState, { oneHot = true, postOnSelect }) => {
+export const LabelUtils = (useState, { oneHot = true, postSetCurr }) => {
   const [all, setAll] = useState<Label[]>();
   const [currIdx, setCurrIdx] = useState<number>();
   const [isOneHot, setOneHot] = useState<bool>(oneHot);
@@ -153,7 +153,7 @@ export const LabelUtils = (useState, { oneHot = true, postOnSelect }) => {
     }
   };
 
-  const onSelect = (label) => {
+  const setCurr = (label) => {
     const idx = indexOf(label, all, 'labelId');
     setCurrIdx(idx);
     console.log('onehot', isOneHot);
@@ -164,7 +164,7 @@ export const LabelUtils = (useState, { oneHot = true, postOnSelect }) => {
     } else {
       all[idx].active = !all[idx].active;
     }
-    if (postOnSelect) postOnSelect(all[idx]);
+    if (postSetCurr) postSetCurr(all[idx]);
     setAll([...all]);
   };
 
@@ -199,7 +199,7 @@ export const LabelUtils = (useState, { oneHot = true, postOnSelect }) => {
     all,
     getAll,
     setAll,
-    onSelect,
+    setCurr,
     create,
     remove,
     onModify,
@@ -328,8 +328,9 @@ export const AnnotationUtils = (useState) => {
     }
   };
 
-  const onSelect = async (annotation: Annotation) => {
+  const setCurr = async (annotation: Annotation | undefined) => {
     console.log('annotation onselect', annotation);
+    if (annotation == undefined) setCurrIdx(undefined);
     for (const ann of all) ann.active = false;
     const selected = all.filter((ann) => ann.annotationId == annotation.annotationId)[0];
     selected.active = !annotation.active;
@@ -337,12 +338,13 @@ export const AnnotationUtils = (useState) => {
     setCurrIdx(idx);
     setAll([...all]);
   };
+
   return {
     all,
     getAll,
     create,
     remove,
-    onSelect,
+    setCurr,
     get curr() {
       if (!all) return undefined;
       return all[currIdx];
@@ -426,9 +428,7 @@ export const PageInit = (useState, useEffect, props = {}) => {
       const [allData, currData] = await data.getAll(task.curr.taskId, 0);
       console.log(allData);
       const allAnns = await annotation.getAll(currData.dataId);
-      for (const lab of label.all) {
-        lab.active = false;
-      }
+      if (label.all) for (const lab of label.all) lab.active = false;
       if (props.effectTrigger.postTaskChange)
         props.effectTrigger.postTaskChange(label.all, allAnns);
 
