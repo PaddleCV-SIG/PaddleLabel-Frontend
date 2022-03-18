@@ -13,7 +13,7 @@ import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
 import PPRectangle from '@/components/PPLabelPage/PPRectangle';
 import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
-import { Button, Progress, Spin } from 'antd';
+import { Button, Progress, Spin, message } from 'antd';
 import { PageInit } from '@/services/utils';
 
 export type ToolType = 'polygon' | 'mover' | undefined;
@@ -163,7 +163,14 @@ const Page: React.FC = () => {
         >
           Zoom out
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/save.png"
+          onClick={() => {
+            message.info("Annotations are saved automatically. You don't need to click save.");
+          }}
+        >
+          Save
+        </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
           onClick={() => {
@@ -213,7 +220,8 @@ const Page: React.FC = () => {
           </div>
           <div className={styles.pblock}>
             <div className={styles.progress}>
-              <Progress percent={50} status="active" />
+              <Progress percent={task.progress} status="active" />
+              {task.currIdx} {task.all?.length} {task.finished}
             </div>
           </div>
         </Spin>
@@ -254,7 +262,7 @@ const Page: React.FC = () => {
         />
         <PPAnnotationList
           selectedAnnotation={currentAnnotation}
-          annotations={annotations}
+          annotations={annotation.all}
           onAnnotationSelect={(selectedAnno) => {
             if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
           }}

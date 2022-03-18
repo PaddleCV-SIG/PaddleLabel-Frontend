@@ -281,6 +281,9 @@ export const TaskUtils = (useState) => {
       console.log('task.curr', all[currIdx]);
       return all[currIdx];
     },
+    get finished() {
+      return Math.floor((all?.length * progress) / 100);
+    },
   };
 };
 
