@@ -68,37 +68,55 @@ const Page: React.FC = () => {
   console.log('projectId', projectId);
 
   useEffect(() => {
-    setLoading(true);
-    project.getCurr(projectId).then((res) => {
-      label.getAll(res.projectId);
-      task.getAll(res.projectId, 0);
-    });
-    setLoading(false);
-  }, [projectId]);
+    // onload, get project, label, task info
+    project.getCurr(projectId);
+    label.getAll(projectId);
+    task.getAll(projectId);
+  }, []);
 
   useEffect(() => {
-    if (!task.curr) return;
-    data.getAll(task.curr.taskId, 0);
-  }, [task.curr]);
+    // when all task is set, set current task
+    if (task.all && task.all.length != 0) task.turnTo(0);
+  }, [task.all]);
 
-  // const nextTask = () => {
-  //   console.log('turning next ', taskIdx, tasks.length);
-  //   if (taskIdx + 1 >= tasks.length) {
-  //     message.error('This is the last task.');
-  //     return;
-  //   }
-  //   setTaskIdx(taskIdx + 1);
-  // };
-  //
-  // const prevTask = () => {
-  //   console.log('turning prev ', taskIdx, tasks.length);
-  //   if (taskIdx - 1 < 0) {
-  //     message.error('This is the first task.');
-  //     return;
-  //   }
-  //   setTaskIdx(taskIdx - 1);
-  // };
+  useEffect(() => {
+    // when current task is set, get task's data, data's annotaton, toggle label active
+    if (task.currIdx == undefined) return;
 
+    const onTaskChange = async () => {
+      console.log('onTaskChange', task.curr, label.all);
+      const [allData, currData] = await data.getAll(task.curr.taskId, 0);
+      const allAnns = await annotation.getAll(currData.dataId);
+      for (const lab of label.all) {
+        lab.active = false;
+      }
+      for (const lab of label.all) {
+        const annOfLabel = allAnns.filter((ann) => ann.label.labelId == lab.labelId);
+        if (annOfLabel.length != 0) lab.active = true;
+      }
+      console.log('label.all toggled', label.all);
+      label.setAll([...label.all]);
+      setLoading(false);
+    };
+
+    onTaskChange();
+  }, [task.currIdx]);
+
+  // when all annotations are set, toggle label active
+  // useEffect(()=>{
+  //   // if(!annotation.all.length || !label.all.length) return;
+  //   const toggleLabelActive = async () => {
+  //     console.log('asdfasdfasdf', annotation.all, label.all);
+  //     for (const lab of label.all) {
+  //       const annOfLabel = annotation.all.filter(ann => ann.label.labelId == lab.labelId);
+  //       if(annOfLabel.length!=0)
+  //         lab.active=true;
+  //     }
+  //     console.log("all labels", label.all);
+  //     label.setAll(label.all);
+  //   }
+  //   toggleLabelActive()
+  // }, [annotation.all])
   // only load project and task once on page show
   // useEffect(() => {
   //   // async function update() {
@@ -215,16 +233,8 @@ const Page: React.FC = () => {
           labels={label.all}
           selectedLabel={label.curr}
           onLabelSelect={label.onSelect}
-          onLabelAdd={
-            label.onAdd
-            // (label) => {
-            // if (project?.projectId) addLabel(project.projectId, label, setLabels);}
-          }
-          onLabelDelete={
-            label.onDelete
-            // (label) => {
-            // deleteLabel(label, setLabels);}
-          }
+          onLabelAdd={label.onAdd}
+          onLabelDelete={label.onDelete}
           onLabelModify={() => {}}
         />
       </div>

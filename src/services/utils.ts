@@ -2,7 +2,7 @@ import { message } from 'antd';
 
 import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services';
-import { ProjectApi, TaskApi } from '@/services';
+import { ProjectApi, TaskApi, DataApi } from '@/services';
 import { Configuration } from '@/services';
 
 const baseUrl = localStorage.getItem('basePath');
@@ -10,6 +10,9 @@ const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
 
 const projectApi = new ProjectApi(config);
 const taskApi = new TaskApi(config);
+const dataApi = new DataApi(config);
+
+// TODO: all should default to undefined or []
 
 /* helper functions */
 // TODO: a more elegent way
@@ -167,10 +170,10 @@ export const LabelUtils = (useState, { oneHot = true, pageOnSelect }) => {
   const toggleOneHot = () => {
     setOneHot(!isOneHot);
   };
-  // reqLabels(projectId);
   return {
     all,
     getAll,
+    setAll,
     onSelect,
     onAdd,
     onDelete,
@@ -184,13 +187,12 @@ export const LabelUtils = (useState, { oneHot = true, pageOnSelect }) => {
 };
 
 export const TaskUtils = (useState) => {
-  const [all, setAll] = useState<Task[]>([]);
-  const [currIdx, setCurrIdx] = useState<number>(0);
+  const [all, setAll] = useState<Task[]>();
+  const [currIdx, setCurrIdx] = useState<number>();
 
   const turnTo = (turnToIdx) => {
-    console.log('turnto', all, turnToIdx);
-    if (all.length == 0) return;
-    if (turnToIdx == -1) {
+    // if (!all) {console.log("no all");return;}
+    if (turnToIdx < 0) {
       message.error('This is the first image. No previous image.');
       return;
     }
@@ -198,6 +200,7 @@ export const TaskUtils = (useState) => {
       message.error('This is the final image. No next image.');
       return;
     }
+    console.log('turning to', turnToIdx);
     setCurrIdx(turnToIdx);
   };
 
@@ -205,7 +208,11 @@ export const TaskUtils = (useState) => {
     try {
       const allRes = await projectApi.getTasks(projectId);
       setAll(allRes);
-      if (turnToIdx != undefined) turnTo(turnToIdx);
+      if (turnToIdx != undefined) {
+        console.log('getall turnto');
+        turnTo(turnToIdx);
+        return [allRes, allRes[turnToIdx]];
+      }
       return allRes;
     } catch (err) {
       console.log('task getall err ', err);
@@ -219,20 +226,21 @@ export const TaskUtils = (useState) => {
     turnTo,
     getAll,
     get curr() {
-      if (currIdx == undefined) return undefined;
+      if (currIdx == undefined || all == undefined) return undefined;
+      console.log('task.curr', all[currIdx]);
       return all[currIdx];
     },
   };
 };
 
 export const AnnotationUtils = (useState) => {
-  const [all, setAll] = useState<Annotation[]>([]);
+  const [all, setAll] = useState<Annotation[]>();
   // const [currIdx, setCurrIdx] = useState<number>();
 
   const getAll = async (dataId: number) => {
     try {
       const annRes = dataApi.getAnnotations(dataId);
-      setAll(annRes);
+      await setAll(annRes);
       return annRes;
     } catch (err) {
       console.log('ann getAll err', err);
@@ -252,11 +260,14 @@ export const DataUtils = (useState) => {
     setCurrIdx(turnToIdx);
   };
 
-  const getAll = async (taskId: number, turnToIdx) => {
+  const getAll = async (taskId: number, turnToIdx: number | undefined) => {
     try {
       const allRes = await taskApi.getDatas(taskId);
-      if (turnToIdx != undefined) turnTo(turnToIdx);
       setAll(allRes);
+      if (turnToIdx != undefined) {
+        turnTo(turnToIdx);
+        return [allRes, allRes[turnToIdx]];
+      }
       return allRes;
     } catch (err) {
       console.log('data getall err ', err);
@@ -269,7 +280,7 @@ export const DataUtils = (useState) => {
     getAll,
     turnTo,
     get curr() {
-      if (all.length == 0) return undefined;
+      if (currIdx == undefined) return undefined;
       return all[currIdx];
     },
   };
