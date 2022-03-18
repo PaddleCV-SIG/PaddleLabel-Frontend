@@ -50,7 +50,7 @@ const selectLabel = (selected) => {
   //
   // setLabels(labs);
   // setCurrLabel(selected);
-  console.log('selectlabel', selectLabel);
+  console.log('selectlabel', selected);
 };
 
 const Page: React.FC = () => {
@@ -59,7 +59,7 @@ const Page: React.FC = () => {
 
   const scale = ScaleUtils(useState);
   const project = ProjectUtils(useState);
-  const label = LabelUtils(useState, { pageOnSelect: selectLabel });
+  const label = LabelUtils(useState, { oneHot: false, pageOnSelect: selectLabel });
   const task = TaskUtils(useState);
   const data = DataUtils(useState);
   const annotation = AnnotationUtils(useState);

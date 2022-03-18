@@ -50,12 +50,7 @@ export const ScaleUtils = (useState, range: number[] = [0.1, 3]) => {
     setCurr(scale);
   };
 
-  return {
-    change,
-    get scale() {
-      return curr;
-    },
-  };
+  return { curr, change };
 };
 
 export const ProjectUtils = (useState) => {
@@ -134,9 +129,10 @@ export const ProjectUtils = (useState) => {
   };
 };
 
-export const LabelUtils = (useState, { pageOnSelect }) => {
+export const LabelUtils = (useState, { oneHot = true, pageOnSelect }) => {
   const [all, setAll] = useState<Label[]>([]);
   const [currIdx, setCurrIdx] = useState<number>();
+  const [isOneHot, setOneHot] = useState<bool>(oneHot);
 
   const getAll = async (projectId: number) => {
     try {
@@ -151,17 +147,26 @@ export const LabelUtils = (useState, { pageOnSelect }) => {
   };
 
   const onSelect = (label) => {
-    setCurrIdx(idx, indexOf(lable, all, 'labelId'));
-    const selected = all.filter((l) => l.labelId == label.labelId)[0];
-    selected.active = !selected.active;
-    pageOnSelect(selected);
+    const idx = indexOf(label, all, 'labelId');
+    setCurrIdx(idx);
+    console.log('onehot', isOneHot);
+    if (isOneHot) {
+      for (const lab of all) lab.active = false;
+      all[idx].active = true;
+      console.log('all', all);
+    } else {
+      all[idx].active = !all[idx].active;
+    }
+    pageOnSelect(all[idx]);
     setAll([...all]);
   };
 
   const onAdd = () => {};
   const onDelete = () => {};
   const onModify = () => {};
-
+  const toggleOneHot = () => {
+    setOneHot(!isOneHot);
+  };
   // reqLabels(projectId);
   return {
     all,
@@ -170,6 +175,7 @@ export const LabelUtils = (useState, { pageOnSelect }) => {
     onAdd,
     onDelete,
     onModify,
+    toggleOneHot,
     get curr() {
       if (currIdx == undefined) return undefined;
       return all[currIdx];

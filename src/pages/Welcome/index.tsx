@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import PPContainer from '@/components/PPContainer';
@@ -40,8 +40,11 @@ export const refreshProject = async (id?: string) => {
 };
 
 const Projects: React.FC = () => {
+  console.log('render projects');
   const projects = ProjectUtils(useState);
-  projects.getAll();
+  useEffect(() => {
+    projects.getAll();
+  }, []);
 
   const columns: ColumnsType<Project> = [
     {
@@ -92,7 +95,6 @@ const Projects: React.FC = () => {
             color={'rgba(207,63,0,1)'}
             onClick={() => {
               projects.remove(project);
-              // deleteProject(project.projectId, setProjects);
             }}
           >
             Delete
