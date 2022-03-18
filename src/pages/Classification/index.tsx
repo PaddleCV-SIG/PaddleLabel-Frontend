@@ -148,7 +148,8 @@ const Page: React.FC = () => {
           </div>
           <div className={styles.pblock}>
             <div className={styles.progress}>
-              <Progress percent={task.progress} status="active" />
+              <Progress percent={task.progress} status="active" /> {task.currIdx} {task.all?.length}{' '}
+              {Math.ceil((task.all?.length * task.progress) / 100)}
             </div>
           </div>
           <div className={styles.prevTask} onClick={() => task.turnTo(task.currIdx - 1)} />
