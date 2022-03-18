@@ -163,7 +163,7 @@ export const LabelUtils = (useState, { oneHot = true, postOnSelect }) => {
     } else {
       all[idx].active = !all[idx].active;
     }
-    postOnSelect(all[idx]);
+    if (postOnSelect) postOnSelect(all[idx]);
     setAll([...all]);
   };
 
@@ -346,7 +346,6 @@ export const DataUtils = (useState) => {
     },
   };
 };
-
 
 export const PageInit = (useState, useEffect, props = {}) => {
   if (!props.effectTrigger) props.effectTrigger = {};

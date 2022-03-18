@@ -119,7 +119,6 @@ const Page: React.FC = () => {
       <div className={styles.rightSideBar}>
         <PPLabelList
           labels={label.all}
-          selectedLabel={label.curr}
           onLabelSelect={label.onSelect}
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
           onLabelDelete={label.remove}

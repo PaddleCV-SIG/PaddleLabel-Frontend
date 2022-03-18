@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove this
+/* eslint-disable @typescript-eslint/no-shadow*/ // TODO: remove this
 import React, { useEffect, useState } from 'react';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
@@ -11,6 +14,7 @@ import type { Annotation } from '@/models/annotation';
 import PPRectangle from '@/components/PPLabelPage/PPRectangle';
 import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
 import { Button, Progress } from 'antd';
+import { PageInit } from '@/services/utils';
 
 export type ToolType = 'polygon' | 'mover' | undefined;
 
@@ -25,16 +29,25 @@ type HistoryType = {
 };
 
 const Page: React.FC = () => {
+  const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
+    useState,
+    useEffect,
+    {
+      label: { oneHot: true },
+      effectTrigger: {},
+    },
+  );
+
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>({ color: '', name: '' });
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
-  const [scale, setScaleRaw] = useState(1);
-  const setScale = (size: number) => {
-    if (!size) setScaleRaw(1);
-    if (size < 0.1 || size > 3.0) setScaleRaw(1);
-    else setScaleRaw(size);
-  };
+  // const [scale, setScaleRaw] = useState(1);
+  // const setScale = (size: number) => {
+  //   if (!size) setScaleRaw(1);
+  //   if (size < 0.1 || size > 3.0) setScaleRaw(1);
+  //   else setScaleRaw(size);
+  // };
 
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
     setCurrentAnnotationRaw(anno);
@@ -144,7 +157,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
-            setScale(scale + 0.1);
+            scale.change(0.1);
           }}
         >
           Zoom in
@@ -152,7 +165,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
           onClick={() => {
-            setScale(scale - 0.1);
+            scale.change(-0.1);
           }}
         >
           Zoom out
@@ -188,7 +201,7 @@ const Page: React.FC = () => {
         <div className={styles.draw}>
           <PPStage
             width={document.getElementById('dr')?.clientWidth}
-            scale={scale}
+            scale={scale.curr}
             annotations={annotations}
             currentTool={currentTool}
             currentAnnotation={currentAnnotation}
@@ -201,6 +214,7 @@ const Page: React.FC = () => {
             onMouseMove={dr.onMouseMove}
             onMouseUp={dr.onMouseUp}
             createPolygonFunc={polygon.createElementsFunc}
+            imgSrc={'/pics/background.png'}
           />
         </div>
         <div className={styles.pblock}>
@@ -227,14 +241,15 @@ const Page: React.FC = () => {
           </Button>
         </div>
         <PPLabelList
-          selectedLabel={currentLabel}
-          onLabelSelect={(label) => {
-            setCurrentLabel(label);
+          labels={label.all}
+          onLabelSelect={(selected) => {
+            label.onSelect(selected);
+            setCurrentLabel(selected);
             setCurrentAnnotation(undefined);
           }}
           onLabelModify={() => {}}
-          onLabelDelete={() => {}}
-          onLabelAdd={() => {}}
+          onLabelDelete={label.remove}
+          onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
         />
         <PPAnnotationList
           selectedAnnotation={currentAnnotation}
