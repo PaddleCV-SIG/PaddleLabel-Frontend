@@ -21,10 +21,16 @@ import { exists, mapValues } from '../runtime';
 export interface InlineResponse200 {
   /**
    *
-   * @type {string}
+   * @type {number}
    * @memberof InlineResponse200
    */
-  image?: string;
+  finished?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof InlineResponse200
+   */
+  total?: number;
 }
 
 export function InlineResponse200FromJSON(json: any): InlineResponse200 {
@@ -39,7 +45,8 @@ export function InlineResponse200FromJSONTyped(
     return json;
   }
   return {
-    image: !exists(json, 'image') ? undefined : json['image'],
+    finished: !exists(json, 'finished') ? undefined : json['finished'],
+    total: !exists(json, 'total') ? undefined : json['total'],
   };
 }
 
@@ -51,6 +58,7 @@ export function InlineResponse200ToJSON(value?: InlineResponse200 | null): any {
     return null;
   }
   return {
-    image: value.image,
+    finished: value.finished,
+    total: value.total,
   };
 }

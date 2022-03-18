@@ -213,6 +213,7 @@ export const LabelUtils = (useState, { oneHot = true, pageOnSelect }) => {
 export const TaskUtils = (useState) => {
   const [all, setAll] = useState<Task[]>();
   const [currIdx, setCurrIdx] = useState<number>();
+  const [progress, setProgress] = useState<number>();
 
   const turnTo = (turnToIdx) => {
     // if (!all) {console.log("no all");return;}
@@ -244,11 +245,27 @@ export const TaskUtils = (useState) => {
     }
   };
 
+  const getProgress = async (projectId): number => {
+    try {
+      const stat = await projectApi.getProgress(projectId);
+      const prog = Math.ceil((stat.finished / stat.total) * 100);
+      console.log('progress', stat, prog);
+      setProgress(prog);
+      return prog;
+    } catch (err) {
+      console.log('get progress err', err);
+      serviceUtils.parseError(err, message);
+      return 0;
+    }
+  };
+
   return {
     currIdx,
     all,
     turnTo,
     getAll,
+    getProgress,
+    progress,
     get curr() {
       if (currIdx == undefined || all == undefined) return undefined;
       console.log('task.curr', all[currIdx]);
