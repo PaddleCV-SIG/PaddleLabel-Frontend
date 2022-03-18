@@ -67,7 +67,7 @@ const Page: React.FC = () => {
     console.log('label.all toggled', label.all);
     label.setAll([...labels]);
   };
-  const [loading, setLoading, scale, annotation, task, data, project, label] = pageInit(
+  const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
     useState,
     useEffect,
     {
