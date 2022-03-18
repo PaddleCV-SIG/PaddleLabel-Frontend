@@ -17,7 +17,14 @@ import serviceUtils from '@/services/serviceUtils';
 import { annotationApi, taskApi, dataApi } from '@/services/api';
 import { toDict, indexOf, setLabelActive } from '@/services/api';
 
-import { ScaleUtils, ProjectUtils, LabelUtils, DataUtils, TaskUtils } from '@/services/utils';
+import {
+  ScaleUtils,
+  ProjectUtils,
+  LabelUtils,
+  DataUtils,
+  TaskUtils,
+  AnnotationUtils,
+} from '@/services/utils';
 
 const baseUrl = localStorage.getItem('basePath');
 
@@ -47,28 +54,15 @@ const selectLabel = (selected) => {
 };
 
 const Page: React.FC = () => {
-  // const [project, setProject] = useState<Project>();
-  // const [labels, setLabels] = useState<Label[]>();
-  // const [tasks, setTasks] = useState<Task[]>();
-  // const [taskIdx, setTaskIdx] = useState<number>(0); // This is not taskId, this is the index of current task in tasks! They are DIFFERENT! It's mainly used for turning task
-  // const [task, setTask] = useState<Task>(); // current task
-  // const [datas, setDatas] = useState<Data[]>(); // datas of the CURRENT TASK, not all datas in project
-  // const [anns, setAnns] = useState<Annotation[]>(); // anns of the CURRENT TASK, not all anns in project
-  // const [currData, setCurrData] = useState<Data>(); // The data that's currently being shown. One piece of data
-  // const [currAnns, setCurrAnns] = useState<Annotation[]>(); // The anns for the current data that's being shown. One piece of data can have multiple anns
-  //
-  // const [currLabel, setCurrLabel] = useState<Label>({ color: '', name: '' });
   const [currTool, setCurrTool] = useState<ToolType>('mover');
-  // const [progress, setProgress] = useState<number>(0);
-  // const [imgSrc, setImgSrc] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
+  const scale = ScaleUtils(useState);
   const project = ProjectUtils(useState);
   const label = LabelUtils(useState, { pageOnSelect: selectLabel });
-  // const task = new TaskUtils(useState)
   const task = TaskUtils(useState);
-  const scale = ScaleUtils(useState);
   const data = DataUtils(useState);
+  const annotation = AnnotationUtils(useState);
 
   const projectId = serviceUtils.getQueryVariable('projectId');
   console.log('projectId', projectId);

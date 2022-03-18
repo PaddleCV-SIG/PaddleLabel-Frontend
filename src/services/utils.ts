@@ -16,6 +16,7 @@ const taskApi = new TaskApi(config);
 export const toDict = (arr: any[]) => {
   return JSON.parse(JSON.stringify(arr));
 };
+
 export function snake2camel(name: string) {
   if (!name) return name;
   name
@@ -24,62 +25,75 @@ export function snake2camel(name: string) {
   return name;
 }
 
+export const indexOf = (item: any, arr: any[], key: string) => {
+  if (!key) return undefined;
+  for (let idx = 0; idx < arr.length; idx++) {
+    if (item[key] == arr[idx][key]) return idx;
+  }
+  return undefined;
+};
+
 export const ScaleUtils = (useState, range: number[] = [0.1, 3]) => {
-  const [scale, setScale] = useState<number>(1);
-  const curr = scale;
+  const [curr, setCurr] = useState<number>(1);
 
   const change = (delta: number) => {
-    let s = scale;
-    s += delta;
-    if (s < range[0]) {
-      s = range[0];
+    let scale = curr;
+    scale += delta;
+    if (scale < range[0]) {
+      scale = range[0];
       message.error('Smallest scale is ' + range[0]);
     }
-    if (s > range[1]) {
-      s = range[1];
+    if (scale > range[1]) {
+      scale = range[1];
       message.error('Largest scale is ' + range[1]);
     }
-    setScale(s);
+    setCurr(scale);
   };
 
   return {
-    curr,
     change,
+    get scale() {
+      return curr;
+    },
   };
 };
 
 export const ProjectUtils = (useState) => {
-  console.log('create project util');
   const [all, setAll] = useState<Project[]>([]);
-  const [curr, setCurr] = useState<Project>();
+  const [currIdx, setCurrIdx] = useState<number>();
 
   const getAll = async () => {
-    projectApi
-      .getAll()
-      .then((projects) => {
-        setAll(projects);
-      })
-      .catch((err) => {
-        console.log('prject getall err', err);
-        serviceUtils.parseError(err, message);
-      });
+    try {
+      const projectsRes = await projectApi.getAll();
+      setAll(projectsRes);
+      return projectsRes;
+    } catch (err) {
+      console.log('project getAll err', err);
+      serviceUtils.parseError(err, message);
+    }
   };
 
   const getCurr = async (projectId) => {
-    console.log('get curr project');
-    if (!projectId) return undefined;
+    if (projectId == undefined) return undefined;
+    if (all.length > 1) {
+      message.error('Currently have multiple projects stored, use turnTo instead');
+      return;
+    }
+
     try {
-      const project = await projectApi.get(projectId);
-      setCurr(project);
-      return project;
+      const projectRes = await projectApi.get(projectId);
+      setAll([projectRes]);
+      setCurrIdx(0);
+      return projectRes;
     } catch (err) {
       console.log('prject getcurr err', err);
       serviceUtils.parseError(err, message);
     }
   };
 
-  const remove = async (project) => {
-    projectApi.remove(project.projectId);
+  const remove = async (project: Project | number) => {
+    if (typeof project == 'number') projectApi.remove(project);
+    else projectApi.remove(project.projectId);
     getAll();
   };
 
@@ -96,12 +110,7 @@ export const ProjectUtils = (useState) => {
 
   const update = async (projectId, values) => {
     projectApi
-      .update(projectId, {
-        name: values.name,
-        description: values.description,
-        dataDir: values.dataDir,
-        labelDir: values.labelDir,
-      })
+      .update(projectId, values)
       .then((res) => {
         console.log('project update res', res);
       })
@@ -112,28 +121,37 @@ export const ProjectUtils = (useState) => {
   };
 
   return {
-    curr,
     all,
     getAll,
     getCurr,
     remove,
     create,
     update,
+    get curr() {
+      if (currIdx == undefined) return undefined;
+      return all[currIdx];
+    },
   };
 };
 
 export const LabelUtils = (useState, { pageOnSelect }) => {
-  const [all, setAll] = useState([]);
-  // const [curr, setCurr] = useState();
+  const [all, setAll] = useState<Label[]>([]);
+  const [currIdx, setCurrIdx] = useState<number>();
 
   const getAll = async (projectId: number) => {
-    projectApi.getLabels(projectId).then((labs) => {
-      for (const lab of labs) lab.active = true;
-      setAll(labs);
-    });
+    try {
+      const labelsRes = await projectApi.getLabels(projectId);
+      for (const lab of labelsRes) lab.active = false;
+      setAll(labelsRes);
+      return labelsRes;
+    } catch (err) {
+      console.log('label getall err ', err);
+      serviceUtils.parseError(err, message);
+    }
   };
 
   const onSelect = (label) => {
+    setCurrIdx(idx, indexOf(lable, all, 'labelId'));
     const selected = all.filter((l) => l.labelId == label.labelId)[0];
     selected.active = !selected.active;
     pageOnSelect(selected);
@@ -145,38 +163,19 @@ export const LabelUtils = (useState, { pageOnSelect }) => {
   const onModify = () => {};
 
   // reqLabels(projectId);
-  return { all, curr, getAll, onSelect, onAdd, onDelete, onModify };
+  return {
+    all,
+    getAll,
+    onSelect,
+    onAdd,
+    onDelete,
+    onModify,
+    get curr() {
+      if (currIdx == undefined) return undefined;
+      return all[currIdx];
+    },
+  };
 };
-
-// export class TaskUtils {
-//   all = [];
-//   currIdx = 0;
-//   curr;
-//   setcurr;
-//
-//   constructor(useState) {
-//     [this.curr, this.setCurr] = useState<Task>();
-//   }
-//
-//   turnTo(turnToIdx) {
-//     console.log("turnto", this, turnToIdx)
-//     this.currIdx = turnToIdx;
-//     this.setCurr(this.all[turnToIdx]);
-//     return this.all[turnToIdx]
-//   }
-//
-//   async getAll(projectId: number, turnToIdx: number) {
-//    try {
-//      this.all = await projectApi.getTasks(projectId);
-//      if(turnToIdx!=undefined)
-//        this.turnTo(turnToIdx);
-//      return this.all;
-//    } catch (err) {
-//      console.log('task getall err ', err);
-//      serviceUtils.parseError(err, message);
-//    }
-//  }
-// }
 
 export const TaskUtils = (useState) => {
   const [all, setAll] = useState<Task[]>([]);
@@ -214,19 +213,33 @@ export const TaskUtils = (useState) => {
     turnTo,
     getAll,
     get curr() {
-      if (this.all.length) return this.all[this.currIdx];
-      else return undefined;
+      if (currIdx == undefined) return undefined;
+      return all[currIdx];
     },
   };
 };
 
-// export const AnnotationUtils = (useState, {taskId:number}) => {
-//
-// }
+export const AnnotationUtils = (useState) => {
+  const [all, setAll] = useState<Annotation[]>([]);
+  // const [currIdx, setCurrIdx] = useState<number>();
+
+  const getAll = async (dataId: number) => {
+    try {
+      const annRes = dataApi.getAnnotations(dataId);
+      setAll(annRes);
+      return annRes;
+    } catch (err) {
+      console.log('ann getAll err', err);
+      serviceUtils.parseError(err, message);
+    }
+  };
+
+  return { all, getAll };
+};
 
 export const DataUtils = (useState) => {
   // const [curr, setCurr] = useState<Data>();
-  const [currIdx, setCurrIdx] = useState<number>(0);
+  const [currIdx, setCurrIdx] = useState<number>();
   const [all, setAll] = useState<Data[]>([]);
 
   const turnTo = async (turnToIdx) => {
