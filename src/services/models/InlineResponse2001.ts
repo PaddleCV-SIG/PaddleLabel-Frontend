@@ -16,34 +16,37 @@ import { exists, mapValues } from '../runtime';
 /**
  *
  * @export
- * @interface InlineObject
+ * @interface InlineResponse2001
  */
-export interface InlineObject {
+export interface InlineResponse2001 {
   /**
    *
    * @type {number}
-   * @memberof InlineObject
+   * @memberof InlineResponse2001
    */
   train?: number;
   /**
    *
    * @type {number}
-   * @memberof InlineObject
+   * @memberof InlineResponse2001
    */
   validation?: number;
   /**
    *
    * @type {number}
-   * @memberof InlineObject
+   * @memberof InlineResponse2001
    */
   test?: number;
 }
 
-export function InlineObjectFromJSON(json: any): InlineObject {
-  return InlineObjectFromJSONTyped(json, false);
+export function InlineResponse2001FromJSON(json: any): InlineResponse2001 {
+  return InlineResponse2001FromJSONTyped(json, false);
 }
 
-export function InlineObjectFromJSONTyped(json: any, ignoreDiscriminator: boolean): InlineObject {
+export function InlineResponse2001FromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean,
+): InlineResponse2001 {
   if (json === undefined || json === null) {
     return json;
   }
@@ -54,7 +57,7 @@ export function InlineObjectFromJSONTyped(json: any, ignoreDiscriminator: boolea
   };
 }
 
-export function InlineObjectToJSON(value?: InlineObject | null): any {
+export function InlineResponse2001ToJSON(value?: InlineResponse2001 | null): any {
   if (value === undefined) {
     return undefined;
   }

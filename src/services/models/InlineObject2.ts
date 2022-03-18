@@ -16,31 +16,38 @@ import { exists, mapValues } from '../runtime';
 /**
  *
  * @export
- * @interface InlineObject1
+ * @interface InlineObject2
  */
-export interface InlineObject1 {
+export interface InlineObject2 {
   /**
    *
-   * @type {number}
-   * @memberof InlineObject1
+   * @type {string}
+   * @memberof InlineObject2
    */
-  tagId?: number;
+  username: string;
+  /**
+   *
+   * @type {string}
+   * @memberof InlineObject2
+   */
+  password: string;
 }
 
-export function InlineObject1FromJSON(json: any): InlineObject1 {
-  return InlineObject1FromJSONTyped(json, false);
+export function InlineObject2FromJSON(json: any): InlineObject2 {
+  return InlineObject2FromJSONTyped(json, false);
 }
 
-export function InlineObject1FromJSONTyped(json: any, ignoreDiscriminator: boolean): InlineObject1 {
+export function InlineObject2FromJSONTyped(json: any, ignoreDiscriminator: boolean): InlineObject2 {
   if (json === undefined || json === null) {
     return json;
   }
   return {
-    tagId: !exists(json, 'tag_id') ? undefined : json['tag_id'],
+    username: json['username'],
+    password: json['password'],
   };
 }
 
-export function InlineObject1ToJSON(value?: InlineObject1 | null): any {
+export function InlineObject2ToJSON(value?: InlineObject2 | null): any {
   if (value === undefined) {
     return undefined;
   }
@@ -48,6 +55,7 @@ export function InlineObject1ToJSON(value?: InlineObject1 | null): any {
     return null;
   }
   return {
-    tag_id: value.tagId,
+    username: value.username,
+    password: value.password,
   };
 }

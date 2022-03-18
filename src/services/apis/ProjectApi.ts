@@ -17,9 +17,15 @@ import {
   Annotation,
   AnnotationFromJSON,
   AnnotationToJSON,
+  InlineObject,
+  InlineObjectFromJSON,
+  InlineObjectToJSON,
   InlineResponse200,
   InlineResponse200FromJSON,
   InlineResponse200ToJSON,
+  InlineResponse2001,
+  InlineResponse2001FromJSON,
+  InlineResponse2001ToJSON,
   Label,
   LabelFromJSON,
   LabelToJSON,
@@ -71,6 +77,11 @@ export interface GetTasksRequest {
 export interface RemoveRequest {
   projectId: string;
   requestId?: string;
+}
+
+export interface SplitDatasetRequest {
+  projectId: string;
+  inlineObject?: InlineObject;
 }
 
 export interface UpdateRequest {
@@ -478,6 +489,60 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async remove(projectId: string, requestId?: string, initOverrides?: RequestInit): Promise<void> {
     await this.removeRaw({ projectId: projectId, requestId: requestId }, initOverrides);
+  }
+
+  /**
+   * Split this project\'s data into train, validation and test dataset.
+   */
+  async splitDatasetRaw(
+    requestParameters: SplitDatasetRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<InlineResponse2001>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling splitDataset.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/split`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: InlineObjectToJSON(requestParameters.inlineObject),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      InlineResponse2001FromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Split this project\'s data into train, validation and test dataset.
+   */
+  async splitDataset(
+    projectId: string,
+    inlineObject?: InlineObject,
+    initOverrides?: RequestInit,
+  ): Promise<InlineResponse2001> {
+    const response = await this.splitDatasetRaw(
+      { projectId: projectId, inlineObject: inlineObject },
+      initOverrides,
+    );
+    return await response.value();
   }
 
   /**

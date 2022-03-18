@@ -153,8 +153,9 @@ export const LabelUtils = (useState, { oneHot = true, postSetCurr }) => {
     }
   };
 
-  const setCurr = (label) => {
-    const idx = indexOf(label, all, 'labelId');
+  const setCurr = (label: Label | number) => {
+    let idx = label;
+    if (!(typeof label == 'number')) idx = indexOf(label, all, 'labelId');
     setCurrIdx(idx);
     console.log('onehot', isOneHot);
     if (isOneHot) {
@@ -315,6 +316,7 @@ export const AnnotationUtils = (useState) => {
       serviceUtils.parseError(err, message);
     }
   };
+
   const remove = async (annotation: number | Annotation) => {
     let annId = annotation;
     console.log('typeof', typeof annotation);
@@ -336,6 +338,7 @@ export const AnnotationUtils = (useState) => {
     selected.active = !annotation.active;
     const idx = indexOf(selected, all, 'annotationId');
     setCurrIdx(idx);
+    label.setCurr(annotation.labelId);
     setAll([...all]);
   };
 
@@ -386,8 +389,11 @@ export const DataUtils = (useState) => {
     },
     get imgSrc() {
       if (all && all[currIdx]) {
-        console.log('imgsrc', `${baseUrl}/datas/${all[currIdx].dataId}/image`);
-        return `${baseUrl}/datas/${all[currIdx].dataId}/image`;
+        console.log(
+          'imgsrc',
+          `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`,
+        );
+        return `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`;
       }
     },
   };
@@ -398,11 +404,11 @@ export const PageInit = (useState, useEffect, props = {}) => {
 
   const [loading, setLoading] = useState<boolean>(false);
   const scale = ScaleUtils(useState);
-  const annotation = AnnotationUtils(useState);
   const task = TaskUtils(useState);
   const data = DataUtils(useState);
   const project = ProjectUtils(useState);
   const label = LabelUtils(useState, props.label);
+  const annotation = AnnotationUtils(useState);
 
   useEffect(() => {
     // onload, get project, label, task info

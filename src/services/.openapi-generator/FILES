@@ -11,7 +11,9 @@ models/Annotation.ts
 models/Data.ts
 models/InlineObject.ts
 models/InlineObject1.ts
+models/InlineObject2.ts
 models/InlineResponse200.ts
+models/InlineResponse2001.ts
 models/Label.ts
 models/Project.ts
 models/Tag.ts

@@ -13,96 +13,88 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import {
-    Task,
-    TaskFromJSON,
-    TaskFromJSONTyped,
-    TaskToJSON,
-} from './Task';
+import { Task, TaskFromJSON, TaskFromJSONTyped, TaskToJSON } from './Task';
 
 /**
- * 
+ *
  * @export
  * @interface Data
  */
 export interface Data {
-    /**
-     * 
-     * @type {number}
-     * @memberof Data
-     */
-    readonly dataId?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof Data
-     */
-    taskId?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof Data
-     */
-    path: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof Data
-     */
-    sliceCount?: number;
-    /**
-     * 
-     * @type {Task}
-     * @memberof Data
-     */
-    task?: Task;
-    /**
-     * 
-     * @type {string}
-     * @memberof Data
-     */
-    readonly created?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof Data
-     */
-    readonly modified?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof Data
+   */
+  readonly dataId?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof Data
+   */
+  taskId?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof Data
+   */
+  sliceCount?: number;
+  /**
+   *
+   * @type {Task}
+   * @memberof Data
+   */
+  task?: Task;
+  /**
+   *
+   * @type {string}
+   * @memberof Data
+   */
+  readonly created?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Data
+   */
+  readonly modified?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Data
+   */
+  sault?: string;
 }
 
 export function DataFromJSON(json: any): Data {
-    return DataFromJSONTyped(json, false);
+  return DataFromJSONTyped(json, false);
 }
 
 export function DataFromJSONTyped(json: any, ignoreDiscriminator: boolean): Data {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'dataId': !exists(json, 'data_id') ? undefined : json['data_id'],
-        'taskId': !exists(json, 'task_id') ? undefined : json['task_id'],
-        'path': json['path'],
-        'sliceCount': !exists(json, 'slice_count') ? undefined : json['slice_count'],
-        'task': !exists(json, 'task') ? undefined : TaskFromJSON(json['task']),
-        'created': !exists(json, 'created') ? undefined : json['created'],
-        'modified': !exists(json, 'modified') ? undefined : json['modified'],
-    };
+  if (json === undefined || json === null) {
+    return json;
+  }
+  return {
+    dataId: !exists(json, 'data_id') ? undefined : json['data_id'],
+    taskId: !exists(json, 'task_id') ? undefined : json['task_id'],
+    sliceCount: !exists(json, 'slice_count') ? undefined : json['slice_count'],
+    task: !exists(json, 'task') ? undefined : TaskFromJSON(json['task']),
+    created: !exists(json, 'created') ? undefined : json['created'],
+    modified: !exists(json, 'modified') ? undefined : json['modified'],
+    sault: !exists(json, 'sault') ? undefined : json['sault'],
+  };
 }
 
 export function DataToJSON(value?: Data | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'task_id': value.taskId,
-        'path': value.path,
-        'slice_count': value.sliceCount,
-        'task': TaskToJSON(value.task),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return null;
+  }
+  return {
+    task_id: value.taskId,
+    slice_count: value.sliceCount,
+    task: TaskToJSON(value.task),
+    sault: value.sault,
+  };
 }
-
