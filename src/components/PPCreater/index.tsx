@@ -1,4 +1,4 @@
-import { Col, Form, Input, Radio, Row, Cascader } from 'antd';
+import { Col, Form, Input, Radio, Row } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import React, { useState, useEffect } from 'react';
 import styles from './index.less';
@@ -14,37 +14,6 @@ export type _PPCardProps = {
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
 };
-
-const paths = [
-  {
-    value: '/app',
-    label: '/app',
-    children: [
-      {
-        value: 'data',
-        label: 'data',
-        children: [
-          {
-            value: 'pplabel',
-            label: 'pplabel',
-            children: [
-              {
-                value: 'clas_single',
-                label: 'clas_single',
-                children: [
-                  {
-                    value: 'PetImages',
-                    label: 'PetImages',
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
 
 const _PPBlock: React.FC<_PPCardProps> = (props) => {
   return (
@@ -180,13 +149,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               ]}
               style={{ fontSize: '1.5rem' }}
             >
-              <Cascader
-                options={paths}
-                onChange={(value) => {
-                  console.log(value);
-                }}
-                changeOnSelect
-              />
+              <Input size="large" placeholder="Dataset Path" style={{ height: '3.13rem' }} />
             </Form.Item>
 
             <Form.Item
