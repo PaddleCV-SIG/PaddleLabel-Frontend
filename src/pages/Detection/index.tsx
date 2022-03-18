@@ -261,7 +261,6 @@ const Page: React.FC = () => {
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
         />
         <PPAnnotationList
-          // selectedAnnotation={currentAnnotation}
           annotations={annotation.all}
           onAnnotationSelect={
             //   (selectedAnno) => {
@@ -271,10 +270,13 @@ const Page: React.FC = () => {
           }
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
-          onAnnotationDelete={(annotation: Annotation<any>) => {
-            setAnnotations(annotations.filter((x) => x.annotationId != annotation.annotationId));
-            setCurrentAnnotation(undefined);
-          }}
+          onAnnotationDelete={
+            // (annotation: Annotation<any>) => {
+            // setAnnotations(annotations.filter((x) => x.annotationId != annotation.annotationId));
+            // setCurrentAnnotation(undefined);
+            // }
+            annotation.remove
+          }
         />
       </div>
     </PPLabelPageContainer>

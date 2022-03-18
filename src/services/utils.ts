@@ -317,9 +317,11 @@ export const AnnotationUtils = (useState) => {
   };
   const remove = async (annotation: number | Annotation) => {
     let annId = annotation;
-    if (typeof annotation == 'Annotation') annId = annotation.annotationId;
+    console.log('typeof', typeof annotation);
+    if (typeof annotation != 'number') annId = annotation.annotationId;
     try {
-      annotationApi.remove(annId);
+      await annotationApi.remove(annId);
+      setAll(all.filter((a) => a.annotationId != annotation.annotationId));
     } catch (err) {
       console.log('annotation remove err', err);
       serviceUtils.parseError(err, message);
