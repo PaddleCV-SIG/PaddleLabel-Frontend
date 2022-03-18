@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import { history } from 'umi';
 
 import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services';
@@ -81,15 +82,15 @@ export const ProjectUtils = (useState) => {
       return;
     }
 
-    try {
-      const projectRes = await projectApi.get(projectId);
-      setAll([projectRes]);
-      setCurrIdx(0);
-      return projectRes;
-    } catch (err) {
-      console.log('prject getcurr err', err);
-      serviceUtils.parseError(err, message);
-    }
+    // try {
+    const projectRes = await projectApi.get(projectId);
+    setAll([projectRes]);
+    setCurrIdx(0);
+    return projectRes;
+    // } catch (err) {
+    //   console.log('prject getcurr err', err);
+    //   serviceUtils.parseError(err, message);
+    // }
   };
 
   const remove = async (project: Project | number) => {
@@ -413,7 +414,15 @@ export const PageInit = (useState, useEffect, props = {}) => {
   useEffect(() => {
     // onload, get project, label, task info
     const projectId = serviceUtils.getQueryVariable('projectId');
-    project.getCurr(projectId);
+    if (projectId == undefined) {
+      history.push('/');
+      return;
+    }
+    project.getCurr(projectId).catch((err) => {
+      serviceUtils.parseError(err, message);
+      history.push('/');
+      return;
+    });
     label.getAll(projectId);
     task.getAll(projectId);
     task.getProgress(projectId);

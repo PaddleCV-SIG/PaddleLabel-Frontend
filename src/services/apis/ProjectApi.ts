@@ -20,6 +20,9 @@ import {
   InlineObject,
   InlineObjectFromJSON,
   InlineObjectToJSON,
+  InlineObject1,
+  InlineObject1FromJSON,
+  InlineObject1ToJSON,
   InlineResponse200,
   InlineResponse200FromJSON,
   InlineResponse200ToJSON,
@@ -43,6 +46,11 @@ import {
 export interface CreateRequest {
   project: Project;
   requestId?: string;
+}
+
+export interface ExportDatasetRequest {
+  projectId: string;
+  inlineObject1?: InlineObject1;
 }
 
 export interface GetRequest {
@@ -145,6 +153,57 @@ export class ProjectApi extends runtime.BaseAPI {
       initOverrides,
     );
     return await response.value();
+  }
+
+  /**
+   * Export dataset to specified directory
+   */
+  async exportDatasetRaw(
+    requestParameters: ExportDatasetRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling exportDataset.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/export`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: InlineObject1ToJSON(requestParameters.inlineObject1),
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Export dataset to specified directory
+   */
+  async exportDataset(
+    projectId: string,
+    inlineObject1?: InlineObject1,
+    initOverrides?: RequestInit,
+  ): Promise<void> {
+    await this.exportDatasetRaw(
+      { projectId: projectId, inlineObject1: inlineObject1 },
+      initOverrides,
+    );
   }
 
   /**

@@ -14,9 +14,9 @@
 
 import * as runtime from '../runtime';
 import {
-  InlineObject2,
-  InlineObject2FromJSON,
-  InlineObject2ToJSON,
+  InlineObject3,
+  InlineObject3FromJSON,
+  InlineObject3ToJSON,
   User,
   UserFromJSON,
   UserToJSON,
@@ -27,7 +27,7 @@ export interface GetRequest {
 }
 
 export interface PplabelApiControllerUserLoginRequest {
-  inlineObject2?: InlineObject2;
+  inlineObject3?: InlineObject3;
 }
 
 export interface RemoveRequest {
@@ -162,7 +162,7 @@ export class UserApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject2ToJSON(requestParameters.inlineObject2),
+        body: InlineObject3ToJSON(requestParameters.inlineObject3),
       },
       initOverrides,
     );
@@ -174,10 +174,10 @@ export class UserApi extends runtime.BaseAPI {
    * Login and get JWT
    */
   async pplabelApiControllerUserLogin(
-    inlineObject2?: InlineObject2,
+    inlineObject3?: InlineObject3,
     initOverrides?: RequestInit,
   ): Promise<void> {
-    await this.pplabelApiControllerUserLoginRaw({ inlineObject2: inlineObject2 }, initOverrides);
+    await this.pplabelApiControllerUserLoginRaw({ inlineObject3: inlineObject3 }, initOverrides);
   }
 
   /**
