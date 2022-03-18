@@ -2,7 +2,7 @@ import { message } from 'antd';
 
 import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services';
-import { ProjectApi, TaskApi, DataApi } from '@/services';
+import { ProjectApi, TaskApi, DataApi, AnnotationApi } from '@/services';
 import { Configuration } from '@/services';
 
 const baseUrl = localStorage.getItem('basePath');
@@ -11,6 +11,7 @@ const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
 const projectApi = new ProjectApi(config);
 const taskApi = new TaskApi(config);
 const dataApi = new DataApi(config);
+const annotationApi = new AnnotationApi(config);
 
 // TODO: all should default to undefined or []
 
@@ -239,7 +240,7 @@ export const AnnotationUtils = (useState) => {
 
   const getAll = async (dataId: number) => {
     try {
-      const annRes = dataApi.getAnnotations(dataId);
+      const annRes = await dataApi.getAnnotations(dataId);
       await setAll(annRes);
       return annRes;
     } catch (err) {
@@ -248,7 +249,27 @@ export const AnnotationUtils = (useState) => {
     }
   };
 
-  return { all, getAll };
+  const create = async (values) => {
+    console.log('create', values);
+    try {
+      const newAnn = await annotationApi.create(values);
+      getAll(values.dataId);
+      return newAnn;
+    } catch (err) {
+      console.log('annotation create err', err);
+      serviceUtils.parseError(err, message);
+    }
+  };
+  const remove = async (annotationId: number) => {
+    try {
+      annotationApi.remove(annotationId);
+    } catch (err) {
+      console.log('annotation remove err', err);
+      serviceUtils.parseError(err, message);
+    }
+  };
+
+  return { all, getAll, create, remove };
 };
 
 export const DataUtils = (useState) => {
@@ -280,7 +301,7 @@ export const DataUtils = (useState) => {
     getAll,
     turnTo,
     get curr() {
-      if (currIdx == undefined) return undefined;
+      if (currIdx == undefined || all == undefined) return undefined;
       return all[currIdx];
     },
   };

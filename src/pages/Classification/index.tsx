@@ -30,42 +30,36 @@ const baseUrl = localStorage.getItem('basePath');
 
 export type ToolType = 'mover' | undefined;
 
-const selectLabel = (selected) => {
-  // const labs = [...labels];
-  // labs[indexOf(selected, labels, 'name')].active = !selected.active;
-  //
-  // // click on active, delete ann
-  // if (selected.active) {
-  //   const ann = currAnns.filter((a) => a.labelId == selected.labelId)[0];
-  //   console.log('filter ann ', ann);
-  //   annotationApi.remove(ann.annotationId);
-  // } else {
-  //   console.log('add ann', { taskId: task.taskId, labelId: selected.labelId });
-  //   annotationApi
-  //     .create({ taskId: task.taskId, labelId: selected.labelId, dataId: currData.dataId })
-  //     .catch((err) => {
-  //       console.log('err', err);
-  //     });
-  // }
-  //
-  // setLabels(labs);
-  // setCurrLabel(selected);
-  console.log('selectlabel', selected);
-};
-
 const Page: React.FC = () => {
   const [currTool, setCurrTool] = useState<ToolType>('mover');
   const [loading, setLoading] = useState<boolean>(false);
+  const projectId = serviceUtils.getQueryVariable('projectId');
 
   const scale = ScaleUtils(useState);
-  const project = ProjectUtils(useState);
-  const label = LabelUtils(useState, { oneHot: false, pageOnSelect: selectLabel });
+  const annotation = AnnotationUtils(useState);
   const task = TaskUtils(useState);
   const data = DataUtils(useState);
-  const annotation = AnnotationUtils(useState);
+  const project = ProjectUtils(useState);
 
-  const projectId = serviceUtils.getQueryVariable('projectId');
-  console.log('projectId', projectId);
+  const selectLabel = (selected) => {
+    // after toggle is active, add ann
+    console.log('selectLabel', task.curr, data.curr, annotation.all);
+
+    if (selected.active) {
+      annotation.create({
+        taskId: task.curr.taskId,
+        labelId: selected.labelId,
+        dataId: data.curr.dataId,
+      });
+    } else {
+      const ann = annotation.all.filter((a) => a.labelId == selected.labelId)[0];
+      console.log('filter ann ', ann);
+      annotation.remove(ann.annotationId);
+    }
+    console.log('selectlabel', selected);
+  };
+
+  const label = LabelUtils(useState, { oneHot: false, pageOnSelect: selectLabel });
 
   useEffect(() => {
     // onload, get project, label, task info
