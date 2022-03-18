@@ -16,6 +16,8 @@ export type PPLabelListProps = {
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
+  console.log('render pplabellist');
+
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
 
   return (
@@ -45,7 +47,6 @@ const Component: React.FC<PPLabelListProps> = (props) => {
             <PPLabelListItem
               onClick={props.onLabelSelect}
               label={item}
-
               onLabelDelete={props.onLabelDelete}
               onLabelModify={props.onLabelModify}
             />

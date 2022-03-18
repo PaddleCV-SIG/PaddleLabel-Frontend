@@ -17,118 +17,141 @@ import serviceUtils from '@/services/serviceUtils';
 import { annotationApi, taskApi, dataApi } from '@/services/api';
 import { toDict, indexOf, setLabelActive } from '@/services/api';
 
-import { ScaleUtils } from '@/services/utils';
+import { ScaleUtils, ProjectUtils, LabelUtils, DataUtils, TaskUtils } from '@/services/utils';
 
 const baseUrl = localStorage.getItem('basePath');
 
 export type ToolType = 'mover' | undefined;
 
-const Page: React.FC = () => {
-  const [project, setProject] = useState<Project>();
-  const [labels, setLabels] = useState<Label[]>();
-  const [tasks, setTasks] = useState<Task[]>();
-  const [taskIdx, setTaskIdx] = useState<number>(0); // This is not taskId, this is the index of current task in tasks! They are DIFFERENT! It's mainly used for turning task
-  const [task, setTask] = useState<Task>(); // current task
-  const [datas, setDatas] = useState<Data[]>(); // datas of the CURRENT TASK, not all datas in project
-  const [anns, setAnns] = useState<Annotation[]>(); // anns of the CURRENT TASK, not all anns in project
-  const [currData, setCurrData] = useState<Data>(); // The data that's currently being shown. One piece of data
-  const [currAnns, setCurrAnns] = useState<Annotation[]>(); // The anns for the current data that's being shown. One piece of data can have multiple anns
+const selectLabel = (selected) => {
+  // const labs = [...labels];
+  // labs[indexOf(selected, labels, 'name')].active = !selected.active;
+  //
+  // // click on active, delete ann
+  // if (selected.active) {
+  //   const ann = currAnns.filter((a) => a.labelId == selected.labelId)[0];
+  //   console.log('filter ann ', ann);
+  //   annotationApi.remove(ann.annotationId);
+  // } else {
+  //   console.log('add ann', { taskId: task.taskId, labelId: selected.labelId });
+  //   annotationApi
+  //     .create({ taskId: task.taskId, labelId: selected.labelId, dataId: currData.dataId })
+  //     .catch((err) => {
+  //       console.log('err', err);
+  //     });
+  // }
+  //
+  // setLabels(labs);
+  // setCurrLabel(selected);
+  console.log('selectlabel', selectLabel);
+};
 
-  const [currLabel, setCurrLabel] = useState<Label>({ color: '', name: '' });
+const Page: React.FC = () => {
+  // const [project, setProject] = useState<Project>();
+  // const [labels, setLabels] = useState<Label[]>();
+  // const [tasks, setTasks] = useState<Task[]>();
+  // const [taskIdx, setTaskIdx] = useState<number>(0); // This is not taskId, this is the index of current task in tasks! They are DIFFERENT! It's mainly used for turning task
+  // const [task, setTask] = useState<Task>(); // current task
+  // const [datas, setDatas] = useState<Data[]>(); // datas of the CURRENT TASK, not all datas in project
+  // const [anns, setAnns] = useState<Annotation[]>(); // anns of the CURRENT TASK, not all anns in project
+  // const [currData, setCurrData] = useState<Data>(); // The data that's currently being shown. One piece of data
+  // const [currAnns, setCurrAnns] = useState<Annotation[]>(); // The anns for the current data that's being shown. One piece of data can have multiple anns
+  //
+  // const [currLabel, setCurrLabel] = useState<Label>({ color: '', name: '' });
   const [currTool, setCurrTool] = useState<ToolType>('mover');
-  const [progress, setProgress] = useState<number>(0);
-  const [imgSrc, setImgSrc] = useState<string>('');
+  // const [progress, setProgress] = useState<number>(0);
+  // const [imgSrc, setImgSrc] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
+  const project = ProjectUtils(useState);
+  const label = LabelUtils(useState, { pageOnSelect: selectLabel });
+  // const task = new TaskUtils(useState)
+  const task = TaskUtils(useState);
   const scale = ScaleUtils(useState);
+  const data = DataUtils(useState);
 
-  const nextTask = () => {
-    console.log('turning next ', taskIdx, tasks.length);
-    if (taskIdx + 1 >= tasks.length) {
-      message.error('This is the last task.');
-      return;
-    }
-    setTaskIdx(taskIdx + 1);
-  };
+  const projectId = serviceUtils.getQueryVariable('projectId');
+  console.log('projectId', projectId);
 
-  const prevTask = () => {
-    console.log('turning prev ', taskIdx, tasks.length);
-    if (taskIdx - 1 < 0) {
-      message.error('This is the first task.');
-      return;
-    }
-    setTaskIdx(taskIdx - 1);
-  };
+  useEffect(() => {
+    setLoading(true);
+    project.getCurr(projectId).then((res) => {
+      label.getAll(res.projectId);
+      task.getAll(res.projectId, 0);
+    });
+    setLoading(false);
+  }, [projectId]);
 
-  const selectLabel = (selected) => {
-    const labs = [...labels];
-    labs[indexOf(selected, labels, 'name')].active = !selected.active;
+  useEffect(() => {
+    if (!task.curr) return;
+    data.getAll(task.curr.taskId, 0);
+  }, [task.curr]);
 
-    // click on active, delete ann
-    if (selected.active) {
-      const ann = currAnns.filter((a) => a.labelId == selected.labelId)[0];
-      console.log('filter ann ', ann);
-      annotationApi.remove(ann.annotationId);
-    } else {
-      console.log('add ann', { taskId: task.taskId, labelId: selected.labelId });
-      annotationApi
-        .create({ taskId: task.taskId, labelId: selected.labelId, dataId: currData.dataId })
-        .catch((err) => {
-          console.log('err', err);
-        });
-    }
-
-    setLabels(labs);
-    setCurrLabel(selected);
-  };
+  // const nextTask = () => {
+  //   console.log('turning next ', taskIdx, tasks.length);
+  //   if (taskIdx + 1 >= tasks.length) {
+  //     message.error('This is the last task.');
+  //     return;
+  //   }
+  //   setTaskIdx(taskIdx + 1);
+  // };
+  //
+  // const prevTask = () => {
+  //   console.log('turning prev ', taskIdx, tasks.length);
+  //   if (taskIdx - 1 < 0) {
+  //     message.error('This is the first task.');
+  //     return;
+  //   }
+  //   setTaskIdx(taskIdx - 1);
+  // };
 
   // only load project and task once on page show
-  useEffect(() => {
-    async function update() {
-      try {
-        setLoading(true);
-        if (!project) {
-          const projectRes = await refreshProject();
-          const tasksRes = await projectApi.getTasks(projectRes.projectId);
-          const labelsRes = await projectApi.getLabels(projectRes.projectId);
-          setLabels(toDict(labelsRes));
-          setTasks(tasksRes);
-          setProject(projectRes);
-          setLoading(false);
-          return;
-        }
-
-        // update progress
-        getProgress(project.projectId).then((prog) => {
-          setProgress(prog);
-        });
-
-        // update task, datas, anns, currData, currAnns
-        setTask(tasks[taskIdx]);
-        const taskId = tasks[taskIdx].taskId;
-        taskApi.getAnnotations(taskId).then((annotations) => {
-          setAnns(annotations);
-        });
-        const newDatas = await taskApi.getDatas(taskId);
-        setDatas(newDatas);
-        const currentData = newDatas[0];
-        setCurrData(currentData);
-
-        const currAnnotations = await dataApi.getAnnotations(currentData.dataId);
-        setCurrAnns(currAnnotations);
-        setLabels(setLabelActive(labels, currAnnotations));
-
-        setImgSrc(`${baseUrl}/datas/${currentData.dataId}/image`);
-        console.log('hereraasdf', labels);
-
-        setLoading(false);
-      } catch (err) {
-        console.log(err);
-        serviceUtils.parseError(err as Response, message);
-      }
-    }
-    update();
-  }, [taskIdx, project]); // TODO: slice change
+  // useEffect(() => {
+  //   // async function update() {
+  //   //   try {
+  //   //     setLoading(true);
+  //   //     if (!project) {
+  //   //       const projectRes = await refreshProject();
+  //   //       const tasksRes = await projectApi.getTasks(projectRes.projectId);
+  //   //       const labelsRes = await projectApi.getLabels(projectRes.projectId);
+  //   //       setLabels(toDict(labelsRes));
+  //   //       setTasks(tasksRes);
+  //   //       setProject(projectRes);
+  //   //       setLoading(false);
+  //   //       return;
+  //   //     }
+  //   //
+  //   //     // update progress
+  //   //     getProgress(project.projectId).then((prog) => {
+  //   //       setProgress(prog);
+  //   //     });
+  //   //
+  //   //     // update task, datas, anns, currData, currAnns
+  //   //     setTask(tasks[taskIdx]);
+  //   //     const taskId = tasks[taskIdx].taskId;
+  //   //     taskApi.getAnnotations(taskId).then((annotations) => {
+  //   //       setAnns(annotations);
+  //   //     });
+  //   //     const newDatas = await taskApi.getDatas(taskId);
+  //   //     setDatas(newDatas);
+  //   //     const currentData = newDatas[0];
+  //   //     setCurrData(currentData);
+  //   //
+  //   //     const currAnnotations = await dataApi.getAnnotations(currentData.dataId);
+  //   //     setCurrAnns(currAnnotations);
+  //   //     setLabels(setLabelActive(labels, currAnnotations));
+  //   //
+  //   //     setImgSrc(`${baseUrl}/datas/${currentData.dataId}/image`);
+  //   //     console.log('hereraasdf', labels);
+  //   //
+  //   //     setLoading(false);
+  //   //   } catch (err) {
+  //   //     console.log(err);
+  //   //     serviceUtils.parseError(err as Response, message);
+  //   //   }
+  //   // }
+  //   // update();
+  // }, []); // TODO: slice change
 
   return (
     <PPLabelPageContainer className={styles.classes}>
@@ -176,26 +199,16 @@ const Page: React.FC = () => {
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
               onAnnotationModifyComplete={() => {}}
-              imgSrc={imgSrc}
+              imgSrc={`${baseUrl}/datas/${data.curr?.dataId}/image`}
             />
           </div>
           <div className={styles.pblock}>
             <div className={styles.progress}>
-              <Progress percent={progress} status="active" />
+              <Progress percent={50} status="active" />
             </div>
           </div>
-          <div
-            className={styles.prevTask}
-            onClick={() => {
-              prevTask();
-            }}
-          />
-          <div
-            className={styles.nextTask}
-            onClick={() => {
-              nextTask();
-            }}
-          />
+          <div className={styles.prevTask} onClick={() => task.turnTo(task.currIdx - 1)} />
+          <div className={styles.nextTask} onClick={() => task.turnTo(task.currIdx + 1)} />
         </Spin>
       </div>
       <PPToolBar disLoc="right">
@@ -205,17 +218,19 @@ const Page: React.FC = () => {
       {/*// TODO: move label widget out*/}
       <div className={styles.rightSideBar}>
         <PPLabelList
-          labels={labels}
-          selectedLabel={currLabel}
-          onLabelSelect={(label) => {
-            selectLabel(label);
-          }}
-          onLabelAdd={(label) => {
-            if (project?.projectId) addLabel(project.projectId, label, setLabels);
-          }}
-          onLabelDelete={(label) => {
-            deleteLabel(label, setLabels);
-          }}
+          labels={label.all}
+          selectedLabel={label.curr}
+          onLabelSelect={label.onSelect}
+          onLabelAdd={
+            label.onAdd
+            // (label) => {
+            // if (project?.projectId) addLabel(project.projectId, label, setLabels);}
+          }
+          onLabelDelete={
+            label.onDelete
+            // (label) => {
+            // deleteLabel(label, setLabels);}
+          }
           onLabelModify={() => {}}
         />
       </div>
