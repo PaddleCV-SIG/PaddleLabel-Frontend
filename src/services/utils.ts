@@ -89,15 +89,10 @@ export const ProjectUtils = (useState: UseStateType) => {
       return;
     }
 
-    // try {
     const projectRes = await projectApi.get(projectId);
     setAll([projectRes]);
     setCurrIdx(0);
     return projectRes;
-    // } catch (err) {
-    //   console.log('prject getcurr err', err);
-    //   serviceUtils.parseError(err, message);
-    // }
   };
 
   const remove = async (project: Project | number) => {
@@ -242,7 +237,7 @@ export const TaskUtils = (useState: UseStateType) => {
     setCurrIdx(turnToIdx);
   };
 
-  const getAll = async (projectId: number, turnToIdx: number) => {
+  const getAll = async (projectId: number, turnToIdx?: number) => {
     try {
       const allRes = await projectApi.getTasks(projectId);
       setAll(allRes);
@@ -254,7 +249,7 @@ export const TaskUtils = (useState: UseStateType) => {
       return allRes;
     } catch (err) {
       console.log('task getall err ', err);
-      serviceUtils.parseError(err, message);
+      return serviceUtils.parseError(err, message);
     }
   };
 
@@ -303,11 +298,11 @@ export const TaskUtils = (useState: UseStateType) => {
 
 export const AnnotationUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Annotation[]>();
-  const [currIdx, setCurrIdx] = useState<number>();
+  const [currIdx, setCurrIdx] = useState<number | undefined>();
 
   const getAll = async (dataId: number) => {
     try {
-      const annRes: Annotation = await dataApi.getAnnotations(dataId);
+      const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
       for (const ann of annRes) ann.active = false;
       setAll(annRes);
       return annRes;
@@ -317,39 +312,42 @@ export const AnnotationUtils = (useState: UseStateType) => {
     }
   };
 
-  const create = async (values) => {
-    console.log('create', values);
+  const create = async (annotation: Annotation) => {
+    console.log('create', annotation);
     try {
-      const newAnn = await annotationApi.create(values);
-      getAll(values.dataId);
+      const newAnn = await annotationApi.create(annotation);
+      if (annotation.dataId) getAll(annotation.dataId);
       return newAnn;
     } catch (err) {
       console.log('annotation create err', err);
-      serviceUtils.parseError(err, message);
+      return serviceUtils.parseError(err, message);
     }
   };
 
   const remove = async (annotation: number | Annotation) => {
-    let annId = annotation;
     console.log('typeof', typeof annotation);
-    if (typeof annotation != 'number') annId = annotation.annotationId;
+    const annId = typeof annotation != 'number' ? annotation.annotationId : annotation;
     try {
-      await annotationApi.remove(annId);
-      setAll(all.filter((a) => a.annotationId != annotation.annotationId));
+      if (annId) await annotationApi.remove(annId);
+      setAll(all.filter((a) => a.annotationId != annId));
     } catch (err) {
       console.log('annotation remove err', err);
-      serviceUtils.parseError(err, message);
+      return serviceUtils.parseError(err, message);
     }
   };
 
-  const setCurr = async (annotation: Annotation | undefined) => {
+  const setCurr = async (annotation: Annotation | undefined, label: any) => {
     console.log('annotation onselect', annotation);
-    if (annotation == undefined) setCurrIdx(undefined);
+    if (annotation == undefined) {
+      setCurrIdx(undefined);
+      return;
+    }
     for (const ann of all) ann.active = false;
     const selected = all.filter((ann) => ann.annotationId == annotation.annotationId)[0];
     selected.active = !annotation.active;
     const idx = indexOf(selected, all, 'annotationId');
     setCurrIdx(idx);
+    // FIXME: label is not defined.
     label.setCurr(annotation.labelId);
     setAll([...all]);
   };
@@ -361,18 +359,17 @@ export const AnnotationUtils = (useState: UseStateType) => {
     remove,
     setCurr,
     get curr() {
-      if (!all) return undefined;
+      if (!all || !currIdx) return undefined;
       return all[currIdx];
     },
   };
 };
 
 export const DataUtils = (useState: UseStateType) => {
-  // const [curr, setCurr] = useState<Data>();
   const [currIdx, setCurrIdx] = useState<number>();
   const [all, setAll] = useState<Data[]>([]);
 
-  const turnTo = async (turnToIdx) => {
+  const turnTo = async (turnToIdx: number) => {
     setCurrIdx(turnToIdx);
   };
 
@@ -387,7 +384,7 @@ export const DataUtils = (useState: UseStateType) => {
       return allRes;
     } catch (err) {
       console.log('data getall err ', err);
-      serviceUtils.parseError(err, message);
+      return serviceUtils.parseError(err, message);
     }
   };
 
@@ -407,11 +404,19 @@ export const DataUtils = (useState: UseStateType) => {
         );
         return `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`;
       }
+      return ``;
     },
   };
 };
 
-export const PageInit = (useState: UseStateType, useEffect: UseStateType, props = {}) => {
+export const PageInit = (
+  useState: UseStateType,
+  useEffect: UseEffectType,
+  props: {
+    effectTrigger?: any;
+    label?: Label;
+  } = {},
+) => {
   if (!props.effectTrigger) props.effectTrigger = {};
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -419,17 +424,19 @@ export const PageInit = (useState: UseStateType, useEffect: UseStateType, props 
   const task = TaskUtils(useState);
   const data = DataUtils(useState);
   const project = ProjectUtils(useState);
+  //FIXME: What's the type of props.label?
   const label = LabelUtils(useState, props.label);
   const annotation = AnnotationUtils(useState);
 
   useEffect(() => {
     // onload, get project, label, task info
-    const projectId = serviceUtils.getQueryVariable('projectId');
-    if (projectId == undefined) {
+    const projectIdStr = serviceUtils.getQueryVariable('projectId');
+    if (projectIdStr == undefined) {
       history.push('/');
       return;
     }
-    project.getCurr(projectId).catch((err) => {
+    const projectId = parseInt(projectIdStr);
+    project.getCurr(projectIdStr).catch((err) => {
       serviceUtils.parseError(err, message);
       history.push('/');
       return;
@@ -437,12 +444,12 @@ export const PageInit = (useState: UseStateType, useEffect: UseStateType, props 
     label.getAll(projectId);
     task.getAll(projectId);
     task.getProgress(projectId);
-  }, []);
+  }, [label, project, task]);
 
   useEffect(() => {
     // when all task is set, set current task
     if (task.all && task.all.length != 0) task.turnTo(0);
-  }, [task.all]);
+  }, [task, task.all]);
 
   useEffect(() => {
     // when current task is set, get task's data, data's annotation, toggle label active
@@ -450,18 +457,21 @@ export const PageInit = (useState: UseStateType, useEffect: UseStateType, props 
 
     const onTaskChange = async () => {
       console.log('onTaskChange', task.curr, label.all, task.progress);
-      task.getProgress(task.curr.projectId);
-      const [allData, currData] = await data.getAll(task.curr.taskId, 0);
-      console.log(allData);
-      const allAnns = await annotation.getAll(currData.dataId);
-      if (label.all) for (const lab of label.all) lab.active = false;
-      if (props.effectTrigger.postTaskChange)
-        props.effectTrigger.postTaskChange(label.all, allAnns);
+      if (task.curr?.projectId) task.getProgress(task.curr.projectId);
+      if (task.curr?.taskId) {
+        const [allData, currData] = await data.getAll(task.curr.taskId, 0);
+
+        console.log(allData);
+        const allAnns = await annotation.getAll(currData.dataId);
+        if (label.all) for (const lab of label.all) lab.active = false;
+        if (props.effectTrigger.postTaskChange)
+          props.effectTrigger.postTaskChange(label.all, allAnns);
+      }
 
       setLoading(false);
     };
     onTaskChange();
-  }, [task.currIdx]);
+  }, [annotation, data, label.all, props.effectTrigger, task, task.currIdx]);
 
   return [loading, setLoading, scale, annotation, task, data, project, label];
 };
