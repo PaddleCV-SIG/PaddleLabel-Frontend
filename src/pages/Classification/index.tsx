@@ -105,8 +105,11 @@ const Page: React.FC = () => {
           </div>
           <div className={styles.pblock}>
             <div className={styles.progress}>
-              <Progress percent={task.progress} status="active" /> {task.currIdx} {task.all?.length}{' '}
-              {task.finished}
+              <Progress percent={task.progress} status="active" showInfo={false} />{' '}
+              <span style={styles.progressDesc}>
+                Current labeling {task.currIdx} of {task.all?.length}. Already labeled{' '}
+                {task.finished}.
+              </span>
             </div>
           </div>
           <div className={styles.prevTask} onClick={task.prevTask} />

@@ -41,15 +41,6 @@ export type PPCardProps = {
   project: Project;
 };
 
-function buildDataDir(dataDirs: string[]) {
-  let res = '';
-  for (const dataDir of dataDirs) {
-    if (dataDir.endsWith('/')) res += dataDir;
-    else res += dataDir + '/';
-  }
-  return res;
-}
-
 const PPCreater: React.FC<PPCardProps> = (props) => {
   console.log('render ppcreater', props);
   const projects = ProjectUtils(useState);
@@ -63,7 +54,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
           name: values.name,
           description: values.description,
           taskCategoryId: createInfo[props.taskCategory]['id'],
-          dataDir: buildDataDir(values.dataDir),
+          dataDir: values.dataDir,
           labelDir: values.labelDir,
         })
         .then((project) => {
@@ -75,7 +66,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
         .update(projectId, {
           name: values.name,
           description: values.description,
-          dataDir: buildDataDir(values.dataDir),
+          dataDir: values.dataDir,
           labelDir: values.labelDir,
         })
         .then(() => {

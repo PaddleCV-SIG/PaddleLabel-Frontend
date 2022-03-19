@@ -60,17 +60,18 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
         {eye}
         {label.name}
         {colorPicker}
-        <a
-          className={styles.delete}
-          style={{
-            backgroundImage: 'url(./pics/delete.png)',
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            props.onLabelDelete(label);
-          }}
-        />
       </Space>
+
+      <a
+        className={styles.delete}
+        style={{
+          backgroundImage: 'url(./pics/delete.png)',
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          props.onLabelDelete(label);
+        }}
+      />
     </List.Item>
   );
   return item;
