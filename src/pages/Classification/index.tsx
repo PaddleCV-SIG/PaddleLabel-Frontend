@@ -7,7 +7,7 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
-import { Progress, message, Spin } from 'antd';
+import { Progress, message, Spin, Space } from 'antd';
 import type { Label, Project, Task, Data } from '@/services';
 import serviceUtils from '@/services/serviceUtils';
 import { PageInit } from '@/services/utils';
@@ -105,8 +105,13 @@ const Page: React.FC = () => {
           </div>
           <div className={styles.pblock}>
             <div className={styles.progress}>
-              <Progress percent={task.progress} status="active" showInfo={false} />{' '}
-              <span style={styles.progressDesc}>
+              <Progress
+                className={styles.progressBar}
+                percent={task.progress}
+                status="active"
+                showInfo={false}
+              />{' '}
+              <span className={styles.progressDesc}>
                 Current labeling {task.currIdx} of {task.all?.length}. Already labeled{' '}
                 {task.finished}.
               </span>

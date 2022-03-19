@@ -53,8 +53,28 @@
       background-color: white;
 
       .progress {
-        width: 15rem;
+        width: 100%;
         margin: 0 auto;
+        text-align: center;
+
+        .progressBar {
+          width: 15rem;
+          :global {
+            .ant-progress-inner {
+              margin-top: 7px;
+              vertical-align: top;
+            }
+            .ant-progress-inner,
+            .ant-progress-outer {
+              width: 15rem;
+            }
+          }
+        }
+        .progressDesc {
+          margin-left: 10px;
+          font-size: 15px;
+          line-height: 40px;
+        }
       }
     }
   }
