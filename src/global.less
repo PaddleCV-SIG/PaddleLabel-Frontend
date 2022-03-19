@@ -54,6 +54,85 @@ ol {
   }
 }
 
+.mainStage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background-color: gray;
+
+  .prevTask {
+    position: absolute;
+    top: 40%;
+    left: 30px;
+    width: 72px;
+    height: 72px;
+    background-image: url('../public/pics/buttons/left_clicked.png');
+    opacity: 0.5;
+    &:hover {
+      cursor: pointer;
+      opacity: 1;
+    }
+  }
+  .nextTask {
+    position: absolute;
+    top: 40%;
+    right: 30px;
+    width: 72px;
+    width: 72px;
+    height: 72px;
+    height: 72px;
+    background-image: url('../public/pics/buttons/right_clicked.png');
+    opacity: 0.5;
+    &:hover {
+      cursor: pointer;
+      opacity: 1;
+    }
+  }
+
+  .draw {
+    height: 100% - 4.85rem;
+    // overflow-x: scroll;
+  }
+  .pblock {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2.55rem;
+    background-color: white;
+    user-select: none;
+
+    .progress {
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+
+      .progressBar {
+        width: 15rem;
+        :global {
+          .ant-progress-inner {
+            margin-top: 7px;
+            vertical-align: top;
+          }
+          .ant-progress-inner,
+          .ant-progress-outer {
+            width: 15rem;
+          }
+        }
+      }
+      .progressDesc {
+        margin-left: 10px;
+        font-size: 15px;
+        line-height: 40px;
+      }
+    }
+  }
+}
+.rightSideBar {
+  width: 330px;
+  border-left: 4px solid #ddd;
+}
+
 // Compatible with IE11
 @media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
   body .ant-design-pro > .ant-layout {

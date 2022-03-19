@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
@@ -7,9 +6,7 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
-import { Progress, message, Spin, Space } from 'antd';
-import type { Label, Project, Task, Data } from '@/services';
-import serviceUtils from '@/services/serviceUtils';
+import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
 
 const baseUrl = localStorage.getItem('basePath');
@@ -18,7 +15,17 @@ export type ToolType = 'mover' | undefined;
 
 const Page: React.FC = () => {
   const [currTool, setCurrTool] = useState<ToolType>('mover');
-  const selectLabel = (selected) => {
+
+  const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
+    useState,
+    useEffect,
+    {
+      label: { oneHot: false, postSetCurr: selectLabel },
+      effectTrigger: { postTaskChange: postTaskChange },
+    },
+  );
+
+  function selectLabel(selected) {
     // after toggle is active, add ann
     console.log('selectLabel', task.curr, data.curr, annotation.all);
 
@@ -34,8 +41,9 @@ const Page: React.FC = () => {
       annotation.remove(ann.annotationId);
     }
     console.log('selectlabel', selected);
-  };
-  const postTaskChange = (labels, annotations) => {
+  }
+
+  function postTaskChange(labels, annotations) {
     if (!labels) return;
     for (const lab of labels) {
       const annOfLabel = annotations.filter((ann) => ann.label.labelId == lab.labelId);
@@ -43,15 +51,7 @@ const Page: React.FC = () => {
     }
     console.log('label.all toggled', label.all);
     label.setAll([...labels]);
-  };
-  const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
-    useState,
-    useEffect,
-    {
-      label: { oneHot: false, postSetCurr: selectLabel },
-      effectTrigger: { postTaskChange: postTaskChange },
-    },
-  );
+  }
 
   return (
     <PPLabelPageContainer className={styles.classes}>
@@ -90,9 +90,9 @@ const Page: React.FC = () => {
           Move
         </PPToolBarButton>
       </PPToolBar>
-      <div id="dr" className={styles.mainStage}>
+      <div id="dr" className="mainStage">
         <Spin tip="loading" spinning={loading}>
-          <div className={styles.draw}>
+          <div className="draw">
             <PPStage
               scale={scale.curr}
               currentTool={currTool}
@@ -103,22 +103,22 @@ const Page: React.FC = () => {
               imgSrc={data.imgSrc}
             />
           </div>
-          <div className={styles.pblock}>
-            <div className={styles.progress}>
+          <div className="pblock">
+            <div className="progress">
               <Progress
-                className={styles.progressBar}
+                className="progressBar"
                 percent={task.progress}
                 status="active"
                 showInfo={false}
               />{' '}
-              <span className={styles.progressDesc}>
+              <span className="progressDesc">
                 Current labeling {task.currIdx} of {task.all?.length}. Already labeled{' '}
                 {task.finished}.
               </span>
             </div>
           </div>
-          <div className={styles.prevTask} onClick={task.prevTask} />
-          <div className={styles.nextTask} onClick={task.nextTask} />
+          <div className="prevTask" onClick={task.prevTask} />
+          <div className="nextTask" onClick={task.nextTask} />
         </Spin>
       </div>
       <PPToolBar disLoc="right">
@@ -126,7 +126,7 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Split Dataset</PPToolBarButton>
       </PPToolBar>
       {/*// TODO: move label widget out*/}
-      <div className={styles.rightSideBar}>
+      <div className="rightSideBar">
         <PPLabelList
           labels={label.all}
           onLabelSelect={label.setCurr}
