@@ -15,6 +15,7 @@ import { Button, Progress, Spin, message } from 'antd';
 import { PageInit } from '@/services/utils';
 import { backwardHistory, initHistory, recordHistory } from '@/components/history';
 import type { Annotation } from '@/models/Annotation';
+import { ToolType } from '@/models/ToolType';
 
 const Page: React.FC = () => {
   const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
@@ -26,7 +27,7 @@ const Page: React.FC = () => {
     },
   );
 
-  annotation.const[(currentTool, setCurrentTool)] = useState<ToolType>(undefined);
+  const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
 
