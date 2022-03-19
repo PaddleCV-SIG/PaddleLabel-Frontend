@@ -15,8 +15,6 @@ import PPPolygon from '@/components/PPLabelPage/PPPolygon';
 import drawBrush from '@/components/PPLabelPage/PPBrush/drawBrush';
 import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
 
-export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
-
 export const MOST_HISTORY_STEPS = 40;
 
 export type HistoryType = {

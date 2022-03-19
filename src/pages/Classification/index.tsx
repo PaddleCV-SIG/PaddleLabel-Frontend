@@ -11,8 +11,6 @@ import { PageInit } from '@/services/utils';
 
 const baseUrl = localStorage.getItem('basePath');
 
-export type ToolType = 'mover' | undefined;
-
 const Page: React.FC = () => {
   const [currTool, setCurrTool] = useState<ToolType>('mover');
 

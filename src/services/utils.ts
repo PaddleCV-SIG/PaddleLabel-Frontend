@@ -5,6 +5,9 @@ import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services';
 import { ProjectApi, TaskApi, DataApi, AnnotationApi, LabelApi } from '@/services';
 import { Configuration } from '@/services';
+import { DependencyList, Dispatch, EffectCallback, SetStateAction } from 'react';
+import { Label } from '@/models/Label';
+import { Annotation } from '@/models/Annotation';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -14,6 +17,9 @@ const taskApi = new TaskApi(config);
 const dataApi = new DataApi(config);
 const annotationApi = new AnnotationApi(config);
 const labelApi = new LabelApi(config);
+
+export type UseStateType = <S>(initialState?: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
+export type UseEffectType = (effect: EffectCallback, deps?: DependencyList | undefined) => void;
 
 // TODO: all should default to undefined or []
 // TODO: check create for missing xxId
@@ -40,7 +46,7 @@ export const indexOf = (item: any, arr: any[], key: string) => {
   return undefined;
 };
 
-export const ScaleUtils = (useState, range: number[] = [0.1, 3]) => {
+export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 3]) => {
   const [curr, setCurr] = useState<number>(1);
 
   const change = (delta: number) => {
@@ -60,7 +66,7 @@ export const ScaleUtils = (useState, range: number[] = [0.1, 3]) => {
   return { curr, change };
 };
 
-export const ProjectUtils = (useState) => {
+export const ProjectUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Project[]>([]);
   const [currIdx, setCurrIdx] = useState<number>();
 
@@ -72,10 +78,11 @@ export const ProjectUtils = (useState) => {
     } catch (err) {
       console.log('project getAll err', err);
       serviceUtils.parseError(err, message);
+      return;
     }
   };
 
-  const getCurr = async (projectId) => {
+  const getCurr = async (projectId: string) => {
     if (projectId == undefined) return undefined;
     if (all.length > 1) {
       message.error('Currently have multiple projects stored, use turnTo instead');
@@ -100,20 +107,20 @@ export const ProjectUtils = (useState) => {
     getAll();
   };
 
-  const create = async (values) => {
+  const create = async (project: Project) => {
     try {
-      const newProject = await projectApi.create(values);
+      const newProject = await projectApi.create(project);
       console.log(newProject);
       return newProject;
     } catch (err) {
       console.log('project create err', err);
-      serviceUtils.parseError(err, message);
+      return serviceUtils.parseError(err, message);
     }
   };
 
-  const update = async (projectId, values) => {
+  const update = async (projectId: number, project: Project) => {
     projectApi
-      .update(projectId, values)
+      .update(projectId, project)
       .then((res) => {
         console.log('project update res', res);
       })
@@ -137,26 +144,29 @@ export const ProjectUtils = (useState) => {
   };
 };
 
-export const LabelUtils = (useState, { oneHot = true, postSetCurr }) => {
+export const LabelUtils = (
+  useState: UseStateType,
+  { oneHot = true, postSetCurr }: { oneHot: boolean; postSetCurr: (label: Label) => void },
+) => {
   const [all, setAll] = useState<Label[]>();
   const [currIdx, setCurrIdx] = useState<number>();
-  const [isOneHot, setOneHot] = useState<bool>(oneHot);
+  const [isOneHot, setOneHot] = useState<boolean>(oneHot);
 
   const getAll = async (projectId: number) => {
     try {
-      const labelsRes = await projectApi.getLabels(projectId);
+      const labelsRes: Label[] = await projectApi.getLabels(projectId);
       for (const lab of labelsRes) lab.active = false;
       setAll(labelsRes);
       return labelsRes;
     } catch (err) {
       console.log('label getall err ', err);
-      serviceUtils.parseError(err, message);
+      return serviceUtils.parseError(err, message);
     }
   };
 
   const setCurr = (label: Label | number) => {
-    let idx = label;
-    if (!(typeof label == 'number')) idx = indexOf(label, all, 'labelId');
+    let idx = typeof label == 'number' ? label : indexOf(label, all, 'labelId');
+    idx = idx ? idx : 0;
     setCurrIdx(idx);
     console.log('onehot', isOneHot);
     if (isOneHot) {
@@ -170,19 +180,19 @@ export const LabelUtils = (useState, { oneHot = true, postSetCurr }) => {
     setAll([...all]);
   };
 
-  const create = async (values) => {
+  const create = async (label: Label) => {
     try {
-      const newLabel = await labelApi.create(values);
+      const newLabel: Label = await labelApi.create(label);
       // getAll(values.projectId);
       newLabel.active = false;
       setAll([...all, newLabel]);
       return newLabel;
     } catch (err) {
       console.log('label create err', err);
-      serviceUtils.parseError(err, message);
+      return serviceUtils.parseError(err, message);
     }
   };
-  const remove = async (label) => {
+  const remove = async (label: Label) => {
     console.log('remove label', label);
     try {
       await labelApi.remove(label.labelId);
@@ -213,12 +223,12 @@ export const LabelUtils = (useState, { oneHot = true, postSetCurr }) => {
   };
 };
 
-export const TaskUtils = (useState) => {
+export const TaskUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Task[]>();
   const [currIdx, setCurrIdx] = useState<number>();
   const [progress, setProgress] = useState<number>();
 
-  const turnTo = (turnToIdx) => {
+  const turnTo = (turnToIdx: number) => {
     // if (!all) {console.log("no all");return;}
     if (turnToIdx < 0) {
       message.error('This is the first image. No previous image.');
@@ -248,9 +258,10 @@ export const TaskUtils = (useState) => {
     }
   };
 
-  const getProgress = async (projectId): number => {
+  const getProgress = async (projectId: number): Promise<number> => {
     try {
       const stat = await projectApi.getProgress(projectId);
+      if (!stat || !stat.finished || !stat.total) throw Error('empty progress');
       const prog = Math.ceil((stat.finished / stat.total) * 100);
       console.log('progress', stat, prog);
       setProgress(prog);
@@ -290,19 +301,19 @@ export const TaskUtils = (useState) => {
   };
 };
 
-export const AnnotationUtils = (useState) => {
+export const AnnotationUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Annotation[]>();
   const [currIdx, setCurrIdx] = useState<number>();
 
   const getAll = async (dataId: number) => {
     try {
-      const annRes = await dataApi.getAnnotations(dataId);
+      const annRes: Annotation = await dataApi.getAnnotations(dataId);
       for (const ann of annRes) ann.active = false;
-      await setAll(annRes);
+      setAll(annRes);
       return annRes;
     } catch (err) {
       console.log('ann getAll err', err);
-      serviceUtils.parseError(err, message);
+      return serviceUtils.parseError(err, message);
     }
   };
 
@@ -356,7 +367,7 @@ export const AnnotationUtils = (useState) => {
   };
 };
 
-export const DataUtils = (useState) => {
+export const DataUtils = (useState: UseStateType) => {
   // const [curr, setCurr] = useState<Data>();
   const [currIdx, setCurrIdx] = useState<number>();
   const [all, setAll] = useState<Data[]>([]);
@@ -400,7 +411,7 @@ export const DataUtils = (useState) => {
   };
 };
 
-export const PageInit = (useState, useEffect, props = {}) => {
+export const PageInit = (useState: UseStateType, useEffect: UseStateType, props = {}) => {
   if (!props.effectTrigger) props.effectTrigger = {};
 
   const [loading, setLoading] = useState<boolean>(false);

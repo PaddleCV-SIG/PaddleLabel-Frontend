@@ -1,7 +1,11 @@
 import type { MessageApi } from 'antd/lib/message';
 
 const serviceUtils = () => {
-  const parseError = async (err: Response, msgComponent: MessageApi, defaultErrMsg?: string) => {
+  const parseError = async (
+    err: Response | any,
+    msgComponent: MessageApi,
+    defaultErrMsg?: string,
+  ) => {
     const defaultErrStr = defaultErrMsg
       ? defaultErrMsg
       : 'Something unexpected happened, please try again later.';

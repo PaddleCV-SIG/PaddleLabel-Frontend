@@ -8,24 +8,13 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
-import type { Label, Annotation } from '@/models/';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import PPRectangle from '@/components/PPLabelPage/PPRectangle';
 import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
 import { Button, Progress, Spin, message } from 'antd';
 import { PageInit } from '@/services/utils';
-
-export type ToolType = 'polygon' | 'mover' | undefined;
-
-const MOST_HISTORY_STEPS = 40;
-
-type HistoryType = {
-  index: number;
-  items: {
-    currentAnnotation?: Annotation<any>; // TODO: remove this
-    annotations: Annotation<any>[];
-  }[];
-};
+import { backwardHistory, initHistory, recordHistory } from '@/components/history';
+import type { Annotation } from '@/models/Annotation';
 
 const Page: React.FC = () => {
   const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
@@ -37,7 +26,7 @@ const Page: React.FC = () => {
     },
   );
 
-  const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
+  annotation.const[(currentTool, setCurrentTool)] = useState<ToolType>(undefined);
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
 
@@ -47,60 +36,8 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
-    localStorage.removeItem('history');
-    recordHistory([]);
+    initHistory();
   }, []);
-
-  function recordHistory(annos: Annotation<any>[], anno?: Annotation<any>) {
-    const historyStr = localStorage.getItem('history');
-    const history: HistoryType = historyStr ? JSON.parse(historyStr) : { index: -1, items: [] };
-    const newItem = { currentAnnotation: anno, annotations: annos };
-    if (JSON.stringify(history.items[history.index]) == JSON.stringify(newItem)) {
-      return;
-    }
-    const earliestIndex =
-      history.index > MOST_HISTORY_STEPS ? history.index - MOST_HISTORY_STEPS : 0;
-    const itemsToKeep = history.items.splice(
-      earliestIndex,
-      history.index == 0 ? 1 : history.index + 1,
-    );
-    history.items = itemsToKeep.concat([newItem]);
-    if (history.index <= MOST_HISTORY_STEPS) history.index++;
-    else history.index = MOST_HISTORY_STEPS + 1;
-    localStorage.setItem('history', JSON.stringify(history));
-  }
-
-  const forwardHistory = () => {
-    const historyStr = localStorage.getItem('history');
-    if (!historyStr) {
-      return;
-    }
-    const history: HistoryType = JSON.parse(historyStr);
-    if (!history) {
-      return;
-    }
-    if (history.index >= history.items.length - 1) {
-      return;
-    }
-    history.index++;
-    localStorage.setItem('history', JSON.stringify(history));
-    const item = history.items[history.index];
-    setCurrentAnnotationRaw(item.currentAnnotation);
-    setAnnotations(item.annotations);
-  };
-
-  const backwardHistory = () => {
-    const historyStr = localStorage.getItem('history');
-    if (!historyStr) return;
-    const history: HistoryType = JSON.parse(historyStr);
-    if (!history || !history.index) return;
-    if (history.index <= 0) return; // already the latest
-    history.index--;
-    localStorage.setItem('history', JSON.stringify(history));
-    const item = history.items[history.index];
-    setCurrentAnnotationRaw(item.currentAnnotation);
-    setAnnotations(item.annotations);
-  };
 
   const onAnnotationModify = (annotation: Annotation<any>) => {
     const newAnnos: Annotation<any>[] = [];
@@ -127,7 +64,7 @@ const Page: React.FC = () => {
     },
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
-      recordHistory(annotations, currentAnnotation);
+      recordHistory({ annos: annotations, currAnno: currentAnnotation });
     },
   });
 
@@ -181,7 +118,9 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
-            backwardHistory();
+            const res = backwardHistory();
+            setAnnotations(res.annos);
+            setCurrentAnnotation(res.currAnno);
           }}
         >
           Undo
