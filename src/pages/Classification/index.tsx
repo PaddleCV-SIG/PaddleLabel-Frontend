@@ -11,7 +11,6 @@ import { ToolType } from '@/models/ToolType';
 
 const Page: React.FC = () => {
   const [currTool, setCurrTool] = useState<ToolType>('mover');
-
   const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
     useState,
     useEffect,
@@ -23,8 +22,7 @@ const Page: React.FC = () => {
 
   function selectLabel(selected) {
     // after toggle is active, add ann
-    console.log('selectLabel', task.curr, data.curr, annotation.all);
-
+    // console.log('selectLabel', task.curr, data.curr, annotation.all);
     if (selected.active) {
       annotation.create({
         taskId: task.curr.taskId,

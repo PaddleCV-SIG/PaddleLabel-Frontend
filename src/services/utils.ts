@@ -55,7 +55,7 @@ export const indexOf = (item: any, arr: any[], key: string) => {
 export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) => {
   const [curr, setCurr] = useState<number>(1);
 
-  const setScale = (scale: number) => {
+  function setScale(scale: number) {
     let s = scale;
     if (s < range[0]) {
       s = range[0];
@@ -66,7 +66,7 @@ export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) 
       message.error('Largest scale is ' + range[1]);
     }
     setCurr(s);
-  };
+  }
 
   function change(delta: number) {
     setScale(curr + delta);
@@ -75,53 +75,59 @@ export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) 
 };
 
 export const ProjectUtils = (useState: UseStateType) => {
-  const [all, setAll] = useState<Project[]>([]);
+  const [all, setAll] = useState<Project[]>();
   const [currIdx, setCurrIdx] = useState<number>();
 
-  const getAll = async () => {
+  async function getAll() {
     try {
-      const projectsRes = await projectApi.getAll();
-      setAll(projectsRes);
-      return projectsRes;
+      const projects = await projectApi.getAll();
+      setAll(projects);
+      return projects;
     } catch (err) {
       console.log('project getAll err', err);
       serviceUtils.parseError(err, message);
       return;
     }
-  };
+  }
 
-  const getCurr = async (projectId: string) => {
+  async function getCurr(projectId: string) {
     if (projectId == undefined) return undefined;
-    if (all.length > 1) {
+    if (all && all.length > 1) {
       message.error('Currently have multiple projects stored, use turnTo instead');
       return;
     }
 
-    const projectRes = await projectApi.get(projectId);
-    setAll([projectRes]);
+    const project = await projectApi.get(projectId);
+    setAll([project]);
     setCurrIdx(0);
-    return projectRes;
-  };
+    return project;
+  }
 
-  const remove = async (project: Project | number) => {
+  async function turnTo(turnToIdx: number) {
+    setCurrIdx(turnToIdx);
+    return all[turnToIdx];
+  }
+
+  async function remove(project: Project | number) {
     console.log('remove project', project);
-    if (typeof project == 'number') await projectApi.remove(project);
-    else await projectApi.remove(project.projectId);
+    const projectId = typeof project == 'number' ? project : project.projectId;
+    // if (typeof project == 'number') await projectApi.remove(project);
+    // else await projectApi.remove(project.projectId);
+    await projectApi.remove(projectId);
     getAll();
-  };
+  }
 
-  const create = async (project: Project) => {
+  async function create(project: Project) {
     try {
       const newProject = await projectApi.create(project);
-      console.log(newProject);
       return newProject;
     } catch (err) {
       console.log('project create err', err);
       return serviceUtils.parseError(err, message);
     }
-  };
+  }
 
-  const update = async (projectId: number, project: Project) => {
+  async function update(projectId: number, project: Project) {
     projectApi
       .update(projectId, project)
       .then((res) => {
@@ -131,17 +137,18 @@ export const ProjectUtils = (useState: UseStateType) => {
         console.log('project update err ', err);
         serviceUtils.parseError(err, message);
       });
-  };
+  }
 
   return {
     all,
     getAll,
     getCurr,
+    turnTo,
     remove,
     create,
     update,
     get curr() {
-      if (currIdx == undefined) return undefined;
+      if (!all) return undefined;
       return all[currIdx];
     },
   };
