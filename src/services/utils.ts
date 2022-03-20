@@ -224,10 +224,16 @@ export const LabelUtils = (
   }
 
   function setCurr(label: Label | number) {
+    console.log('setCurr', label);
     if (!oneHot) throw Error("multi select task doesn't have current label");
-    const labelId = typeof label == 'number' ? label : label.labelId;
-    setCurrIdx(indexOf(labelId, all, 'labelId'));
-    setActiveIds(new Set([labelId]));
+    if (!label) return;
+    let labelId = typeof label == 'number' ? label : label.labelId;
+    labelId = indexOf(labelId, all, 'labelId');
+    if (labelId) {
+      console.log('setCurr index:', labelId);
+      setCurrIdx(labelId);
+      setActiveIds(new Set([labelId]));
+    }
   }
 
   function initActive(annotations: Annotation[]) {
@@ -262,7 +268,7 @@ export const LabelUtils = (
     return activeIds.has(labelId);
   }
 
-  const toggleOneHot = (target: bool) => {
+  const toggleOneHot = (target: boolean) => {
     if (target != undefined) setOneHot(target);
     else setOneHot(!isOneHot);
   };
@@ -351,7 +357,7 @@ export const TaskUtils = (useState: UseStateType) => {
 
 export function AnnotationUtils(
   useState: UseStateType,
-  { label = undefined, project = undefined }: { label: any; project: any } = {},
+  { label = undefined, project = undefined }: { label: any; project: any },
 ) {
   const [all, setAll] = useState<Annotation[]>();
   const [currIdx, setCurrIdx] = useState<number | undefined>();
@@ -359,19 +365,21 @@ export function AnnotationUtils(
   const [activeIds, setActiveIds] = useState(new Set());
 
   const getAll = async (dataId: number) => {
-    if (dataId == undefined) return;
+    if (dataId == undefined) return [];
     try {
       const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
       setAll(annRes);
       return annRes;
     } catch (err) {
       console.log('ann getAll err', err);
-      return serviceUtils.parseError(err, message);
+      serviceUtils.parseError(err, message);
+      return [];
     }
   };
 
   const create = async (annotation: Annotation) => {
     try {
+      if (annotation.label) annotation.labelId = annotation.label.id;
       const newAnn = await annotationApi.create(annotation);
       let annRes = [];
       // sync anns from backend
@@ -391,7 +399,7 @@ export function AnnotationUtils(
     try {
       await annotationApi.remove(annId);
       // setAll(all.filter((a) => a.annotationId != annId));
-      if (all && all.length) {
+      if (all && all.length && all[0].dataId) {
         const anns = await getAll(all[0].dataId);
         if (anns.length == 0) project.getProgress();
       }
@@ -402,9 +410,15 @@ export function AnnotationUtils(
   };
 
   const setCurr = async (annotation: Annotation | undefined) => {
+    console.log('setCurr', annotation);
     if (annotation == undefined) {
       setCurrIdx(undefined);
       return;
+    }
+    const index = indexOf(annotation, all, 'annotationId');
+    if (!index) {
+      // create if not exist
+      await create(annotation);
     }
     setCurrIdx(indexOf(annotation, all, 'annotationId'));
     setActiveIds(new Set([annotation.annotationId]));
@@ -494,7 +508,7 @@ export const PageInit = (
   props: {
     effectTrigger?: any;
     label: { oneHot: boolean; postSetCurr?: (label: Label) => void };
-    annotation: {};
+    annotation?: Annotation;
   },
 ) => {
   if (!props.effectTrigger) props.effectTrigger = {};

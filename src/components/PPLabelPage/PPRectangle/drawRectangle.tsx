@@ -77,11 +77,9 @@ function drawRectangle(
           onDrag(newAnno);
         }}
         onMouseOver={() => {
-          console.log(`Circle onMouseOver`);
           if (currentTool == 'editor') document.body.style.cursor = 'pointer';
         }}
         onMouseOut={() => {
-          console.log(`Circle onMouseOut`);
           document.body.style.cursor = 'default';
         }}
         x={x}
@@ -151,6 +149,7 @@ export default function (props: {
   onAnnotationModify: (annotation: Annotation<PPRectangleType>) => void;
   onMouseUp: () => void;
 }) {
+  console.log('currentAnnotation', props.currentAnnotation);
   const startNewRectangle = (
     e: Konva.KonvaEventObject<MouseEvent>,
     offsetX: number,
@@ -159,20 +158,6 @@ export default function (props: {
   ) => {
     const mouseX = e.evt.offsetX + offsetX / scale;
     const mouseY = e.evt.offsetY + offsetY / scale;
-    console.log(
-      `evt.offsetX:`,
-      e.evt.offsetX,
-      `evt.offsetY:`,
-      e.evt.offsetY,
-      `offset:`,
-      offsetX,
-      offsetY,
-      `scale:`,
-      scale,
-      `mouseXY:`,
-      mouseX,
-      mouseY,
-    );
 
     const Rectangle = createRectangle(props.currentLabel?.color, [mouseX, mouseY]);
     if (!Rectangle) return;
@@ -214,7 +199,6 @@ export default function (props: {
     offsetY: number,
     scale: number,
   ) => {
-    console.log(e.evt);
     if (props.currentTool != 'rectangle') return;
     // No annotation is marking, start new
     if (!props.currentAnnotation) {

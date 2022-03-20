@@ -25,28 +25,29 @@ const Page: React.FC = () => {
   // TODO: move to utils
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
 
-  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
 
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
-    setCurrentAnnotationRaw(anno);
+    console.log('setCurrentAnnotation', anno, 'anno.label:', anno?.label);
+    annotation.setCurr(anno);
     if (anno?.label) label.setCurr(anno.label);
   };
 
-  // useEffect(() => {
-  //   initHistory(); // reinit history after turn task s
-  // }, []);
+  useEffect(() => {
+    initHistory(); // reinit history after turn task s
+  }, []);
 
-  const onAnnotationModify = (annotation: Annotation<any>) => {
+  const onAnnotationModify = (anno: Annotation<any>) => {
+    anno.taskId = task.currIdx;
     const newAnnos: Annotation<any>[] = [];
     for (let i = 0; i < annotations.length; i++) {
-      if (annotations[i].annotationId == annotation.annotationId) {
-        newAnnos.push(annotation);
+      if (annotations[i].annotationId == anno.annotationId) {
+        newAnnos.push(anno);
       } else {
         newAnnos.push(annotations[i]);
       }
     }
-    setCurrentAnnotation(annotation);
+    setCurrentAnnotation(anno);
     setAnnotations(newAnnos);
   };
 
@@ -55,10 +56,11 @@ const Page: React.FC = () => {
     currentTool: currentTool,
     annotations: annotations,
     currentAnnotation: annotation.curr,
-    onAnnotationAdd: (annotation) => {
-      const newAnnos = annotations.concat([annotation]);
+    onAnnotationAdd: (anno) => {
+      anno.taskId = task.currIdx;
+      const newAnnos = annotations.concat([anno]);
       setAnnotations(newAnnos);
-      if (!currentAnnotation) setCurrentAnnotation(annotation);
+      if (!annotation.curr) setCurrentAnnotation(anno);
     },
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
@@ -125,6 +127,9 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
             const res = backwardHistory();
+            if (!res) {
+              return;
+            }
             setAnnotations(res.annos);
             setCurrentAnnotation(res.currAnno);
           }}
@@ -135,6 +140,9 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/next.png"
           onClick={() => {
             const res = forwardHistory();
+            if (!res) {
+              return;
+            }
             setAnnotations(res.annos);
             setCurrentAnnotation(res.currAnno);
           }}
@@ -154,7 +162,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={onAnnotationModify}
               onAnnotationModifyComplete={() => {
-                recordHistory(annotations, annotation.curr);
+                recordHistory({ annos: annotations, currAnno: annotation.curr });
               }}
               onMouseDown={dr.onMouseDown}
               onMouseMove={dr.onMouseMove}
