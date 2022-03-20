@@ -26,6 +26,10 @@ export interface CreateRequest {
   data: Data;
 }
 
+export interface DeleteAnnotationsRequest {
+  dataId: string;
+}
+
 export interface GetRequest {
   dataId: string;
 }
@@ -41,6 +45,11 @@ export interface GetImageRequest {
 
 export interface RemoveRequest {
   dataId: string;
+}
+
+export interface SetAnnotationsRequest {
+  dataId: string;
+  annotation?: Array<Annotation>;
 }
 
 export interface UpdateRequest {
@@ -92,6 +101,47 @@ export class DataApi extends runtime.BaseAPI {
   async create(data: Data, initOverrides?: RequestInit): Promise<Data> {
     const response = await this.createRaw({ data: data }, initOverrides);
     return await response.value();
+  }
+
+  /**
+   * Delete all annotations of a data record
+   */
+  async deleteAnnotationsRaw(
+    requestParameters: DeleteAnnotationsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
+      throw new runtime.RequiredError(
+        'dataId',
+        'Required parameter requestParameters.dataId was null or undefined when calling deleteAnnotations.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/datas/{data_id}/annotations`.replace(
+          `{${'data_id'}}`,
+          encodeURIComponent(String(requestParameters.dataId)),
+        ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Delete all annotations of a data record
+   */
+  async deleteAnnotations(dataId: string, initOverrides?: RequestInit): Promise<void> {
+    await this.deleteAnnotationsRaw({ dataId: dataId }, initOverrides);
   }
 
   /**
@@ -293,6 +343,54 @@ export class DataApi extends runtime.BaseAPI {
    */
   async remove(dataId: string, initOverrides?: RequestInit): Promise<void> {
     await this.removeRaw({ dataId: dataId }, initOverrides);
+  }
+
+  /**
+   * Set the annotations of a data record
+   */
+  async setAnnotationsRaw(
+    requestParameters: SetAnnotationsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
+      throw new runtime.RequiredError(
+        'dataId',
+        'Required parameter requestParameters.dataId was null or undefined when calling setAnnotations.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/datas/{data_id}/annotations`.replace(
+          `{${'data_id'}}`,
+          encodeURIComponent(String(requestParameters.dataId)),
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: requestParameters.annotation.map(AnnotationToJSON),
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Set the annotations of a data record
+   */
+  async setAnnotations(
+    dataId: string,
+    annotation?: Array<Annotation>,
+    initOverrides?: RequestInit,
+  ): Promise<void> {
+    await this.setAnnotationsRaw({ dataId: dataId, annotation: annotation }, initOverrides);
   }
 
   /**

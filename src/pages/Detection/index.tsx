@@ -17,14 +17,21 @@ import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/c
 import type { Annotation } from '@/models/Annotation';
 
 const Page: React.FC = () => {
-  const [tool, loading, scale, annotation, task, data, project, label] = PageInit(
-    useState,
-    useEffect,
-    {
-      label: { oneHot: true },
-      effectTrigger: { postTaskChange: initHistory },
-    },
-  );
+  const [
+    tool,
+    loading,
+    scale,
+    annotation,
+    task,
+    data,
+    project,
+    label,
+    splitDataset,
+    exportDataset,
+  ] = PageInit(useState, useEffect, {
+    label: { oneHot: true },
+    effectTrigger: { postTaskChange: initHistory },
+  });
 
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
 
@@ -204,8 +211,22 @@ const Page: React.FC = () => {
         </Spin>
       </div>
       <PPToolBar disLoc="right">
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/data_division.png"
+          onClick={() => {
+            splitDataset(project.curr.projectId, { train: 0.5, validation: 0.3, test: 0.2 });
+          }}
+        >
+          Split Dataset
+        </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/export.png"
+          onClick={() => {
+            exportDataset(project.curr.projectId, '/home/lin/Desktop/data/pplabel/export/');
+          }}
+        >
+          Export
+        </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
         <PPLabelList
