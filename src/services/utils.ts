@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove this
+
 import { message } from 'antd';
 import { history } from 'umi';
 
@@ -7,7 +9,7 @@ import { ProjectApi, TaskApi, DataApi, AnnotationApi, LabelApi } from '@/service
 import { Configuration } from '@/services';
 import { DependencyList, Dispatch, EffectCallback, SetStateAction } from 'react';
 import { Label } from '@/models/Label';
-import { Annotation } from '@/models/Annotation';
+import type { ToolType, Annotation } from '@/models/Annotation';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -73,6 +75,14 @@ export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) 
   }
   return { curr, change, setScale };
 };
+
+export function ToolUtils(useState, { defaultTool }: { defaultTool: ToolType }) {
+  const [curr, setCurr] = useState<ToolType>(defaultTool);
+  return {
+    curr,
+    setCurr,
+  };
+}
 
 export function LoadingUtils(useState: UseStateType) {
   const [curr, setCurr] = useState<bool>(false);
@@ -190,6 +200,8 @@ export const LabelUtils = (
   const [isOneHot, setOneHot] = useState<boolean>(oneHot);
 
   async function getAll(projectId: number) {
+    console.log('label getall');
+
     if (projectId == undefined) return;
     try {
       const labels: Label[] = await projectApi.getLabels(projectId);
@@ -216,7 +228,6 @@ export const LabelUtils = (
       if (activeIds.has(labelId)) activeIds.delete(labelId);
       else activeIds.add(labelId);
     }
-    console.log('activeIds', activeIds);
     setActiveIds(new Set(activeIds));
     if (postSetCurr) postSetCurr(all[idx]);
   }
@@ -239,7 +250,9 @@ export const LabelUtils = (
     for (const ann of annotations) activeIds.add(ann.labelId);
   }
 
-  const create = async (label: Label) => {
+  async function create(label: Label) {
+    console.log('create label', label);
+
     try {
       const newLabel: Label = await labelApi.create(label);
       getAll(label.projectId);
@@ -248,7 +261,7 @@ export const LabelUtils = (
       console.log('label create err', err);
       return serviceUtils.parseError(err, message);
     }
-  };
+  }
 
   async function remove(label: Label | number) {
     const labelId = typeof label == 'number' ? label : label.labelId;
@@ -291,10 +304,9 @@ export const LabelUtils = (
 export const TaskUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Task[]>();
   const [currIdx, setCurrIdx] = useState<number>();
-  // const [progress, setProgress] = useState<number>();
 
   const turnTo = (turnToIdx: number) => {
-    // if (!all) {console.log("no all");return;}
+    if (!all) return;
     if (turnToIdx < 0) {
       message.error('This is the first image. No previous image.');
       return;
@@ -303,7 +315,6 @@ export const TaskUtils = (useState: UseStateType) => {
       message.error('This is the final image. No next image.');
       return;
     }
-    // console.log('turning to', turnToIdx);
     setCurrIdx(turnToIdx);
   };
 
@@ -347,7 +358,6 @@ export const TaskUtils = (useState: UseStateType) => {
     finished,
     get curr() {
       if (currIdx == undefined || all == undefined) return undefined;
-      // console.log('task.curr', all[currIdx]);
       return all[currIdx];
     },
   };
@@ -391,13 +401,14 @@ export function AnnotationUtils(
     }
   };
 
-  const remove = async (annotation: number | Annotation) => {
+  async function remove(annotation: number | Annotation) {
+    console.log('remove', annotation);
+
     const annId = typeof annotation == 'number' ? annotation : annotation.annotationId;
     if (annId == undefined) return;
     try {
       await annotationApi.remove(annId);
-      // setAll(all.filter((a) => a.annotationId != annId));
-      if (all && all.length && all[0].dataId) {
+      if (all && all.length && all[0].dataId!) {
         const anns = await getAll(all[0].dataId);
         if (anns.length == 0) project.getProgress();
       }
@@ -405,10 +416,10 @@ export function AnnotationUtils(
       console.log('annotation remove err', err);
       return serviceUtils.parseError(err, message);
     }
-  };
+  }
 
   const setCurr = async (annotation: Annotation | undefined) => {
-    console.log('setCurr', annotation);
+    console.log('annotation setcurr', annotation);
     if (annotation == undefined) {
       setCurrIdx(undefined);
       return;
@@ -428,12 +439,37 @@ export function AnnotationUtils(
     );
   };
 
+  async function update(annotation: Annotation) {
+    annotationApi
+      .update(annotation.annotationId, annotation)
+      .then((res) => {
+        console.log('annotation update res', res);
+        getAll(annotation.projectId);
+      })
+      .catch((err) => {
+        console.log('annotation update err ', err);
+        serviceUtils.parseError(err, message);
+      });
+  }
+
+  async function modify(annotation: Annotation) {
+    const ann = annotation == undefined ? all[currIdx] : annotation;
+    // no annotationId -> new ann, create
+    if (ann.annotationId == undefined) {
+      create(ann);
+    } else {
+      update(ann);
+    }
+  }
+
   return {
     all,
     getAll,
     create,
     remove,
     setCurr,
+    update,
+    modify,
     activeIds,
     get curr() {
       if (!all || !currIdx) return undefined;
@@ -486,18 +522,17 @@ export const DataUtils = (useState: UseStateType) => {
   };
 };
 
-// TODO: update progress when add first ann and remove last ann
 export const PageInit = (
   useState: UseStateType,
   useEffect: UseEffectType,
   props: {
     effectTrigger?: any;
     label: { oneHot: boolean; postSetCurr?: (label: Label) => void };
-    annotation?: Annotation;
+    tool: { defaultTool: ToolType };
+    annotation?: Annotation; // FIXME: setting annotation this way may be overwritten by annotation.getAll in onTaskChange
   },
 ) => {
-  if (!props.effectTrigger) props.effectTrigger = {};
-
+  const tool = ToolUtils(useState, props.tool ? props.tool : {});
   const loading = LoadingUtils(useState);
   const scale = ScaleUtils(useState);
   const task = TaskUtils(useState);
@@ -505,7 +540,7 @@ export const PageInit = (
   const project = ProjectUtils(useState);
   //FIXME: What's the type of props.label?
   //REPLY: should be the same as the second parameter of LabelUtils. Maybe declear a type to use for both places?
-  const label = LabelUtils(useState, props.label);
+  const label = LabelUtils(useState, props.label ? props.label : {});
   const annotation = AnnotationUtils(useState, {
     ...props.annotation,
     label: label,
@@ -544,17 +579,15 @@ export const PageInit = (
       if (task.curr?.taskId) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [allData, currData] = await data.getAll(task.curr.taskId, 0);
-
-        // console.log(allData);
         const allAnns = await annotation.getAll(currData.dataId);
         if (label.all) for (const lab of label.all) lab.active = false;
-        if (props.effectTrigger.postTaskChange)
-          props.effectTrigger.postTaskChange(label.all, allAnns);
+        if (props.effectTrigger?.postTaskChange)
+          props.effectTrigger?.postTaskChange(label.all, allAnns);
       }
       loading.setCurr(false);
     };
     onTaskChange();
   }, [task.currIdx]);
 
-  return [loading, scale, annotation, task, data, project, label];
+  return [tool, loading, scale, annotation, task, data, project, label];
 };

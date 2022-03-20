@@ -15,15 +15,16 @@ import { Button, Progress, Spin, message } from 'antd';
 import { PageInit } from '@/services/utils';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import type { Annotation } from '@/models/Annotation';
-import { ToolType } from '@/models/ToolType';
 
 const Page: React.FC = () => {
-  const [loading, scale, annotation, task, data, project, label] = PageInit(useState, useEffect, {
-    label: { oneHot: true },
-    effectTrigger: { postTaskChange: initHistory },
-  });
-  // TODO: move to utils
-  const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
+  const [tool, loading, scale, annotation, task, data, project, label] = PageInit(
+    useState,
+    useEffect,
+    {
+      label: { oneHot: true },
+      effectTrigger: { postTaskChange: initHistory },
+    },
+  );
 
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
 
@@ -38,7 +39,7 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
-    initHistory(); // reinit history after turn task s
+    initHistory(); // reinit history after turn task
   }, []);
 
   const onAnnotationModify = (anno: Annotation<any>) => {
@@ -56,7 +57,7 @@ const Page: React.FC = () => {
 
   const rectagle = drawRectangle({
     currentLabel: label.curr,
-    currentTool: currentTool,
+    currentTool: tool.curr,
     annotations: annotations,
     currentAnnotation: annotation.curr,
     onAnnotationAdd: (anno) => {
@@ -76,19 +77,23 @@ const Page: React.FC = () => {
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
         <PPRectangle
-          active={currentTool == 'rectangle'}
+          active={tool.curr == 'rectangle'}
           onClick={() => {
-            setCurrentTool('rectangle');
+            if (!label.curr) {
+              message.error('Please choose a label category first!');
+              return;
+            }
+            tool.setCurr('rectangle');
             setCurrentAnnotation(undefined);
           }}
         >
           Rectangle
         </PPRectangle>
         <PPToolBarButton
-          active={currentTool == 'editor'}
+          active={tool.curr == 'editor'}
           imgSrc="./pics/buttons/edit.png"
           onClick={() => {
-            setCurrentTool('editor');
+            tool.setCurr('editor');
           }}
         >
           Edit
@@ -119,8 +124,9 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
+          active={tool.curr == 'mover'}
           onClick={() => {
-            setCurrentTool('mover');
+            tool.setCurr('mover');
           }}
         >
           Move
@@ -151,7 +157,12 @@ const Page: React.FC = () => {
         >
           Redo
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/clear_mark.png"
+          onClick={() => console.log('clear')}
+        >
+          Clear Mark
+        </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
         <Spin tip="loading" spinning={!!loading.curr}>
@@ -159,12 +170,13 @@ const Page: React.FC = () => {
             <PPStage
               scale={scale.curr}
               annotations={annotations}
-              currentTool={currentTool}
+              currentTool={tool.curr}
               currentAnnotation={annotation.curr}
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={onAnnotationModify}
               onAnnotationModifyComplete={() => {
                 recordHistory({ annos: annotations, currAnno: annotation.curr });
+                annotation.modify();
               }}
               onMouseDown={dr.onMouseDown}
               onMouseMove={dr.onMouseMove}
@@ -177,7 +189,7 @@ const Page: React.FC = () => {
             <div className="progress">
               <Progress
                 className="progressBar"
-                percent={task.progress}
+                percent={project.progress}
                 status="active"
                 showInfo={false}
               />{' '}
@@ -213,7 +225,7 @@ const Page: React.FC = () => {
           activeIds={label.activeIds}
           onLabelSelect={(selected) => {
             label.onSelect(selected);
-            // annotation.setCurr(undefined);
+            annotation.setCurr(undefined);
           }}
           onLabelModify={() => {}}
           onLabelDelete={label.remove}
@@ -225,13 +237,10 @@ const Page: React.FC = () => {
           onAnnotationSelect={annotation.setCurr}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
-          onAnnotationDelete={
-            // (annotation: Annotation<any>) => {
-            // setAnnotations(annotations.filter((x) => x.annotationId != annotation.annotationId));
-            // setCurrentAnnotation(undefined);
-            // }
-            annotation.remove
-          }
+          onAnnotationDelete={(ann) => {
+            annotation.remove(ann);
+            annotation.setCurr(undefined);
+          }}
         />
       </div>
     </PPLabelPageContainer>

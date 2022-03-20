@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import styles from './index.less';
 import PPLabelListItem from './PPLabelListItem';
 import PPAddLabelModal from '../PPAddLabelModal';
-import { Label } from '@/services';
+import type { Label } from '@/services';
 import { useIntl } from 'umi';
 
 export type PPLabelListProps = {

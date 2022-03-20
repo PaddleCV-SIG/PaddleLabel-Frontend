@@ -18,6 +18,7 @@ export type PPLabelListItemProps = {
 const Component: React.FC<PPLabelListItemProps> = (props) => {
   const label = { ...props.label };
   const [invisible, setInvisible] = useState(label.invisible);
+  const [lastClickTime, setLastClickTime] = useState<number>(0);
 
   const eye = props.hideEye ? (
     ' '
@@ -68,6 +69,9 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
         className={styles.delete}
         onClick={(e) => {
           e.stopPropagation();
+          const time = new Date().getTime();
+          if (time - lastClickTime < 300) return;
+          setLastClickTime(time);
           props.onLabelDelete(label);
         }}
       />
