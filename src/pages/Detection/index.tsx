@@ -41,9 +41,9 @@ const Page: React.FC = () => {
     annotation.modify(anno);
   };
 
-  useEffect(() => {
-    initHistory(); // reinit history after turn task
-  }, []);
+  // useEffect(() => {
+  //   initHistory(); // reinit history after turn task
+  // }, []);
 
   const onAnnotationModify = (anno: Annotation<any>) => {
     modifyAnnotation(anno);

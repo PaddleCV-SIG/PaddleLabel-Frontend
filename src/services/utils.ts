@@ -240,7 +240,7 @@ export const LabelUtils = (
     if (labelId) {
       console.log('LabelUtils setCurr index:', labelId);
       setCurrIdx(labelId);
-      setActiveIds(new Set([labelId]));
+      setActiveIds(new Set([label]));
     }
   }
 
@@ -384,7 +384,7 @@ export function AnnotationUtils(
     }
   };
 
-  const create = async (annotation: Annotation) => {
+  const create = async (annotation: Annotation, refresh: boolean = false) => {
     try {
       if (annotation.label) annotation.labelId = annotation.label.id;
       const newAnn = await annotationApi.create(annotation);
