@@ -56,13 +56,19 @@ export interface Annotation {
    * @type {number}
    * @memberof Annotation
    */
-  dataId?: number;
+  dataId: number;
   /**
    *
    * @type {string}
    * @memberof Annotation
    */
   result?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Annotation
+   */
+  type?: string;
   /**
    *
    * @type {string}
@@ -91,8 +97,9 @@ export function AnnotationFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     labelId: !exists(json, 'label_id') ? undefined : json['label_id'],
     label: !exists(json, 'label') ? undefined : LabelFromJSON(json['label']),
     projectId: !exists(json, 'project_id') ? undefined : json['project_id'],
-    dataId: !exists(json, 'data_id') ? undefined : json['data_id'],
+    dataId: json['data_id'],
     result: !exists(json, 'result') ? undefined : json['result'],
+    type: !exists(json, 'type') ? undefined : json['type'],
     created: !exists(json, 'created') ? undefined : json['created'],
     modified: !exists(json, 'modified') ? undefined : json['modified'],
   };
@@ -112,5 +119,6 @@ export function AnnotationToJSON(value?: Annotation | null): any {
     project_id: value.projectId,
     data_id: value.dataId,
     result: value.result,
+    type: value.type,
   };
 }

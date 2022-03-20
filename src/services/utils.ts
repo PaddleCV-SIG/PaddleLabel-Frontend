@@ -293,10 +293,9 @@ export const LabelUtils = (
 export const TaskUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Task[]>();
   const [currIdx, setCurrIdx] = useState<number>();
-  // const [progress, setProgress] = useState<number>();
 
   const turnTo = (turnToIdx: number) => {
-    // if (!all) {console.log("no all");return;}
+    if (!all) return;
     if (turnToIdx < 0) {
       message.error('This is the first image. No previous image.');
       return;
@@ -305,7 +304,6 @@ export const TaskUtils = (useState: UseStateType) => {
       message.error('This is the final image. No next image.');
       return;
     }
-    // console.log('turning to', turnToIdx);
     setCurrIdx(turnToIdx);
   };
 
@@ -349,7 +347,6 @@ export const TaskUtils = (useState: UseStateType) => {
     finished,
     get curr() {
       if (currIdx == undefined || all == undefined) return undefined;
-      // console.log('task.curr', all[currIdx]);
       return all[currIdx];
     },
   };
