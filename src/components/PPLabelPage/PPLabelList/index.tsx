@@ -7,7 +7,8 @@ import PPAddLabelModal from '../PPAddLabelModal';
 import { Label } from '@/services';
 
 export type PPLabelListProps = {
-  labels?: Label[];
+  labels?: Label[]; // the label from utils, LabelUtils()
+  activeIds?: Set;
   selectedLabel?: Label;
   hideEye?: boolean;
   hideColorPicker?: boolean;
@@ -51,6 +52,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
               hideEye={props.hideEye}
               onClick={props.onLabelSelect}
               label={item}
+              active={props.activeIds?.has(item.labelId)}
               onLabelDelete={props.onLabelDelete}
               onLabelModify={props.onLabelModify}
             />

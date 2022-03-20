@@ -38,8 +38,11 @@ export function snake2camel(name: string) {
   return name;
 }
 
-// if item is number, return idx where arr[idx].key == item
-// if item is object, return idx where arr[idx].key == item.key
+/*
+if item is
+- number, return idx where arr[idx].key == item
+- object, return idx where arr[idx].key == item.key
+*/
 export const indexOf = (item: any, arr: any[], key: string) => {
   if (!key) return undefined;
   const toFind = typeof item == 'number' ? item : item[key];
@@ -52,71 +55,78 @@ export const indexOf = (item: any, arr: any[], key: string) => {
 export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) => {
   const [curr, setCurr] = useState<number>(1);
 
-  const change = (delta: number) => {
-    let scale = curr;
-    scale += delta;
-    if (scale < range[0]) {
-      scale = range[0];
+  function setScale(scale: number) {
+    let s: number = scale;
+    if (s < range[0]) {
+      s = range[0];
       message.error('Smallest scale is ' + range[0]);
     }
-    if (scale > range[1]) {
-      scale = range[1];
+    if (s > range[1]) {
+      s = range[1];
       message.error('Largest scale is ' + range[1]);
     }
-    setCurr(scale);
-  };
+    setCurr(s);
+  }
 
-  return { curr, change };
+  function change(delta: number) {
+    setScale(curr + delta);
+  }
+  return { curr, change, setScale };
 };
 
 export const ProjectUtils = (useState: UseStateType) => {
-  const [all, setAll] = useState<Project[]>([]);
+  const [all, setAll] = useState<Project[]>();
   const [currIdx, setCurrIdx] = useState<number>();
 
-  const getAll = async () => {
+  async function getAll() {
     try {
-      const projectsRes = await projectApi.getAll();
-      setAll(projectsRes);
-      return projectsRes;
+      const projects: Project[] = await projectApi.getAll();
+      setAll(projects);
+      return projects;
     } catch (err) {
       console.log('project getAll err', err);
       serviceUtils.parseError(err, message);
       return;
     }
-  };
+  }
 
-  const getCurr = async (projectId: string) => {
+  async function getCurr(projectId: string) {
     if (projectId == undefined) return undefined;
-    if (all.length > 1) {
+    if (all && all.length > 1) {
       message.error('Currently have multiple projects stored, use turnTo instead');
       return;
     }
 
-    const projectRes = await projectApi.get(projectId);
-    setAll([projectRes]);
+    const project: Project = await projectApi.get(projectId);
+    setAll([project]);
     setCurrIdx(0);
-    return projectRes;
-  };
+    return project;
+  }
 
-  const remove = async (project: Project | number) => {
+  // WARNING: untested
+  async function turnTo(turnToIdx: number) {
+    setCurrIdx(turnToIdx);
+    return all[turnToIdx];
+  }
+
+  async function remove(project: Project | number) {
     console.log('remove project', project);
-    if (typeof project == 'number') await projectApi.remove(project);
-    else await projectApi.remove(project.projectId);
+    const projectId: number = typeof project == 'number' ? project : project.projectId;
+    await projectApi.remove(projectId);
     getAll();
-  };
+  }
 
-  const create = async (project: Project) => {
+  async function create(project: Project) {
     try {
-      const newProject = await projectApi.create(project);
-      console.log(newProject);
+      const newProject: Project = await projectApi.create(project);
       return newProject;
     } catch (err) {
       console.log('project create err', err);
       return serviceUtils.parseError(err, message);
     }
-  };
+  }
 
-  const update = async (projectId: number, project: Project) => {
+  async function update(projectId: number, project: Project) {
     projectApi
       .update(projectId, project)
       .then((res) => {
@@ -126,63 +136,73 @@ export const ProjectUtils = (useState: UseStateType) => {
         console.log('project update err ', err);
         serviceUtils.parseError(err, message);
       });
-  };
+  }
 
   return {
     all,
     getAll,
     getCurr,
+    turnTo,
     remove,
     create,
     update,
     get curr() {
-      if (currIdx == undefined) return undefined;
+      if (!all) return undefined;
       return all[currIdx];
     },
   };
 };
 
+/*
+if oneHot = true, only one label can be active, else multiple can be activate at the same time
+*/
 export const LabelUtils = (
   useState: UseStateType,
   { oneHot = true, postSetCurr }: { oneHot: boolean; postSetCurr?: (label: Label) => void },
 ) => {
   const [all, setAll] = useState<Label[]>();
   const [currIdx, setCurrIdx] = useState<number>();
+  const [activeIds, setActiveIds] = useState(new Set());
   const [isOneHot, setOneHot] = useState<boolean>(oneHot);
 
-  const getAll = async (projectId: number) => {
+  async function getAll(projectId: number) {
     try {
-      const labelsRes: Label[] = await projectApi.getLabels(projectId);
-      for (const lab of labelsRes) lab.active = false;
-      setAll(labelsRes);
-      return labelsRes;
+      const labels: Label[] = await projectApi.getLabels(projectId);
+      setAll(labels);
+      return labels;
     } catch (err) {
       console.log('label getall err ', err);
       return serviceUtils.parseError(err, message);
     }
-  };
+  }
 
-  const setCurr = (label: Label | number) => {
-    const idx = indexOf(label, all, 'labelId');
-    if (idx == undefined) throw Error('undefined label idx');
+  function setCurr(label: Label | number) {
+    console.log('label setcurr', label);
+
+    const idx: number = indexOf(label, all, 'labelId');
+    if (idx == undefined) throw Error('label.setCurr label not found');
     setCurrIdx(idx);
+    const labelId: number = all[idx].labelId;
     if (isOneHot) {
-      for (const lab of all) lab.active = false;
-      all[idx].active = true;
-      // console.log('all', all);
+      if (activeIds.has(labelId)) activeIds = new Set();
+      else activeIds = new Set([labelId]);
     } else {
-      all[idx].active = !all[idx].active;
+      if (activeIds.has(labelId)) activeIds.delete(labelId);
+      else activeIds.add(labelId);
     }
+    setActiveIds(new Set(activeIds));
     if (postSetCurr) postSetCurr(all[idx]);
-    setAll([...all]);
-  };
+  }
+
+  function initActive(annotations: Annotation[]) {
+    activeIds.clear();
+    for (const ann of annotations) activeIds.add(ann.labelId);
+  }
 
   const create = async (label: Label) => {
     try {
       const newLabel: Label = await labelApi.create(label);
-      // getAll(values.projectId);
-      newLabel.active = false;
-      setAll([...all, newLabel]);
+      getAll(label.projectId);
       return newLabel;
     } catch (err) {
       console.log('label create err', err);
@@ -199,22 +219,27 @@ export const LabelUtils = (
       serviceUtils.parseError(err, message);
     }
   };
+  function isActive(label: Label | number) {
+    // TODO: number
+    return activeIds.has(label.labelId);
+  }
 
-  const onModify = () => {};
-  const toggleOneHot = () => {
-    setOneHot(!isOneHot);
+  const toggleOneHot = (target: bool) => {
+    if (target != undefined) setOneHot(target);
+    else setOneHot(!isOneHot);
   };
   return {
     all,
     getAll,
-    setAll,
+    activeIds,
+    initActive,
     setCurr,
+    isActive,
     create,
     remove,
-    onModify,
     toggleOneHot,
     get curr() {
-      if (currIdx == undefined) return undefined;
+      if (all == undefined) return undefined;
       return all[currIdx];
     },
   };

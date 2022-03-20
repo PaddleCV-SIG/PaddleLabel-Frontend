@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
@@ -10,11 +9,8 @@ import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
 import { ToolType } from '@/models/ToolType';
 
-const baseUrl = localStorage.getItem('basePath');
-
 const Page: React.FC = () => {
   const [currTool, setCurrTool] = useState<ToolType>('mover');
-
   const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
     useState,
     useEffect,
@@ -26,9 +22,7 @@ const Page: React.FC = () => {
 
   function selectLabel(selected) {
     // after toggle is active, add ann
-    console.log('selectLabel', task.curr, data.curr, annotation.all);
-
-    if (selected.active) {
+    if (label.isActive(selected)) {
       annotation.create({
         taskId: task.curr.taskId,
         labelId: selected.labelId,
@@ -36,20 +30,15 @@ const Page: React.FC = () => {
       });
     } else {
       const ann = annotation.all.filter((a) => a.labelId == selected.labelId)[0];
-      console.log('filter ann ', ann);
       annotation.remove(ann.annotationId);
     }
-    console.log('selectlabel', selected);
   }
 
   function postTaskChange(labels, annotations) {
-    if (!labels) return;
-    for (const lab of labels) {
-      const annOfLabel = annotations.filter((ann) => ann.label.labelId == lab.labelId);
-      if (annOfLabel.length != 0) lab.active = true;
-    }
-    console.log('label.all toggled', label.all);
-    label.setAll([...labels]);
+    setLoading(true);
+    if (!labels || !annotations) return;
+    label.initActive(annotations);
+    setLoading(false);
   }
 
   return (
@@ -98,7 +87,6 @@ const Page: React.FC = () => {
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
               onAnnotationModifyComplete={() => {}}
-              // imgSrc={`${baseUrl}/datas/${data.curr?.dataId}/image`}
               imgSrc={data.imgSrc}
             />
           </div>
@@ -128,6 +116,7 @@ const Page: React.FC = () => {
       <div className="rightSideBar">
         <PPLabelList
           labels={label.all}
+          activeIds={label.activeIds}
           onLabelSelect={label.setCurr}
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
           onLabelDelete={label.remove}

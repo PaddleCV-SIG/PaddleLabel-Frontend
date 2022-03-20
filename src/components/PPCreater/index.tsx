@@ -42,10 +42,9 @@ export type PPCardProps = {
 };
 
 const PPCreater: React.FC<PPCardProps> = (props) => {
-  console.log('render ppcreater', props);
   const projects = ProjectUtils(useState);
   const projectId = serviceUtils.getQueryVariable('projectId');
-  console.log('projectId', projectId);
+  console.log('render ppcreater', props, projectId);
 
   const saveProject = (values: any) => {
     if (!projectId) {
@@ -84,7 +83,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
       const initialValues = {
         name: project?.name,
         description: project?.description,
-        // dataDir: project.dataDir, // TODO: value.join is not a funx
+        dataDir: project?.dataDir, // TODO: value.join is not a funx
       };
       form.setFieldsValue(initialValues);
     });
@@ -140,7 +139,12 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               ]}
               style={{ fontSize: '1.5rem' }}
             >
-              <Input size="large" placeholder="Dataset Path" style={{ height: '3.13rem' }} />
+              <Input
+                size="large"
+                placeholder="Dataset Path"
+                style={{ height: '3.13rem' }}
+                disabled={projectId == undefined ? false : true}
+              />
             </Form.Item>
 
             <Form.Item
