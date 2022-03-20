@@ -208,18 +208,6 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
-        <div className="determinOutline">
-          <Button
-            style={{ height: 40, fontSize: '0.75rem' }}
-            type="primary"
-            block
-            onClick={() => {
-              annotation.setCurr(undefined);
-            }}
-          >
-            Determine Outline
-          </Button>
-        </div>
         <PPLabelList
           labels={label.all}
           activeIds={label.activeIds}
