@@ -139,7 +139,7 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
-        <Spin tip="loading" spinning={loading}>
+        <Spin tip="loading" spinning={!!loading}>
           <div className="draw">
             <PPStage
               scale={scale.curr}
@@ -160,21 +160,25 @@ const Page: React.FC = () => {
           </div>
           <div className="pblock">
             <div className="progress">
-              <Progress percent={task.progress} status="active" />
-              {task.currIdx} {task.all?.length} {task.finished}
+              <Progress
+                className="progressBar"
+                percent={task.progress}
+                status="active"
+                showInfo={false}
+              />{' '}
+              <span className="progressDesc">
+                Current labeling {task.currIdx ? task.currIdx + 1 : 1} of {task.all?.length}.
+                Already labeled {task.finished || 0}.
+              </span>
             </div>
           </div>
+          <div className="prevTask" onClick={task.prevTask} />
+          <div className="nextTask" onClick={task.nextTask} />
         </Spin>
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/next.png" onClick={task.nextTask}>
-          Next
-        </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/prev.png" onClick={task.prevTask}>
-          Prev
-        </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
         <div className="determinOutline">
