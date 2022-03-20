@@ -13,7 +13,7 @@ import PPRectangle from '@/components/PPLabelPage/PPRectangle';
 import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
 import { Button, Progress, Spin, message } from 'antd';
 import { PageInit } from '@/services/utils';
-import { backwardHistory, initHistory, recordHistory } from '@/components/history';
+import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import type { Annotation } from '@/models/Annotation';
 import { ToolType } from '@/models/ToolType';
 
@@ -129,16 +129,18 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
           onClick={() => {
-            forwardHistory();
+            const res = forwardHistory();
+            setAnnotations(res.annos);
+            setCurrentAnnotation(res.currAnno);
           }}
         >
           Redo
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
-      <div id="dr" className={styles.mainStage}>
+      <div id="dr" className="mainStage">
         <Spin tip="loading" spinning={loading}>
-          <div className={styles.draw}>
+          <div className="draw">
             <PPStage
               width={document.getElementById('dr')?.clientWidth}
               scale={scale.curr}
@@ -157,8 +159,8 @@ const Page: React.FC = () => {
               imgSrc={data.imgSrc}
             />
           </div>
-          <div className={styles.pblock}>
-            <div className={styles.progress}>
+          <div className="pblock">
+            <div className="progress">
               <Progress percent={task.progress} status="active" />
               {task.currIdx} {task.all?.length} {task.finished}
             </div>
@@ -175,8 +177,8 @@ const Page: React.FC = () => {
           Prev
         </PPToolBarButton>
       </PPToolBar>
-      <div className={styles.rightSideBar}>
-        <div className={styles.determinOutline}>
+      <div className="rightSideBar">
+        <div className="determinOutline">
           <Button
             style={{ height: 40, fontSize: '0.75rem' }}
             type="primary"
