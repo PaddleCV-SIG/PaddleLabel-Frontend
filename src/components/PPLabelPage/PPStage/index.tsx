@@ -52,6 +52,7 @@ export type PPStageProps = {
     currentTool: ToolType,
     onSelect: (anntation: Annotation<any>) => void,
     currentAnnotation?: Annotation<any>,
+    offset?: { x: number; y: number },
   ) => ReactElement[];
   onAnnotationModify: (annotation: Annotation<any>) => void;
   onAnnotationModifyComplete: () => void;
@@ -62,8 +63,6 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
-
-  console.log('scale: ', props.scale);
 
   // Dynamically adjust canvas size, prevent content overflow
   function handleWindowResize() {
@@ -117,6 +116,7 @@ const Component: React.FC<PPStageProps> = (props) => {
             props.currentTool,
             props.setCurrentAnnotation,
             props.currentAnnotation,
+            { x: -canvasWidth / 2, y: -canvasHeight / 2 },
           ),
         );
     }

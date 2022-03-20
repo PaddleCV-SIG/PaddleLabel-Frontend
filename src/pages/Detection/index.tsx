@@ -83,7 +83,15 @@ const Page: React.FC = () => {
         >
           Rectangle
         </PPRectangle>
-        <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
+        <PPToolBarButton
+          active={currentTool == 'editor'}
+          imgSrc="./pics/buttons/edit.png"
+          onClick={() => {
+            setCurrentTool('editor');
+          }}
+        >
+          Edit
+        </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
