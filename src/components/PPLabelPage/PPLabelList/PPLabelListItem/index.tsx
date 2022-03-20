@@ -1,12 +1,12 @@
-import { List, Space } from 'antd';
 import React, { useState } from 'react';
+import { List, Space } from 'antd';
 import styles from './index.less';
 import PPColorBall from '../../PPColorBall';
-import { Label } from '@/models/label';
+import type { Label } from '@/models/label';
 
 export type PPLabelListItemProps = {
   label: Label;
-  active: bool;
+  active: boolean;
   hideEye?: boolean;
   hideColorPicker?: boolean;
   // Currently, only support modify visibility and color

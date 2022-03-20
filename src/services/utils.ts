@@ -210,12 +210,13 @@ export const LabelUtils = (
       if (activeIds.has(labelId)) activeIds.clear();
       else {
         activeIds.clear();
-        activeIds.add([labelId]);
+        activeIds.add(labelId);
       }
     } else {
       if (activeIds.has(labelId)) activeIds.delete(labelId);
       else activeIds.add(labelId);
     }
+    console.log('activeIds', activeIds);
     setActiveIds(new Set(activeIds));
     if (postSetCurr) postSetCurr(all[idx]);
   }
@@ -401,7 +402,6 @@ export function AnnotationUtils(
   const setCurr = async (annotation: Annotation | undefined) => {
     if (annotation == undefined) {
       setCurrIdx(undefined);
-      setActiveIds(new Set());
       return;
     }
     setCurrIdx(indexOf(annotation, all, 'annotationId'));

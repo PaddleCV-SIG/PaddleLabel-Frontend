@@ -172,8 +172,8 @@ const Page: React.FC = () => {
                 showInfo={false}
               />{' '}
               <span className="progressDesc">
-                Current labeling {task.currIdx ? task.currIdx + 1 : 1} of {task.all?.length}.
-                Already labeled {task.finished || 0}.
+                Current labeling {task.currIdx == undefined ? 1 : task.currIdx + 1} of{' '}
+                {task.all?.length}. Already labeled {task.finished(project.progress) || 0}.
               </span>
             </div>
           </div>
@@ -203,8 +203,7 @@ const Page: React.FC = () => {
           activeIds={label.activeIds}
           onLabelSelect={(selected) => {
             label.onSelect(selected);
-            // setCurrentLabel(selected);
-            annotation.setCurr(undefined);
+            // annotation.setCurr(undefined);
           }}
           onLabelModify={() => {}}
           onLabelDelete={label.remove}
