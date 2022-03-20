@@ -4,6 +4,7 @@ import React from 'react';
 import styles from './index.less';
 import { Annotation } from '@/models/annotation';
 import PPAnnotationListItem from './PPAnnotationListItem';
+import { useIntl } from 'umi';
 
 export type PPLabelListProps = {
   annotations: Annotation[];
@@ -15,12 +16,17 @@ export type PPLabelListProps = {
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
+  const annotationList = useIntl().formatMessage({
+    id: 'component.PPAnnotationList.annotationList',
+  });
+  const addAnnotation = useIntl().formatMessage({ id: 'component.PPAnnotationList.addAnnotation' });
+
   return (
     <>
       <List
         className={styles.labelList}
         size="large"
-        header={<div className={styles.listHeader}>Annotation List</div>}
+        header={<div className={styles.listHeader}>{annotationList}</div>}
         bordered
         dataSource={props.annotations}
         renderItem={(item) => {
@@ -44,7 +50,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
               }}
               block
             >
-              Add Annotation
+              {addAnnotation}
             </Button>
           </div>
         }

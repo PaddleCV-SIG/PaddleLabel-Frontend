@@ -2,6 +2,7 @@ import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { Button, Col, Dropdown, Input, Menu, message, Row } from 'antd';
 import React from 'react';
+import { useIntl } from 'umi';
 
 export type PPBoundarySimplify = {
   // imgSrc: string;
@@ -29,11 +30,18 @@ const menu = (
 );
 
 const component: React.FC<PPBoundarySimplify> = () => {
+  const pdParameter = useIntl().formatMessage({ id: 'component.PPRS.pdParameter' });
+  const simplifiedDistance = useIntl().formatMessage({
+    id: 'component.PPRS.simplifiedDistance',
+  });
+  const simplifiedAngle = useIntl().formatMessage({ id: 'component.PPRS.simplifiedAngle' });
+  const threshold = useIntl().formatMessage({ id: 'component.PPRS.threshold' });
+
   return (
     <div>
       <Row>
         <Col span={12} className={styles.RSPop1}>
-          <span>PD parameter</span>
+          <span>{pdParameter}</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
           <Dropdown overlay={menu}>
@@ -45,7 +53,7 @@ const component: React.FC<PPBoundarySimplify> = () => {
       </Row>
       <Row>
         <Col span={12} className={styles.RSPop1}>
-          <span>Simplified distance</span>
+          <span>{simplifiedDistance}</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
           <Input placeholder="Basic usage" />
@@ -53,7 +61,7 @@ const component: React.FC<PPBoundarySimplify> = () => {
       </Row>
       <Row>
         <Col span={12} className={styles.RSPop1}>
-          <span>Simplified angle</span>
+          <span>{simplifiedAngle}</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
           <Input placeholder="Basic usage" />
@@ -61,7 +69,7 @@ const component: React.FC<PPBoundarySimplify> = () => {
       </Row>
       <Row>
         <Col span={12} className={styles.RSPop1}>
-          <span>Threshold of building simplification </span>
+          <span>{threshold}</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
           <Input placeholder="Basic usage" />

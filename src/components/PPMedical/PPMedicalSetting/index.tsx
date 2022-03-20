@@ -1,6 +1,7 @@
 import styles from './index.less';
 import { Col, Row, Slider } from 'antd';
 import React from 'react';
+import { useIntl } from 'umi';
 
 export type PPMedicalSettingProps = {
   wwValue?: number;
@@ -8,11 +9,14 @@ export type PPMedicalSettingProps = {
 };
 
 const component: React.FC<PPMedicalSettingProps> = (props) => {
+  const windowWidth = useIntl().formatMessage({ id: 'component.PPMedical.windowWidth' });
+  const windowLevel = useIntl().formatMessage({ id: 'component.PPMedical.windowLevel' });
+
   return (
     <div>
       <Row>
         <Col span={6} className={styles.Pop1}>
-          <span>Ww</span>
+          <span>{windowWidth}</span>
         </Col>
         <Col span={18} className={styles.Pop2}>
           <Slider
@@ -26,7 +30,7 @@ const component: React.FC<PPMedicalSettingProps> = (props) => {
       </Row>
       <Row>
         <Col span={6} className={styles.Pop1}>
-          <span>Wl</span>
+          <span>{windowLevel}</span>
         </Col>
         <Col span={18} className={styles.Pop2}>
           <Slider

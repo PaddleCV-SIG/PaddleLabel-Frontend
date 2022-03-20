@@ -5,6 +5,7 @@ import styles from './index.less';
 import PPLabelListItem from './PPLabelListItem';
 import PPAddLabelModal from '../PPAddLabelModal';
 import { Label } from '@/services';
+import { useIntl } from 'umi';
 
 export type PPLabelListProps = {
   labels?: Label[];
@@ -18,6 +19,11 @@ export type PPLabelListProps = {
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
+  const addLabel = useIntl().formatMessage({
+    id: 'component.PPLabelList.addLabel',
+  });
+  const labelList = useIntl().formatMessage({ id: 'component.PPLabelList.labelList' });
+
   console.log('render pplabellist');
 
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
@@ -27,7 +33,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
       <List
         className={styles.labelList}
         size="large"
-        header={<div className={styles.listHeader}>Label List</div>}
+        header={<div className={styles.listHeader}>{labelList}</div>}
         footer={
           <div>
             <Button
@@ -38,7 +44,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
               }}
               block
             >
-              Add Label
+              {addLabel}
             </Button>
           </div>
         }

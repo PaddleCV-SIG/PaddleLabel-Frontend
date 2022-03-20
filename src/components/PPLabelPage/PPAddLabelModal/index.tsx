@@ -1,6 +1,7 @@
 import { Form, Input, Modal, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { useIntl } from 'umi';
 import PPColorBall from '../PPColorBall';
 import type { Label } from '../PPLabelList';
 
@@ -50,6 +51,12 @@ const generatedColorList: string[] = [
 ];
 
 const Component: React.FC<PPAddLabelProps> = (props) => {
+  const selectColor = useIntl().formatMessage({ id: 'component.PPAddLabelModal.selectColor' });
+  const addLabel = useIntl().formatMessage({ id: 'component.PPAddLabelModal.addLabel' });
+  const labelName = useIntl().formatMessage({ id: 'component.PPAddLabelModal.labelName' });
+  const cancel = useIntl().formatMessage({ id: 'component.PPCreater.cancel' });
+  const ok = useIntl().formatMessage({ id: 'component.PPSegMode.ok' });
+
   const [newLabelColor, setNewLabelColor] = useState<string>(
     props.defaultLabel?.color || generatedColorList[props.order || 0],
   );
@@ -60,7 +67,7 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
   const colorPicker = props.hideColorPicker ? (
     <></>
   ) : (
-    <Form.Item label="Select Color" name="color">
+    <Form.Item label={selectColor} name="color">
       <PPColorBall
         color={newLabelColor}
         onChange={(color) => {
@@ -73,7 +80,7 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
   const [form] = Form.useForm();
 
   return (
-    <Modal title="Add Label" visible={props.visible} onCancel={props.onCancel} footer={null}>
+    <Modal title={addLabel} visible={props.visible} onCancel={props.onCancel} footer={null}>
       <Form
         form={form}
         name="basic"
@@ -91,7 +98,7 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
         autoComplete="off"
       >
         <Form.Item
-          label="Label Name"
+          label={labelName}
           name="labelname"
           rules={[{ required: true, message: 'Please input label name!' }]}
         >
@@ -108,10 +115,10 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
                 form.resetFields();
               }}
             >
-              取消
+              {cancel}
             </Button>
             <Button type="primary" htmlType="submit">
-              确定
+              {ok}
             </Button>
           </Space>
         </Form.Item>
