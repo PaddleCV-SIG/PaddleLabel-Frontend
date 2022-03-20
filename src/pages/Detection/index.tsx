@@ -33,16 +33,12 @@ const Page: React.FC = () => {
     effectTrigger: { postTaskChange: initHistory },
   });
 
-  const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
-
-  const setCurrentAnnotation = (anno?: Annotation<any>) => {
+  const modifyAnnotation = (anno: Annotation<any>) => {
     if (!anno) return;
-    console.log('setCurrentAnnotation', anno, 'anno.label:', anno?.label);
+    console.log('modifyAnnotation', anno, 'anno.label:', anno?.label);
     anno.taskId = task.curr.taskId;
     anno.dataId = data.curr.dataId;
-    annotation.setCurr(anno);
-    console.log(annotation.curr);
-    if (anno?.label) label.setCurr(anno.label);
+    annotation.modify(anno);
   };
 
   useEffect(() => {
@@ -50,31 +46,18 @@ const Page: React.FC = () => {
   }, []);
 
   const onAnnotationModify = (anno: Annotation<any>) => {
-    const newAnnos: Annotation<any>[] = [];
-    for (let i = 0; i < annotations.length; i++) {
-      if (annotations[i].annotationId == anno.annotationId) {
-        newAnnos.push(anno);
-      } else {
-        newAnnos.push(annotations[i]);
-      }
-    }
-    setCurrentAnnotation(anno);
-    setAnnotations(newAnnos);
+    modifyAnnotation(anno);
   };
 
   const rectagle = drawRectangle({
     currentLabel: label.curr,
     currentTool: tool.curr,
-    annotations: annotations,
+    annotations: annotation.all,
     currentAnnotation: annotation.curr,
-    onAnnotationAdd: (anno) => {
-      const newAnnos = annotations.concat([anno]);
-      setAnnotations(newAnnos);
-      if (!annotation.curr) setCurrentAnnotation(anno);
-    },
+    onAnnotationAdd: annotation.setCurr,
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
-      recordHistory({ annos: annotations, currAnno: annotation.curr });
+      recordHistory({ annos: annotation.all, currAnno: annotation.curr });
     },
   });
 
@@ -91,7 +74,7 @@ const Page: React.FC = () => {
               return;
             }
             tool.setCurr('rectangle');
-            setCurrentAnnotation(undefined);
+            annotation.setCurr(undefined);
           }}
         >
           Rectangle
@@ -145,8 +128,7 @@ const Page: React.FC = () => {
             if (!res) {
               return;
             }
-            setAnnotations(res.annos);
-            setCurrentAnnotation(res.currAnno);
+            annotation.setCurr(res.currAnno);
           }}
         >
           Undo
@@ -158,8 +140,7 @@ const Page: React.FC = () => {
             if (!res) {
               return;
             }
-            setAnnotations(res.annos);
-            setCurrentAnnotation(res.currAnno);
+            annotation.setCurr(res.currAnno);
           }}
         >
           Redo
@@ -176,14 +157,14 @@ const Page: React.FC = () => {
           <div className="draw">
             <PPStage
               scale={scale.curr}
-              annotations={annotations}
+              annotations={annotation.all}
               currentTool={tool.curr}
               currentAnnotation={annotation.curr}
-              setCurrentAnnotation={setCurrentAnnotation}
+              setCurrentAnnotation={annotation.setCurr}
               onAnnotationModify={onAnnotationModify}
               onAnnotationModifyComplete={() => {
-                recordHistory({ annos: annotations, currAnno: annotation.curr });
-                annotation.modify();
+                recordHistory({ annos: annotation.all, currAnno: annotation.curr });
+                annotation.setCurr();
               }}
               onMouseDown={dr.onMouseDown}
               onMouseMove={dr.onMouseMove}
