@@ -522,6 +522,31 @@ export const DataUtils = (useState: UseStateType) => {
   };
 };
 
+function exportDataset(projectId, exportDir) {
+  projectApi
+    .exportDataset(projectId, { exportDir: exportDir })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log('export error', err);
+      serviceUtils.parseError(err, message);
+    });
+}
+async function splitDataset(projectId, props: { train: number; validation: number; test: number }) {
+  console.log('split param', props);
+
+  projectApi
+    .splitDataset(projectId, props)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log('split error', err);
+      serviceUtils.parseError(err, message);
+    });
+}
+
 export const PageInit = (
   useState: UseStateType,
   useEffect: UseEffectType,
@@ -589,5 +614,16 @@ export const PageInit = (
     onTaskChange();
   }, [task.currIdx]);
 
-  return [tool, loading, scale, annotation, task, data, project, label];
+  return [
+    tool,
+    loading,
+    scale,
+    annotation,
+    task,
+    data,
+    project,
+    label,
+    splitDataset,
+    exportDataset,
+  ];
 };
