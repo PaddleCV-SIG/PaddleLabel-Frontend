@@ -206,12 +206,7 @@ const Page: React.FC = () => {
         />
         <PPAnnotationList
           annotations={annotation.all}
-          onAnnotationSelect={
-            //   (selectedAnno) => {
-            //   if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
-            // }
-            annotation.setCurr
-          }
+          onAnnotationSelect={(ann) => annotation.setCurr(ann, label)}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
           onAnnotationDelete={
