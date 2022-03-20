@@ -157,9 +157,22 @@ export default function (props: {
     offsetY: number,
     scale: number,
   ) => {
-    console.log(scale);
-    const mouseX = (e.evt.offsetX + offsetX) / scale;
-    const mouseY = (e.evt.offsetY + offsetY) / scale;
+    const mouseX = e.evt.offsetX + offsetX / scale;
+    const mouseY = e.evt.offsetY + offsetY / scale;
+    console.log(
+      `evt.offsetX:`,
+      e.evt.offsetX,
+      `evt.offsetY:`,
+      e.evt.offsetY,
+      `offset:`,
+      offsetX,
+      offsetY,
+      `scale:`,
+      scale,
+      `mouseXY:`,
+      mouseX,
+      mouseY,
+    );
 
     const Rectangle = createRectangle(props.currentLabel?.color, [mouseX, mouseY]);
     if (!Rectangle) return;

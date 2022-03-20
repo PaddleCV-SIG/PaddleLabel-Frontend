@@ -177,7 +177,7 @@ export const LabelUtils = (
   }
 
   function setCurr(label: Label | number) {
-    console.log('label setcurr', label);
+    // console.log('label setcurr', label);
 
     const idx: number = indexOf(label, all, 'labelId');
     if (idx == undefined) throw Error('label.setCurr label not found');

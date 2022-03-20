@@ -64,6 +64,9 @@ const Component: React.FC<PPStageProps> = (props) => {
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
 
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
   // Dynamically adjust canvas size, prevent content overflow
   function handleWindowResize() {
     const parent = document.getElementById('dr');
@@ -116,11 +119,16 @@ const Component: React.FC<PPStageProps> = (props) => {
             props.currentTool,
             props.setCurrentAnnotation,
             props.currentAnnotation,
-            { x: -canvasWidth / 2, y: -canvasHeight / 2 },
+            { x: -canvasWidth / 2 - dragOffset.x, y: -canvasHeight / 2 - dragOffset.y },
           ),
         );
     }
   }
+  console.log(
+    `canvas: (${canvasWidth}, ${canvasHeight}), offset: (${-canvasWidth / 2}, ${
+      -canvasHeight / 2
+    })`,
+  );
 
   return (
     <Stage
@@ -136,7 +144,12 @@ const Component: React.FC<PPStageProps> = (props) => {
       <Layer
         onMouseDown={(e) => {
           if (props.onMouseDown)
-            props.onMouseDown(e, -canvasWidth / 2, -canvasHeight / 2, props.scale);
+            props.onMouseDown(
+              e,
+              -canvasWidth / 2 - dragOffset.x,
+              -canvasHeight / 2 - dragOffset.y,
+              props.scale,
+            );
         }}
         onMouseMove={(e) => {
           if (props.onMouseMove) props.onMouseMove(e, props.scale);
@@ -149,10 +162,20 @@ const Component: React.FC<PPStageProps> = (props) => {
           e.evt.preventDefault();
         }}
         draggable={false}
-        scaleX={props.scale}
-        scaleY={props.scale}
       >
-        <Group draggable={props.currentTool == 'mover'} onDragEnd={(evt) => {}}>
+        <Group
+          draggable={props.currentTool == 'mover'}
+          scaleX={props.scale}
+          scaleY={props.scale}
+          onDragEnd={(evt) => {
+            if (props.currentTool != 'mover') return;
+            setDragOffset({ x: evt.evt.offsetX - dragStart.x, y: evt.evt.offsetY - dragStart.y });
+          }}
+          onDragStart={(evt) => {
+            if (props.currentTool != 'mover') return;
+            setDragStart({ x: evt.evt.offsetX, y: evt.evt.offsetY });
+          }}
+        >
           <Image
             draggable={false}
             image={image}
