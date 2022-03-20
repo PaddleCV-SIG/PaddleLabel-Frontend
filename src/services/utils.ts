@@ -424,7 +424,7 @@ export const PageInit = (
   const task = TaskUtils(useState);
   const data = DataUtils(useState);
   const project = ProjectUtils(useState);
-  //FIXME: What's the type of props.label?
+  //FIXME: What's the type of props.label? just the second parameter for creating labelUtils
   const label = LabelUtils(useState, props.label);
   const annotation = AnnotationUtils(useState);
 
@@ -443,13 +443,14 @@ export const PageInit = (
     });
     label.getAll(projectId);
     task.getAll(projectId);
-    task.getProgress(projectId);
-  }, [label, project, task]);
+    // task.getProgress(projectId);
+    // }, [label, project, task]);
+  }, []);
 
   useEffect(() => {
     // when all task is set, set current task
     if (task.all && task.all.length != 0) task.turnTo(0);
-  }, [task, task.all]);
+  }, [task.all]);
 
   useEffect(() => {
     // when current task is set, get task's data, data's annotation, toggle label active
@@ -471,7 +472,8 @@ export const PageInit = (
       setLoading(false);
     };
     onTaskChange();
-  }, [annotation, data, label.all, props.effectTrigger, task, task.currIdx]);
+    // }, [annotation, data, label.all, props.effectTrigger, task, task.currIdx]);
+  }, [task.currIdx]);
 
   return [loading, setLoading, scale, annotation, task, data, project, label];
 };
