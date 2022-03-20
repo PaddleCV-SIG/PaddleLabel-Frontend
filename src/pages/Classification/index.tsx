@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
@@ -9,8 +8,6 @@ import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
 import { ToolType } from '@/models/ToolType';
-
-const baseUrl = localStorage.getItem('basePath');
 
 const Page: React.FC = () => {
   const [currTool, setCurrTool] = useState<ToolType>('mover');
@@ -43,6 +40,7 @@ const Page: React.FC = () => {
   }
 
   function postTaskChange(labels, annotations) {
+    setLoading(true);
     if (!labels) return;
     for (const lab of labels) {
       const annOfLabel = annotations.filter((ann) => ann.label.labelId == lab.labelId);
@@ -50,6 +48,7 @@ const Page: React.FC = () => {
     }
     console.log('label.all toggled', label.all);
     label.setAll([...labels]);
+    setLoading(false);
   }
 
   return (
@@ -98,7 +97,6 @@ const Page: React.FC = () => {
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
               onAnnotationModifyComplete={() => {}}
-              // imgSrc={`${baseUrl}/datas/${data.curr?.dataId}/image`}
               imgSrc={data.imgSrc}
             />
           </div>

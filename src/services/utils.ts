@@ -38,8 +38,11 @@ export function snake2camel(name: string) {
   return name;
 }
 
-// if item is number, return idx where arr[idx].key == item
-// if item is object, return idx where arr[idx].key == item.key
+/*
+if item is
+- number, return idx where arr[idx].key == item
+- object, return idx where arr[idx].key == item.key
+*/
 export const indexOf = (item: any, arr: any[], key: string) => {
   if (!key) return undefined;
   const toFind = typeof item == 'number' ? item : item[key];
@@ -52,21 +55,23 @@ export const indexOf = (item: any, arr: any[], key: string) => {
 export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) => {
   const [curr, setCurr] = useState<number>(1);
 
-  const change = (delta: number) => {
-    let scale = curr;
-    scale += delta;
-    if (scale < range[0]) {
-      scale = range[0];
+  const setScale = (scale: number) => {
+    let s = scale;
+    if (s < range[0]) {
+      s = range[0];
       message.error('Smallest scale is ' + range[0]);
     }
-    if (scale > range[1]) {
-      scale = range[1];
+    if (s > range[1]) {
+      s = range[1];
       message.error('Largest scale is ' + range[1]);
     }
-    setCurr(scale);
+    setCurr(s);
   };
 
-  return { curr, change };
+  function change(delta: number) {
+    setScale(curr + delta);
+  }
+  return { curr, change, setScale };
 };
 
 export const ProjectUtils = (useState: UseStateType) => {
