@@ -38,15 +38,18 @@ export function snake2camel(name: string) {
   return name;
 }
 
+// if item is number, return idx where arr[idx].key == item
+// if item is object, return idx where arr[idx].key == item.key
 export const indexOf = (item: any, arr: any[], key: string) => {
   if (!key) return undefined;
+  const toFind = typeof item == 'number' ? item : item[key];
   for (let idx = 0; idx < arr.length; idx++) {
-    if (item[key] == arr[idx][key]) return idx;
+    if (toFind == arr[idx][key]) return idx;
   }
   return undefined;
 };
 
-export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 3]) => {
+export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) => {
   const [curr, setCurr] = useState<number>(1);
 
   const change = (delta: number) => {
@@ -160,10 +163,9 @@ export const LabelUtils = (
   };
 
   const setCurr = (label: Label | number) => {
-    let idx = typeof label == 'number' ? label : indexOf(label, all, 'labelId');
-    idx = idx ? idx : 0;
+    const idx = indexOf(label, all, 'labelId');
+    if (idx == undefined) throw Error('undefined label idx');
     setCurrIdx(idx);
-    console.log('onehot', isOneHot);
     if (isOneHot) {
       for (const lab of all) lab.active = false;
       all[idx].active = true;
@@ -337,7 +339,6 @@ export const AnnotationUtils = (useState: UseStateType) => {
   };
 
   const setCurr = async (annotation: Annotation | undefined, label: any) => {
-    console.log('annotation onselect', annotation);
     if (annotation == undefined) {
       setCurrIdx(undefined);
       return;
@@ -347,9 +348,9 @@ export const AnnotationUtils = (useState: UseStateType) => {
     selected.active = !annotation.active;
     const idx = indexOf(selected, all, 'annotationId');
     setCurrIdx(idx);
-    // FIXME: label is not defined.
-    label.setCurr(annotation.labelId);
     setAll([...all]);
+    console.log('ann on select label', label);
+    label.setCurr(annotation.labelId);
   };
 
   return {
@@ -424,7 +425,8 @@ export const PageInit = (
   const task = TaskUtils(useState);
   const data = DataUtils(useState);
   const project = ProjectUtils(useState);
-  //FIXME: What's the type of props.label? just the second parameter for creating labelUtils
+  //FIXME: What's the type of props.label?
+  //REPLY: should be the same as the second parameter of LabelUtils. Maybe declear a type to use for both places?
   const label = LabelUtils(useState, props.label);
   const annotation = AnnotationUtils(useState);
 
@@ -443,7 +445,7 @@ export const PageInit = (
     });
     label.getAll(projectId);
     task.getAll(projectId);
-    // task.getProgress(projectId);
+    task.getProgress(projectId);
     // }, [label, project, task]);
   }, []);
 
