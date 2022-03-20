@@ -1,11 +1,12 @@
-import type { Annotation } from '@/models/annotation';
-import type { Label } from '@/models/label';
-import type { ToolType } from '@/pages/SemanticSegmentation';
+import { Annotation } from '@/models/Annotation';
+import { Label } from '@/models/Label';
+import { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
 import type { ReactElement } from 'react';
 import { Circle, Group, Rect } from 'react-konva';
 
 export type PPRectangleType = {
+  tool: ToolType;
   color: string;
   points: number[];
 };
@@ -21,9 +22,10 @@ function hexToRgb(hex: string) {
     : null;
 }
 
-function createRectangle(color: string, points: number[]): PPRectangleType | undefined {
+function createRectangle(color?: string, points?: number[]): PPRectangleType | undefined {
   if (!color || !points) return undefined;
   return {
+    tool: 'rectangle',
     color: color,
     points: points,
   };
@@ -63,11 +65,14 @@ function drawRectangle(
         draggable={currentTool == 'mover'}
         onDragMove={(evt) => {
           console.log(`Circle onDrageMove`);
-          const newPositionX = evt.evt.offsetX / scale;
-          const newPositionY = evt.evt.offsetY / scale;
+          const newPositionX = evt.evt.offsetX;
+          const newPositionY = evt.evt.offsetY;
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
-          const newAnno = { ...annotation, lines: [{ color: color, points: points }] };
+          const newAnno = {
+            ...annotation,
+            lines: [{ tool: 'rectangle' as ToolType, color: color, points: points }],
+          };
           onDrag(newAnno);
         }}
         onMouseOver={() => {
@@ -84,50 +89,13 @@ function drawRectangle(
         fill={color}
       />,
     );
-    console.log(index, points);
     if (points.length > 4) {
       points.splice(index + 1, 2);
     }
     x = undefined;
   });
-  // Create Rectangle
-  // console.log(points); // DEBUG
   return [
-    <Group
-      key={annotation.annotationId}
-      // onDragStart={(evt) => {
-      //   const originX = evt.evt.clientX / scale;
-      //   const originY = evt.evt.clientY / scale;
-      //   setDragStartMousePos({ x: originX, y: originY });
-      // }}
-      // onDragEnd={() => {
-      //   onDragEnd();
-      // }}
-      // draggable={false}
-      // onDragMove={(evt) => {
-      //   evt.target.position();
-      //   console.log(`dragStartMousePos: ${JSON.stringify(dragStartMousePos)}, scale: ${scale}`);
-      //   const newPositionX = evt.evt.clientX / scale;
-      //   const newPositionY = evt.evt.clientY / scale;
-      //   console.log(`newPositionX: ${newPositionX}, newPositionY: ${newPositionY}`);
-      //   const offsetX = newPositionX - dragStartMousePos.x;
-      //   const offsetY = newPositionY - dragStartMousePos.y;
-      //   console.log(`offsetX: ${offsetX}, offsetY: ${offsetY}`);
-      //   const newPoints: number[] = [];
-      //   points.forEach((point, index) => {
-      //     if (index % 2 == 1) {
-      //       newPoints.push(point + offsetY);
-      //     } else {
-      //       newPoints.push(point + offsetX);
-      //     }
-      //   });
-      //   console.log(`points: ${JSON.stringify(points)}, newPoints: ${JSON.stringify(newPoints)}`);
-      //   const newAnno = { ...annotation, lines: [{ color: color, points: newPoints }] };
-      //   setDragStartMousePos({ x: newPositionX, y: newPositionY });
-      //   onDrag(newAnno);
-      // }}
-    >
-      {/* FIXME: add rectangle */}
+    <Group key={annotation.annotationId}>
       <Rect
         onMouseOver={() => {
           if (currentTool == 'mover') {
@@ -144,8 +112,6 @@ function drawRectangle(
         strokeWidth={2}
         globalCompositeOperation="source-over"
         lineCap="round"
-        // points={points}
-        // tension={0}
         x={points[0]}
         y={points[1]}
         width={points[2] - points[0]}
@@ -184,23 +150,35 @@ export default function (props: {
   onAnnotationModify: (annotation: Annotation<PPRectangleType>) => void;
   onMouseUp: () => void;
 }) {
-  const startNewRectangle = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
-    const mouseX = e.evt.offsetX / scale;
-    const mouseY = e.evt.offsetY / scale;
+  const startNewRectangle = (
+    e: Konva.KonvaEventObject<MouseEvent>,
+    offsetX: number,
+    offsetY: number,
+    scale: number,
+  ) => {
+    console.log(scale);
+    const mouseX = (e.evt.offsetX + offsetX) / scale;
+    const mouseY = (e.evt.offsetY + offsetY) / scale;
+
     const Rectangle = createRectangle(props.currentLabel?.color, [mouseX, mouseY]);
     if (!Rectangle) return;
     props.onAnnotationAdd({
-      tool: 'polygon',
+      tool: 'rectangle',
       annotationId: getMaxId(props.annotations) + 1,
       label: props.currentLabel,
       lines: [Rectangle],
     });
   };
 
-  const addDotToRectangle = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
+  const addDotToRectangle = (
+    e: Konva.KonvaEventObject<MouseEvent>,
+    offsetX: number,
+    offsetY: number,
+    scale: number,
+  ) => {
     if (!props.currentAnnotation) return;
-    const mouseX = e.evt.offsetX / scale;
-    const mouseY = e.evt.offsetY / scale;
+    const mouseX = (e.evt.offsetX + offsetX) / scale;
+    const mouseY = (e.evt.offsetY + offsetY) / scale;
     const existLines = props.currentAnnotation.lines || [];
     const Rectangle = createRectangle(
       props.currentLabel?.color,
@@ -208,7 +186,7 @@ export default function (props: {
     );
     if (!Rectangle) return;
     const anno = {
-      tool: 'polygon' as ToolType,
+      tool: 'rectangle' as ToolType,
       annotationId: props.currentAnnotation.annotationId,
       label: props.currentAnnotation.label,
       lines: [Rectangle],
@@ -216,18 +194,24 @@ export default function (props: {
     props.onAnnotationModify(anno);
   };
 
-  const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
-    if (props.currentTool != 'polygon') return;
+  const OnMouseDown = (
+    e: Konva.KonvaEventObject<MouseEvent>,
+    offsetX: number,
+    offsetY: number,
+    scale: number,
+  ) => {
+    console.log(e.evt);
+    if (props.currentTool != 'rectangle') return;
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
-      startNewRectangle(e, scale);
+      startNewRectangle(e, offsetX, offsetY, scale);
     } else {
-      addDotToRectangle(e, scale);
+      addDotToRectangle(e, offsetX, offsetY, scale);
     }
   };
 
   const OnMouseUp = () => {
-    if (props.currentTool != 'polygon') return;
+    if (props.currentTool != 'rectangle') return;
     // console.log(`OnMouseUp`);
     props.onMouseUp();
   };

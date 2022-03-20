@@ -53,7 +53,7 @@ const Page: React.FC = () => {
     setAnnotations(newAnnos);
   };
 
-  const polygon = drawRectangle({
+  const rectagle = drawRectangle({
     currentLabel: label.curr,
     currentTool: currentTool,
     annotations: annotations,
@@ -69,15 +69,15 @@ const Page: React.FC = () => {
     },
   });
 
-  const dr = polygon;
+  const dr = rectagle;
 
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
         <PPRectangle
-          active={currentTool == 'polygon'}
+          active={currentTool == 'rectangle'}
           onClick={() => {
-            setCurrentTool('polygon');
+            setCurrentTool('rectangle');
             setCurrentAnnotation(undefined);
           }}
         >
@@ -149,12 +149,12 @@ const Page: React.FC = () => {
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={onAnnotationModify}
               onAnnotationModifyComplete={() => {
-                recordHistory(annotations, currentAnnotation);
+                recordHistory({ annotations, currentAnnotation });
               }}
               onMouseDown={dr.onMouseDown}
               onMouseMove={dr.onMouseMove}
               onMouseUp={dr.onMouseUp}
-              createPolygonFunc={polygon.createElementsFunc}
+              createRectangleFunc={rectagle.createElementsFunc}
               imgSrc={data.imgSrc}
             />
           </div>

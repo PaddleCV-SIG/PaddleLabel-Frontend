@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Annotation } from '@/models/annotation';
-import { ToolType } from '@/pages/SemanticSegmentation';
+import { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
 import React, { Props, ReactElement, useEffect, useRef, useState } from 'react';
 import { Layer, Stage, Image, Transformer, Group } from 'react-konva';
@@ -18,7 +18,12 @@ export type PPStageProps = {
   currentTool: ToolType;
   currentAnnotation?: Annotation<any>;
   setCurrentAnnotation: (anntation: Annotation<any>) => void;
-  onMouseDown?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
+  onMouseDown?: (
+    evt: Konva.KonvaEventObject<MouseEvent>,
+    offsetX: number,
+    offsetY: number,
+    scale: number,
+  ) => void;
   onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
   createPolygonFunc?: (
@@ -39,18 +44,26 @@ export type PPStageProps = {
     onSelect: (anntation: Annotation<any>) => void,
     currentAnnotation?: Annotation<any>,
   ) => ReactElement[];
+  createRectangleFunc?: (
+    annotation: Annotation<any>,
+    onDrag: (anntation: Annotation<any>) => void,
+    onDragEnd: () => void,
+    scale: number,
+    currentTool: ToolType,
+    onSelect: (anntation: Annotation<any>) => void,
+    currentAnnotation?: Annotation<any>,
+  ) => ReactElement[];
   onAnnotationModify: (annotation: Annotation<any>) => void;
   onAnnotationModifyComplete: () => void;
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
   const [image] = useImage(props.imgSrc || '');
-  const imageWidth = image?.width || 0;
-  const imageHeight = image?.height || 0;
 
-  const [canvasWidth, setCanvasWidth] = useState<number>();
-  const [canvasHeight, setCanvasHeight] = useState<number>();
-  const [imagePosition, setImagePosition] = useState({ x: 0, y: 0 });
+  const [canvasWidth, setCanvasWidth] = useState<number>(0);
+  const [canvasHeight, setCanvasHeight] = useState<number>(0);
+
+  console.log('scale: ', props.scale);
 
   // Dynamically adjust canvas size, prevent content overflow
   function handleWindowResize() {
@@ -69,8 +82,6 @@ const Component: React.FC<PPStageProps> = (props) => {
     if (parent) {
       setCanvasWidth(parent.clientWidth);
       setCanvasHeight(parent.clientHeight);
-      // Place image at the center when init
-      setImagePosition({ x: parent.clientWidth / 2, y: parent.clientHeight / 2 });
     }
   }, []);
 
@@ -78,7 +89,24 @@ const Component: React.FC<PPStageProps> = (props) => {
   if (props.annotations) {
     for (const annotation of props.annotations) {
       if (!annotation) continue;
-      const func = annotation.tool == 'polygon' ? props.createPolygonFunc : props.createBrushFunc;
+      // console.log(annotation);
+      let func;
+      switch (annotation.tool as ToolType) {
+        case 'polygon':
+          func = props.createPolygonFunc;
+          break;
+        case 'brush':
+          func = props.createBrushFunc;
+          break;
+        case 'rubber':
+          func = props.createBrushFunc;
+          break;
+        case 'rectangle':
+          func = props.createRectangleFunc;
+          break;
+        default:
+          func = null;
+      }
       if (func)
         shapes.push(
           func(
@@ -94,15 +122,21 @@ const Component: React.FC<PPStageProps> = (props) => {
     }
   }
 
-  // console.log(`PPStage. ${JSON.stringify(props.elements)}`);
   return (
-    <Stage width={canvasWidth} height={canvasHeight} className={styles.stage}>
+    <Stage
+      width={canvasWidth}
+      height={canvasHeight}
+      offsetX={-canvasWidth / 2}
+      offsetY={-canvasHeight / 2}
+      className={styles.stage}
+    >
       {/* <Layer scaleX={props.scale} scaleY={props.scale} draggable={false}>
         <Image image={image} draggable={false} />
       </Layer> */}
       <Layer
         onMouseDown={(e) => {
-          if (props.onMouseDown) props.onMouseDown(e, props.scale);
+          if (props.onMouseDown)
+            props.onMouseDown(e, -canvasWidth / 2, -canvasHeight / 2, props.scale);
         }}
         onMouseMove={(e) => {
           if (props.onMouseMove) props.onMouseMove(e, props.scale);
@@ -115,17 +149,15 @@ const Component: React.FC<PPStageProps> = (props) => {
           e.evt.preventDefault();
         }}
         draggable={false}
+        scaleX={props.scale}
+        scaleY={props.scale}
       >
         <Group draggable={props.currentTool == 'mover'} onDragEnd={(evt) => {}}>
           <Image
             draggable={false}
             image={image}
-            x={imagePosition.x}
-            y={imagePosition.y}
-            offsetX={imageWidth / 2}
-            offsetY={imageHeight / 2}
-            scaleX={props.scale}
-            scaleY={props.scale}
+            x={-(image?.width || 0) / 2}
+            y={-(image?.height || 0) / 2}
           />
           {shapes}
         </Group>

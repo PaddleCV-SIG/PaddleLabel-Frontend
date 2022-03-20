@@ -88,40 +88,7 @@ function drawPolygon(
   });
   // Create polygon
   return [
-    <Group
-      key={annotation.annotationId}
-      // onDragStart={(evt) => {
-      //   const originX = evt.evt.clientX / scale;
-      //   const originY = evt.evt.clientY / scale;
-      //   setDragStartMousePos({ x: originX, y: originY });
-      // }}
-      // onDragEnd={() => {
-      //   onDragEnd();
-      // }}
-      // draggable={false}
-      // onDragMove={(evt) => {
-      //   evt.target.position();
-      //   console.log(`dragStartMousePos: ${JSON.stringify(dragStartMousePos)}, scale: ${scale}`);
-      //   const newPositionX = evt.evt.clientX / scale;
-      //   const newPositionY = evt.evt.clientY / scale;
-      //   console.log(`newPositionX: ${newPositionX}, newPositionY: ${newPositionY}`);
-      //   const offsetX = newPositionX - dragStartMousePos.x;
-      //   const offsetY = newPositionY - dragStartMousePos.y;
-      //   console.log(`offsetX: ${offsetX}, offsetY: ${offsetY}`);
-      //   const newPoints: number[] = [];
-      //   points.forEach((point, index) => {
-      //     if (index % 2 == 1) {
-      //       newPoints.push(point + offsetY);
-      //     } else {
-      //       newPoints.push(point + offsetX);
-      //     }
-      //   });
-      //   console.log(`points: ${JSON.stringify(points)}, newPoints: ${JSON.stringify(newPoints)}`);
-      //   const newAnno = { ...annotation, lines: [{ color: color, points: newPoints }] };
-      //   setDragStartMousePos({ x: newPositionX, y: newPositionY });
-      //   onDrag(newAnno);
-      // }}
-    >
+    <Group key={annotation.annotationId}>
       <Line
         onMouseOver={() => {
           if (currentTool == 'mover') {

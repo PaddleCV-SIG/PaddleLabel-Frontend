@@ -169,7 +169,7 @@ export const LabelUtils = (
     if (isOneHot) {
       for (const lab of all) lab.active = false;
       all[idx].active = true;
-      console.log('all', all);
+      // console.log('all', all);
     } else {
       all[idx].active = !all[idx].active;
     }
@@ -235,7 +235,7 @@ export const TaskUtils = (useState: UseStateType) => {
       message.error('This is the final image. No next image.');
       return;
     }
-    console.log('turning to', turnToIdx);
+    // console.log('turning to', turnToIdx);
     setCurrIdx(turnToIdx);
   };
 
@@ -289,7 +289,7 @@ export const TaskUtils = (useState: UseStateType) => {
     prevTask,
     get curr() {
       if (currIdx == undefined || all == undefined) return undefined;
-      console.log('task.curr', all[currIdx]);
+      // console.log('task.curr', all[currIdx]);
       return all[currIdx];
     },
     get finished() {
@@ -399,10 +399,10 @@ export const DataUtils = (useState: UseStateType) => {
     },
     get imgSrc() {
       if (all && all[currIdx]) {
-        console.log(
-          'imgsrc',
-          `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`,
-        );
+        // console.log(
+        //   'imgsrc',
+        //   `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`,
+        // );
         return `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`;
       }
       return ``;
@@ -459,12 +459,13 @@ export const PageInit = (
     if (task.currIdx == undefined) return;
 
     const onTaskChange = async () => {
-      console.log('onTaskChange', task.curr, label.all, task.progress);
+      // console.log('onTaskChange', task.curr, label.all, task.progress);
       if (task.curr?.projectId) task.getProgress(task.curr.projectId);
       if (task.curr?.taskId) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [allData, currData] = await data.getAll(task.curr.taskId, 0);
 
-        console.log(allData);
+        // console.log(allData);
         const allAnns = await annotation.getAll(currData.dataId);
         if (label.all) for (const lab of label.all) lab.active = false;
         if (props.effectTrigger.postTaskChange)

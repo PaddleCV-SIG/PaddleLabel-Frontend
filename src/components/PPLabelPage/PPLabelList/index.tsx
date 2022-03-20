@@ -18,7 +18,7 @@ export type PPLabelListProps = {
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
-  console.log('render pplabellist');
+  // console.log('render pplabellist');
 
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
 
