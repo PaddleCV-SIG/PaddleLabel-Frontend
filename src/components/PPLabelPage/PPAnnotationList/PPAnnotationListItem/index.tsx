@@ -5,7 +5,7 @@ import PPColorBall from '../../PPColorBall';
 import type { Annotation } from '@/models/annotation';
 
 export type PPAnnotationListItemProps = {
-  active?: boolean;
+  active: boolean;
   annotation: Annotation;
   // Currently, only support modify visibility and color
   onAnnotationModify: (annotation: Annotation) => void;

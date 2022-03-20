@@ -39,6 +39,7 @@ function drawRectangle(
   currentTool: ToolType,
   onSelect: (anntation: Annotation<PPRectangleType>) => void,
   currentAnnotation?: Annotation<PPRectangleType>,
+  offset?: { x: number; y: number },
 ): ReactElement[] {
   if (!annotation || !annotation.lines || !annotation.lines[0]) return [<></>];
   const points = annotation.lines[0].points;
@@ -60,13 +61,13 @@ function drawRectangle(
     pointElements.push(
       <Circle
         onMouseDown={() => {
-          if (currentTool == 'mover') onSelect(annotation);
+          if (currentTool == 'editor' || currentTool == 'mover') onSelect(annotation);
         }}
-        draggable={currentTool == 'mover'}
+        draggable={currentTool == 'editor'}
         onDragMove={(evt) => {
-          console.log(`Circle onDrageMove`);
-          const newPositionX = evt.evt.offsetX;
-          const newPositionY = evt.evt.offsetY;
+          if (currentTool != 'editor') return;
+          const newPositionX = (evt.evt.offsetX + (offset?.x || 0)) / scale;
+          const newPositionY = (evt.evt.offsetY + (offset?.y || 0)) / scale;
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
           const newAnno = {
@@ -77,7 +78,7 @@ function drawRectangle(
         }}
         onMouseOver={() => {
           console.log(`Circle onMouseOver`);
-          if (currentTool == 'mover') document.body.style.cursor = 'pointer';
+          if (currentTool == 'editor') document.body.style.cursor = 'pointer';
         }}
         onMouseOut={() => {
           console.log(`Circle onMouseOut`);

@@ -18,16 +18,13 @@ import type { Annotation } from '@/models/Annotation';
 import { ToolType } from '@/models/ToolType';
 
 const Page: React.FC = () => {
-  const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
-    useState,
-    useEffect,
-    {
-      label: { oneHot: true },
-      effectTrigger: {},
-    },
-  );
-
+  const [loading, scale, annotation, task, data, project, label] = PageInit(useState, useEffect, {
+    label: { oneHot: true },
+    effectTrigger: { postTaskChange: initHistory },
+  });
+  // TODO: move to utils
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
+
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
 
@@ -36,9 +33,9 @@ const Page: React.FC = () => {
     if (anno?.label) label.setCurr(anno.label);
   };
 
-  useEffect(() => {
-    initHistory();
-  }, []);
+  // useEffect(() => {
+  //   initHistory(); // reinit history after turn task s
+  // }, []);
 
   const onAnnotationModify = (annotation: Annotation<any>) => {
     const newAnnos: Annotation<any>[] = [];
@@ -57,7 +54,7 @@ const Page: React.FC = () => {
     currentLabel: label.curr,
     currentTool: currentTool,
     annotations: annotations,
-    currentAnnotation: currentAnnotation,
+    currentAnnotation: annotation.curr,
     onAnnotationAdd: (annotation) => {
       const newAnnos = annotations.concat([annotation]);
       setAnnotations(newAnnos);
@@ -65,7 +62,7 @@ const Page: React.FC = () => {
     },
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
-      recordHistory({ annos: annotations, currAnno: currentAnnotation });
+      recordHistory({ annos: annotations, currAnno: annotation.curr });
     },
   });
 
@@ -83,7 +80,15 @@ const Page: React.FC = () => {
         >
           Rectangle
         </PPRectangle>
-        <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
+        <PPToolBarButton
+          active={currentTool == 'editor'}
+          imgSrc="./pics/buttons/edit.png"
+          onClick={() => {
+            setCurrentTool('editor');
+          }}
+        >
+          Edit
+        </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
@@ -139,17 +144,17 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
-        <Spin tip="loading" spinning={!!loading}>
+        <Spin tip="loading" spinning={!!loading.curr}>
           <div className="draw">
             <PPStage
               scale={scale.curr}
               annotations={annotations}
               currentTool={currentTool}
-              currentAnnotation={currentAnnotation}
+              currentAnnotation={annotation.curr}
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={onAnnotationModify}
               onAnnotationModifyComplete={() => {
-                recordHistory({ annotations, currentAnnotation });
+                recordHistory(annotations, annotation.curr);
               }}
               onMouseDown={dr.onMouseDown}
               onMouseMove={dr.onMouseMove}
@@ -167,8 +172,8 @@ const Page: React.FC = () => {
                 showInfo={false}
               />{' '}
               <span className="progressDesc">
-                Current labeling {task.currIdx ? task.currIdx + 1 : 1} of {task.all?.length}.
-                Already labeled {task.finished || 0}.
+                Current labeling {task.currIdx == undefined ? 1 : task.currIdx + 1} of{' '}
+                {task.all?.length}. Already labeled {task.finished(project.progress) || 0}.
               </span>
             </div>
           </div>
@@ -195,10 +200,10 @@ const Page: React.FC = () => {
         </div>
         <PPLabelList
           labels={label.all}
+          activeIds={label.activeIds}
           onLabelSelect={(selected) => {
-            label.setCurr(selected);
-            // setCurrentLabel(selected);
-            annotation.setCurr(undefined);
+            label.onSelect(selected);
+            // annotation.setCurr(undefined);
           }}
           onLabelModify={() => {}}
           onLabelDelete={label.remove}
@@ -206,7 +211,8 @@ const Page: React.FC = () => {
         />
         <PPAnnotationList
           annotations={annotation.all}
-          onAnnotationSelect={(ann) => annotation.setCurr(ann, label)}
+          activeIds={annotation.activeIds}
+          onAnnotationSelect={annotation.setCurr}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
           onAnnotationDelete={
