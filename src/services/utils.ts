@@ -256,7 +256,9 @@ export const TaskUtils = (useState: UseStateType) => {
   const getProgress = async (projectId: number): Promise<number> => {
     try {
       const stat = await projectApi.getProgress(projectId);
-      if (!stat || !stat.finished || !stat.total) throw Error('empty progress');
+      console.log('stat', stat, stat.finished, stat.total);
+      if (!stat || stat.finished == undefined || stat.total == undefined)
+        throw Error('empty progress');
       const prog = Math.ceil((stat.finished / stat.total) * 100);
       console.log('progress', stat, prog);
       setProgress(prog);
