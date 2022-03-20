@@ -29,8 +29,12 @@ const Page: React.FC = () => {
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
 
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
+    if (!anno) return;
     console.log('setCurrentAnnotation', anno, 'anno.label:', anno?.label);
+    anno.taskId = task.curr.taskId;
+    anno.dataId = data.curr.dataId;
     annotation.setCurr(anno);
+    console.log(annotation.curr);
     if (anno?.label) label.setCurr(anno.label);
   };
 
@@ -39,7 +43,6 @@ const Page: React.FC = () => {
   }, []);
 
   const onAnnotationModify = (anno: Annotation<any>) => {
-    anno.taskId = task.currIdx;
     const newAnnos: Annotation<any>[] = [];
     for (let i = 0; i < annotations.length; i++) {
       if (annotations[i].annotationId == anno.annotationId) {
@@ -58,7 +61,6 @@ const Page: React.FC = () => {
     annotations: annotations,
     currentAnnotation: annotation.curr,
     onAnnotationAdd: (anno) => {
-      anno.taskId = task.currIdx;
       const newAnnos = annotations.concat([anno]);
       setAnnotations(newAnnos);
       if (!annotation.curr) setCurrentAnnotation(anno);
@@ -206,18 +208,6 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
-        <div className="determinOutline">
-          <Button
-            style={{ height: 40, fontSize: '0.75rem' }}
-            type="primary"
-            block
-            onClick={() => {
-              annotation.setCurr(undefined);
-            }}
-          >
-            Determine Outline
-          </Button>
-        </div>
         <PPLabelList
           labels={label.all}
           activeIds={label.activeIds}

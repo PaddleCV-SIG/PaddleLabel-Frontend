@@ -29,7 +29,8 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
         style={{
           backgroundImage: invisible ? 'url(./pics/hide.png)' : 'url(./pics/show.png)',
         }}
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           setInvisible(!invisible);
           props.onLabelModify(label);
         }}
@@ -66,9 +67,6 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
 
       <a
         className={styles.delete}
-        style={{
-          backgroundImage: 'url(./pics/delete.png)',
-        }}
         onClick={(e) => {
           e.stopPropagation();
           const time = new Date().getTime();

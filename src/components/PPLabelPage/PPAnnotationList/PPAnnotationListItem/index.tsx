@@ -35,7 +35,8 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
           style={{
             backgroundImage: invisible ? 'url(./pics/hide.png)' : 'url(./pics/show.png)',
           }}
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             setInvisible(!invisible);
             props.onAnnotationModify(annotation);
           }}
