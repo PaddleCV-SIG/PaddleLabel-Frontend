@@ -184,8 +184,8 @@ export const LabelUtils = (
     setCurrIdx(idx);
     const labelId: number = all[idx].labelId;
     if (isOneHot) {
-      if (activeIds.has(labelId)) activeIds = new Set();
-      else activeIds = new Set([labelId]);
+      activeIds.clear();
+      activeIds.add([labelId]);
     } else {
       if (activeIds.has(labelId)) activeIds.delete(labelId);
       else activeIds.add(labelId);
