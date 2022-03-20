@@ -26,8 +26,6 @@ const Page: React.FC = () => {
     },
   );
 
-  const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
-
   const modifyAnnotation = (anno: Annotation<any>) => {
     if (!anno) return;
     console.log('modifyAnnotation', anno, 'anno.label:', anno?.label);
@@ -41,31 +39,18 @@ const Page: React.FC = () => {
   }, []);
 
   const onAnnotationModify = (anno: Annotation<any>) => {
-    const newAnnos: Annotation<any>[] = [];
-    for (let i = 0; i < annotations.length; i++) {
-      if (annotations[i].annotationId == anno.annotationId) {
-        newAnnos.push(anno);
-      } else {
-        newAnnos.push(annotations[i]);
-      }
-    }
     modifyAnnotation(anno);
-    setAnnotations(newAnnos);
   };
 
   const rectagle = drawRectangle({
     currentLabel: label.curr,
     currentTool: tool.curr,
-    annotations: annotations,
+    annotations: annotation.all,
     currentAnnotation: annotation.curr,
-    onAnnotationAdd: (anno) => {
-      const newAnnos = annotations.concat([anno]);
-      setAnnotations(newAnnos);
-      if (!annotation.curr) modifyAnnotation(anno);
-    },
+    onAnnotationAdd: annotation.setCurr,
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
-      recordHistory({ annos: annotations, currAnno: annotation.curr });
+      recordHistory({ annos: annotation.all, currAnno: annotation.curr });
     },
   });
 
@@ -136,7 +121,6 @@ const Page: React.FC = () => {
             if (!res) {
               return;
             }
-            setAnnotations(res.annos);
             annotation.setCurr(res.currAnno);
           }}
         >
@@ -149,7 +133,6 @@ const Page: React.FC = () => {
             if (!res) {
               return;
             }
-            setAnnotations(res.annos);
             annotation.setCurr(res.currAnno);
           }}
         >
@@ -167,13 +150,13 @@ const Page: React.FC = () => {
           <div className="draw">
             <PPStage
               scale={scale.curr}
-              annotations={annotations}
+              annotations={annotation.all}
               currentTool={tool.curr}
               currentAnnotation={annotation.curr}
               setCurrentAnnotation={annotation.setCurr}
               onAnnotationModify={onAnnotationModify}
               onAnnotationModifyComplete={() => {
-                recordHistory({ annos: annotations, currAnno: annotation.curr });
+                recordHistory({ annos: annotation.all, currAnno: annotation.curr });
                 annotation.setCurr();
               }}
               onMouseDown={dr.onMouseDown}

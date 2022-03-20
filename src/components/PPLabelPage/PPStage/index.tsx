@@ -91,9 +91,9 @@ const Component: React.FC<PPStageProps> = (props) => {
   if (props.annotations) {
     for (const annotation of props.annotations) {
       if (!annotation) continue;
-      console.log(annotation);
+      console.log('PPStage rendering annotation:', annotation, 'annotation.tool:', annotation.tool);
       let func;
-      switch (annotation.tool as ToolType) {
+      switch (annotation.type as ToolType) {
         case 'polygon':
           func = props.createPolygonFunc;
           break;

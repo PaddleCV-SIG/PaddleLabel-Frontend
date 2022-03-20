@@ -232,13 +232,13 @@ export const LabelUtils = (
   }
 
   function setCurr(label: Label | number) {
-    console.log('setCurr', label);
+    console.log('LabelUtils setCurr', label);
     if (!oneHot) throw Error("multi select task doesn't have current label");
     if (!label) return;
     let labelId = typeof label == 'number' ? label : label.labelId;
     labelId = indexOf(labelId, all, 'labelId');
     if (labelId) {
-      console.log('setCurr index:', labelId);
+      console.log('LabelUtils setCurr index:', labelId);
       setCurrIdx(labelId);
       setActiveIds(new Set([labelId]));
     }
@@ -370,15 +370,15 @@ export function AnnotationUtils(
   const [curr, setCurrRaw] = useState<Annotation | undefined>();
 
   const getAll = async (dataId: number) => {
-    console.log('getAll, dataId:', dataId);
+    console.log('AnnotationUtils getAll, dataId:', dataId);
     if (dataId == undefined) return [];
     try {
       const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
-      console.log('getAll, annRes:', annRes);
+      console.log('AnnotationUtils getAll, annRes:', annRes);
       setAll(annRes);
       return annRes;
     } catch (err) {
-      console.log('ann getAll err', err);
+      console.log('AnnotationUtils ann getAll err', err);
       serviceUtils.parseError(err, message);
       return [];
     }
@@ -423,7 +423,6 @@ export function AnnotationUtils(
       setCurrRaw(undefined);
       return;
     }
-    console.log(`all:`, all);
     setCurrRaw(annotation);
     label.setCurr(annotation.labelId);
   }
@@ -448,7 +447,7 @@ export function AnnotationUtils(
   }
 
   async function modify(annotation: Annotation) {
-    if (!annotation || !annotation.annotationId) return undefined;
+    if (!annotation) return undefined;
     // no annotationId -> new ann, create
     if (annotation.annotationId == undefined) await create(annotation);
     else await update(annotation);
