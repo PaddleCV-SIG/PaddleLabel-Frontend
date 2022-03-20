@@ -111,8 +111,8 @@ const Page: React.FC = () => {
                 showInfo={false}
               />{' '}
               <span className="progressDesc">
-                Current labeling {task.currIdx} of {task.all?.length}. Already labeled{' '}
-                {task.finished}.
+                Current labeling {task.currIdx ? task.currIdx + 1 : 1} of {task.all?.length}.
+                Already labeled {task.finished || 0}.
               </span>
             </div>
           </div>
