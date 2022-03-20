@@ -91,7 +91,7 @@ const Component: React.FC<PPStageProps> = (props) => {
   if (props.annotations) {
     for (const annotation of props.annotations) {
       if (!annotation) continue;
-      // console.log(annotation);
+      console.log(annotation);
       let func;
       switch (annotation.tool as ToolType) {
         case 'polygon':
@@ -124,11 +124,6 @@ const Component: React.FC<PPStageProps> = (props) => {
         );
     }
   }
-  console.log(
-    `canvas: (${canvasWidth}, ${canvasHeight}), offset: (${-canvasWidth / 2}, ${
-      -canvasHeight / 2
-    })`,
-  );
 
   return (
     <Stage
