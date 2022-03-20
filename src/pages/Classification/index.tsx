@@ -7,14 +7,17 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
-import { ToolType } from '@/models/ToolType';
 
 const Page: React.FC = () => {
-  const [currTool, setCurrTool] = useState<ToolType>('mover');
-  const [loading, scale, annotation, task, data, project, label] = PageInit(useState, useEffect, {
-    label: { oneHot: false, postSetCurr: selectLabel },
-    effectTrigger: { postTaskChange: postTaskChange },
-  });
+  const [tool, loading, scale, annotation, task, data, project, label] = PageInit(
+    useState,
+    useEffect,
+    {
+      label: { oneHot: false, postSetCurr: selectLabel },
+      tool: { defaultTool: 'mover' },
+      effectTrigger: { postTaskChange: postTaskChange },
+    },
+  );
 
   function selectLabel(selected) {
     // after toggle is active, add ann
@@ -66,8 +69,9 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
+          active={tool.curr == 'mover'}
           onClick={() => {
-            setCurrTool('mover');
+            tool.setCurr('mover');
             message.info('You can move the image now.');
           }}
         >
@@ -79,7 +83,7 @@ const Page: React.FC = () => {
           <div className="draw">
             <PPStage
               scale={scale.curr}
-              currentTool={currTool}
+              currentTool={tool.curr}
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
               onAnnotationModifyComplete={() => {}}

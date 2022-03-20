@@ -16,6 +16,8 @@ export type PPAnnotationListItemProps = {
 const Component: React.FC<PPAnnotationListItemProps> = (props) => {
   const annotation = { ...props.annotation };
   const [invisible, setInvisible] = useState(annotation.invisible);
+  const [lastClickTime, setLastClickTime] = useState<number>(0);
+
   useEffect(() => {
     setInvisible(props.annotation.invisible);
   }, [props.annotation.invisible]);
@@ -45,8 +47,11 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
 
       <a
         className={styles.delete}
-        onClick={() => {
-          annotation.delete = true;
+        onClick={(e) => {
+          e.stopPropagation();
+          const time = new Date().getTime();
+          if (time - lastClickTime < 300) return;
+          setLastClickTime(time);
           props.onAnnotationDelete(annotation);
         }}
       />
