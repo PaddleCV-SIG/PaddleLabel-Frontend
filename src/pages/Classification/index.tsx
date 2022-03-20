@@ -11,14 +11,10 @@ import { ToolType } from '@/models/ToolType';
 
 const Page: React.FC = () => {
   const [currTool, setCurrTool] = useState<ToolType>('mover');
-  const [loading, setLoading, scale, annotation, task, data, project, label] = PageInit(
-    useState,
-    useEffect,
-    {
-      label: { oneHot: false, postSetCurr: selectLabel },
-      effectTrigger: { postTaskChange: postTaskChange },
-    },
-  );
+  const [loading, scale, annotation, task, data, project, label] = PageInit(useState, useEffect, {
+    label: { oneHot: false, postSetCurr: selectLabel },
+    effectTrigger: { postTaskChange: postTaskChange },
+  });
 
   function selectLabel(selected) {
     // after toggle is active, add ann
@@ -35,10 +31,10 @@ const Page: React.FC = () => {
   }
 
   function postTaskChange(labels, annotations) {
-    setLoading(true);
+    loading.setCurr(true);
     if (!labels || !annotations) return;
     label.initActive(annotations);
-    setLoading(false);
+    loading.setCurr(false);
   }
 
   return (
@@ -79,7 +75,7 @@ const Page: React.FC = () => {
         </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
-        <Spin tip="loading" spinning={loading}>
+        <Spin tip="loading" spinning={loading.curr}>
           <div className="draw">
             <PPStage
               scale={scale.curr}
@@ -94,13 +90,13 @@ const Page: React.FC = () => {
             <div className="progress">
               <Progress
                 className="progressBar"
-                percent={task.progress}
+                percent={project.progress}
                 status="active"
                 showInfo={false}
               />{' '}
               <span className="progressDesc">
-                Current labeling {task.currIdx ? task.currIdx + 1 : 1} of {task.all?.length}.
-                Already labeled {task.finished || 0}.
+                Current labeling {task.currIdx == undefined ? 1 : task.currIdx + 1} of{' '}
+                {task.all?.length}. Already labeled {task.finished(project.progress) || 0}.
               </span>
             </div>
           </div>
@@ -112,12 +108,11 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Split Dataset</PPToolBarButton>
       </PPToolBar>
-      {/*// TODO: move label widget out*/}
       <div className="rightSideBar">
         <PPLabelList
           labels={label.all}
           activeIds={label.activeIds}
-          onLabelSelect={label.setCurr}
+          onLabelSelect={label.onSelect}
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
           onLabelDelete={label.remove}
           onLabelModify={() => {}}

@@ -7,6 +7,8 @@ import PPAnnotationListItem from './PPAnnotationListItem';
 
 export type PPLabelListProps = {
   annotations: Annotation[];
+  // FIXME: is this right? it is a Set()
+  activeIds;
   selectedAnnotation?: Annotation;
   onAnnotationModify: (annotation: Annotation) => void;
   onAnnotationDelete: (annotation: Annotation) => void;
@@ -28,7 +30,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
             <PPAnnotationListItem
               onClick={props.onAnnotationSelect}
               annotation={item}
-              active={item.active}
+              active={props.activeIds?.has(item.annotationId)}
               onAnnotationDelete={props.onAnnotationDelete}
               onAnnotationModify={props.onAnnotationModify}
             />
