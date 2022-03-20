@@ -6,6 +6,7 @@ import { Label } from '@/models/label';
 
 export type PPLabelListItemProps = {
   label: Label;
+  active: bool;
   hideEye?: boolean;
   hideColorPicker?: boolean;
   // Currently, only support modify visibility and color
@@ -50,7 +51,7 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
 
   const item = (
     <List.Item
-      className={`${styles.listItem} ${label.active ? styles.listItemActive : ''}`}
+      className={`${styles.listItem} ${props.active ? styles.listItemActive : ''}`}
       unselectable="on"
       onClick={() => {
         props.onClick(label);

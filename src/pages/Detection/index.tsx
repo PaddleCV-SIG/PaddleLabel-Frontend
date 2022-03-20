@@ -53,7 +53,7 @@ const Page: React.FC = () => {
     setAnnotations(newAnnos);
   };
 
-  const polygon = drawRectangle({
+  const rectagle = drawRectangle({
     currentLabel: label.curr,
     currentTool: currentTool,
     annotations: annotations,
@@ -69,15 +69,15 @@ const Page: React.FC = () => {
     },
   });
 
-  const dr = polygon;
+  const dr = rectagle;
 
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
         <PPRectangle
-          active={currentTool == 'polygon'}
+          active={currentTool == 'rectangle'}
           onClick={() => {
-            setCurrentTool('polygon');
+            setCurrentTool('rectangle');
             setCurrentAnnotation(undefined);
           }}
         >
@@ -139,7 +139,7 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
-        <Spin tip="loading" spinning={loading}>
+        <Spin tip="loading" spinning={!!loading}>
           <div className="draw">
             <PPStage
               scale={scale.curr}
@@ -149,32 +149,36 @@ const Page: React.FC = () => {
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={onAnnotationModify}
               onAnnotationModifyComplete={() => {
-                recordHistory(annotations, currentAnnotation);
+                recordHistory({ annotations, currentAnnotation });
               }}
               onMouseDown={dr.onMouseDown}
               onMouseMove={dr.onMouseMove}
               onMouseUp={dr.onMouseUp}
-              createPolygonFunc={polygon.createElementsFunc}
+              createRectangleFunc={rectagle.createElementsFunc}
               imgSrc={data.imgSrc}
             />
           </div>
           <div className="pblock">
             <div className="progress">
-              <Progress percent={task.progress} status="active" />
-              {task.currIdx} {task.all?.length} {task.finished}
+              <Progress
+                className="progressBar"
+                percent={task.progress}
+                status="active"
+                showInfo={false}
+              />{' '}
+              <span className="progressDesc">
+                Current labeling {task.currIdx ? task.currIdx + 1 : 1} of {task.all?.length}.
+                Already labeled {task.finished || 0}.
+              </span>
             </div>
           </div>
+          <div className="prevTask" onClick={task.prevTask} />
+          <div className="nextTask" onClick={task.nextTask} />
         </Spin>
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/next.png" onClick={task.nextTask}>
-          Next
-        </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/prev.png" onClick={task.prevTask}>
-          Prev
-        </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
         <div className="determinOutline">

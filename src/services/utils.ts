@@ -56,7 +56,7 @@ export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) 
   const [curr, setCurr] = useState<number>(1);
 
   function setScale(scale: number) {
-    let s = scale;
+    let s: number = scale;
     if (s < range[0]) {
       s = range[0];
       message.error('Smallest scale is ' + range[0]);
@@ -80,7 +80,7 @@ export const ProjectUtils = (useState: UseStateType) => {
 
   async function getAll() {
     try {
-      const projects = await projectApi.getAll();
+      const projects: Project[] = await projectApi.getAll();
       setAll(projects);
       return projects;
     } catch (err) {
@@ -97,12 +97,13 @@ export const ProjectUtils = (useState: UseStateType) => {
       return;
     }
 
-    const project = await projectApi.get(projectId);
+    const project: Project = await projectApi.get(projectId);
     setAll([project]);
     setCurrIdx(0);
     return project;
   }
 
+  // WARNING: untested
   async function turnTo(turnToIdx: number) {
     setCurrIdx(turnToIdx);
     return all[turnToIdx];
@@ -110,16 +111,14 @@ export const ProjectUtils = (useState: UseStateType) => {
 
   async function remove(project: Project | number) {
     console.log('remove project', project);
-    const projectId = typeof project == 'number' ? project : project.projectId;
-    // if (typeof project == 'number') await projectApi.remove(project);
-    // else await projectApi.remove(project.projectId);
+    const projectId: number = typeof project == 'number' ? project : project.projectId;
     await projectApi.remove(projectId);
     getAll();
   }
 
   async function create(project: Project) {
     try {
-      const newProject = await projectApi.create(project);
+      const newProject: Project = await projectApi.create(project);
       return newProject;
     } catch (err) {
       console.log('project create err', err);
@@ -154,47 +153,56 @@ export const ProjectUtils = (useState: UseStateType) => {
   };
 };
 
+/*
+if oneHot = true, only one label can be active, else multiple can be activate at the same time
+*/
 export const LabelUtils = (
   useState: UseStateType,
   { oneHot = true, postSetCurr }: { oneHot: boolean; postSetCurr?: (label: Label) => void },
 ) => {
   const [all, setAll] = useState<Label[]>();
   const [currIdx, setCurrIdx] = useState<number>();
+  const [activeIds, setActiveIds] = useState(new Set());
   const [isOneHot, setOneHot] = useState<boolean>(oneHot);
 
-  const getAll = async (projectId: number) => {
+  async function getAll(projectId: number) {
     try {
-      const labelsRes: Label[] = await projectApi.getLabels(projectId);
-      for (const lab of labelsRes) lab.active = false;
-      setAll(labelsRes);
-      return labelsRes;
+      const labels: Label[] = await projectApi.getLabels(projectId);
+      setAll(labels);
+      return labels;
     } catch (err) {
       console.log('label getall err ', err);
       return serviceUtils.parseError(err, message);
     }
-  };
+  }
 
-  const setCurr = (label: Label | number) => {
-    const idx = indexOf(label, all, 'labelId');
-    if (idx == undefined) throw Error('undefined label idx');
+  function setCurr(label: Label | number) {
+    console.log('label setcurr', label);
+
+    const idx: number = indexOf(label, all, 'labelId');
+    if (idx == undefined) throw Error('label.setCurr label not found');
     setCurrIdx(idx);
+    const labelId: number = all[idx].labelId;
     if (isOneHot) {
-      for (const lab of all) lab.active = false;
-      all[idx].active = true;
-      console.log('all', all);
+      if (activeIds.has(labelId)) activeIds = new Set();
+      else activeIds = new Set([labelId]);
     } else {
-      all[idx].active = !all[idx].active;
+      if (activeIds.has(labelId)) activeIds.delete(labelId);
+      else activeIds.add(labelId);
     }
+    setActiveIds(new Set(activeIds));
     if (postSetCurr) postSetCurr(all[idx]);
-    setAll([...all]);
-  };
+  }
+
+  function initActive(annotations: Annotation[]) {
+    activeIds.clear();
+    for (const ann of annotations) activeIds.add(ann.labelId);
+  }
 
   const create = async (label: Label) => {
     try {
       const newLabel: Label = await labelApi.create(label);
-      // getAll(values.projectId);
-      newLabel.active = false;
-      setAll([...all, newLabel]);
+      getAll(label.projectId);
       return newLabel;
     } catch (err) {
       console.log('label create err', err);
@@ -211,22 +219,27 @@ export const LabelUtils = (
       serviceUtils.parseError(err, message);
     }
   };
+  function isActive(label: Label | number) {
+    // TODO: number
+    return activeIds.has(label.labelId);
+  }
 
-  const onModify = () => {};
-  const toggleOneHot = () => {
-    setOneHot(!isOneHot);
+  const toggleOneHot = (target: bool) => {
+    if (target != undefined) setOneHot(target);
+    else setOneHot(!isOneHot);
   };
   return {
     all,
     getAll,
-    setAll,
+    activeIds,
+    initActive,
     setCurr,
+    isActive,
     create,
     remove,
-    onModify,
     toggleOneHot,
     get curr() {
-      if (currIdx == undefined) return undefined;
+      if (all == undefined) return undefined;
       return all[currIdx];
     },
   };
@@ -247,7 +260,7 @@ export const TaskUtils = (useState: UseStateType) => {
       message.error('This is the final image. No next image.');
       return;
     }
-    console.log('turning to', turnToIdx);
+    // console.log('turning to', turnToIdx);
     setCurrIdx(turnToIdx);
   };
 
@@ -301,7 +314,7 @@ export const TaskUtils = (useState: UseStateType) => {
     prevTask,
     get curr() {
       if (currIdx == undefined || all == undefined) return undefined;
-      console.log('task.curr', all[currIdx]);
+      // console.log('task.curr', all[currIdx]);
       return all[currIdx];
     },
     get finished() {
@@ -411,10 +424,10 @@ export const DataUtils = (useState: UseStateType) => {
     },
     get imgSrc() {
       if (all && all[currIdx]) {
-        console.log(
-          'imgsrc',
-          `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`,
-        );
+        // console.log(
+        //   'imgsrc',
+        //   `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`,
+        // );
         return `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`;
       }
       return ``;
@@ -471,12 +484,13 @@ export const PageInit = (
     if (task.currIdx == undefined) return;
 
     const onTaskChange = async () => {
-      console.log('onTaskChange', task.curr, label.all, task.progress);
+      // console.log('onTaskChange', task.curr, label.all, task.progress);
       if (task.curr?.projectId) task.getProgress(task.curr.projectId);
       if (task.curr?.taskId) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [allData, currData] = await data.getAll(task.curr.taskId, 0);
 
-        console.log(allData);
+        // console.log(allData);
         const allAnns = await annotation.getAll(currData.dataId);
         if (label.all) for (const lab of label.all) lab.active = false;
         if (props.effectTrigger.postTaskChange)

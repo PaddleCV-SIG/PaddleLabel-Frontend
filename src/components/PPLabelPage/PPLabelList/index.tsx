@@ -8,7 +8,8 @@ import { Label } from '@/services';
 import { useIntl } from 'umi';
 
 export type PPLabelListProps = {
-  labels?: Label[];
+  labels?: Label[]; // the label from utils, LabelUtils()
+  activeIds?: Set;
   selectedLabel?: Label;
   hideEye?: boolean;
   hideColorPicker?: boolean;
@@ -24,7 +25,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
   });
   const labelList = useIntl().formatMessage({ id: 'component.PPLabelList.labelList' });
 
-  console.log('render pplabellist');
+  // console.log('render pplabellist');
 
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
 
@@ -57,6 +58,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
               hideEye={props.hideEye}
               onClick={props.onLabelSelect}
               label={item}
+              active={props.activeIds?.has(item.labelId)}
               onLabelDelete={props.onLabelDelete}
               onLabelModify={props.onLabelModify}
             />
