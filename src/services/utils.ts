@@ -210,7 +210,7 @@ export const LabelUtils = (
       if (activeIds.has(labelId)) activeIds.clear();
       else {
         activeIds.clear();
-        activeIds.add(labelId);
+        activeIds.add([labelId]);
       }
     } else {
       if (activeIds.has(labelId)) activeIds.delete(labelId);
@@ -296,7 +296,7 @@ export const TaskUtils = (useState: UseStateType) => {
       message.error('This is the final image. No next image.');
       return;
     }
-    console.log('turning to', turnToIdx);
+    // console.log('turning to', turnToIdx);
     setCurrIdx(turnToIdx);
   };
 
@@ -340,7 +340,7 @@ export const TaskUtils = (useState: UseStateType) => {
     finished,
     get curr() {
       if (currIdx == undefined || all == undefined) return undefined;
-      console.log('task.curr', all[currIdx]);
+      // console.log('task.curr', all[currIdx]);
       return all[currIdx];
     },
   };
@@ -461,10 +461,10 @@ export const DataUtils = (useState: UseStateType) => {
     },
     get imgSrc() {
       if (all && all[currIdx]) {
-        console.log(
-          'imgsrc',
-          `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`,
-        );
+        // console.log(
+        //   'imgsrc',
+        //   `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`,
+        // );
         return `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`;
       }
       return ``;
@@ -526,12 +526,12 @@ export const PageInit = (
     if (task.currIdx == undefined) return;
 
     const onTaskChange = async () => {
-      console.log('onTaskChange', task.curr, label.all, task.progress);
       if (task.curr?.projectId) project.getProgress(task.curr.projectId);
       if (task.curr?.taskId) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [allData, currData] = await data.getAll(task.curr.taskId, 0);
 
-        console.log(allData);
+        // console.log(allData);
         const allAnns = await annotation.getAll(currData.dataId);
         if (label.all) for (const lab of label.all) lab.active = false;
         if (props.effectTrigger.postTaskChange)

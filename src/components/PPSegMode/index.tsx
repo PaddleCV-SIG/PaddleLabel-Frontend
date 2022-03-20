@@ -4,6 +4,7 @@ import React from 'react';
 import styles from './index.less';
 import { Button } from 'antd';
 import PPSegCard from '../PPSegCard';
+import { useIntl } from 'umi';
 
 export type _PPCardProps = {
   title?: string;
@@ -38,6 +39,15 @@ export type PPCardProps = {
 
 const PPSegMode: React.FC<PPCardProps> = (props) => {
   const [form] = Form.useForm();
+
+  const note = useIntl().formatMessage({ id: 'component.PPSegMode.note' });
+  const general = useIntl().formatMessage({ id: 'component.PPSegMode.general' });
+  const medical = useIntl().formatMessage({ id: 'component.PPSegMode.medical' });
+  const remoteSensing = useIntl().formatMessage({ id: 'component.PPSegMode.remoteSensing' });
+  const changeDetection = useIntl().formatMessage({ id: 'component.PPSegMode.changeDetection' });
+  const ok = useIntl().formatMessage({ id: 'component.PPSegMode.ok' });
+  const cancel = useIntl().formatMessage({ id: 'component.PPCreater.cancel' });
+
   return (
     <div className={styles.shadow} style={props.style}>
       <div id="left" className={styles.block_l}>
@@ -52,8 +62,7 @@ const PPSegMode: React.FC<PPCardProps> = (props) => {
               <Space>
                 <Alert
                   className={styles.info}
-                  message="Semantic segmentation annotation provides a variety of vertical class directions,
-                please select."
+                  message={note}
                   type="info"
                   style={{ height: '3.13rem', width: '38.75rem' }}
                 />
@@ -67,16 +76,16 @@ const PPSegMode: React.FC<PPCardProps> = (props) => {
             >
               <Space size={20}>
                 <PPSegCard imgSrc={'./pics/seg_mode/un_not_clicked.png'} width={140} height={140}>
-                  General
+                  {general}
                 </PPSegCard>
                 <PPSegCard imgSrc={'./pics/seg_mode/md_not_clicked.png'} width={140} height={140}>
-                  Medical
+                  {medical}
                 </PPSegCard>
                 <PPSegCard imgSrc={'./pics/seg_mode/rs_not_clicked.png'} width={140} height={140}>
-                  Remote Sensing
+                  {remoteSensing}
                 </PPSegCard>
                 <PPSegCard imgSrc={'./pics/seg_mode/cd_not_clicked.png'} width={140} height={140}>
-                  Change Detection
+                  {changeDetection}
                 </PPSegCard>
               </Space>
             </Form.Item>
@@ -92,11 +101,11 @@ const PPSegMode: React.FC<PPCardProps> = (props) => {
                 style={{ height: '2.5rem', width: '48%' }}
                 block
               >
-                OK
+                {ok}
               </Button>
               &nbsp;&nbsp;
               <Button htmlType="button" style={{ height: '2.5rem', width: '48%' }} block>
-                Cancel
+                {cancel}
               </Button>
             </Form.Item>
           </Form>

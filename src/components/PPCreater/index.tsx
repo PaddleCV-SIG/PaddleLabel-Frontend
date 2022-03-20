@@ -3,7 +3,7 @@ import Title from 'antd/lib/typography/Title';
 import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import { Button } from 'antd';
-import { history } from 'umi';
+import { history, useIntl } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
 import { createInfo, camel2snake } from '@/services/api';
 import type { Project } from '@/services/models/Project';
@@ -45,6 +45,17 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
   const projects = ProjectUtils(useState);
   const projectId = serviceUtils.getQueryVariable('projectId');
   console.log('render ppcreater', props, projectId);
+
+  const projectName = useIntl().formatMessage({ id: 'component.PPCreater.projectName' });
+  const datasePath = useIntl().formatMessage({ id: 'component.PPCreater.datasePath' });
+  const description = useIntl().formatMessage({ id: 'component.PPCreater.description' });
+  const maxPoints = useIntl().formatMessage({ id: 'component.PPCreater.maxPoints' });
+  const annotationMode = useIntl().formatMessage({ id: 'component.PPCreater.annotationMode' });
+  const pixelMode = useIntl().formatMessage({ id: 'component.PPCreater.pixelMode' });
+  const polygonMode = useIntl().formatMessage({ id: 'component.PPCreater.polygonMode' });
+  const update = useIntl().formatMessage({ id: 'component.PPCreater.update' });
+  const create = useIntl().formatMessage({ id: 'component.PPCreater.create' });
+  const cancel = useIntl().formatMessage({ id: 'component.PPCreater.cancel' });
 
   const saveProject = (values: any) => {
     if (!projectId) {
@@ -104,7 +115,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
           >
             <Form.Item
               name="name"
-              label="Project Name"
+              label={projectName}
               labelCol={{
                 span: 6,
               }}
@@ -124,7 +135,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
 
             <Form.Item
               name="dataDir"
-              label="Dataset Path"
+              label={datasePath}
               labelCol={{
                 span: 6,
               }}
@@ -149,7 +160,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
 
             <Form.Item
               name="description"
-              label="Description"
+              label={description}
               labelCol={{
                 span: 6,
               }}
@@ -168,7 +179,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
 
             <Form.Item
               name="maxPoints"
-              label="MaxPoints"
+              label={maxPoints}
               labelCol={{
                 span: 6,
               }}
@@ -191,7 +202,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
 
             <Form.Item
               name="segmentationMode"
-              label="AnnotationMode"
+              label={annotationMode}
               labelCol={{
                 span: 6,
               }}
@@ -211,8 +222,8 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
             >
               <div className={styles.goup}>
                 <Radio.Group defaultValue={1} size="large" style={{ height: '3.13rem' }}>
-                  <Radio value={1}>Pixel model</Radio>
-                  <Radio value={2}>Polygon mode</Radio>
+                  <Radio value={1}>{pixelMode}</Radio>
+                  <Radio value={2}>{polygonMode}</Radio>
                 </Radio.Group>
               </div>
             </Form.Item>
@@ -228,7 +239,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                 style={{ height: '2.5rem', width: '48%' }}
                 block
               >
-                {projectId ? 'Update' : 'Create'}
+                {projectId ? update : create}
               </Button>
               &nbsp;&nbsp;
               <Button
@@ -239,7 +250,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                   history.push('/welcome');
                 }}
               >
-                Cancel
+                {cancel}
               </Button>
             </Form.Item>
           </Form>

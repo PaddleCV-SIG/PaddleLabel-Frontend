@@ -2,6 +2,7 @@ import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import styles from './index.less';
 import { Button, Col, Descriptions, Dropdown, Menu, message, Row } from 'antd';
 import React from 'react';
+import { useIntl } from 'umi';
 
 export type PPCDRGBSetting = {
   // imgSrc: string;
@@ -29,11 +30,23 @@ const menu = (
 );
 
 const component: React.FC<PPCDRGBSetting> = () => {
+  const r = useIntl().formatMessage({ id: 'component.PPRS.r' });
+  const g = useIntl().formatMessage({ id: 'component.PPRS.g' });
+  const b = useIntl().formatMessage({ id: 'component.PPRS.b' });
+  const dataInformation = useIntl().formatMessage({ id: 'component.PPRS.dataInformation' });
+  const fileName = useIntl().formatMessage({ id: 'component.PPRS.fileName' });
+  const row = useIntl().formatMessage({ id: 'component.PPRS.row' });
+  const column = useIntl().formatMessage({ id: 'component.PPRS.column' });
+  const bands = useIntl().formatMessage({ id: 'component.PPRS.bands' });
+  const dataType = useIntl().formatMessage({ id: 'component.PPRS.dataType' });
+  const EPSG = useIntl().formatMessage({ id: 'component.PPRS.EPSG' });
+  const unit = useIntl().formatMessage({ id: 'component.PPRS.unit' });
+
   return (
     <div>
       <Row>
         <Col className={styles.RSPop1}>
-          <span>R</span>
+          <span>{r}</span>
         </Col>
         <Col className={styles.RSPop2}>
           <Dropdown overlay={menu}>
@@ -43,7 +56,7 @@ const component: React.FC<PPCDRGBSetting> = () => {
           </Dropdown>
         </Col>
         <Col className={styles.RSPop1}>
-          <span>G</span>
+          <span>{g}</span>
         </Col>
         <Col className={styles.RSPop2}>
           <Dropdown overlay={menu}>
@@ -53,7 +66,7 @@ const component: React.FC<PPCDRGBSetting> = () => {
           </Dropdown>
         </Col>
         <Col className={styles.RSPop1}>
-          <span>B</span>
+          <span>{b}</span>
         </Col>
         <Col className={styles.RSPop2}>
           <Dropdown overlay={menu}>
@@ -65,7 +78,7 @@ const component: React.FC<PPCDRGBSetting> = () => {
       </Row>
       <Row>
         <Col className={styles.RSPop1}>
-          <span>R</span>
+          <span>{r}</span>
         </Col>
         <Col className={styles.RSPop2}>
           <Dropdown overlay={menu}>
@@ -75,7 +88,7 @@ const component: React.FC<PPCDRGBSetting> = () => {
           </Dropdown>
         </Col>
         <Col className={styles.RSPop1}>
-          <span>G</span>
+          <span>{g}</span>
         </Col>
         <Col className={styles.RSPop2}>
           <Dropdown overlay={menu}>
@@ -85,7 +98,7 @@ const component: React.FC<PPCDRGBSetting> = () => {
           </Dropdown>
         </Col>
         <Col className={styles.RSPop1}>
-          <span>B</span>
+          <span>{b}</span>
         </Col>
         <Col className={styles.RSPop2}>
           <Dropdown overlay={menu}>
@@ -95,14 +108,14 @@ const component: React.FC<PPCDRGBSetting> = () => {
           </Dropdown>
         </Col>
       </Row>
-      <Descriptions title="Data source information" column={1} bordered>
-        <Descriptions.Item label="FileName">A/XXX.tif B/XXX.tf</Descriptions.Item>
-        <Descriptions.Item label="Row">1234</Descriptions.Item>
-        <Descriptions.Item label="Column">897</Descriptions.Item>
-        <Descriptions.Item label="Bands">7 7</Descriptions.Item>
-        <Descriptions.Item label="DataType">UInt16</Descriptions.Item>
-        <Descriptions.Item label="EPSG">7030</Descriptions.Item>
-        <Descriptions.Item label="Unit">m</Descriptions.Item>
+      <Descriptions title={dataInformation} column={1} bordered>
+        <Descriptions.Item label={fileName}>A/XXX.tif B/XXX.tif</Descriptions.Item>
+        <Descriptions.Item label={row}>1234</Descriptions.Item>
+        <Descriptions.Item label={column}>897</Descriptions.Item>
+        <Descriptions.Item label={bands}>7 7</Descriptions.Item>
+        <Descriptions.Item label={dataType}>UInt16</Descriptions.Item>
+        <Descriptions.Item label={EPSG}>7030</Descriptions.Item>
+        <Descriptions.Item label={unit}>m</Descriptions.Item>
       </Descriptions>
     </div>
   );
