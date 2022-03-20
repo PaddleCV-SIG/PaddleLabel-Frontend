@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove this
+
 import { message } from 'antd';
 import { history } from 'umi';
 
@@ -413,6 +415,18 @@ export function AnnotationUtils(
       annotation.labelId,
     );
   };
+  async function update(annotationId: number, annotation: Annotation) {
+    annotationApi
+      .update(annotationId, annotation)
+      .then((res) => {
+        console.log('annotation update res', res);
+        getAll(annotation.projectId);
+      })
+      .catch((err) => {
+        console.log('annotation update err ', err);
+        serviceUtils.parseError(err, message);
+      });
+  }
 
   return {
     all,
@@ -420,6 +434,7 @@ export function AnnotationUtils(
     create,
     remove,
     setCurr,
+    update,
     activeIds,
     get curr() {
       if (!all || !currIdx) return undefined;
