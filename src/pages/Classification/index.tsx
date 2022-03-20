@@ -9,15 +9,22 @@ import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
 
 const Page: React.FC = () => {
-  const [tool, loading, scale, annotation, task, data, project, label] = PageInit(
-    useState,
-    useEffect,
-    {
-      label: { oneHot: false, postSetCurr: selectLabel },
-      tool: { defaultTool: 'mover' },
-      effectTrigger: { postTaskChange: postTaskChange },
-    },
-  );
+  const [
+    tool,
+    loading,
+    scale,
+    annotation,
+    task,
+    data,
+    project,
+    label,
+    splitDataset,
+    exportDataset,
+  ] = PageInit(useState, useEffect, {
+    label: { oneHot: false, postSetCurr: selectLabel },
+    tool: { defaultTool: 'mover' },
+    effectTrigger: { postTaskChange: postTaskChange },
+  });
 
   function selectLabel(selected) {
     // after toggle is active, add ann
@@ -109,8 +116,22 @@ const Page: React.FC = () => {
         </Spin>
       </div>
       <PPToolBar disLoc="right">
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Split Dataset</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/export.png"
+          onClick={() => {
+            exportDataset(project.curr.projectId, '/home/lin/Desktop/data/pplabel/export/');
+          }}
+        >
+          Export
+        </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/data_division.png"
+          onClick={() =>
+            splitDataset(project.curr.projectId, { train: 0.5, validation: 0.3, test: 0.2 })
+          }
+        >
+          Split Dataset
+        </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
         <PPLabelList
