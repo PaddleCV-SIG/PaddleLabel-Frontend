@@ -142,7 +142,6 @@ const Page: React.FC = () => {
         <Spin tip="loading" spinning={loading}>
           <div className="draw">
             <PPStage
-              width={document.getElementById('dr')?.clientWidth}
               scale={scale.curr}
               annotations={annotations}
               currentTool={currentTool}
