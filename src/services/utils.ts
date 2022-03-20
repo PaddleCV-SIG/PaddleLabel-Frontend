@@ -141,7 +141,7 @@ export const ProjectUtils = (useState: UseStateType) => {
 
 export const LabelUtils = (
   useState: UseStateType,
-  { oneHot = true, postSetCurr }: { oneHot: boolean; postSetCurr: (label: Label) => void },
+  { oneHot = true, postSetCurr }: { oneHot: boolean; postSetCurr?: (label: Label) => void },
 ) => {
   const [all, setAll] = useState<Label[]>();
   const [currIdx, setCurrIdx] = useState<number>();
@@ -414,8 +414,8 @@ export const PageInit = (
   useEffect: UseEffectType,
   props: {
     effectTrigger?: any;
-    label?: Label;
-  } = {},
+    label: { oneHot: boolean; postSetCurr?: (label: Label) => void };
+  },
 ) => {
   if (!props.effectTrigger) props.effectTrigger = {};
 

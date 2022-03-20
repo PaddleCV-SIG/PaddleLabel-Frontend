@@ -8,6 +8,7 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
+import { ToolType } from '@/models/ToolType';
 
 const baseUrl = localStorage.getItem('basePath');
 
