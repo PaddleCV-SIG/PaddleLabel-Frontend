@@ -83,7 +83,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
       const initialValues = {
         name: project?.name,
         description: project?.description,
-        dataDir: project.dataDir, // TODO: value.join is not a funx
+        dataDir: project?.dataDir, // TODO: value.join is not a funx
       };
       form.setFieldsValue(initialValues);
     });

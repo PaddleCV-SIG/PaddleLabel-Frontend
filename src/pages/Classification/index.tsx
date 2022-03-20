@@ -22,8 +22,7 @@ const Page: React.FC = () => {
 
   function selectLabel(selected) {
     // after toggle is active, add ann
-    // console.log('selectLabel', task.curr, data.curr, annotation.all);
-    if (selected.active) {
+    if (label.isActive(selected)) {
       annotation.create({
         taskId: task.curr.taskId,
         labelId: selected.labelId,
@@ -31,21 +30,14 @@ const Page: React.FC = () => {
       });
     } else {
       const ann = annotation.all.filter((a) => a.labelId == selected.labelId)[0];
-      console.log('filter ann ', ann);
       annotation.remove(ann.annotationId);
     }
-    console.log('selectlabel', selected);
   }
 
   function postTaskChange(labels, annotations) {
     setLoading(true);
-    if (!labels) return;
-    for (const lab of labels) {
-      const annOfLabel = annotations.filter((ann) => ann.label.labelId == lab.labelId);
-      if (annOfLabel.length != 0) lab.active = true;
-    }
-    console.log('label.all toggled', label.all);
-    label.setAll([...labels]);
+    if (!labels || !annotations) return;
+    label.initActive(annotations);
     setLoading(false);
   }
 
@@ -124,6 +116,7 @@ const Page: React.FC = () => {
       <div className="rightSideBar">
         <PPLabelList
           labels={label.all}
+          activeIds={label.activeIds}
           onLabelSelect={label.setCurr}
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
           onLabelDelete={label.remove}
