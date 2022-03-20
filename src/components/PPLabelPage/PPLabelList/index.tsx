@@ -20,8 +20,6 @@ export type PPLabelListProps = {
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
-  console.log('render labellist', props.activeIds);
-
   const addLabel = useIntl().formatMessage({
     id: 'component.PPLabelList.addLabel',
   });

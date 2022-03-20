@@ -200,11 +200,10 @@ export const LabelUtils = (
   const [isOneHot, setOneHot] = useState<boolean>(oneHot);
 
   async function getAll(projectId: number) {
-    console.log('label getall');
-
     if (projectId == undefined) return;
     try {
       const labels: Label[] = await projectApi.getLabels(projectId);
+      console.log('label getall:', labels);
       setAll(labels);
       return labels;
     } catch (err) {
@@ -368,14 +367,14 @@ export function AnnotationUtils(
   { label = undefined, project = undefined }: { label: any; project: any },
 ) {
   const [all, setAll] = useState<Annotation[]>();
-  const [currIdx, setCurrIdx] = useState<number | undefined>();
-  // FIXME: : add type def
-  const [activeIds, setActiveIds] = useState(new Set());
+  const [curr, setCurrRaw] = useState<Annotation | undefined>();
 
   const getAll = async (dataId: number) => {
+    console.log('getAll, dataId:', dataId);
     if (dataId == undefined) return [];
     try {
       const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
+      console.log('getAll, annRes:', annRes);
       setAll(annRes);
       return annRes;
     } catch (err) {
@@ -389,12 +388,12 @@ export function AnnotationUtils(
     try {
       if (annotation.label) annotation.labelId = annotation.label.id;
       const newAnn = await annotationApi.create(annotation);
-      let annRes = [];
+      setCurr(newAnn);
+      let annRes: Annotation[] = [];
       // sync anns from backend
       if (annotation.dataId) annRes = await getAll(annotation.dataId);
       // if currently 1 ann -> this is the first ann -> update progress
       if (project && annRes.length == 1) project.getProgress();
-      return newAnn;
     } catch (err) {
       console.log('annotation create err', err);
       return serviceUtils.parseError(err, message);
@@ -418,48 +417,41 @@ export function AnnotationUtils(
     }
   }
 
-  const setCurr = async (annotation: Annotation | undefined) => {
-    console.log('annotation setcurr', annotation);
+  async function setCurr(annotation: Annotation | undefined) {
+    console.log('annotation setcurr', annotation, 'all', all);
     if (annotation == undefined) {
-      setCurrIdx(undefined);
+      setCurrRaw(undefined);
       return;
     }
-    const index = indexOf(annotation, all, 'annotationId');
-    if (!index) {
-      // create if not exist
-      await create(annotation);
-    }
-    setCurrIdx(indexOf(annotation, all, 'annotationId'));
-    setActiveIds(new Set([annotation.annotationId]));
+    console.log(`all:`, all);
+    setCurrRaw(annotation);
     label.setCurr(annotation.labelId);
-    console.log(
-      indexOf(annotation, all, 'annotationId'),
-      new Set([annotation.annotationId]),
-      annotation.labelId,
-    );
-  };
+  }
 
   async function update(annotation: Annotation) {
+    if (!annotation.annotationId) return [];
+    annotation.taskId = undefined;
+    if (annotation.label) annotation.labelId = annotation.label?.labelId;
+    annotation.label = undefined;
     annotationApi
       .update(annotation.annotationId, annotation)
       .then((res) => {
         console.log('annotation update res', res);
-        getAll(annotation.projectId);
+        setCurr(annotation);
+        return getAll(annotation.dataId);
       })
       .catch((err) => {
         console.log('annotation update err ', err);
         serviceUtils.parseError(err, message);
+        return [];
       });
   }
 
   async function modify(annotation: Annotation) {
-    const ann = annotation == undefined ? all[currIdx] : annotation;
+    if (!annotation || !annotation.annotationId) return undefined;
     // no annotationId -> new ann, create
-    if (ann.annotationId == undefined) {
-      create(ann);
-    } else {
-      update(ann);
-    }
+    if (annotation.annotationId == undefined) await create(annotation);
+    else await update(annotation);
   }
 
   return {
@@ -470,11 +462,7 @@ export function AnnotationUtils(
     setCurr,
     update,
     modify,
-    activeIds,
-    get curr() {
-      if (!all || !currIdx) return undefined;
-      return all[currIdx];
-    },
+    curr,
   };
 }
 
