@@ -8,8 +8,7 @@ import { useIntl } from 'umi';
 
 export type PPLabelListProps = {
   annotations: Annotation[];
-  // FIXME: is this right? it is a Set()
-  activeIds;
+  currAnnotation: Annotation;
   selectedAnnotation?: Annotation;
   onAnnotationModify: (annotation: Annotation) => void;
   onAnnotationDelete: (annotation: Annotation) => void;
@@ -36,7 +35,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
             <PPAnnotationListItem
               onClick={props.onAnnotationSelect}
               annotation={item}
-              active={props.activeIds?.has(item.annotationId)}
+              active={item.annotationId == props.currAnnotation?.annotationId}
               onAnnotationDelete={props.onAnnotationDelete}
               onAnnotationModify={props.onAnnotationModify}
             />

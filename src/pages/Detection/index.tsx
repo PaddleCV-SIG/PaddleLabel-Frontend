@@ -225,7 +225,7 @@ const Page: React.FC = () => {
         />
         <PPAnnotationList
           annotations={annotation.all}
-          activeIds={annotation.activeIds}
+          currAnnotation={annotation.curr}
           onAnnotationSelect={annotation.setCurr}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
