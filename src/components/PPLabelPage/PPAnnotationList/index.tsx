@@ -35,7 +35,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
             <PPAnnotationListItem
               onClick={props.onAnnotationSelect}
               annotation={item}
-              active={item.annotationId == props.currAnnotation?.annotationId}
+              active={item.frontendId == props.currAnnotation?.frontendId}
               onAnnotationDelete={props.onAnnotationDelete}
               onAnnotationModify={props.onAnnotationModify}
             />

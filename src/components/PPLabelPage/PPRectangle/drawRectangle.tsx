@@ -23,8 +23,8 @@ function hexToRgb(hex: string) {
     : null;
 }
 
-function createRectangle(color?: string, points?: number[]) {
-  if (!color || !points || points.length < 2) return undefined;
+function createRectangle(points: number[]): PPRectangleType | undefined {
+  if (!points || points.length < 2) return undefined;
   return {
     xmin: points[0],
     ymin: points[1],
@@ -34,19 +34,19 @@ function createRectangle(color?: string, points?: number[]) {
 }
 
 function drawRectangle(
-  annotation: Annotation,
-  onDrag: (anntation: Annotation) => void,
+  annotation: Annotation<PPRectangleType>,
+  onDrag: (anntation: Annotation<PPRectangleType>) => void,
   onDragEnd: () => void,
   scale: number,
   currentTool: ToolType,
-  onSelect: (anntation: Annotation) => void,
-  currentAnnotation?: Annotation,
+  onSelect: (anntation: Annotation<PPRectangleType>) => void,
+  currentAnnotation?: Annotation<PPRectangleType>,
   offset?: { x: number; y: number },
 ): ReactElement[] {
   console.log(`drawRectangle, annotation:`, annotation);
-  if (!annotation || !annotation.result || !annotation.label || !annotation.label.color)
+  if (!annotation || !annotation.points || !annotation.label || !annotation.label.color)
     return [<></>];
-  const points: PPRectangleType = JSON.parse(annotation.result);
+  const points: PPRectangleType = annotation.points;
   const color = annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return [<></>];
@@ -56,7 +56,7 @@ function drawRectangle(
   const transparency = selected ? 0.5 : 0.1;
 
   const rect =
-    points.xmax && points.ymax ? (
+    points.xmax != undefined && points.ymax != undefined ? (
       <Rect
         onMouseOver={() => {
           if (currentTool == 'mover') {
@@ -83,68 +83,67 @@ function drawRectangle(
     ) : (
       <></>
     );
+
+  function createDot(isMin: boolean) {
+    if (!isMin && (points.xmax == undefined || points.ymax == undefined)) return <></>;
+
+    const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>) => {
+      if (currentTool != 'editor') return;
+      const newPositionX = (evt.evt.offsetX + (offset?.x || 0)) / scale;
+      const newPositionY = (evt.evt.offsetY + (offset?.y || 0)) / scale;
+      if (isMin) {
+        points.xmin = newPositionX;
+        points.ymin = newPositionY;
+      } else {
+        points.xmax = newPositionX;
+        points.ymax = newPositionY;
+      }
+      const newAnno = {
+        ...annotation,
+        points: points,
+      };
+      onDrag(newAnno);
+    };
+    return (
+      <Circle
+        onMouseDown={() => {
+          if (currentTool == 'editor' || currentTool == 'mover') onSelect(annotation);
+        }}
+        draggable={currentTool == 'editor'}
+        onDragMove={onDragEvt}
+        onDragEnd={onDragEvt}
+        onMouseOver={() => {
+          if (currentTool == 'editor') document.body.style.cursor = 'pointer';
+        }}
+        onMouseOut={() => {
+          document.body.style.cursor = 'default';
+        }}
+        x={isMin ? points.xmin : points.xmax}
+        y={isMin ? points.ymin : points.ymax}
+        radius={5}
+        fill={color}
+      />
+    );
+  }
   // Create dots
   return [
     <Group key={annotation.annotationId}>
       {rect}
-      <Circle
-        onMouseDown={() => {
-          if (currentTool == 'editor' || currentTool == 'mover') onSelect(annotation);
-        }}
-        draggable={currentTool == 'editor'}
-        onDragMove={(evt) => {
-          if (currentTool != 'editor') return;
-          const newPositionX = (evt.evt.offsetX + (offset?.x || 0)) / scale;
-          const newPositionY = (evt.evt.offsetY + (offset?.y || 0)) / scale;
-          points.xmin = newPositionX;
-          points.ymin = newPositionY;
-          const newAnno = {
-            ...annotation,
-            lines: [{ tool: 'rectangle' as ToolType, color: color, points: points }],
-          };
-          onDrag(newAnno);
-        }}
-        onMouseOver={() => {
-          if (currentTool == 'editor') document.body.style.cursor = 'pointer';
-        }}
-        onMouseOut={() => {
-          document.body.style.cursor = 'default';
-        }}
-        x={points.xmin}
-        y={points.ymin}
-        radius={5}
-        fill={color}
-      />
-      <Circle
-        onMouseDown={() => {
-          if (currentTool == 'editor' || currentTool == 'mover') onSelect(annotation);
-        }}
-        draggable={currentTool == 'editor'}
-        onDragMove={(evt) => {
-          if (currentTool != 'editor') return;
-          const newPositionX = (evt.evt.offsetX + (offset?.x || 0)) / scale;
-          const newPositionY = (evt.evt.offsetY + (offset?.y || 0)) / scale;
-          points.xmax = newPositionX;
-          points.ymax = newPositionY;
-          const newAnno = {
-            ...annotation,
-            lines: [{ tool: 'rectangle' as ToolType, color: color, points: points }],
-          };
-          onDrag(newAnno);
-        }}
-        onMouseOver={() => {
-          if (currentTool == 'editor') document.body.style.cursor = 'pointer';
-        }}
-        onMouseOut={() => {
-          document.body.style.cursor = 'default';
-        }}
-        x={points.xmax}
-        y={points.ymax}
-        radius={5}
-        fill={color}
-      />
+      {createDot(true)}
+      {createDot(false)}
     </Group>,
   ];
+}
+
+function findMaxId(annos: Annotation<PPRectangleType>[]) {
+  let maxId = 1;
+  if (!annos || annos.length == 0) {
+    return maxId;
+  }
+  for (const anno of annos) {
+    if (anno.frontendId && maxId <= anno.frontendId) maxId = anno.frontendId + 1;
+  }
+  return maxId;
 }
 
 export default function (props: {
@@ -152,28 +151,28 @@ export default function (props: {
   brushSize?: number;
   points?: number[];
   currentTool?: ToolType;
-  annotations: Annotation[];
-  currentAnnotation?: Annotation;
-  onAnnotationAdd: (annotation: Annotation) => void;
-  onAnnotationModify: (annotation: Annotation) => void;
+  annotations: Annotation<PPRectangleType>[];
+  currentAnnotation?: Annotation<PPRectangleType>;
+  onAnnotationAdd: (annotation: Annotation<PPRectangleType>) => void;
+  onAnnotationModify: (annotation: Annotation<PPRectangleType>) => void;
   onMouseUp: () => void;
 }) {
-  console.log('currentAnnotation', props.currentAnnotation);
   const startNewRectangle = (
     e: Konva.KonvaEventObject<MouseEvent>,
     offsetX: number,
     offsetY: number,
     scale: number,
   ) => {
-    const mouseX = e.evt.offsetX + offsetX / scale;
-    const mouseY = e.evt.offsetY + offsetY / scale;
+    const mouseX = (e.evt.offsetX + offsetX) / scale;
+    const mouseY = (e.evt.offsetY + offsetY) / scale;
 
-    const Rectangle = createRectangle(props.currentLabel?.color, [mouseX, mouseY]);
+    const Rectangle = createRectangle([mouseX, mouseY]);
     if (!Rectangle) return;
     props.onAnnotationAdd({
+      frontendId: findMaxId(props.annotations),
       type: 'rectangle',
       label: props.currentLabel,
-      result: JSON.stringify(Rectangle),
+      points: Rectangle,
     });
   };
 
@@ -183,18 +182,18 @@ export default function (props: {
     offsetY: number,
     scale: number,
   ) => {
-    if (!props.currentAnnotation || !props.currentAnnotation.result) return;
+    if (!props.currentAnnotation || !props.currentAnnotation.points) return;
     const mouseX = (e.evt.offsetX + offsetX) / scale;
     const mouseY = (e.evt.offsetY + offsetY) / scale;
-    const Rectangle: PPRectangleType = JSON.parse(props.currentAnnotation.result);
+    const Rectangle: PPRectangleType = props.currentAnnotation.points;
     if (!Rectangle) return;
     Rectangle.xmax = mouseX;
     Rectangle.ymax = mouseY;
     const anno = {
       type: 'rectangle' as ToolType,
-      annotationId: props.currentAnnotation.annotationId,
+      frontendId: props.currentAnnotation.frontendId,
       label: props.currentAnnotation.label,
-      result: JSON.stringify(Rectangle),
+      points: Rectangle,
     };
     props.onAnnotationModify(anno);
   };

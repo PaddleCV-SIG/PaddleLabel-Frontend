@@ -34,7 +34,54 @@ const Page: React.FC = () => {
     effectTrigger: { postTaskChange: initHistory },
   });
 
-  const modifyAnnotation = (anno: Annotation<any>) => {
+  // These two used only by frontend, and synchronize with backend when triggered.
+  const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
+  const [annotations, setAnotations] = useState<Annotation[]>([]);
+
+  const addAnnotation = (anno: Annotation) => {
+    if (!anno.frontendId)
+      throw new Error(
+        'addAnnotation, Annotation frontendId not generated: ' + JSON.stringify(anno),
+      );
+    annotations.push(anno);
+    setAnotations(annotations);
+    setCurrentAnnotation(anno);
+  };
+
+  const modifyAnnotation = (anno: Annotation) => {
+    if (!anno.frontendId)
+      throw new Error(
+        'addAnnotation, Annotation frontendId not generated: ' + JSON.stringify(anno),
+      );
+    const newAnnos = [];
+    for (const everyAnno of annotations) {
+      if (everyAnno.frontendId == anno.frontendId) {
+        newAnnos.push(anno);
+      } else {
+        newAnnos.push(everyAnno);
+      }
+    }
+    console.log('modifyAnnotation, newAnnos:', newAnnos, 'anno:', anno);
+    setAnotations(newAnnos);
+    setCurrentAnnotation(anno);
+  };
+
+  const removeAnnotation = (anno: Annotation) => {
+    if (!anno.frontendId)
+      throw new Error(
+        'addAnnotation, Annotation frontendId not generated: ' + JSON.stringify(anno),
+      );
+    const newAnnos = [];
+    for (const everyAnno of annotations) {
+      if (everyAnno.frontendId != anno.frontendId) {
+        newAnnos.push(everyAnno);
+      }
+    }
+    setAnotations(newAnnos);
+    setCurrentAnnotation(undefined);
+  };
+
+  const syncSingleAnnotation = (anno: Annotation) => {
     if (!anno) return;
     console.log('modifyAnnotation', anno, 'anno.label:', anno?.label);
     anno.taskId = task.curr.taskId;
@@ -46,7 +93,7 @@ const Page: React.FC = () => {
   //   initHistory(); // reinit history after turn task
   // }, []);
 
-  const onAnnotationModify = (anno: Annotation<any>) => {
+  const onAnnotationModify = (anno: Annotation) => {
     console.log('onAnnotationModify');
 
     modifyAnnotation(anno);
@@ -55,12 +102,12 @@ const Page: React.FC = () => {
   const rectagle = drawRectangle({
     currentLabel: label.curr,
     currentTool: tool.curr,
-    annotations: annotation.all,
-    currentAnnotation: annotation.curr,
-    onAnnotationAdd: annotation.setCurr,
+    annotations: annotations,
+    currentAnnotation: currentAnnotation,
+    onAnnotationAdd: addAnnotation,
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
-      recordHistory({ annos: annotation.all, currAnno: annotation.curr });
+      recordHistory({ annos: annotations, currAnno: currentAnnotation });
     },
   });
 
@@ -90,7 +137,7 @@ const Page: React.FC = () => {
               return;
             }
             tool.setCurr('rectangle');
-            annotation.setCurr(undefined);
+            setCurrentAnnotation(undefined);
           }}
         >
           {rectangleBtn}
@@ -144,7 +191,8 @@ const Page: React.FC = () => {
             if (!res) {
               return;
             }
-            annotation.setCurr(res.currAnno);
+            setCurrentAnnotation(res.currAnno);
+            setAnotations(res.annos);
           }}
         >
           {unDo}
@@ -156,7 +204,8 @@ const Page: React.FC = () => {
             if (!res) {
               return;
             }
-            annotation.setCurr(res.currAnno);
+            setCurrentAnnotation(res.currAnno);
+            setAnotations(res.annos);
           }}
         >
           {reDo}
@@ -173,14 +222,13 @@ const Page: React.FC = () => {
           <div className="draw">
             <PPStage
               scale={scale.curr}
-              annotations={annotation.all}
+              annotations={annotations}
               currentTool={tool.curr}
-              currentAnnotation={annotation.curr}
-              setCurrentAnnotation={annotation.setCurr}
+              currentAnnotation={currentAnnotation}
+              setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={onAnnotationModify}
               onAnnotationModifyComplete={() => {
-                recordHistory({ annos: annotation.all, currAnno: annotation.curr });
-                annotation.setCurr();
+                recordHistory({ annos: annotations, currAnno: currentAnnotation });
               }}
               onMouseDown={dr.onMouseDown}
               onMouseMove={dr.onMouseMove}
@@ -228,7 +276,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() => {
-            annotation.setCurr(undefined);
+            setCurrentAnnotation(undefined);
           }}
         >
           {undef}
@@ -240,23 +288,22 @@ const Page: React.FC = () => {
           activeIds={label.activeIds}
           onLabelSelect={(selected) => {
             label.onSelect(selected);
-            annotation.setCurr(undefined);
+            setCurrentAnnotation(undefined);
           }}
           onLabelModify={() => {}}
           onLabelDelete={label.remove}
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
         />
         <PPAnnotationList
-          annotations={annotation.all}
-          currAnnotation={annotation.curr}
-          onAnnotationSelect={annotation.setCurr}
+          annotations={annotations}
+          currAnnotation={currentAnnotation}
+          onAnnotationSelect={setCurrentAnnotation}
           onAnnotationAdd={() => {
-            annotation.setCurr(undefined);
+            setCurrentAnnotation(undefined);
           }}
           onAnnotationModify={() => {}}
           onAnnotationDelete={(ann) => {
-            annotation.remove(ann);
-            annotation.setCurr(undefined);
+            removeAnnotation(ann);
           }}
         />
       </div>
