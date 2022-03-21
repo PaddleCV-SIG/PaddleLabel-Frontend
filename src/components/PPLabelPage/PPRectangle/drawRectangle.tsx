@@ -41,9 +41,8 @@ function drawRectangle(
   currentTool: ToolType,
   onSelect: (anntation: Annotation<PPRectangleType>) => void,
   currentAnnotation?: Annotation<PPRectangleType>,
-  offset?: { x: number; y: number },
 ): ReactElement[] {
-  console.log(`drawRectangle, annotation:`, annotation);
+  // console.log(`drawRectangle, annotation:`, annotation);
   if (!annotation || !annotation.points || !annotation.label || !annotation.label.color)
     return [<></>];
   const points: PPRectangleType = annotation.points;
@@ -51,7 +50,7 @@ function drawRectangle(
   const rgb = hexToRgb(color);
   if (!rgb) return [<></>];
 
-  console.log(`drawRectangle, points:`, points, `color:`, color);
+  // console.log(`drawRectangle, points:`, points, `color:`, color);
   const selected = currentAnnotation?.annotationId == annotation.annotationId;
   const transparency = selected ? 0.5 : 0.1;
 
@@ -89,8 +88,8 @@ function drawRectangle(
 
     const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>) => {
       if (currentTool != 'editor') return;
-      const newPositionX = (evt.evt.offsetX + (offset?.x || 0)) / scale;
-      const newPositionY = (evt.evt.offsetY + (offset?.y || 0)) / scale;
+      const newPositionX = evt.target.x();
+      const newPositionY = evt.target.y();
       if (isMin) {
         points.xmin = newPositionX;
         points.ymin = newPositionY;
@@ -215,7 +214,6 @@ export default function (props: {
 
   const OnMouseUp = () => {
     if (props.currentTool != 'rectangle') return;
-    // console.log(`OnMouseUp`);
     props.onMouseUp();
   };
   return {

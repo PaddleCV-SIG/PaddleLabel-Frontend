@@ -64,7 +64,6 @@ const Component: React.FC<PPStageProps> = (props) => {
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
 
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   // Dynamically adjust canvas size, prevent content overflow
@@ -119,7 +118,6 @@ const Component: React.FC<PPStageProps> = (props) => {
             props.currentTool,
             props.setCurrentAnnotation,
             props.currentAnnotation,
-            { x: -canvasWidth / 2 - dragOffset.x, y: -canvasHeight / 2 - dragOffset.y },
           ),
         );
     }
@@ -164,11 +162,10 @@ const Component: React.FC<PPStageProps> = (props) => {
           scaleY={props.scale}
           onDragEnd={(evt) => {
             if (props.currentTool != 'mover') return;
-            setDragOffset({ x: evt.evt.offsetX - dragStart.x, y: evt.evt.offsetY - dragStart.y });
-          }}
-          onDragStart={(evt) => {
-            if (props.currentTool != 'mover') return;
-            setDragStart({ x: evt.evt.offsetX, y: evt.evt.offsetY });
+            setDragOffset({
+              x: evt.target.x(),
+              y: evt.target.y(),
+            });
           }}
         >
           <Image
