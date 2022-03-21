@@ -87,6 +87,15 @@ export interface RemoveRequest {
   requestId?: string;
 }
 
+export interface RemoveLabelsRequest {
+  projectId: string;
+}
+
+export interface SetLabelsRequest {
+  projectId: string;
+  label?: Array<Label>;
+}
+
 export interface SplitDatasetRequest {
   projectId: string;
   inlineObject?: InlineObject;
@@ -548,6 +557,96 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async remove(projectId: string, requestId?: string, initOverrides?: RequestInit): Promise<void> {
     await this.removeRaw({ projectId: projectId, requestId: requestId }, initOverrides);
+  }
+
+  /**
+   * Delete all labels under a project
+   */
+  async removeLabelsRaw(
+    requestParameters: RemoveLabelsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling removeLabels.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/labels`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Delete all labels under a project
+   */
+  async removeLabels(projectId: string, initOverrides?: RequestInit): Promise<void> {
+    await this.removeLabelsRaw({ projectId: projectId }, initOverrides);
+  }
+
+  /**
+   * Set all labels under a project, will delete previous labels
+   */
+  async setLabelsRaw(
+    requestParameters: SetLabelsRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<Array<Label>>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling setLabels.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/labels`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: requestParameters.label.map(LabelToJSON),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LabelFromJSON));
+  }
+
+  /**
+   * Set all labels under a project, will delete previous labels
+   */
+  async setLabels(
+    projectId: string,
+    label?: Array<Label>,
+    initOverrides?: RequestInit,
+  ): Promise<Array<Label>> {
+    const response = await this.setLabelsRaw({ projectId: projectId, label: label }, initOverrides);
+    return await response.value();
   }
 
   /**

@@ -46,6 +46,8 @@ const Page: React.FC = () => {
   // }, []);
 
   const onAnnotationModify = (anno: Annotation<any>) => {
+    console.log('onAnnotationModify');
+
     modifyAnnotation(anno);
   };
 
