@@ -18,6 +18,7 @@ import operation from './operation';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 // import type { Annotation } from '@/models/annotation';
 import { MOST_HISTORY_STEPS } from '../SemanticSegmentation';
+import { useIntl } from 'umi';
 
 export type ToolType =
   | 'polygon'
@@ -130,6 +131,30 @@ const Page: React.FC = () => {
   const leafletMapRef = React.useRef<Map>(null);
   const dr = operation({ leafletMapRef, currentLabel, setAnnotations, annotations, recordHistory });
 
+  const finished = useIntl().formatMessage({ id: 'pages.Maps.finished' });
+  const removeLastVertex = useIntl().formatMessage({ id: 'pages.Maps.removeLastVertex' });
+  const cancel = useIntl().formatMessage({ id: 'pages.Maps.cancel' });
+  const boundary = useIntl().formatMessage({ id: 'pages.Maps.boundary' });
+  const remoteSensing = useIntl().formatMessage({ id: 'pages.Maps.remoteSensing' });
+  const grids = useIntl().formatMessage({ id: 'pages.Maps.grids' });
+  const polygonBtn = useIntl().formatMessage({ id: 'pages.toolBar.polygon' });
+  const rubber = useIntl().formatMessage({ id: 'pages.toolBar.rubber' });
+  const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
+  const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
+  const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
+  const unDo = useIntl().formatMessage({ id: 'pages.toolBar.unDo' });
+  const reDo = useIntl().formatMessage({ id: 'pages.toolBar.reDo' });
+  const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
+  const edit = useIntl().formatMessage({ id: 'pages.toolBar.edit' });
+  const clearMark = useIntl().formatMessage({ id: 'pages.toolBar.clearMark' });
+  const interactor = useIntl().formatMessage({ id: 'pages.toolBar.interactor' });
+  const segmentThreshold = useIntl().formatMessage({ id: 'pages.toolBar.segmentThreshold' });
+  const diaphaneity = useIntl().formatMessage({ id: 'pages.toolBar.diaphaneity' });
+  const visualRadius = useIntl().formatMessage({ id: 'pages.toolBar.visualRadius' });
+  const determineOutline = useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' });
+  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
+  const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
+
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -146,7 +171,7 @@ const Page: React.FC = () => {
                     dr.finishShape();
                   }}
                 >
-                  Finish
+                  {finished}
                 </Button>
                 <Button
                   type="primary"
@@ -154,7 +179,7 @@ const Page: React.FC = () => {
                     dr.removeLastVertex();
                   }}
                 >
-                  Remove Last Vertex
+                  {removeLastVertex}
                 </Button>
                 <Popconfirm title="Are you sure cancel this task?" okText="Yes" cancelText="No">
                   <Button
@@ -163,7 +188,7 @@ const Page: React.FC = () => {
                       dr.RSDrawDisable(dr.currentShape());
                     }}
                   >
-                    Cancel
+                    {cancel}
                   </Button>
                 </Popconfirm>
               </Space>
@@ -179,7 +204,7 @@ const Page: React.FC = () => {
               dr.RSDraw('Polygon');
             }}
           >
-            Polygon
+            {polygonBtn}
           </PPToolBarButton>
         </Popover>
         <PPToolBarButton
@@ -188,7 +213,7 @@ const Page: React.FC = () => {
           }}
           imgSrc="./pics/buttons/edit.png"
         >
-          Edit
+          {edit}
         </PPToolBarButton>
         <Popover
           placement="rightTop"
@@ -203,7 +228,7 @@ const Page: React.FC = () => {
               dr.removeShape();
             }}
           >
-            Rubber
+            {rubber}
           </PPToolBarButton>
         </Popover>
         <PPToolBarButton
@@ -212,7 +237,7 @@ const Page: React.FC = () => {
           }}
           imgSrc="./pics/buttons/zoom_in.png"
         >
-          Zoom in
+          {zoomIn}
         </PPToolBarButton>
         <PPToolBarButton
           onClick={() => {
@@ -220,7 +245,7 @@ const Page: React.FC = () => {
           }}
           imgSrc="./pics/buttons/zoom_out.png"
         >
-          Zoom out
+          {zoomOut}
         </PPToolBarButton>
         <PPToolBarButton
           onClick={() => {
@@ -228,18 +253,18 @@ const Page: React.FC = () => {
           }}
           imgSrc="./pics/buttons/save.png"
         >
-          Save
+          {save}
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/move.png" onClick={() => dr.moveShape()}>
-          Move
+          {move}
         </PPToolBarButton>
         <PPToolBarButton onClick={() => backwardHistory()} imgSrc="./pics/buttons/prev.png">
-          Undo
+          {unDo}
         </PPToolBarButton>
         <PPToolBarButton onClick={() => forwardHistory()} imgSrc="./pics/buttons/next.png">
-          Redo
+          {reDo}
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">{clearMark}</PPToolBarButton>
       </PPToolBar>
       {/* FIXME: how to do between 2 maps */}
       <div className={styles.mainStage}>
@@ -269,16 +294,16 @@ const Page: React.FC = () => {
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
-          Interactor
+          {interactor}
         </PPToolBarButton>
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
-          Segment Threshold
+          {segmentThreshold}
         </PPSetButton>
         <PPSetButton imgSrc="./pics/buttons/alpha.png" disLoc="left">
-          Diaphaneity
+          {diaphaneity}
         </PPSetButton>
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
-          Visual Radius
+          {visualRadius}
         </PPSetButton>
         <Popover
           overlayInnerStyle={{ borderRadius: '0.5rem' }}
@@ -294,7 +319,7 @@ const Page: React.FC = () => {
               setCurrentTool('boundry');
             }}
           >
-            Boundary
+            {boundary}
           </PPToolBarButton>
         </Popover>
         <Popover
@@ -311,7 +336,7 @@ const Page: React.FC = () => {
               setCurrentTool('colorgun');
             }}
           >
-            Remote Sensing
+            {remoteSensing}
           </PPToolBarButton>
         </Popover>
         <Popover
@@ -328,16 +353,16 @@ const Page: React.FC = () => {
               setCurrentTool('grid');
             }}
           >
-            Grids
+            {grids}
           </PPToolBarButton>
         </Popover>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">{divideData}</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">{exportBtn}</PPToolBarButton>
       </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.determinOutline}>
           <Button style={{ height: 40, fontSize: '0.75rem' }} type="primary" block>
-            Determine Outline
+            {determineOutline}
           </Button>
         </div>
         <PPLabelList

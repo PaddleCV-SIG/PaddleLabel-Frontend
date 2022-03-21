@@ -15,6 +15,7 @@ import PPPolygon from '@/components/PPLabelPage/PPPolygon';
 import drawBrush from '@/components/PPLabelPage/PPBrush/drawBrush';
 import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
 import PPMedicalSetting from '@/components/PPMedical/PPMedicalSetting';
+import { useIntl } from 'umi';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
 
@@ -158,6 +159,26 @@ const Page: React.FC = () => {
 
   const dr = currentTool == 'polygon' ? polygon : brush;
 
+  const polygonBtn = useIntl().formatMessage({ id: 'pages.toolBar.polygon' });
+  const brushBtn = useIntl().formatMessage({ id: 'pages.toolBar.brush' });
+  const rubber = useIntl().formatMessage({ id: 'pages.toolBar.rubber' });
+  const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
+  const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
+  const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
+  const unDo = useIntl().formatMessage({ id: 'pages.toolBar.unDo' });
+  const reDo = useIntl().formatMessage({ id: 'pages.toolBar.reDo' });
+  const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
+  const edit = useIntl().formatMessage({ id: 'pages.toolBar.edit' });
+  const clearMark = useIntl().formatMessage({ id: 'pages.toolBar.clearMark' });
+  const interactor = useIntl().formatMessage({ id: 'pages.toolBar.interactor' });
+  const segmentThreshold = useIntl().formatMessage({ id: 'pages.toolBar.segmentThreshold' });
+  const diaphaneity = useIntl().formatMessage({ id: 'pages.toolBar.diaphaneity' });
+  const visualRadius = useIntl().formatMessage({ id: 'pages.toolBar.visualRadius' });
+  const determineOutline = useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' });
+  const medicalSetting = useIntl().formatMessage({ id: 'pages.toolBar.medicalSetting' });
+  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
+  const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
+
   return (
     <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
@@ -168,9 +189,9 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
           }}
         >
-          Polygon
+          {polygonBtn}
         </PPPolygon>
-        <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/edit.png">{edit}</PPToolBarButton>
         <PPBrush
           size={brushSize}
           active={currentTool == 'brush'}
@@ -184,7 +205,7 @@ const Page: React.FC = () => {
             setBrushSize(newBrushSize);
           }}
         >
-          Brush
+          {brushBtn}
         </PPBrush>
         <PPBrush
           size={brushSize}
@@ -200,7 +221,7 @@ const Page: React.FC = () => {
           }}
           imgSrc="./pics/buttons/rubber.png"
         >
-          Rubber
+          {rubber}
         </PPBrush>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
@@ -208,7 +229,7 @@ const Page: React.FC = () => {
             setScale(scale + 0.1);
           }}
         >
-          Zoom in
+          {zoomIn}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
@@ -216,16 +237,16 @@ const Page: React.FC = () => {
             setScale(scale - 0.1);
           }}
         >
-          Zoom out
+          {zoomOut}
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/save.png">{save}</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
           onClick={() => {
             setCurrentTool('mover');
           }}
         >
-          Move
+          {move}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
@@ -233,7 +254,7 @@ const Page: React.FC = () => {
             backwardHistory();
           }}
         >
-          Undo
+          {unDo}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
@@ -241,9 +262,9 @@ const Page: React.FC = () => {
             forwardHistory();
           }}
         >
-          Redo
+          {reDo}
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">{clearMark}</PPToolBarButton>
       </PPToolBar>
       <div id="dr" className={styles.mainStage}>
         <div className={styles.draw}>
@@ -273,16 +294,16 @@ const Page: React.FC = () => {
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
-          Interactor
+          {interactor}
         </PPToolBarButton>
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
-          Segment Threshold
+          {segmentThreshold}
         </PPSetButton>
         <PPSetButton imgSrc="./pics/buttons/alpha.png" disLoc="left">
-          Diaphaneity
+          {diaphaneity}
         </PPSetButton>
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
-          Visual Radius
+          {visualRadius}
         </PPSetButton>
         <Popover
           overlayInnerStyle={{ borderRadius: '0.5rem' }}
@@ -293,11 +314,11 @@ const Page: React.FC = () => {
         >
           {' '}
           <PPToolBarButton imgSrc="./pics/buttons/medical_setting.png">
-            Medical Setting
+            {medicalSetting}
           </PPToolBarButton>
         </Popover>
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">{divideData}</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">{exportBtn}</PPToolBarButton>
       </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.determinOutline}>
@@ -309,7 +330,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
             }}
           >
-            Determine Outline
+            {determineOutline}
           </Button>
         </div>
         <PPLabelList

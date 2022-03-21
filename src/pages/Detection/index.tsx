@@ -15,6 +15,7 @@ import { Button, Progress, Spin, message } from 'antd';
 import { PageInit } from '@/services/utils';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import type { Annotation } from '@/models/Annotation';
+import { useIntl } from 'umi';
 
 const Page: React.FC = () => {
   const [
@@ -65,6 +66,19 @@ const Page: React.FC = () => {
 
   const dr = rectagle;
 
+  const rectangleBtn = useIntl().formatMessage({ id: 'pages.toolBar.rectangle' });
+  const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
+  const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
+  const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
+  const unDo = useIntl().formatMessage({ id: 'pages.toolBar.unDo' });
+  const reDo = useIntl().formatMessage({ id: 'pages.toolBar.reDo' });
+  const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
+  const edit = useIntl().formatMessage({ id: 'pages.toolBar.edit' });
+  const clearMark = useIntl().formatMessage({ id: 'pages.toolBar.clearMark' });
+  const undef = useIntl().formatMessage({ id: 'pages.toolBar.undef' });
+  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
+  const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
+
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -79,7 +93,7 @@ const Page: React.FC = () => {
             annotation.setCurr(undefined);
           }}
         >
-          Rectangle
+          {rectangleBtn}
         </PPRectangle>
         <PPToolBarButton
           active={tool.curr == 'editor'}
@@ -88,7 +102,7 @@ const Page: React.FC = () => {
             tool.setCurr('editor');
           }}
         >
-          Edit
+          {edit}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
@@ -96,7 +110,7 @@ const Page: React.FC = () => {
             scale.change(0.1);
           }}
         >
-          Zoom in
+          {zoomIn}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
@@ -104,7 +118,7 @@ const Page: React.FC = () => {
             scale.change(-0.1);
           }}
         >
-          Zoom out
+          {zoomOut}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
@@ -112,7 +126,7 @@ const Page: React.FC = () => {
             message.info("Annotations are saved automatically. You don't need to click save.");
           }}
         >
-          Save
+          {save}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
@@ -121,7 +135,7 @@ const Page: React.FC = () => {
             tool.setCurr('mover');
           }}
         >
-          Move
+          {move}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
@@ -133,7 +147,7 @@ const Page: React.FC = () => {
             annotation.setCurr(res.currAnno);
           }}
         >
-          Undo
+          {unDo}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
@@ -145,13 +159,13 @@ const Page: React.FC = () => {
             annotation.setCurr(res.currAnno);
           }}
         >
-          Redo
+          {reDo}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/clear_mark.png"
           onClick={() => console.log('clear')}
         >
-          Clear Mark
+          {clearMark}
         </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
@@ -184,6 +198,7 @@ const Page: React.FC = () => {
                 showInfo={false}
               />{' '}
               <span className="progressDesc">
+                {/* TODO: translate */}
                 Current labeling {task.currIdx == undefined ? 1 : task.currIdx + 1} of{' '}
                 {task.all?.length}. Already labeled {task.finished(project.progress) || 0}.
               </span>
@@ -200,7 +215,7 @@ const Page: React.FC = () => {
             splitDataset(project.curr.projectId, { train: 0.5, validation: 0.3, test: 0.2 });
           }}
         >
-          Split Dataset
+          {divideData}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/export.png"
@@ -208,16 +223,15 @@ const Page: React.FC = () => {
             exportDataset(project.curr.projectId, '/home/lin/Desktop/data/pplabel/export/');
           }}
         >
-          Export
+          {exportBtn}
         </PPToolBarButton>
-
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() => {
             annotation.setCurr(undefined);
           }}
         >
-          undefined
+          {undef}
         </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">

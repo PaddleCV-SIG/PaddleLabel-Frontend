@@ -7,6 +7,7 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
+import { useIntl } from 'umi';
 
 const Page: React.FC = () => {
   const [
@@ -25,6 +26,13 @@ const Page: React.FC = () => {
     tool: { defaultTool: 'mover' },
     effectTrigger: { postTaskChange: postTaskChange },
   });
+
+  const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
+  const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
+  const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
+  const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
+  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
+  const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
 
   function selectLabel(selected) {
     // after toggle is active, add ann
@@ -56,7 +64,7 @@ const Page: React.FC = () => {
             scale.change(0.1);
           }}
         >
-          Zoom in
+          {zoomIn}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
@@ -64,7 +72,7 @@ const Page: React.FC = () => {
             scale.change(-0.1);
           }}
         >
-          Zoom out
+          {zoomOut}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
@@ -72,7 +80,7 @@ const Page: React.FC = () => {
             message.info("Annotations are saved automatically. You don't need to click save.");
           }}
         >
-          Save
+          {save}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
@@ -82,7 +90,7 @@ const Page: React.FC = () => {
             message.info('You can move the image now.');
           }}
         >
-          Move
+          {move}
         </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
@@ -106,6 +114,7 @@ const Page: React.FC = () => {
                 showInfo={false}
               />{' '}
               <span className="progressDesc">
+                {/* TODO: translate */}
                 Current labeling {task.currIdx == undefined ? 1 : task.currIdx + 1} of{' '}
                 {task.all?.length}. Already labeled {task.finished(project.progress) || 0}.
               </span>
@@ -117,20 +126,20 @@ const Page: React.FC = () => {
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton
-          imgSrc="./pics/buttons/export.png"
-          onClick={() => {
-            exportDataset(project.curr.projectId, '/home/lin/Desktop/data/pplabel/export/');
-          }}
-        >
-          Export
-        </PPToolBarButton>
-        <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() =>
             splitDataset(project.curr.projectId, { train: 0.5, validation: 0.3, test: 0.2 })
           }
         >
-          Split Dataset
+          {divideData}
+        </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/export.png"
+          onClick={() => {
+            exportDataset(project.curr.projectId, '/home/lin/Desktop/data/pplabel/export/');
+          }}
+        >
+          {exportBtn}
         </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">

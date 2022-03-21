@@ -7,13 +7,18 @@ export default function (props: {
   currentLabel?: Label;
   setAnnotations: (annotations: GeojsonCollection) => void;
   annotations: GeojsonCollection;
+  recordHistory: (annos: GeojsonCollection) => void;
 }) {
   const [maxId, setMaxId] = useState(0);
   const [polyVisable, setPolyVis] = useState(false);
-  const [currentLabel, setCurrentLabel] = useState(props.currentLabel);
+  // const [currentLabel, setCurrentLabel] = useState(props.currentLabel);
   useEffect(() => {
-    setCurrentLabel(props.currentLabel);
+    localStorage.setItem('currentLabel', JSON.stringify(props.currentLabel || {}));
   }, [props.currentLabel]);
+
+  useEffect(() => {
+    localStorage.setItem('annotations', JSON.stringify(props.annotations || {}));
+  }, [props.annotations]);
 
   const toggleTest = () => {
     const drawToggleCheck = props.leafletMapRef.current?.leafletElement.pm.globalDrawModeEnabled();
@@ -31,16 +36,20 @@ export default function (props: {
   // Everytime currentTool changes, react will rerender this component(aka re-call Page() function to generate)
   // This means Page() function will always be called with currentTool's latest value.
   const RSDraw = (RScurrentTool: any) => {
-    setPolyVis(true);
-    if (currentLabel) {
+    const LabelNew = localStorage.getItem('currentLabel');
+    // console.log(LabelNew);
+    if (LabelNew != '{}') {
+      setPolyVis(true);
+      const LabelNewNew = JSON.parse(LabelNew || '{}');
       props.leafletMapRef.current?.leafletElement.pm.enableDraw(RScurrentTool);
       // console.log('drawTools: ', RScurrentTool);
       props.leafletMapRef.current?.leafletElement.pm.setPathOptions({
-        color: currentLabel?.color,
-        fillColor: currentLabel?.color,
+        color: LabelNewNew?.color,
+        fillColor: LabelNewNew?.color,
         fillOpacity: 0.4,
       });
     } else {
+      alert('Test');
       props.leafletMapRef.current?.leafletElement.pm.disableDraw(RScurrentTool);
       setPolyVis(false);
     }
@@ -95,52 +104,45 @@ export default function (props: {
   };
 
   const saveGeoJson = () => {
-    console.log(props.leafletMapRef.current?.leafletElement.pm.getGeomanDrawLayers(true));
+    // console.log(props.leafletMapRef.current?.leafletElement.pm.getGeomanDrawLayers(true));
     setPolyVis(false);
   };
 
   // console.log(`operation re-rendering. currentLabel:${props.currentLabel}`);
   const storeOnDb = (layer: any) => {
-    const uid = layer._uid;
+    // const uid = layer._uid;
     const json = layer.toGeoJSON();
+    const LabelNew = JSON.parse(localStorage.getItem('currentLabel') || '{}');
     setMaxId(maxId + 1);
     // console.log(`storeOnDb. currentLabel:${props.currentLabel}`);
     json.properties = {
-      labelName: currentLabel?.name,
-      stroke: currentLabel?.color,
+      labelName: LabelNew?.name,
+      stroke: LabelNew?.color,
       annotationId: maxId + 1,
     };
-    console.log('Store Layer on DB. Id:' + uid, json);
-    console.log(JSON.stringify(json));
-    props.setAnnotations({
-      ...props.annotations,
-      features: props.annotations.features.concat(json),
-    });
-    console.log({
-      ...props.annotations,
-      features: props.annotations.features.concat(json),
-    });
+    // console.log('Store Layer on DB. Id:' + uid, json);
+    // console.log(JSON.stringify(json));
+    const newAnnotation = JSON.parse(localStorage.getItem('annotations') || '{}');
+    const setanno = {
+      ...newAnnotation,
+      features: newAnnotation.features.concat(json),
+    };
+    console.log(setanno);
+    props.setAnnotations(setanno);
+    props.recordHistory(setanno);
   };
 
   function onShapeCreate(e: any) {
     // console.log(props.currentLabel);
     // enterUid(e.layer);
-    e.layer.bindPopup('Label: ' + e.layer._uid).openPopup();
+    // e.layer.bindPopup('Label: ' + e.layer._uid).openPopup();
     setPolyVis(false);
 
     storeOnDb(e.layer);
   }
   const onShapeEdit = (e: any) => {
-    updateOnDb(e.layer);
-    // console.log(e);
+    console.log(e);
   };
-
-  function updateOnDb(layer: any) {
-    // console.log(props.currentLabel);
-    const uid = layer._uid;
-    const json = layer.toGeoJSON();
-    console.log('Update Layer on DB. Id:' + uid, json);
-  }
 
   const toolZoomIn = () => {
     props.leafletMapRef.current?.leafletElement.zoomIn();

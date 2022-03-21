@@ -17,16 +17,21 @@ import { rule, addRule, updateRule, removeRule } from '@/services/ant-design-pro
  * @zh-CN 添加节点
  * @param fields
  */
-const handleAdd = async (fields: API.RuleListItem) => {
-  const hide = message.loading('正在添加');
+const handleAdd = async (
+  fields: API.RuleListItem,
+  loading: {} | null | undefined,
+  addSuccess: {} | null | undefined,
+  addFailed: {} | null | undefined,
+) => {
+  const hide = message.loading(loading);
   try {
     await addRule({ ...fields });
     hide();
-    message.success('Added successfully');
+    message.success(addSuccess);
     return true;
   } catch (error) {
     hide();
-    message.error('Adding failed, please try again!');
+    message.error(addFailed);
     return false;
   }
 };
@@ -37,8 +42,13 @@ const handleAdd = async (fields: API.RuleListItem) => {
  *
  * @param fields
  */
-const handleUpdate = async (fields: FormValueType) => {
-  const hide = message.loading('Configuring');
+const handleUpdate = async (
+  fields: FormValueType,
+  configuring: {} | null | undefined,
+  confSuccess: {} | null | undefined,
+  confFailed: {} | null | undefined,
+) => {
+  const hide = message.loading(configuring);
   try {
     await updateRule({
       name: fields.name,
@@ -47,11 +57,11 @@ const handleUpdate = async (fields: FormValueType) => {
     });
     hide();
 
-    message.success('Configuration is successful');
+    message.success(confSuccess);
     return true;
   } catch (error) {
     hide();
-    message.error('Configuration failed, please try again!');
+    message.error(confFailed);
     return false;
   }
 };
@@ -62,19 +72,24 @@ const handleUpdate = async (fields: FormValueType) => {
  *
  * @param selectedRows
  */
-const handleRemove = async (selectedRows: API.RuleListItem[]) => {
-  const hide = message.loading('正在删除');
+const handleRemove = async (
+  selectedRows: API.RuleListItem[],
+  deleting: {} | null | undefined,
+  deletSuccess: {} | null | undefined,
+  deletFailed: {} | null | undefined,
+) => {
+  const hide = message.loading(deleting);
   if (!selectedRows) return true;
   try {
     await removeRule({
       key: selectedRows.map((row) => row.key),
     });
     hide();
-    message.success('Deleted successfully and will refresh soon');
+    message.success(deletSuccess);
     return true;
   } catch (error) {
     hide();
-    message.error('Delete failed, please try again');
+    message.error(deletFailed);
     return false;
   }
 };
@@ -102,6 +117,15 @@ const TableList: React.FC = () => {
    * @zh-CN 国际化配置
    * */
   const intl = useIntl();
+  const loading = intl.formatMessage({ id: 'pages.tableList.loading' });
+  const addSuccess = intl.formatMessage({ id: 'pages.tableList.addSuccess' });
+  const addFailed = intl.formatMessage({ id: 'pages.tableList.addFailed' });
+  const configuring = intl.formatMessage({ id: 'pages.tableList.configuring' });
+  const confSuccess = intl.formatMessage({ id: 'pages.tableList.confSuccess' });
+  const confFailed = intl.formatMessage({ id: 'pages.tableList.confFailed' });
+  const deleting = intl.formatMessage({ id: 'pages.tableList.deleting' });
+  const deletSuccess = intl.formatMessage({ id: 'pages.tableList.deletSuccess' });
+  const deletFailed = intl.formatMessage({ id: 'pages.tableList.deletFailed' });
 
   const columns: ProColumns<API.RuleListItem>[] = [
     {
@@ -289,7 +313,7 @@ const TableList: React.FC = () => {
         >
           <Button
             onClick={async () => {
-              await handleRemove(selectedRowsState);
+              await handleRemove(selectedRowsState, deleting, deletSuccess, deletFailed);
               setSelectedRows([]);
               actionRef.current?.reloadAndRest?.();
             }}
@@ -316,7 +340,12 @@ const TableList: React.FC = () => {
         visible={createModalVisible}
         onVisibleChange={handleModalVisible}
         onFinish={async (value) => {
-          const success = await handleAdd(value as API.RuleListItem);
+          const success = await handleAdd(
+            value as API.RuleListItem,
+            loading,
+            addSuccess,
+            addFailed,
+          );
           if (success) {
             handleModalVisible(false);
             if (actionRef.current) {
@@ -344,7 +373,7 @@ const TableList: React.FC = () => {
       </ModalForm>
       <UpdateForm
         onSubmit={async (value) => {
-          const success = await handleUpdate(value);
+          const success = await handleUpdate(value, configuring, confSuccess, confFailed);
           if (success) {
             handleUpdateModalVisible(false);
             setCurrentRow(undefined);

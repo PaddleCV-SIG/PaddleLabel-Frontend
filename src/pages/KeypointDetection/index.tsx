@@ -11,6 +11,7 @@ import type { Annotation } from '@/models/annotation';
 import PPPolygon from '@/components/PPLabelPage/PPPolygon';
 import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
 import { Button, Progress } from 'antd';
+import { useIntl } from 'umi';
 
 export type ToolType = 'polygon' | 'mover' | undefined;
 
@@ -128,6 +129,19 @@ const Page: React.FC = () => {
 
   const dr = polygon;
 
+  const polygonBtn = useIntl().formatMessage({ id: 'pages.toolBar.polygon' });
+  const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
+  const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
+  const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
+  const unDo = useIntl().formatMessage({ id: 'pages.toolBar.unDo' });
+  const reDo = useIntl().formatMessage({ id: 'pages.toolBar.reDo' });
+  const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
+  const edit = useIntl().formatMessage({ id: 'pages.toolBar.edit' });
+  const clearMark = useIntl().formatMessage({ id: 'pages.toolBar.clearMark' });
+  const determineOutline = useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' });
+  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
+  const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
+
   return (
     <PPLabelPageContainer className={styles.key}>
       <PPToolBar>
@@ -138,16 +152,16 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
           }}
         >
-          Polygon
+          {polygonBtn}
         </PPPolygon>
-        <PPToolBarButton imgSrc="./pics/buttons/edit.png">Edit</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/edit.png">{edit}</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
             setScale(scale + 0.1);
           }}
         >
-          Zoom in
+          {zoomIn}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
@@ -155,16 +169,16 @@ const Page: React.FC = () => {
             setScale(scale - 0.1);
           }}
         >
-          Zoom out
+          {zoomOut}
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/save.png">Save</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/save.png">{save}</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
           onClick={() => {
             setCurrentTool('mover');
           }}
         >
-          Move
+          {move}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
@@ -172,7 +186,7 @@ const Page: React.FC = () => {
             backwardHistory();
           }}
         >
-          Undo
+          {unDo}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
@@ -180,9 +194,9 @@ const Page: React.FC = () => {
             forwardHistory();
           }}
         >
-          Redo
+          {reDo}
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">Clear Mark</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">{clearMark}</PPToolBarButton>
       </PPToolBar>
       <div id="dr" className={styles.mainStage}>
         <div className={styles.draw}>
@@ -210,8 +224,8 @@ const Page: React.FC = () => {
         </div>
       </div>
       <PPToolBar disLoc="right">
-        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">Divide Data</PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/export.png">Export</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">{divideData}</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">{exportBtn}</PPToolBarButton>
       </PPToolBar>
       <div className={styles.rightSideBar}>
         <div className={styles.finished}>
@@ -223,7 +237,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
             }}
           >
-            Determine Outline
+            {determineOutline}
           </Button>
         </div>
         <PPLabelList
