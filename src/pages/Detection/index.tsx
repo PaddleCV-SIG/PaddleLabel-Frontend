@@ -210,6 +210,15 @@ const Page: React.FC = () => {
         >
           Export
         </PPToolBarButton>
+
+        <PPToolBarButton
+          imgSrc="./pics/buttons/data_division.png"
+          onClick={() => {
+            annotation.setCurr(undefined);
+          }}
+        >
+          undefined
+        </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
         <PPLabelList
@@ -227,7 +236,9 @@ const Page: React.FC = () => {
           annotations={annotation.all}
           currAnnotation={annotation.curr}
           onAnnotationSelect={annotation.setCurr}
-          onAnnotationAdd={() => {}}
+          onAnnotationAdd={() => {
+            annotation.setCurr(undefined);
+          }}
           onAnnotationModify={() => {}}
           onAnnotationDelete={(ann) => {
             annotation.remove(ann);

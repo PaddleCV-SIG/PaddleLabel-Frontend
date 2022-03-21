@@ -47,7 +47,8 @@ const Component: React.FC<PPLabelListProps> = (props) => {
               style={{ height: 40, fontSize: '0.75rem' }}
               type="primary"
               onClick={() => {
-                props.onAnnotationSelect(undefined);
+                // props.onAnnotationSelect(undefined);
+                props.onAnnotationAdd();
               }}
               block
             >

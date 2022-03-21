@@ -237,7 +237,7 @@ export const LabelUtils = (
     if (!label) return;
     let labelId = typeof label == 'number' ? label : label.labelId;
     labelId = indexOf(labelId, all, 'labelId');
-    if (labelId) {
+    if (labelId!= undefined) {
       console.log('LabelUtils setCurr index:', labelId);
       setCurrIdx(labelId);
       setActiveIds(new Set([label]));
@@ -385,8 +385,11 @@ export function AnnotationUtils(
   };
 
   const create = async (annotation: Annotation, refresh: boolean = false) => {
+    console.log("create label", annotation.label);
+
     try {
       if (annotation.label) annotation.labelId = annotation.label.id;
+      // annotation.label=undefined;
       const newAnn = await annotationApi.create(annotation);
       setCurr(newAnn);
       let annRes: Annotation[] = [];

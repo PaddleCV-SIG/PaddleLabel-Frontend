@@ -24,13 +24,7 @@ export interface Label {
    * @type {number}
    * @memberof Label
    */
-  readonly labelId: number;
-  /**
-   *
-   * @type {number}
-   * @memberof Label
-   */
-  id?: number;
+  labelId: number;
   /**
    *
    * @type {number}
@@ -85,7 +79,6 @@ export function LabelFromJSONTyped(json: any, ignoreDiscriminator: boolean): Lab
   }
   return {
     labelId: json['label_id'],
-    id: !exists(json, 'id') ? undefined : json['id'],
     projectId: !exists(json, 'project_id') ? undefined : json['project_id'],
     name: json['name'],
     color: !exists(json, 'color') ? undefined : json['color'],
@@ -104,7 +97,7 @@ export function LabelToJSON(value?: Label | null): any {
     return null;
   }
   return {
-    id: value.id,
+    label_id: value.labelId,
     project_id: value.projectId,
     name: value.name,
     color: value.color,

@@ -1,4 +1,4 @@
-import { Annotation } from '@/models/Annotation';
+import type { Annotation } from '@/models/Annotation';
 import { Label } from '@/models/Label';
 import { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
