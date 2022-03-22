@@ -54,6 +54,7 @@ export default {
   'component.PPDivideDataModal.test': 'Test',
   'component.PPDivideDataModal.success': 'Data Division Success',
   'component.PPExportModal.imagenet': 'Imagenet Format',
+  'component.PPExportModal.export': 'Export',
   'component.PPExportModal.title': 'Export',
   'component.PPExportModal.path': 'Path',
   'component.PPExportModal.pathNotNull': 'Must input path',

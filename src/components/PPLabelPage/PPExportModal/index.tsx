@@ -58,7 +58,7 @@ const Component: React.FC<PPExportProps> = (props) => {
           <Input />
         </Form.Item>
 
-        <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Space>
             <Button
               onClick={() => {
@@ -69,7 +69,7 @@ const Component: React.FC<PPExportProps> = (props) => {
               {cancel}
             </Button>
             <Button type="primary" htmlType="submit" loading={loading}>
-              {intl.formatMessage({ id: 'component.PPExportModal.imagenet' })}
+              {intl.formatMessage({ id: 'component.PPExportModal.export' })}
             </Button>
           </Space>
         </Form.Item>
