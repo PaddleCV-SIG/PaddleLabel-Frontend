@@ -8,6 +8,8 @@ import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
 import { useIntl } from 'umi';
+import PPDivideDataModal from '@/components/PPLabelPage/PPDivideDataModal';
+import PPExportModal from '@/components/PPLabelPage/PPExportModal';
 
 const Page: React.FC = () => {
   const [
@@ -26,6 +28,8 @@ const Page: React.FC = () => {
     tool: { defaultTool: 'mover' },
     effectTrigger: { postTaskChange: postTaskChange },
   });
+  const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
+  const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
   const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
   const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
@@ -127,16 +131,16 @@ const Page: React.FC = () => {
       <PPToolBar disLoc="right">
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
-          onClick={() =>
-            splitDataset(project.curr.projectId, { train: 0.5, validation: 0.3, test: 0.2 })
-          }
+          onClick={() => {
+            setDivideModalVisible(true);
+          }}
         >
           {divideData}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/export.png"
           onClick={() => {
-            exportDataset(project.curr.projectId, '/home/lin/Desktop/data/pplabel/export/');
+            setExportModalVisible(true);
           }}
         >
           {exportBtn}
@@ -154,6 +158,28 @@ const Page: React.FC = () => {
           hideEye={true}
         />
       </div>
+      <PPDivideDataModal
+        visible={divideModalVisible}
+        splitDataset={splitDataset}
+        project={project}
+        onCancel={() => {
+          setDivideModalVisible(false);
+        }}
+        onFinish={() => {
+          setDivideModalVisible(false);
+        }}
+      />
+      <PPExportModal
+        visible={exportModalVisible}
+        exportDataset={exportDataset}
+        project={project}
+        onCancel={() => {
+          setExportModalVisible(false);
+        }}
+        onFinish={() => {
+          setExportModalVisible(false);
+        }}
+      />
     </PPLabelPageContainer>
   );
 };
