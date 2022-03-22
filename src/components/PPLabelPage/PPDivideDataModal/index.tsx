@@ -16,6 +16,7 @@ type PPDivideDataProps = {
 };
 
 const Component: React.FC<PPDivideDataProps> = (props) => {
+  const intl = useIntl();
   const [trainData, setTrainData] = useState<number>(60);
   const [validationData, setValidationData] = useState<number>(20);
   const [testData, setTestData] = useState<number>(20);
@@ -45,14 +46,14 @@ const Component: React.FC<PPDivideDataProps> = (props) => {
         wrapperCol={{ span: 16 }}
         initialValues={{ remember: false }}
         onFinish={() => {
-          setLoading(true);
           if (trainData + validationData + testData != 100) {
-            message.error('Train + Validation + Test should equal 100!');
+            message.error('Train, Validation and Test total percent should equal 100!');
             return;
           }
           console.log(
-            `trainData: ${trainData}, validationData: ${validationData}, testData: ${testData}, props.project.curr.projectId: ${props.project.curr.projectId}`,
+            `x trainData: ${trainData}, validationData: ${validationData}, testData: ${testData}, props.project.curr.projectId: ${props.project.curr.projectId}`,
           );
+          setLoading(true);
           props
             .splitDataset(props.project.curr.projectId, {
               train: trainData * 0.01,
@@ -60,6 +61,8 @@ const Component: React.FC<PPDivideDataProps> = (props) => {
               test: testData * 0.01,
             })
             .then(() => {
+              console.log('success');
+              message.success(intl.formatMessage({ id: 'component.PPDivideDataModal.success' }));
               props.onFinish?.call(0);
             })
             .finally(() => {

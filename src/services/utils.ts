@@ -513,7 +513,7 @@ export const DataUtils = (useState: UseStateType) => {
 };
 
 function exportDataset(projectId, exportDir) {
-  projectApi
+  return projectApi
     .exportDataset(projectId, { exportDir: exportDir })
     .then((res) => {
       console.log(res);

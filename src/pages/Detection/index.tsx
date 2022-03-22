@@ -17,6 +17,7 @@ import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/c
 import type { Annotation } from '@/models/Annotation';
 import { useIntl } from 'umi';
 import PPDivideDataModal from '@/components/PPLabelPage/PPDivideDataModal';
+import PPExportModal from '@/components/PPLabelPage/PPExportModal';
 
 const Page: React.FC = () => {
   const [
@@ -39,6 +40,7 @@ const Page: React.FC = () => {
   const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
   const [annotations, setAnotations] = useState<Annotation[]>([]);
   const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
+  const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
   const addAnnotation = (anno: Annotation) => {
     if (!anno.frontendId)
@@ -270,7 +272,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/export.png"
           onClick={() => {
-            exportDataset(project.curr.projectId, '/home/lin/Desktop/data/pplabel/export/');
+            setExportModalVisible(true);
           }}
         >
           {exportBtn}
@@ -318,6 +320,17 @@ const Page: React.FC = () => {
         }}
         onFinish={() => {
           setDivideModalVisible(false);
+        }}
+      />
+      <PPExportModal
+        visible={exportModalVisible}
+        exportDataset={exportDataset}
+        project={project}
+        onCancel={() => {
+          setExportModalVisible(false);
+        }}
+        onFinish={() => {
+          setExportModalVisible(false);
         }}
       />
     </PPLabelPageContainer>
