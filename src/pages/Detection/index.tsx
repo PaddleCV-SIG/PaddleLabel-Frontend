@@ -16,6 +16,7 @@ import { PageInit } from '@/services/utils';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import type { Annotation } from '@/models/Annotation';
 import { useIntl } from 'umi';
+import PPDivideDataModal from '@/components/PPLabelPage/PPDivideDataModal';
 
 const Page: React.FC = () => {
   const [
@@ -34,9 +35,10 @@ const Page: React.FC = () => {
     effectTrigger: { postTaskChange: initHistory },
   });
 
-  // These two used only by frontend, and synchronize with backend when triggered.
+  // These only used by frontend, and synchronize with backend when triggered.
   const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
   const [annotations, setAnotations] = useState<Annotation[]>([]);
+  const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
 
   const addAnnotation = (anno: Annotation) => {
     if (!anno.frontendId)
@@ -260,7 +262,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() => {
-            splitDataset(project.curr.projectId, { train: 0.5, validation: 0.3, test: 0.2 });
+            setDivideModalVisible(true);
           }}
         >
           {divideData}
@@ -307,6 +309,17 @@ const Page: React.FC = () => {
           }}
         />
       </div>
+      <PPDivideDataModal
+        visible={divideModalVisible}
+        splitDataset={splitDataset}
+        project={project}
+        onCancel={() => {
+          setDivideModalVisible(false);
+        }}
+        onFinish={() => {
+          setDivideModalVisible(false);
+        }}
+      />
     </PPLabelPageContainer>
   );
 };

@@ -49,4 +49,7 @@ export default {
   'component.PPSegMode.remoteSensing': 'Remote Sensing',
   'component.PPSegMode.changeDetection': 'Change Detection',
   'component.PPSegMode.ok': 'OK',
+  'component.PPDivideDataModal.train': 'Train',
+  'component.PPDivideDataModal.validation': 'Validation',
+  'component.PPDivideDataModal.test': 'Test',
 };

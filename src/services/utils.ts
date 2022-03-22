@@ -526,7 +526,7 @@ function exportDataset(projectId, exportDir) {
 async function splitDataset(projectId, props: { train: number; validation: number; test: number }) {
   console.log('split param', props);
 
-  projectApi
+  return projectApi
     .splitDataset(projectId, props)
     .then((res) => {
       console.log(res);
