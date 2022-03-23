@@ -2,6 +2,7 @@ import type { Annotation } from '@/models/Annotation';
 import { Label } from '@/models/Label';
 import { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
+import { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Rect } from 'react-konva';
 
@@ -40,6 +41,7 @@ function drawRectangle(
   scale: number,
   currentTool: ToolType,
   onSelect: (anntation: Annotation<PPRectangleType>) => void,
+  shapeRef?: React.MutableRefObject<any>,
   currentAnnotation?: Annotation<PPRectangleType>,
 ): ReactElement[] {
   // console.log(`drawRectangle, annotation:`, annotation);
@@ -51,7 +53,7 @@ function drawRectangle(
   if (!rgb) return [<></>];
 
   // console.log(`drawRectangle, points:`, points, `color:`, color);
-  const selected = currentAnnotation?.annotationId == annotation.annotationId;
+  const selected = currentAnnotation?.frontendId == annotation.frontendId;
   const transparency = selected ? 0.5 : 0.1;
 
   const rect =
@@ -88,8 +90,32 @@ function drawRectangle(
 
     const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>) => {
       if (currentTool != 'editor') return;
-      const newPositionX = evt.target.x();
-      const newPositionY = evt.target.y();
+      // Forbid drage cross image border
+      const stage: Stage = shapeRef?.current;
+      const baseImage = stage.findOne('.baseImage');
+      let reachBorder = false;
+      let newPositionX = evt.target.x();
+      if (newPositionX > baseImage.width() / 2) {
+        newPositionX = baseImage.width() / 2;
+        reachBorder = true;
+      }
+      if (newPositionX < -baseImage.width() / 2) {
+        newPositionX = -baseImage.width() / 2;
+        reachBorder = true;
+      }
+      let newPositionY = evt.target.y();
+      if (newPositionY > baseImage.height() / 2) {
+        newPositionY = baseImage.height() / 2;
+        reachBorder = true;
+      }
+      if (newPositionY < -baseImage.height() / 2) {
+        newPositionY = -baseImage.height() / 2;
+        reachBorder = true;
+      }
+      if (reachBorder) {
+        evt.target.setPosition({ x: newPositionX, y: newPositionY });
+      }
+      console.log(`newPositionX: ${newPositionX}, newPositionY: ${newPositionY}`);
       if (isMin) {
         points.xmin = newPositionX;
         points.ymin = newPositionY;

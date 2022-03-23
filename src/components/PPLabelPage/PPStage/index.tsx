@@ -33,6 +33,7 @@ export type PPStageProps = {
     scale: number,
     currentTool: ToolType,
     onSelect: (anntation: Annotation<any>) => void,
+    shapeRef: React.MutableRefObject<any>,
     currentAnnotation?: Annotation<any>,
   ) => ReactElement[];
   createBrushFunc?: (
@@ -42,6 +43,7 @@ export type PPStageProps = {
     scale: number,
     currentTool: ToolType,
     onSelect: (anntation: Annotation<any>) => void,
+    shapeRef: React.MutableRefObject<any>,
     currentAnnotation?: Annotation<any>,
   ) => ReactElement[];
   createRectangleFunc?: (
@@ -51,6 +53,7 @@ export type PPStageProps = {
     scale: number,
     currentTool: ToolType,
     onSelect: (anntation: Annotation<any>) => void,
+    shapeRef: React.MutableRefObject<any>,
     currentAnnotation?: Annotation<any>,
     offset?: { x: number; y: number },
   ) => ReactElement[];
@@ -65,6 +68,8 @@ const Component: React.FC<PPStageProps> = (props) => {
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
 
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+  const shapeRef = useRef(null);
 
   // Dynamically adjust canvas size, prevent content overflow
   function handleWindowResize() {
@@ -117,6 +122,7 @@ const Component: React.FC<PPStageProps> = (props) => {
             props.scale,
             props.currentTool,
             props.setCurrentAnnotation,
+            shapeRef,
             props.currentAnnotation,
           ),
         );
@@ -130,6 +136,7 @@ const Component: React.FC<PPStageProps> = (props) => {
       offsetX={-canvasWidth / 2}
       offsetY={-canvasHeight / 2}
       className={styles.stage}
+      ref={shapeRef}
     >
       {/* <Layer scaleX={props.scale} scaleY={props.scale} draggable={false}>
         <Image image={image} draggable={false} />
@@ -169,6 +176,7 @@ const Component: React.FC<PPStageProps> = (props) => {
           }}
         >
           <Image
+            name="baseImage"
             draggable={false}
             image={image}
             x={-(image?.width || 0) / 2}
