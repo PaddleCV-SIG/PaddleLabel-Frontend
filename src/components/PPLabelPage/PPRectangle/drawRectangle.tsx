@@ -60,7 +60,7 @@ function drawRectangle(
     points.xmax != undefined && points.ymax != undefined ? (
       <Rect
         onMouseOver={() => {
-          if (currentTool == 'mover') {
+          if (currentTool == 'editor') {
             document.body.style.cursor = 'pointer';
           }
         }}
@@ -68,7 +68,7 @@ function drawRectangle(
           document.body.style.cursor = 'default';
         }}
         onClick={() => {
-          if (currentTool == 'mover') onSelect(annotation);
+          if (currentTool == 'editor') onSelect(annotation);
         }}
         stroke={color}
         strokeWidth={2 / scale}
