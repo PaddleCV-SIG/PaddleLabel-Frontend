@@ -71,7 +71,7 @@ function drawRectangle(
           if (currentTool == 'mover') onSelect(annotation);
         }}
         stroke={color}
-        strokeWidth={2}
+        strokeWidth={2 / scale}
         globalCompositeOperation="source-over"
         lineCap="round"
         x={points.xmin}
@@ -145,7 +145,7 @@ function drawRectangle(
         }}
         x={isMin ? points.xmin : points.xmax}
         y={isMin ? points.ymin : points.ymax}
-        radius={5}
+        radius={5 / scale}
         fill={color}
       />
     );
