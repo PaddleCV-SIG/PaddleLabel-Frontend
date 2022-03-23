@@ -213,7 +213,6 @@ export const LabelUtils = (
   }
 
   function onSelect(label: Label | number) {
-    console.log(`label.onSelect:`, label);
     const idx: number = indexOf(label, all, 'labelId');
     if (idx == undefined) throw Error('label.onSelect label not found');
     setCurrIdx(idx);
@@ -306,16 +305,17 @@ export const TaskUtils = (useState: UseStateType) => {
   const [currIdx, setCurrIdx] = useState<number>();
 
   const turnTo = (turnToIdx: number) => {
-    if (!all) return;
+    if (!all) return false;
     if (turnToIdx < 0) {
       message.error('This is the first image. No previous image.');
-      return;
+      return false;
     }
     if (turnToIdx == all.length) {
       message.error('This is the final image. No next image.');
-      return;
+      return false;
     }
     setCurrIdx(turnToIdx);
+    return true;
   };
 
   const getAll = async (projectId: number, turnToIdx?: number) => {
@@ -340,12 +340,11 @@ export const TaskUtils = (useState: UseStateType) => {
     return Math.round((all.length * progress) / 100);
   }
 
-  const nextTask = async () => {
-    turnTo(currIdx + 1);
-    console.log('all tasks', all);
+  const nextTask = () => {
+    return turnTo(currIdx + 1);
   };
-  const prevTask = async () => {
-    turnTo(currIdx - 1);
+  const prevTask = () => {
+    return turnTo(currIdx - 1);
   };
 
   return {

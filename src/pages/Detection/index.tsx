@@ -97,19 +97,13 @@ const Page: React.FC = () => {
   //   initHistory(); // reinit history after turn task
   // }, []);
 
-  const onAnnotationModify = (anno: Annotation) => {
-    console.log('onAnnotationModify');
-
-    modifyAnnotation(anno);
-  };
-
   const rectagle = drawRectangle({
     currentLabel: label.curr,
     currentTool: tool.curr,
     annotations: annotations,
     currentAnnotation: currentAnnotation,
     onAnnotationAdd: addAnnotation,
-    onAnnotationModify: onAnnotationModify,
+    onAnnotationModify: modifyAnnotation,
     onMouseUp: () => {
       recordHistory({ annos: annotations, currAnno: currentAnnotation });
     },
@@ -230,7 +224,7 @@ const Page: React.FC = () => {
               currentTool={tool.curr}
               currentAnnotation={currentAnnotation}
               setCurrentAnnotation={setCurrentAnnotation}
-              onAnnotationModify={onAnnotationModify}
+              onAnnotationModify={modifyAnnotation}
               onAnnotationModifyComplete={() => {
                 recordHistory({ annos: annotations, currAnno: currentAnnotation });
               }}
@@ -256,8 +250,26 @@ const Page: React.FC = () => {
               </span>
             </div>
           </div>
-          <div className="prevTask" onClick={task.prevTask} />
-          <div className="nextTask" onClick={task.nextTask} />
+          <div
+            className="prevTask"
+            onClick={() => {
+              if (!task.prevTask()) {
+                return;
+              }
+              setCurrentAnnotation(undefined);
+              setAnotations([]);
+            }}
+          />
+          <div
+            className="nextTask"
+            onClick={() => {
+              if (!task.nextTask()) {
+                return;
+              }
+              setCurrentAnnotation(undefined);
+              setAnotations([]);
+            }}
+          />
         </Spin>
       </div>
       <PPToolBar disLoc="right">
