@@ -90,7 +90,7 @@ function drawRectangle(
 
     const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>) => {
       if (currentTool != 'editor') return;
-      // Forbid drage cross image border
+      // start Forbid drage cross image border
       const stage: Stage = shapeRef?.current;
       const baseImage = stage.findOne('.baseImage');
       let reachBorder = false;
@@ -115,7 +115,7 @@ function drawRectangle(
       if (reachBorder) {
         evt.target.setPosition({ x: newPositionX, y: newPositionY });
       }
-      console.log(`newPositionX: ${newPositionX}, newPositionY: ${newPositionY}`);
+      // End cross border control
       if (isMin) {
         points.xmin = newPositionX;
         points.ymin = newPositionY;
