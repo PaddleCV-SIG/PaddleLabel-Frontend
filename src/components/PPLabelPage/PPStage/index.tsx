@@ -24,8 +24,18 @@ export type PPStageProps = {
     offsetY: number,
     scale: number,
   ) => void;
-  onMouseMove?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
-  onMouseUp?: (evt: Konva.KonvaEventObject<MouseEvent>, scale: number) => void;
+  onMouseMove?: (
+    evt: Konva.KonvaEventObject<MouseEvent>,
+    offsetX: number,
+    offsetY: number,
+    scale: number,
+  ) => void;
+  onMouseUp?: (
+    evt: Konva.KonvaEventObject<MouseEvent>,
+    offsetX: number,
+    offsetY: number,
+    scale: number,
+  ) => void;
   createPolygonFunc?: (
     annotations: Annotation<any>,
     onDrag: (annotation: Annotation<any>) => void,
@@ -153,10 +163,22 @@ const Component: React.FC<PPStageProps> = (props) => {
             );
         }}
         onMouseMove={(e) => {
-          if (props.onMouseMove) props.onMouseMove(e, props.scale);
+          if (props.onMouseMove)
+            props.onMouseMove(
+              e,
+              -canvasWidth / 2 - dragOffset.x,
+              -canvasHeight / 2 - dragOffset.y,
+              props.scale,
+            );
         }}
         onMouseUp={(e) => {
-          if (props.onMouseUp) props.onMouseUp(e, props.scale);
+          if (props.onMouseUp)
+            props.onMouseUp(
+              e,
+              -canvasWidth / 2 - dragOffset.x,
+              -canvasHeight / 2 - dragOffset.y,
+              props.scale,
+            );
         }}
         onContextMenu={(e) => {
           // Prevent right-click menu

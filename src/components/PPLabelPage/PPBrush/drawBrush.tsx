@@ -1,8 +1,8 @@
-import type { Annotation } from '@/models/annotation';
-import type { Label } from '@/models/label';
-import type { ToolType } from '@/pages/SemanticSegmentation';
+import type { Annotation } from '@/models/Annotation';
+import type { Label } from '@/models/Label';
+import type { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
-import React, { ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { useState } from 'react';
 import { Line, Group } from 'react-konva';
 
@@ -29,22 +29,24 @@ function createLine(
 }
 
 function drawLine(
-  annotation: Annotation<any>,
-  onDrag: (annotation: Annotation<any>) => void,
+  annotation: Annotation<any[]>,
+  onDrag: (annotation: Annotation<any[]>) => void,
   onDragEnd: () => void,
   scale: number,
   currentTool: ToolType,
-  onSelect: (annotation: Annotation<any>) => void,
-  currentAnnotation?: Annotation<any>,
+  onSelect: (annotation: Annotation<any[]>) => void,
+  currentAnnotation?: Annotation<any[]>,
 ): ReactElement {
-  if (!annotation || !annotation.lines) return <></>;
+  console.log(`drawLine: `, annotation);
+  if (!annotation || !annotation.points) return <></>;
 
   const selected = currentAnnotation?.annotationId == annotation.annotationId;
   const draggable = selected && currentTool == 'mover';
 
   const res = [];
-  for (const line of annotation.lines) {
-    if (!line.width || !line.color || !line.points || !line.tool) continue;
+  for (const line of annotation.points) {
+    console.log(`rendering line: `, line);
+    if (!line.width || !line.color || !line.tool) continue;
     res.push(
       <Line
         stroke={line.color}
@@ -52,7 +54,7 @@ function drawLine(
         globalCompositeOperation={line.tool === 'brush' ? 'source-over' : 'destination-out'}
         lineCap="round"
         points={line.points}
-        tension={0.01}
+        tension={0}
         onDragMove={() => {}}
         onDragEnd={() => {
           onDragEnd();
@@ -85,11 +87,11 @@ function getTool(currentTool: ToolType, mouseButton: number): ToolType {
  * @param annotations
  * @returns
  */
-function getMaxId(annotations: Annotation<PPLineType>[]): any {
+function getMaxId(annotations: Annotation<PPLineType[]>[]): any {
   let maxId = 0;
   for (const annotation of annotations) {
-    if (!annotation) continue;
-    if (annotation.annotationId > maxId) maxId = annotation.annotationId;
+    if (!annotation || !annotation.frontendId) continue;
+    if (annotation.frontendId > maxId) maxId = annotation.frontendId + 1;
   }
   return maxId;
 }
@@ -99,24 +101,28 @@ export default function (props: {
   brushSize?: number;
   points?: number[];
   currentTool?: ToolType;
-  annotations: Annotation<PPLineType>[];
-  currentAnnotation?: Annotation<PPLineType>;
-  onAnnotationAdd: (annotation: Annotation<PPLineType>) => void;
-  onAnnotationModify: (annotation: Annotation<PPLineType>) => void;
+  annotations: Annotation<PPLineType[]>[];
+  currentAnnotation?: Annotation<PPLineType[]>;
+  onAnnotationAdd: (annotation: Annotation<PPLineType[]>) => void;
+  onAnnotationModify: (annotation: Annotation<PPLineType[]>) => void;
   onMouseUp: () => void;
 }) {
   // console.log('drawBrush');
   const [currentTool, setCurrentTool] = useState<ToolType>();
 
-  const OnMouseDown = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
-    if (props.currentTool != 'brush' && props.currentTool != 'rubber') return;
-    // console.log(
-    //   `OnMouseDown, drawing on annotation: ${JSON.stringify(
-    //     props.currentAnnotation,
-    //   )}. Annotations: ${JSON.stringify(props.annotations)}`,
-    // );
-    const mouseX = e.evt.offsetX / scale;
-    const mouseY = e.evt.offsetY / scale;
+  const OnMouseDown = (
+    e: Konva.KonvaEventObject<MouseEvent>,
+    offsetX: number,
+    offsetY: number,
+    scale: number,
+  ) => {
+    if (
+      (props.currentTool != 'brush' && props.currentTool != 'rubber') ||
+      !props.currentLabel.color
+    )
+      return;
+    const mouseX = (e.evt.offsetX + offsetX) / scale;
+    const mouseY = (e.evt.offsetY + offsetY) / scale;
     const tool = getTool(props.currentTool, e.evt.button);
     const line = createLine(
       props.brushSize || 10,
@@ -131,34 +137,39 @@ export default function (props: {
       // Do not start new marking with rubber
       if (tool == 'rubber') return;
       props.onAnnotationAdd({
-        tool: 'brush',
+        type: tool,
         annotationId: getMaxId(props.annotations) + 1,
         label: props.currentLabel,
-        lines: [line],
+        points: [line],
       });
     } else {
       const anno = {
         tool: 'brush' as ToolType,
         annotationId: props.currentAnnotation.annotationId,
         label: props.currentAnnotation.label,
-        lines: props.currentAnnotation.lines?.concat([line]),
+        points: props.currentAnnotation.points?.concat([line]),
       };
       props.onAnnotationModify(anno);
     }
   };
 
-  const OnMouseMove = (e: Konva.KonvaEventObject<MouseEvent>, scale: number) => {
-    if (!currentTool || !props.currentAnnotation) return;
-    const mouseX = e.evt.offsetX / scale;
-    const mouseY = e.evt.offsetY / scale;
+  const OnMouseMove = (
+    e: Konva.KonvaEventObject<MouseEvent>,
+    offsetX: number,
+    offsetY: number,
+    scale: number,
+  ) => {
+    if (!currentTool || !props.currentAnnotation || !props.currentLabel.color) return;
+    const mouseX = (e.evt.offsetX + offsetX) / scale;
+    const mouseY = (e.evt.offsetY + offsetY) / scale;
     let newPoints = [mouseX, mouseY];
     let newLines: PPLineType[] = [];
-    if (props.currentAnnotation?.lines) {
+    if (props.currentAnnotation?.points) {
       newPoints =
-        props.currentAnnotation.lines[props.currentAnnotation.lines.length - 1].points.concat(
+        props.currentAnnotation.points[props.currentAnnotation.points.length - 1].points.concat(
           newPoints,
         );
-      newLines = props.currentAnnotation.lines;
+      newLines = props.currentAnnotation.points;
     }
     const line = createLine(
       props.brushSize || 10,
@@ -171,7 +182,7 @@ export default function (props: {
     newLines.push(line);
     props.onAnnotationModify({
       ...props.currentAnnotation,
-      lines: newLines,
+      points: newLines,
     });
   };
 
