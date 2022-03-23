@@ -213,6 +213,7 @@ export const LabelUtils = (
   }
 
   function onSelect(label: Label | number) {
+    console.log(`label.onSelect:`, label);
     const idx: number = indexOf(label, all, 'labelId');
     if (idx == undefined) throw Error('label.onSelect label not found');
     setCurrIdx(idx);
@@ -233,7 +234,7 @@ export const LabelUtils = (
 
   function setCurr(label: Label | number) {
     console.log('LabelUtils setCurr', label);
-    if (!oneHot) throw Error("multi select task doesn't have current label");
+    if (!oneHot) return;
     if (!label) return;
     let labelId = typeof label == 'number' ? label : label.labelId;
     labelId = indexOf(labelId, all, 'labelId');

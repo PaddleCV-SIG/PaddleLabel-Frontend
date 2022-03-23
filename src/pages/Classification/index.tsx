@@ -81,7 +81,8 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
           onClick={() => {
-            message.info("Annotations are saved automatically. You don't need to click save.");
+            // Classification tasks save automatically
+            message.success('Save Success');
           }}
         >
           {save}
@@ -91,7 +92,6 @@ const Page: React.FC = () => {
           active={tool.curr == 'mover'}
           onClick={() => {
             tool.setCurr('mover');
-            message.info('You can move the image now.');
           }}
         >
           {move}
