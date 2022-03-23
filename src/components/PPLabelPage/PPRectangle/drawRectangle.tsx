@@ -132,7 +132,7 @@ function drawRectangle(
     return (
       <Circle
         onMouseDown={() => {
-          if (currentTool == 'editor' || currentTool == 'mover') onSelect(annotation);
+          if (currentTool == 'editor') onSelect(annotation);
         }}
         draggable={currentTool == 'editor'}
         onDragMove={onDragEvt}

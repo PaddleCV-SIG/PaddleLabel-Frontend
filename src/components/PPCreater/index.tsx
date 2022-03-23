@@ -221,7 +221,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               }}
             >
               <div className={styles.goup}>
-                <Radio.Group defaultValue={1} size="large" style={{ height: '3.13rem' }}>
+                <Radio.Group size="large" style={{ height: '3.13rem' }}>
                   <Radio value={1}>{pixelMode}</Radio>
                   <Radio value={2}>{polygonMode}</Radio>
                 </Radio.Group>

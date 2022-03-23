@@ -9,7 +9,6 @@ import { useIntl } from 'umi';
 export type PPLabelListProps = {
   annotations: Annotation[];
   currAnnotation: Annotation;
-  selectedAnnotation?: Annotation;
   onAnnotationModify: (annotation: Annotation) => void;
   onAnnotationDelete: (annotation: Annotation) => void;
   onAnnotationAdd: (annotation: Annotation) => void;

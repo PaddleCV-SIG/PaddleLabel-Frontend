@@ -62,7 +62,7 @@ export type PPStageProps = {
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
-  const [image] = useImage(props.imgSrc || '');
+  const [image] = useImage(props.imgSrc || imgSrc);
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
@@ -75,6 +75,7 @@ const Component: React.FC<PPStageProps> = (props) => {
   function handleWindowResize() {
     const parent = document.getElementById('dr');
     if (parent) {
+      console.log(`parentSize: `, parent.clientWidth, parent.clientHeight);
       setCanvasWidth(parent.clientWidth);
       setCanvasHeight(parent.clientHeight);
     }

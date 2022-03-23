@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import { Button, Progress } from 'antd';
+import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
@@ -7,48 +9,43 @@ import PPBrush from '@/components/PPLabelPage/PPBrush';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
+import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
+import type { Annotation } from '@/models/annotation';
 import PPPolygon from '@/components/PPLabelPage/PPPolygon';
 import drawBrush from '@/components/PPLabelPage/PPBrush/drawBrush';
 import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
 import { useIntl } from 'umi';
-import { Annotation } from '@/models/Annotation';
-import { ToolType } from '@/models/ToolType';
-import { Label } from '@/models/Label';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
-import PPDivideDataModal from '@/components/PPLabelPage/PPDivideDataModal';
-import PPExportModal from '@/components/PPLabelPage/PPExportModal';
-
-export const MOST_HISTORY_STEPS = 40;
-
-export type HistoryType = {
-  index: number;
-  items: {
-    currentAnnotation?: Annotation<any>;
-    annotations: Annotation<any>[];
-  }[];
-};
+import { PageInit } from '@/services/utils';
 
 const Page: React.FC = () => {
-  const [labels, setLabels] = useState<Label[]>([]);
+  const [
+    tool,
+    loading,
+    scale,
+    annotation,
+    task,
+    data,
+    project,
+    label,
+    splitDataset,
+    exportDataset,
+  ] = PageInit(useState, useEffect, {
+    label: { oneHot: true },
+    effectTrigger: { postTaskChange: initHistory },
+  });
+
+  // These only used by frontend, and synchronize with backend when triggered.
+  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [brushSize, setBrushSize] = useState<number>(10);
   const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
   const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
-  const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
-  const [currentLabel, setCurrentLabel] = useState<Label>();
-  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
-  const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
-  const [brushSize, setBrushSize] = useState(10);
-  const [scale, setScaleRaw] = useState(1);
-  const setScale = (size: number) => {
-    if (!size) setScaleRaw(1);
-    if (size < 0.1 || size > 3.0) setScaleRaw(1);
-    else setScaleRaw(size);
-  };
-
   const setCurrentAnnotation = (anno?: Annotation<any>) => {
     setCurrentAnnotationRaw(anno);
-    if (anno?.label) setCurrentLabel(anno.label);
+    if (anno?.label) label.setCurr(anno.label);
   };
 
   useEffect(() => {
@@ -72,29 +69,29 @@ const Page: React.FC = () => {
     initHistory();
   }, []);
 
-  const onAnnotationModify = (annotation: Annotation<any>) => {
+  const onAnnotationModify = (anno: Annotation<any>) => {
     const newAnnos: Annotation<any>[] = [];
     for (let i = 0; i < annotations.length; i++) {
-      if (annotations[i].annotationId == annotation.annotationId) {
-        newAnnos.push(annotation);
+      if (annotations[i].annotationId == anno.annotationId) {
+        newAnnos.push(anno);
       } else {
         newAnnos.push(annotations[i]);
       }
     }
-    setCurrentAnnotation(annotation);
+    setCurrentAnnotation(anno);
     setAnnotations(newAnnos);
   };
 
   const brush = drawBrush({
-    currentLabel: currentLabel,
+    currentLabel: label.curr,
     brushSize: brushSize,
-    currentTool: currentTool,
+    currentTool: tool.curr,
     annotations: annotations,
     currentAnnotation: currentAnnotation,
-    onAnnotationAdd: (annotation) => {
-      const newAnnos = annotations.concat([annotation]);
+    onAnnotationAdd: (anno) => {
+      const newAnnos = annotations.concat([anno]);
       setAnnotations(newAnnos);
-      if (!currentAnnotation) setCurrentAnnotation(annotation);
+      if (!currentAnnotation) setCurrentAnnotation(anno);
     },
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
@@ -103,15 +100,15 @@ const Page: React.FC = () => {
   });
 
   const polygon = drawPolygon({
-    currentLabel: currentLabel,
+    currentLabel: label.curr,
     brushSize: brushSize,
-    currentTool: currentTool,
+    currentTool: tool.curr,
     annotations: annotations,
     currentAnnotation: currentAnnotation,
-    onAnnotationAdd: (annotation) => {
-      const newAnnos = annotations.concat([annotation]);
+    onAnnotationAdd: (anno) => {
+      const newAnnos = annotations.concat([anno]);
       setAnnotations(newAnnos);
-      if (!currentAnnotation) setCurrentAnnotation(annotation);
+      if (!currentAnnotation) setCurrentAnnotation(anno);
     },
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
@@ -119,7 +116,7 @@ const Page: React.FC = () => {
     },
   });
 
-  const dr = currentTool == 'polygon' ? polygon : brush;
+  const dr = tool.curr == 'polygon' ? polygon : brush;
 
   const polygonBtn = useIntl().formatMessage({ id: 'pages.toolBar.polygon' });
   const brushBtn = useIntl().formatMessage({ id: 'pages.toolBar.brush' });
@@ -141,12 +138,12 @@ const Page: React.FC = () => {
   const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
 
   return (
-    <PPLabelPageContainer className="segment">
+    <PPLabelPageContainer className={styles.segment}>
       <PPToolBar>
         <PPPolygon
-          active={currentTool == 'polygon'}
+          active={tool.curr == 'polygon'}
           onClick={() => {
-            setCurrentTool('polygon');
+            tool.setCurr('polygon');
             setCurrentAnnotation(undefined);
           }}
         >
@@ -155,12 +152,12 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/edit.png">{edit}</PPToolBarButton>
         <PPBrush
           size={brushSize}
-          active={currentTool == 'brush'}
+          active={tool.curr == 'brush'}
           onClick={() => {
-            if (currentTool != 'rubber' && currentTool != 'brush') {
+            if (tool.curr != 'rubber' && tool.curr != 'brush') {
               setCurrentAnnotation(undefined);
             }
-            setCurrentTool('brush');
+            tool.setCurr('brush');
           }}
           onChange={(newBrushSize) => {
             setBrushSize(newBrushSize);
@@ -170,12 +167,12 @@ const Page: React.FC = () => {
         </PPBrush>
         <PPBrush
           size={brushSize}
-          active={currentTool == 'rubber'}
+          active={tool.curr == 'rubber'}
           onClick={() => {
-            if (currentTool != 'rubber' && currentTool != 'brush') {
+            if (tool.curr != 'rubber' && tool.curr != 'brush') {
               setCurrentAnnotation(undefined);
             }
-            setCurrentTool('rubber');
+            tool.setCurr('rubber');
           }}
           onChange={(newBrushSize) => {
             setBrushSize(newBrushSize);
@@ -187,7 +184,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
-            setScale(scale + 0.1);
+            scale.change(0.1);
           }}
         >
           {zoomIn}
@@ -195,7 +192,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
           onClick={() => {
-            setScale(scale - 0.1);
+            scale.change(-0.1);
           }}
         >
           {zoomOut}
@@ -204,7 +201,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
           onClick={() => {
-            setCurrentTool('mover');
+            tool.setCurr('mover');
           }}
         >
           {move}
@@ -235,12 +232,13 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">{clearMark}</PPToolBarButton>
       </PPToolBar>
-      <div id="dr" className="mainStage">
-        <div className="draw">
+      <div id="dr" className={styles.mainStage}>
+        <div className={styles.draw}>
           <PPStage
+            width={document.getElementById('dr')?.clientWidth}
             scale={scale}
             annotations={annotations}
-            currentTool={currentTool}
+            currentTool={tool.curr}
             currentAnnotation={currentAnnotation}
             setCurrentAnnotation={setCurrentAnnotation}
             onAnnotationModify={onAnnotationModify}
@@ -252,46 +250,13 @@ const Page: React.FC = () => {
             onMouseUp={dr.onMouseUp}
             createPolygonFunc={polygon.createElementsFunc}
             createBrushFunc={brush.createElementsFunc}
-            imgSrc={undefined}
           />
         </div>
-        <div className="pblock">
-          <div className="progress">
-            <Progress
-              className="progressBar"
-              // percent={project.progress}
-              percent={10}
-              status="active"
-              showInfo={false}
-            />{' '}
-            <span className="progressDesc">
-              {/* TODO: translate */}
-              {/* Current labeling {task.currIdx == undefined ? 1 : task.currIdx + 1} of{' '}
-              {task.all?.length}. Already labeled {task.finished(project.progress) || 0}.  */}
-              Current labeling 1 of 300. Already labeled 20.
-            </span>
+        <div className={styles.pblock}>
+          <div className={styles.progress}>
+            <Progress percent={50} status="active" />
           </div>
         </div>
-        <div
-          className="prevTask"
-          onClick={() => {
-            if (!task.prevTask()) {
-              return;
-            }
-            setCurrentAnnotation(undefined);
-            setAnnotations([]);
-          }}
-        />
-        <div
-          className="nextTask"
-          onClick={() => {
-            if (!task.nextTask()) {
-              return;
-            }
-            setCurrentAnnotation(undefined);
-            setAnnotations([]);
-          }}
-        />
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
@@ -306,25 +271,11 @@ const Page: React.FC = () => {
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
           {visualRadius}
         </PPSetButton>
-        <PPToolBarButton
-          imgSrc="./pics/buttons/data_division.png"
-          onClick={() => {
-            setDivideModalVisible(true);
-          }}
-        >
-          {divideData}
-        </PPToolBarButton>
-        <PPToolBarButton
-          imgSrc="./pics/buttons/export.png"
-          onClick={() => {
-            setExportModalVisible(true);
-          }}
-        >
-          {exportBtn}
-        </PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/data_division.png">{divideData}</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/export.png">{exportBtn}</PPToolBarButton>
       </PPToolBar>
-      <div className="rightSideBar">
-        <div className="determinOutline">
+      <div className={styles.rightSideBar}>
+        <div className={styles.determinOutline}>
           <Button
             style={{ height: 40, fontSize: '0.75rem' }}
             type="primary"
@@ -337,28 +288,14 @@ const Page: React.FC = () => {
           </Button>
         </div>
         <PPLabelList
-          labels={labels}
-          activeIds={new Set([currentLabel])}
-          onLabelSelect={(selected) => {
-            setCurrentLabel(selected);
+          selectedLabel={label.curr}
+          onLabelSelect={(selectedLabel) => {
+            label.setCurr(selectedLabel);
             setCurrentAnnotation(undefined);
           }}
           onLabelModify={() => {}}
-          onLabelDelete={(deleted) => {
-            const newLabels: Label[] = [];
-            for (const label of labels) {
-              if (label.labelId != deleted.labelId) {
-                newLabels.push(label);
-              }
-            }
-            setLabels(newLabels);
-            if (currentLabel?.labelId == deleted.labelId) setCurrentLabel(undefined);
-          }}
-          onLabelAdd={(lab) => {
-            labels.push(lab);
-            setLabels(labels);
-            setCurrentLabel(lab);
-          }}
+          onLabelDelete={() => {}}
+          onLabelAdd={() => {}}
         />
         <PPAnnotationList
           currAnnotation={currentAnnotation}
@@ -368,34 +305,12 @@ const Page: React.FC = () => {
           }}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
-          onAnnotationDelete={(annotation: Annotation<any>) => {
-            setAnnotations(annotations.filter((x) => x.annotationId != annotation.annotationId));
+          onAnnotationDelete={(anno: Annotation<any>) => {
+            setAnnotations(annotations.filter((x) => x.annotationId != anno.annotationId));
             setCurrentAnnotation(undefined);
           }}
         />
       </div>
-      <PPDivideDataModal
-        visible={divideModalVisible}
-        // splitDataset={splitDataset}
-        // project={project}
-        onCancel={() => {
-          setDivideModalVisible(false);
-        }}
-        onFinish={() => {
-          setDivideModalVisible(false);
-        }}
-      />
-      <PPExportModal
-        visible={exportModalVisible}
-        // exportDataset={exportDataset}
-        // project={project}
-        onCancel={() => {
-          setExportModalVisible(false);
-        }}
-        onFinish={() => {
-          setExportModalVisible(false);
-        }}
-      />
     </PPLabelPageContainer>
   );
 };
