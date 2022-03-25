@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove this
 import React, { useEffect, useState } from 'react';
 import { Button, Popconfirm, Popover, Progress, Space } from 'antd';
 import styles from './index.less';
@@ -5,7 +6,6 @@ import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer'
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
-import type { Label } from '@/models/label';
 // import PPRSToolBar from '@/components/PPRS/PPRSToolBar';
 // import PPRSToolBarButton from '@/components/PPRS/PPRSToolBarButton';
 import PPBoundarySimplify from '@/components/PPRS/PPBoundarySimplify';
@@ -17,8 +17,9 @@ import PPGeoAnnotationList from '@/components/PPLabelPage/PPGeoAnnotationList';
 import operation from './operation';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 // import type { Annotation } from '@/models/annotation';
-import { MOST_HISTORY_STEPS } from '../SemanticSegmentation';
 import { useIntl } from 'umi';
+import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
+import { PageInit } from '@/services/utils';
 
 export type ToolType =
   | 'polygon'
@@ -39,11 +40,6 @@ export type GeojsonCollection = {
   features: GeojsonFeatureObject[];
 };
 
-export type HistoryType = {
-  index: number;
-  items: GeojsonCollection[];
-};
-
 export type GeojsonFeatureObject = {
   type: 'Feature';
   properties: {
@@ -58,8 +54,25 @@ export type GeojsonFeatureObject = {
 };
 
 const Page: React.FC = () => {
-  const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
-  const [currentLabel, setCurrentLabel] = useState<Label>();
+  const [
+    tool,
+    loading,
+    scale,
+    annotation,
+    task,
+    data,
+    project,
+    label,
+    splitDataset,
+    exportDataset,
+  ] = PageInit(useState, useEffect, {
+    label: { oneHot: false },
+    tool: { defaultTool: 'mover' },
+    effectTrigger: {},
+  });
+  const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
+  const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
+
   // const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<GeojsonCollection>({
     type: 'FeatureCollection',
@@ -67,69 +80,19 @@ const Page: React.FC = () => {
   });
 
   useEffect(() => {
-    localStorage.removeItem('history');
-    recordHistory({
-      type: 'FeatureCollection',
-      features: [],
-    });
+    initHistory();
   }, []);
 
-  function recordHistory(annos: GeojsonCollection) {
-    const historyStr = localStorage.getItem('history');
-    const history: HistoryType = historyStr ? JSON.parse(historyStr) : { index: -1, items: [] };
-    // const newItem = { annotations: annos };
-    if (JSON.stringify(history.items[history.index]) == JSON.stringify(annos)) {
-      return;
-    }
-    const earliestIndex =
-      history.index > MOST_HISTORY_STEPS ? history.index - MOST_HISTORY_STEPS : 0;
-    const itemsToKeep = history.items.splice(
-      earliestIndex,
-      history.index == 0 ? 1 : history.index + 1,
-    );
-    history.items = itemsToKeep.concat([annos]);
-    if (history.index <= MOST_HISTORY_STEPS) history.index++;
-    else history.index = MOST_HISTORY_STEPS + 1;
-    localStorage.setItem('history', JSON.stringify(history));
-  }
-
-  const forwardHistory = () => {
-    const historyStr = localStorage.getItem('history');
-    if (!historyStr) {
-      return;
-    }
-    const history: HistoryType = JSON.parse(historyStr);
-    if (!history) {
-      return;
-    }
-    if (history.index >= history.items.length - 1) {
-      return;
-    }
-    history.index++;
-    localStorage.setItem('history', JSON.stringify(history));
-    const item = history.items[history.index];
-    // setCurrentAnnotationRaw(item.currentAnnotation);
-    setAnnotations(item);
-  };
-
-  const backwardHistory = () => {
-    const historyStr = localStorage.getItem('history');
-    if (!historyStr) return;
-    const history: HistoryType = JSON.parse(historyStr);
-    if (!history || !history.index) return;
-    if (history.index <= 0) return; // already the latest
-    history.index--;
-    localStorage.setItem('history', JSON.stringify(history));
-    const item = history.items[history.index];
-    // setCurrentAnnotationRaw(item.currentAnnotation);
-    setAnnotations(item);
-  };
-  //const [brushSize, setBrushSize] = useState(10);
-
-  console.log(`rs is re-rendering! currentLabel: ${JSON.stringify(currentLabel)}`);
+  console.log(`rs is re-rendering! label.curr: ${JSON.stringify(label.curr)}`);
 
   const leafletMapRef = React.useRef<Map>(null);
-  const dr = operation({ leafletMapRef, currentLabel, setAnnotations, annotations, recordHistory });
+  const dr = operation({
+    leafletMapRef: leafletMapRef,
+    currentLabel: label.curr,
+    setAnnotations: setAnnotations,
+    annotations: annotations,
+    recordHistory: recordHistory,
+  });
 
   const finished = useIntl().formatMessage({ id: 'pages.Maps.finished' });
   const removeLastVertex = useIntl().formatMessage({ id: 'pages.Maps.removeLastVertex' });
@@ -194,13 +157,13 @@ const Page: React.FC = () => {
               </Space>
             </>
           }
-          trigger={currentTool == 'Polygon' ? 'hover' : 'click'}
+          trigger={tool.curr == 'Polygon' ? 'hover' : 'click'}
         >
           <PPToolBarButton
-            active={currentTool == 'Polygon'}
+            active={tool.curr == 'Polygon'}
             imgSrc="./pics/buttons/polygon.png"
             onClick={() => {
-              setCurrentTool('Polygon');
+              tool.setCurr('Polygon');
               dr.RSDraw('Polygon');
             }}
           >
@@ -219,7 +182,7 @@ const Page: React.FC = () => {
           placement="rightTop"
           title="title"
           content="content"
-          trigger={currentTool == 'rubber' ? 'hover' : 'click'}
+          trigger={tool.curr == 'rubber' ? 'hover' : 'click'}
         >
           {' '}
           <PPToolBarButton
@@ -258,10 +221,26 @@ const Page: React.FC = () => {
         <PPToolBarButton imgSrc="./pics/buttons/move.png" onClick={() => dr.moveShape()}>
           {move}
         </PPToolBarButton>
-        <PPToolBarButton onClick={() => backwardHistory()} imgSrc="./pics/buttons/prev.png">
+        <PPToolBarButton
+          onClick={() => {
+            const res = backwardHistory();
+            if (res) {
+              // Do something
+            }
+          }}
+          imgSrc="./pics/buttons/prev.png"
+        >
           {unDo}
         </PPToolBarButton>
-        <PPToolBarButton onClick={() => forwardHistory()} imgSrc="./pics/buttons/next.png">
+        <PPToolBarButton
+          onClick={() => {
+            const res = forwardHistory();
+            if (res) {
+              // Do something
+            }
+          }}
+          imgSrc="./pics/buttons/next.png"
+        >
           {reDo}
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">{clearMark}</PPToolBarButton>
@@ -298,13 +277,13 @@ const Page: React.FC = () => {
           placement="leftTop"
           title={'Setting of boundary simplification'}
           content={<PPBoundarySimplify />}
-          trigger={currentTool == 'boundry' ? 'click' : 'hover'}
+          trigger={tool.curr == 'boundry' ? 'click' : 'hover'}
         >
           {' '}
           <PPToolBarButton
             imgSrc="./pics/buttons/border_simplify.png"
             onClick={() => {
-              setCurrentTool('boundry');
+              tool.setCurr('boundry');
             }}
           >
             {boundary}
@@ -315,13 +294,13 @@ const Page: React.FC = () => {
           placement="leftTop"
           title={'Setting of remote sensing'}
           content={<PPRGBSetting />}
-          trigger={currentTool == 'colorgun' ? 'click' : 'hover'}
+          trigger={tool.curr == 'colorgun' ? 'click' : 'hover'}
         >
           {' '}
           <PPToolBarButton
             imgSrc="./pics/buttons/remote_sensing_setting.png"
             onClick={() => {
-              setCurrentTool('colorgun');
+              tool.setCurr('colorgun');
             }}
           >
             {remoteSensing}
@@ -332,13 +311,13 @@ const Page: React.FC = () => {
           placement="leftTop"
           title={'Switch grids'}
           content={<PPGrids />}
-          trigger={currentTool == 'grid' ? 'click' : 'hover'}
+          trigger={tool.curr == 'grid' ? 'click' : 'hover'}
         >
           {' '}
           <PPToolBarButton
             imgSrc="./pics/buttons/switch_grid.png"
             onClick={() => {
-              setCurrentTool('grid');
+              tool.setCurr('grid');
             }}
           >
             {grids}
@@ -354,10 +333,10 @@ const Page: React.FC = () => {
           </Button>
         </div>
         <PPLabelList
-          selectedLabel={currentLabel}
-          onLabelSelect={(label) => {
-            setCurrentLabel(label);
-            console.log(label);
+          selectedLabel={label.curr}
+          onLabelSelect={(lab) => {
+            label.setCurr(lab);
+            console.log(lab);
           }}
           onLabelModify={() => {}}
           onLabelDelete={() => {}}

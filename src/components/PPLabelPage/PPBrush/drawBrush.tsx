@@ -54,7 +54,7 @@ function drawLine(
         globalCompositeOperation={line.tool === 'brush' ? 'source-over' : 'destination-out'}
         lineCap="round"
         points={line.points}
-        tension={0}
+        tension={1}
         onDragMove={() => {}}
         onDragEnd={() => {
           onDragEnd();
@@ -183,6 +183,7 @@ export default function (props: {
     props.onAnnotationModify({
       ...props.currentAnnotation,
       points: newLines,
+      type: currentTool,
     });
   };
 

@@ -566,13 +566,13 @@ export const PageInit = (
     // onload, get project, label, task info
     const projectIdStr = serviceUtils.getQueryVariable('projectId');
     if (projectIdStr == undefined) {
-      history.push('/');
+      // history.push('/');
       return;
     }
     const projectId = parseInt(projectIdStr);
     project.getCurr(projectIdStr).catch((err) => {
       serviceUtils.parseError(err, message);
-      history.push('/');
+      // history.push('/');
       return;
     });
     label.getAll(projectId);

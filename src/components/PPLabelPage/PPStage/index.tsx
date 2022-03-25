@@ -106,7 +106,6 @@ const Component: React.FC<PPStageProps> = (props) => {
   if (props.annotations) {
     for (const annotation of props.annotations) {
       if (!annotation) continue;
-      console.log('PPStage rendering annotation:', annotation, 'annotation.tool:', annotation.tool);
       let func;
       switch (annotation.type as ToolType) {
         case 'polygon':
@@ -124,6 +123,12 @@ const Component: React.FC<PPStageProps> = (props) => {
         default:
           func = null;
       }
+      console.log(
+        'PPStage rendering annotation:',
+        JSON.stringify(annotation),
+        'annotation.type:',
+        annotation.type,
+      );
       if (func)
         shapes.push(
           func(
