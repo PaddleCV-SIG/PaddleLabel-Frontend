@@ -41,7 +41,7 @@ function drawRectangle(
   scale: number,
   currentTool: ToolType,
   onSelect: (anntation: Annotation<PPRectangleType>) => void,
-  shapeRef?: React.MutableRefObject<any>,
+  stageRef?: React.MutableRefObject<any>,
   currentAnnotation?: Annotation<PPRectangleType>,
 ): ReactElement[] {
   // console.log(`drawRectangle, annotation:`, annotation);
@@ -91,7 +91,7 @@ function drawRectangle(
     const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>) => {
       if (currentTool != 'editor') return;
       // start Forbid drage cross image border
-      const stage: Stage = shapeRef?.current;
+      const stage: Stage = stageRef?.current;
       const baseImage = stage.findOne('.baseImage');
       let reachBorder = false;
       let newPositionX = evt.target.x();

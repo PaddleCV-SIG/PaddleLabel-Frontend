@@ -37,15 +37,15 @@ function drawLine(
   onSelect: (annotation: Annotation<any[]>) => void,
   currentAnnotation?: Annotation<any[]>,
 ): ReactElement {
-  console.log(`drawLine: `, annotation);
+  // console.log(`drawLine: `, annotation);
   if (!annotation || !annotation.points) return <></>;
 
-  const selected = currentAnnotation?.annotationId == annotation.annotationId;
+  const selected = currentAnnotation?.frontendId == annotation.frontendId;
   const draggable = selected && currentTool == 'mover';
 
   const res = [];
   for (const line of annotation.points) {
-    console.log(`rendering line: `, line);
+    // console.log(`rendering line: `, line);
     if (!line.width || !line.color || !line.tool) continue;
     res.push(
       <Line
@@ -91,7 +91,7 @@ function getMaxId(annotations: Annotation<PPLineType[]>[]): any {
   let maxId = 0;
   for (const annotation of annotations) {
     if (!annotation || !annotation.frontendId) continue;
-    if (annotation.frontendId > maxId) maxId = annotation.frontendId + 1;
+    if (annotation.frontendId > maxId) maxId = annotation.frontendId;
   }
   return maxId;
 }
@@ -138,14 +138,14 @@ export default function (props: {
       if (tool == 'rubber') return;
       props.onAnnotationAdd({
         type: tool,
-        annotationId: getMaxId(props.annotations) + 1,
+        frontendId: getMaxId(props.annotations) + 1,
         label: props.currentLabel,
         points: [line],
       });
     } else {
       const anno = {
-        tool: 'brush' as ToolType,
-        annotationId: props.currentAnnotation.annotationId,
+        type: 'brush' as ToolType,
+        frontendId: props.currentAnnotation.frontendId,
         label: props.currentAnnotation.label,
         points: props.currentAnnotation.points?.concat([line]),
       };

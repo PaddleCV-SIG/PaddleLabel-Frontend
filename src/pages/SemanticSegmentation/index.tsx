@@ -52,30 +52,13 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
-    // setAnnotations([
-    //   {
-    //     annotationId: 1,
-    //     tool: 'polygon',
-    //     label: {
-    //       color: '#FF0000',
-    //       name: 'Label 1',
-    //     },
-    //     lines: [
-    //       {
-    //         color: '#FF0000',
-    //         // [476,136,715,128,724,270,482,280]
-    //         points: [521, 133, 760, 125, 769, 267, 527, 277],
-    //       },
-    //     ],
-    //   },
-    // ]);
     initHistory();
   }, []);
 
   const onAnnotationModify = (annotation: Annotation<any>) => {
     const newAnnos: Annotation<any>[] = [];
     for (let i = 0; i < annotations.length; i++) {
-      if (annotations[i].annotationId == annotation.annotationId) {
+      if (annotations[i].frontendId == annotation.frontendId) {
         newAnnos.push(annotation);
       } else {
         newAnnos.push(annotations[i]);
@@ -369,7 +352,7 @@ const Page: React.FC = () => {
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
           onAnnotationDelete={(annotation: Annotation<any>) => {
-            setAnnotations(annotations.filter((x) => x.annotationId != annotation.annotationId));
+            setAnnotations(annotations.filter((x) => x.frontendId != annotation.frontendId));
             setCurrentAnnotation(undefined);
           }}
         />

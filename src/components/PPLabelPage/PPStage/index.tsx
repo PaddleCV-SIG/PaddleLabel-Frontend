@@ -2,6 +2,7 @@
 import { Annotation } from '@/models/annotation';
 import { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
+import { Stage as StageType } from 'konva/lib/Stage';
 import React, { Props, ReactElement, useEffect, useRef, useState } from 'react';
 import { Layer, Stage, Image, Transformer, Group } from 'react-konva';
 import useImage from 'use-image';
@@ -79,13 +80,13 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  const shapeRef = useRef(null);
+  const stageRef = useRef(null);
 
   // Dynamically adjust canvas size, prevent content overflow
   function handleWindowResize() {
     const parent = document.getElementById('dr');
     if (parent) {
-      console.log(`parentSize: `, parent.clientWidth, parent.clientHeight);
+      // console.log(`parentSize: `, parent.clientWidth, parent.clientHeight);
       setCanvasWidth(parent.clientWidth);
       setCanvasHeight(parent.clientHeight);
     }
@@ -104,6 +105,7 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   const shapes = [];
   if (props.annotations) {
+    console.log('PPStage rendering annotations:', props.annotations);
     for (const annotation of props.annotations) {
       if (!annotation) continue;
       let func;
@@ -123,12 +125,6 @@ const Component: React.FC<PPStageProps> = (props) => {
         default:
           func = null;
       }
-      console.log(
-        'PPStage rendering annotation:',
-        JSON.stringify(annotation),
-        'annotation.type:',
-        annotation.type,
-      );
       if (func)
         shapes.push(
           func(
@@ -138,7 +134,7 @@ const Component: React.FC<PPStageProps> = (props) => {
             props.scale,
             props.currentTool,
             props.setCurrentAnnotation,
-            shapeRef,
+            stageRef,
             props.currentAnnotation,
           ),
         );
@@ -152,13 +148,12 @@ const Component: React.FC<PPStageProps> = (props) => {
       offsetX={-canvasWidth / 2}
       offsetY={-canvasHeight / 2}
       className={styles.stage}
-      ref={shapeRef}
+      ref={stageRef}
     >
-      {/* <Layer scaleX={props.scale} scaleY={props.scale} draggable={false}>
-        <Image image={image} draggable={false} />
-      </Layer> */}
       <Layer
         onMouseDown={(e) => {
+          // console.log('imgLayer onMouseDown');
+          e.cancelBubble = true;
           if (props.onMouseDown)
             props.onMouseDown(
               e,
@@ -168,6 +163,8 @@ const Component: React.FC<PPStageProps> = (props) => {
             );
         }}
         onMouseMove={(e) => {
+          // console.log('imgLayer onMouseMove');
+          e.cancelBubble = true;
           if (props.onMouseMove)
             props.onMouseMove(
               e,
@@ -177,6 +174,8 @@ const Component: React.FC<PPStageProps> = (props) => {
             );
         }}
         onMouseUp={(e) => {
+          // console.log('imgLayer onMouseUp');
+          e.cancelBubble = true;
           if (props.onMouseUp)
             props.onMouseUp(
               e,
@@ -186,6 +185,8 @@ const Component: React.FC<PPStageProps> = (props) => {
             );
         }}
         onContextMenu={(e) => {
+          // console.log('imgLayer onContextMenu');
+          e.cancelBubble = true;
           // Prevent right-click menu
           e.evt.preventDefault();
         }}
@@ -195,12 +196,24 @@ const Component: React.FC<PPStageProps> = (props) => {
           draggable={props.currentTool == 'mover'}
           scaleX={props.scale}
           scaleY={props.scale}
+          onDragStart={() => {
+            if (props.currentTool != 'mover') return;
+            if (!stageRef.current) return;
+            const stage: StageType = stageRef.current;
+            const annotation = stage.findOne('.annotation');
+            annotation.setDraggable(true);
+            annotation.startDrag();
+          }}
           onDragEnd={(evt) => {
             if (props.currentTool != 'mover') return;
             setDragOffset({
               x: evt.target.x(),
               y: evt.target.y(),
             });
+            if (!stageRef.current) return;
+            const stage: StageType = stageRef.current;
+            const annotation = stage.findOne('.annotation');
+            annotation.setDraggable(false);
           }}
         >
           <Image
@@ -210,8 +223,54 @@ const Component: React.FC<PPStageProps> = (props) => {
             x={-(image?.width || 0) / 2}
             y={-(image?.height || 0) / 2}
           />
-          {shapes}
         </Group>
+      </Layer>
+      <Layer
+        name="annotation"
+        onMouseDown={(e) => {
+          // console.log('annoLayer onMouseDown');
+          e.cancelBubble = true;
+          if (props.onMouseDown)
+            props.onMouseDown(
+              e,
+              -canvasWidth / 2 - dragOffset.x,
+              -canvasHeight / 2 - dragOffset.y,
+              props.scale,
+            );
+        }}
+        onMouseMove={(e) => {
+          // console.log('annoLayer onMouseMove');
+          e.cancelBubble = true;
+          e.evt.cancelBubble = true;
+          if (props.onMouseMove)
+            props.onMouseMove(
+              e,
+              -canvasWidth / 2 - dragOffset.x,
+              -canvasHeight / 2 - dragOffset.y,
+              props.scale,
+            );
+        }}
+        onMouseUp={(e) => {
+          // console.log('annoLayer onMouseUp');
+          e.cancelBubble = true;
+          e.evt.cancelBubble = true;
+          if (props.onMouseUp)
+            props.onMouseUp(
+              e,
+              -canvasWidth / 2 - dragOffset.x,
+              -canvasHeight / 2 - dragOffset.y,
+              props.scale,
+            );
+        }}
+        onContextMenu={(e) => {
+          // console.log('annoLayer onContextMenu');
+          e.cancelBubble = true;
+          e.evt.cancelBubble = true;
+          // Prevent right-click menu
+          e.evt.preventDefault();
+        }}
+      >
+        {shapes}
       </Layer>
     </Stage>
   );
