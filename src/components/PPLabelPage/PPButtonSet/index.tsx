@@ -1,4 +1,4 @@
-import { Button, InputNumber, Popover } from 'antd';
+import { Col, InputNumber, Popover, Row, Slider } from 'antd';
 import React, { useEffect, useState } from 'react';
 import PPToolBarButton from '../PPToolBarButton';
 import styles from './index.less';
@@ -40,38 +40,29 @@ const Component: React.FC<Props> = (props) => {
       overlayClassName={`${styles.popover} ${props.disLoc == 'left' ? styles.popoverLeft : ''}`}
       placement={props.disLoc || 'right'}
       content={
-        <>
-          <Button
-            type="text"
-            onClick={() => {
-              const changedSize = formatSize(size - 1);
-              setSize(changedSize);
-              props.onChange?.call(0, changedSize);
-            }}
-          >
-            -
-          </Button>
-          <InputNumber
-            min={minSize}
-            max={maxSize}
-            value={size}
-            onChange={(newSize) => {
-              props.onChange?.call(0, newSize);
-            }}
-            controls={false}
-            style={{ textAlign: 'center' }}
-          />
-          <Button
-            type="text"
-            onClick={() => {
-              const changedSize = formatSize(size + 1);
-              setSize(changedSize);
-              props.onChange?.call(0, changedSize);
-            }}
-          >
-            +
-          </Button>
-        </>
+        <Row>
+          <Col span={16}>
+            <Slider
+              className={styles.slider}
+              value={size}
+              max={maxSize}
+              min={minSize}
+              onChange={(newSize) => {
+                props.onChange?.call(0, newSize);
+              }}
+            />
+          </Col>
+          <Col span={8}>
+            <InputNumber
+              min={minSize}
+              max={maxSize}
+              value={size}
+              onChange={(newSize) => {
+                props.onChange?.call(0, newSize);
+              }}
+            />
+          </Col>
+        </Row>
       }
       trigger={'hover'}
     >

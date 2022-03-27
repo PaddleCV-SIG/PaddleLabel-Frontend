@@ -194,6 +194,7 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/save.png">{save}</PPToolBarButton>
         <PPToolBarButton
+          active={currentTool == 'mover'}
           imgSrc="./pics/buttons/move.png"
           onClick={() => {
             setCurrentTool('mover');

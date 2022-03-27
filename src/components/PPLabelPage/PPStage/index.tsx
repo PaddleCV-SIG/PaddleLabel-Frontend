@@ -2,6 +2,7 @@
 import { Annotation } from '@/models/Annotation';
 import { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
+import { Stage as StageType } from 'konva/lib/Stage';
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { Layer, Stage, Image } from 'react-konva';
 import useImage from 'use-image';
@@ -17,7 +18,7 @@ export type PPDrawFuncProps<T = any> = {
   scale: number;
   currentTool: ToolType;
   onSelect: (anntation: Annotation<T>) => void;
-  stageRef?: React.MutableRefObject<T>;
+  stageRef?: React.MutableRefObject<StageType>;
   currentAnnotation?: Annotation<T>;
   transparency: number;
 };
@@ -64,7 +65,7 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   const [dragEndPos, setDragEndPos] = useState({ x: 0, y: 0 });
 
-  const stageRef = useRef(null);
+  const stageRef = useRef<StageType>(null);
 
   // Dynamically adjust canvas size, prevent content overflow
   function handleWindowResize() {
@@ -75,6 +76,20 @@ const Component: React.FC<PPStageProps> = (props) => {
       setCanvasHeight(parent.clientHeight);
     }
   }
+
+  // Calculate current mouse pointer
+  function getPointer(toolType: ToolType) {
+    switch (toolType) {
+      case 'mover':
+        return 'move';
+      case 'rectangle':
+      case 'polygon':
+        return 'crosshair';
+      default:
+        return 'default';
+    }
+  }
+
   useEffect(() => {
     // Listen to window resize event
     window.removeEventListener('resize', handleWindowResize);
@@ -86,6 +101,12 @@ const Component: React.FC<PPStageProps> = (props) => {
       setCanvasHeight(parent.clientHeight);
     }
   }, []);
+
+  useEffect(() => {
+    if (!stageRef.current) return;
+    console.log('props.currentTool', props.currentTool, 'cursor:', getPointer(props.currentTool));
+    stageRef.current.container().style.cursor = getPointer(props.currentTool);
+  }, [props.currentTool]);
 
   // Handle layer events
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {

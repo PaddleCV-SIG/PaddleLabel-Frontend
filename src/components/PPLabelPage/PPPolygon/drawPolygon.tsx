@@ -95,11 +95,13 @@ function drawPolygon(props: PPDrawFuncProps): ReactElement[] {
         }}
         onMouseOver={() => {
           // console.log(`Circle onMouseOver`);
-          if (props.currentTool == 'editor') document.body.style.cursor = 'pointer';
+          if (props.currentTool == 'editor' && props.stageRef?.current)
+            props.stageRef.current.container().style.cursor = 'cell';
         }}
         onMouseOut={() => {
           // console.log(`Circle onMouseOut`);
-          document.body.style.cursor = 'default';
+          if (props.currentTool == 'editor' && props.stageRef?.current)
+            props.stageRef.current.container().style.cursor = 'default';
         }}
         x={x}
         y={point}
