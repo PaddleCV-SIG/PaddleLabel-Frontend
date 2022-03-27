@@ -78,7 +78,7 @@ const Component: React.FC<PPStageProps> = (props) => {
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
 
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [dragEndPos, setDragEndPos] = useState({ x: 0, y: 0 });
 
   const stageRef = useRef(null);
 
@@ -103,6 +103,50 @@ const Component: React.FC<PPStageProps> = (props) => {
     }
   }, []);
 
+  // Handle layer events
+  const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    e.cancelBubble = true;
+    console.log(
+      `PPStage onMouseDown`,
+      -canvasWidth / 2 - dragEndPos.x,
+      -canvasHeight / 2 - dragEndPos.y,
+      props.scale,
+    );
+    if (props.onMouseDown)
+      props.onMouseDown(
+        e,
+        -canvasWidth / 2 - dragEndPos.x,
+        -canvasHeight / 2 - dragEndPos.y,
+        props.scale,
+      );
+  };
+  const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    e.cancelBubble = true;
+    if (props.onMouseMove)
+      props.onMouseMove(
+        e,
+        -canvasWidth / 2 - dragEndPos.x,
+        -canvasHeight / 2 - dragEndPos.y,
+        props.scale,
+      );
+  };
+  const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    e.cancelBubble = true;
+    if (props.onMouseUp)
+      props.onMouseUp(
+        e,
+        -canvasWidth / 2 - dragEndPos.x,
+        -canvasHeight / 2 - dragEndPos.y,
+        props.scale,
+      );
+  };
+  const onContextMenu = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    // console.log('imgLayer onContextMenu');
+    e.cancelBubble = true;
+    // Prevent right-click menu
+    e.evt.preventDefault();
+  };
+
   const shapes = [];
   if (props.annotations) {
     console.log('PPStage rendering annotations:', props.annotations);
@@ -125,9 +169,20 @@ const Component: React.FC<PPStageProps> = (props) => {
         default:
           func = null;
       }
-      if (func)
-        shapes.push(
-          func(
+      if (!func) continue;
+      const layer = (
+        <Layer
+          name="annotation"
+          scaleX={props.scale}
+          scaleY={props.scale}
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onContextMenu={onContextMenu}
+          x={dragEndPos.x}
+          y={dragEndPos.y}
+        >
+          {func(
             annotation,
             props.onAnnotationModify,
             props.onAnnotationModifyComplete,
@@ -136,10 +191,14 @@ const Component: React.FC<PPStageProps> = (props) => {
             props.setCurrentAnnotation,
             stageRef,
             props.currentAnnotation,
-          ),
-        );
+          )}
+        </Layer>
+      );
+      shapes.push(layer);
     }
   }
+
+  const draggable = props.currentTool == 'mover';
 
   return (
     <Stage
@@ -149,129 +208,53 @@ const Component: React.FC<PPStageProps> = (props) => {
       offsetY={-canvasHeight / 2}
       className={styles.stage}
       ref={stageRef}
+      // Can not apply scale on Stage cuz it always scale from left corner
     >
       <Layer
-        onMouseDown={(e) => {
-          // console.log('imgLayer onMouseDown');
-          e.cancelBubble = true;
-          if (props.onMouseDown)
-            props.onMouseDown(
-              e,
-              -canvasWidth / 2 - dragOffset.x,
-              -canvasHeight / 2 - dragOffset.y,
-              props.scale,
-            );
-        }}
-        onMouseMove={(e) => {
-          // console.log('imgLayer onMouseMove');
-          e.cancelBubble = true;
-          if (props.onMouseMove)
-            props.onMouseMove(
-              e,
-              -canvasWidth / 2 - dragOffset.x,
-              -canvasHeight / 2 - dragOffset.y,
-              props.scale,
-            );
-        }}
-        onMouseUp={(e) => {
-          // console.log('imgLayer onMouseUp');
-          e.cancelBubble = true;
-          if (props.onMouseUp)
-            props.onMouseUp(
-              e,
-              -canvasWidth / 2 - dragOffset.x,
-              -canvasHeight / 2 - dragOffset.y,
-              props.scale,
-            );
-        }}
-        onContextMenu={(e) => {
-          // console.log('imgLayer onContextMenu');
-          e.cancelBubble = true;
-          // Prevent right-click menu
-          e.evt.preventDefault();
-        }}
-        draggable={false}
-      >
-        <Group
-          draggable={props.currentTool == 'mover'}
-          scaleX={props.scale}
-          scaleY={props.scale}
-          onDragStart={() => {
-            if (props.currentTool != 'mover') return;
-            if (!stageRef.current) return;
-            const stage: StageType = stageRef.current;
-            const annotation = stage.findOne('.annotation');
-            annotation.setDraggable(true);
-            annotation.startDrag();
-          }}
-          onDragEnd={(evt) => {
-            if (props.currentTool != 'mover') return;
-            setDragOffset({
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+        onContextMenu={onContextMenu}
+        draggable={draggable}
+        scaleX={props.scale}
+        scaleY={props.scale}
+        onDragMove={(evt) => {
+          if (props.currentTool != 'mover') return;
+          if (!stageRef.current) return;
+          const stage: StageType = stageRef.current;
+          stage.find('.annotation').forEach((anno) => {
+            anno.setPosition({
               x: evt.target.x(),
               y: evt.target.y(),
             });
-            if (!stageRef.current) return;
-            const stage: StageType = stageRef.current;
-            const annotation = stage.findOne('.annotation');
-            annotation.setDraggable(false);
-          }}
-        >
-          <Image
-            name="baseImage"
-            draggable={false}
-            image={image}
-            x={-(image?.width || 0) / 2}
-            y={-(image?.height || 0) / 2}
-          />
-        </Group>
-      </Layer>
-      <Layer
-        name="annotation"
-        onMouseDown={(e) => {
-          // console.log('annoLayer onMouseDown');
-          e.cancelBubble = true;
-          if (props.onMouseDown)
-            props.onMouseDown(
-              e,
-              -canvasWidth / 2 - dragOffset.x,
-              -canvasHeight / 2 - dragOffset.y,
-              props.scale,
-            );
+          });
         }}
-        onMouseMove={(e) => {
-          // console.log('annoLayer onMouseMove');
-          e.cancelBubble = true;
-          e.evt.cancelBubble = true;
-          if (props.onMouseMove)
-            props.onMouseMove(
-              e,
-              -canvasWidth / 2 - dragOffset.x,
-              -canvasHeight / 2 - dragOffset.y,
-              props.scale,
-            );
-        }}
-        onMouseUp={(e) => {
-          // console.log('annoLayer onMouseUp');
-          e.cancelBubble = true;
-          e.evt.cancelBubble = true;
-          if (props.onMouseUp)
-            props.onMouseUp(
-              e,
-              -canvasWidth / 2 - dragOffset.x,
-              -canvasHeight / 2 - dragOffset.y,
-              props.scale,
-            );
-        }}
-        onContextMenu={(e) => {
-          // console.log('annoLayer onContextMenu');
-          e.cancelBubble = true;
-          e.evt.cancelBubble = true;
-          // Prevent right-click menu
-          e.evt.preventDefault();
+        onDragEnd={(evt) => {
+          if (props.currentTool != 'mover') return;
+          console.log(`dragEndPosX,Y: (${evt.target.x()},${evt.target.y()})`);
+          setDragEndPos({
+            x: evt.target.x(),
+            y: evt.target.y(),
+          });
+          if (!stageRef.current) return;
+          const stage: StageType = stageRef.current;
+          stage.find('.annotation').forEach((anno) =>
+            anno.setPosition({
+              x: evt.target.x(),
+              y: evt.target.y(),
+            }),
+          );
         }}
       >
-        {shapes}
+        <Image
+          name="baseImage"
+          draggable={false}
+          image={image}
+          x={-(image?.width || 0) / 2}
+          y={-(image?.height || 0) / 2}
+        />
       </Layer>
+      {shapes}
     </Stage>
   );
 };

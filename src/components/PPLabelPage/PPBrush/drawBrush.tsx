@@ -39,13 +39,9 @@ function drawLine(
 ): ReactElement {
   // console.log(`drawLine: `, annotation);
   if (!annotation || !annotation.points) return <></>;
-
-  const selected = currentAnnotation?.frontendId == annotation.frontendId;
-  const draggable = selected && currentTool == 'mover';
-
   const res = [];
   for (const line of annotation.points) {
-    // console.log(`rendering line: `, line);
+    // console.log(`rendering line: `, line.points);
     if (!line.width || !line.color || !line.tool) continue;
     res.push(
       <Line
@@ -55,18 +51,10 @@ function drawLine(
         lineCap="round"
         points={line.points}
         tension={1}
-        onDragMove={() => {}}
-        onDragEnd={() => {
-          onDragEnd();
-        }}
-        shadowColor="red"
-        shadowBlur={10}
-        shadowOffset={{ x: 5, y: 5 }}
-        shadowOpacity={draggable ? 1 : 0}
       />,
     );
   }
-  return <Group draggable={draggable}>{res}</Group>;
+  return <Group draggable={false}>{res}</Group>;
 }
 
 /**
@@ -118,11 +106,14 @@ export default function (props: {
   ) => {
     if (
       (props.currentTool != 'brush' && props.currentTool != 'rubber') ||
-      !props.currentLabel.color
+      !props.currentLabel?.color
     )
       return;
     const mouseX = (e.evt.offsetX + offsetX) / scale;
     const mouseY = (e.evt.offsetY + offsetY) / scale;
+    // console.log(
+    //   `e.evt.offsetX,Y: (${e.evt.offsetX},${e.evt.offsetY}). offsetX,Y: (${offsetX},${offsetY}). mouseX,Y: (${mouseX},${mouseY}). scale: ${scale}`,
+    // );
     const tool = getTool(props.currentTool, e.evt.button);
     const line = createLine(
       props.brushSize || 10,
