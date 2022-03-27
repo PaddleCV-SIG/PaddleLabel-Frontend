@@ -172,7 +172,7 @@ const Page: React.FC = () => {
   const clearMark = useIntl().formatMessage({ id: 'pages.toolBar.clearMark' });
   const interactor = useIntl().formatMessage({ id: 'pages.toolBar.interactor' });
   const segmentThreshold = useIntl().formatMessage({ id: 'pages.toolBar.segmentThreshold' });
-  const diaphaneity = useIntl().formatMessage({ id: 'pages.toolBar.diaphaneity' });
+  const transparency = useIntl().formatMessage({ id: 'pages.toolBar.transparency' });
   const visualRadius = useIntl().formatMessage({ id: 'pages.toolBar.visualRadius' });
   const determineOutline = useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' });
   const medicalSetting = useIntl().formatMessage({ id: 'pages.toolBar.medicalSetting' });
@@ -300,7 +300,7 @@ const Page: React.FC = () => {
           {segmentThreshold}
         </PPSetButton>
         <PPSetButton imgSrc="./pics/buttons/alpha.png" disLoc="left">
-          {diaphaneity}
+          {transparency}
         </PPSetButton>
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
           {visualRadius}

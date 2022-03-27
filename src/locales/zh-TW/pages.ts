@@ -104,7 +104,7 @@ export default {
   'pages.toolBar.clearMark': '清除',
   'pages.toolBar.interactor': '智慧標注',
   'pages.toolBar.segmentThreshold': '分割閾值',
-  'pages.toolBar.diaphaneity': '透明度',
+  'pages.toolBar.transparency': '透明度',
   'pages.toolBar.visualRadius': '視覺化半徑',
   'pages.toolBar.determineOutline': '確定輪廓',
   'pages.toolBar.divideData': '劃分數据集',

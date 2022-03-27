@@ -39,6 +39,7 @@ const Page: React.FC = () => {
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
   const [brushSize, setBrushSize] = useState(10);
+  const [transparency, setTransparency] = useState(60);
   const [scale, setScaleRaw] = useState(1);
   const setScale = (size: number) => {
     if (!size) setScaleRaw(1);
@@ -117,7 +118,6 @@ const Page: React.FC = () => {
   const clearMark = useIntl().formatMessage({ id: 'pages.toolBar.clearMark' });
   const interactor = useIntl().formatMessage({ id: 'pages.toolBar.interactor' });
   const segmentThreshold = useIntl().formatMessage({ id: 'pages.toolBar.segmentThreshold' });
-  const diaphaneity = useIntl().formatMessage({ id: 'pages.toolBar.diaphaneity' });
   const visualRadius = useIntl().formatMessage({ id: 'pages.toolBar.visualRadius' });
   const determineOutline = useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' });
   const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
@@ -136,6 +136,7 @@ const Page: React.FC = () => {
           {polygonBtn}
         </PPPolygon>
         <PPToolBarButton
+          active={currentTool == 'editor'}
           imgSrc="./pics/buttons/edit.png"
           onClick={() => {
             setCurrentTool('editor');
@@ -244,6 +245,7 @@ const Page: React.FC = () => {
             createPolygonFunc={polygon.createElementsFunc}
             createBrushFunc={brush.createElementsFunc}
             imgSrc={undefined}
+            transparency={transparency}
           />
         </div>
         <div className="pblock">
@@ -291,8 +293,17 @@ const Page: React.FC = () => {
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
           {segmentThreshold}
         </PPSetButton>
-        <PPSetButton imgSrc="./pics/buttons/alpha.png" disLoc="left">
-          {diaphaneity}
+        <PPSetButton
+          imgSrc="./pics/buttons/alpha.png"
+          disLoc="left"
+          size={transparency}
+          maxSize={100}
+          minSize={0}
+          onChange={(newSize) => {
+            setTransparency(newSize);
+          }}
+        >
+          {useIntl().formatMessage({ id: 'pages.toolBar.transparency' })}
         </PPSetButton>
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
           {visualRadius}

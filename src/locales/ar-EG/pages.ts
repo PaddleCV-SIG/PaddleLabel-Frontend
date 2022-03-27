@@ -104,7 +104,7 @@ export default {
   'pages.toolBar.clearMark': 'مسح',
   'pages.toolBar.interactor': 'ذكي الشرح',
   'pages.toolBar.segmentThreshold': 'تجزئة العتبة',
-  'pages.toolBar.diaphaneity': 'الشفافية',
+  'pages.toolBar.transparency': 'الشفافية',
   'pages.toolBar.visualRadius': 'نصف قطر البصرية',
   'pages.toolBar.determineOutline': 'تحديد محيط',
   'pages.toolBar.divideData': 'تقسيم مجموعة البيانات',

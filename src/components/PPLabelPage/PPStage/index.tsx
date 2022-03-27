@@ -10,6 +10,18 @@ import styles from './index.less';
 // Mock Data
 const imgSrc = './pics/basketball.jpg';
 
+export type PPDrawFuncProps<T = any> = {
+  annotation: Annotation<T>;
+  onDrag: (anntation: Annotation<T>) => void;
+  onDragEnd: () => void;
+  scale: number;
+  currentTool: ToolType;
+  onSelect: (anntation: Annotation<T>) => void;
+  stageRef?: React.MutableRefObject<T>;
+  currentAnnotation?: Annotation<T>;
+  transparency: number;
+};
+
 export type PPStageProps = {
   imgSrc?: string;
   scale: number;
@@ -35,43 +47,17 @@ export type PPStageProps = {
     offsetY: number,
     scale: number,
   ) => void;
-  createPolygonFunc?: (
-    annotations: Annotation<any>,
-    onDrag: (annotation: Annotation<any>) => void,
-    onDragEnd: () => void,
-    scale: number,
-    currentTool: ToolType,
-    onSelect: (anntation: Annotation<any>) => void,
-    shapeRef: React.MutableRefObject<any>,
-    currentAnnotation?: Annotation<any>,
-  ) => ReactElement[];
-  createBrushFunc?: (
-    annotations: Annotation<any>,
-    onDrag: (annotation: Annotation<any>) => void,
-    onDragEnd: () => void,
-    scale: number,
-    currentTool: ToolType,
-    onSelect: (anntation: Annotation<any>) => void,
-    shapeRef: React.MutableRefObject<any>,
-    currentAnnotation?: Annotation<any>,
-  ) => ReactElement[];
-  createRectangleFunc?: (
-    annotation: Annotation<any>,
-    onDrag: (anntation: Annotation<any>) => void,
-    onDragEnd: () => void,
-    scale: number,
-    currentTool: ToolType,
-    onSelect: (anntation: Annotation<any>) => void,
-    shapeRef: React.MutableRefObject<any>,
-    currentAnnotation?: Annotation<any>,
-    offset?: { x: number; y: number },
-  ) => ReactElement[];
+  createPolygonFunc?: (props: PPDrawFuncProps) => ReactElement[];
+  createBrushFunc?: (props: PPDrawFuncProps) => ReactElement[];
+  createRectangleFunc?: (props: PPDrawFuncProps) => ReactElement[];
   onAnnotationModify: (annotation: Annotation<any>) => void;
   onAnnotationModifyComplete: () => void;
+  transparency: number;
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
   const [image] = useImage(props.imgSrc || imgSrc);
+  const transparency = props.transparency == undefined ? 0 : props.transparency;
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
@@ -178,16 +164,17 @@ const Component: React.FC<PPStageProps> = (props) => {
           onMouseUp={onMouseUp}
           onContextMenu={onContextMenu}
         >
-          {func(
-            annotation,
-            props.onAnnotationModify,
-            props.onAnnotationModifyComplete,
-            props.scale,
-            props.currentTool,
-            props.setCurrentAnnotation,
-            stageRef,
-            props.currentAnnotation,
-          )}
+          {func({
+            annotation: annotation,
+            onDrag: props.onAnnotationModify,
+            onDragEnd: props.onAnnotationModifyComplete,
+            scale: props.scale,
+            currentTool: props.currentTool,
+            onSelect: props.setCurrentAnnotation,
+            stageRef: stageRef,
+            currentAnnotation: props.currentAnnotation,
+            transparency: transparency,
+          })}
         </Layer>
       );
       shapes.push(layer);

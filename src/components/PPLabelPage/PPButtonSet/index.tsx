@@ -3,32 +3,36 @@ import React, { useEffect, useState } from 'react';
 import PPToolBarButton from '../PPToolBarButton';
 import styles from './index.less';
 
-const minSize = 1;
-const maxSize = 100;
+const defaultMinSize = 0;
+const defaultMaxSize = 100;
 const defaultSize = 10;
 
-export type PPBrushProps = {
+type Props = {
   size?: number;
+  minSize?: number;
+  maxSize?: number;
   onClick?: React.MouseEventHandler<HTMLElement>;
   onChange?: (size: number) => void;
   imgSrc?: string;
   disLoc?: string;
 };
 
-function formatSize(size: number | undefined) {
-  if (!size) return defaultSize;
-  if (size <= minSize) return minSize;
-  if (size >= maxSize) return maxSize;
-  return size;
-}
-
-const Component: React.FC<PPBrushProps> = (props) => {
+const Component: React.FC<Props> = (props) => {
   const [size, setSizeRaw] = useState(formatSize(props.size));
-  const setSize = (destSize: number | undefined) => {
+  function setSize(destSize: number | undefined) {
     setSizeRaw(formatSize(destSize));
-  };
+  }
+  const minSize = props.minSize == undefined ? defaultMinSize : props.minSize;
+  const maxSize = props.maxSize == undefined ? defaultMaxSize : props.maxSize;
+  function formatSize(originSize?: number) {
+    if (originSize == undefined) return defaultSize;
+    if (originSize <= minSize) return minSize;
+    if (originSize >= maxSize) return maxSize;
+    return originSize;
+  }
   useEffect(() => {
     setSize(props.size);
+    console.log(`props.size changed to:${props.size}`);
   }, [props.size]);
 
   return (
@@ -72,7 +76,7 @@ const Component: React.FC<PPBrushProps> = (props) => {
       trigger={'hover'}
     >
       {' '}
-      <PPToolBarButton imgSrc={props.imgSrc} onClick={props.onClick}>
+      <PPToolBarButton imgSrc={props.imgSrc || ''} onClick={props.onClick}>
         {props.children}
       </PPToolBarButton>
     </Popover>

@@ -5,6 +5,7 @@ import type Konva from 'konva';
 import { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Rect } from 'react-konva';
+import { PPDrawFuncProps } from '../PPStage';
 
 export type PPRectangleType = {
   xmin: number;
@@ -34,33 +35,29 @@ function createRectangle(points: number[]): PPRectangleType | undefined {
   };
 }
 
-function drawRectangle(
-  annotation: Annotation<PPRectangleType>,
-  onDrag: (anntation: Annotation<PPRectangleType>) => void,
-  onDragEnd: () => void,
-  scale: number,
-  currentTool: ToolType,
-  onSelect: (anntation: Annotation<PPRectangleType>) => void,
-  stageRef?: React.MutableRefObject<any>,
-  currentAnnotation?: Annotation<PPRectangleType>,
-): ReactElement[] {
+function drawRectangle(props: PPDrawFuncProps): ReactElement[] {
   // console.log(`drawRectangle, annotation:`, annotation);
-  if (!annotation || !annotation.points || !annotation.label || !annotation.label.color)
+  if (
+    !props.annotation ||
+    !props.annotation.points ||
+    !props.annotation.label ||
+    !props.annotation.label.color
+  )
     return [<></>];
-  const points: PPRectangleType = annotation.points;
-  const color = annotation.label.color;
+  const points: PPRectangleType = props.annotation.points;
+  const color = props.annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return [<></>];
 
   // console.log(`drawRectangle, points:`, points, `color:`, color);
-  const selected = currentAnnotation?.frontendId == annotation.frontendId;
+  const selected = props.currentAnnotation?.frontendId == props.annotation.frontendId;
   const transparency = selected ? 0.5 : 0.1;
 
   const rect =
     points.xmax != undefined && points.ymax != undefined ? (
       <Rect
         onMouseOver={() => {
-          if (currentTool == 'editor') {
+          if (props.currentTool == 'editor') {
             document.body.style.cursor = 'pointer';
           }
         }}
@@ -68,10 +65,10 @@ function drawRectangle(
           document.body.style.cursor = 'default';
         }}
         onClick={() => {
-          if (currentTool == 'editor') onSelect(annotation);
+          if (props.currentTool == 'editor') props.onSelect(props.annotation);
         }}
         stroke={color}
-        strokeWidth={2 / scale}
+        strokeWidth={2 / props.scale}
         globalCompositeOperation="source-over"
         lineCap="round"
         x={points.xmin}
@@ -89,9 +86,9 @@ function drawRectangle(
     if (!isMin && (points.xmax == undefined || points.ymax == undefined)) return <></>;
 
     const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>) => {
-      if (currentTool != 'editor') return;
+      if (props.currentTool != 'editor') return;
       // start Forbid drage cross image border
-      const stage: Stage = stageRef?.current;
+      const stage: Stage = props.stageRef?.current;
       const baseImage = stage.findOne('.baseImage');
       let reachBorder = false;
       let newPositionX = evt.target.x();
@@ -124,35 +121,35 @@ function drawRectangle(
         points.ymax = newPositionY;
       }
       const newAnno = {
-        ...annotation,
+        ...props.annotation,
         points: points,
       };
-      onDrag(newAnno);
+      props.onDrag(newAnno);
     };
     return (
       <Circle
         onMouseDown={() => {
-          if (currentTool == 'editor') onSelect(annotation);
+          if (props.currentTool == 'editor') props.onSelect(props.annotation);
         }}
-        draggable={currentTool == 'editor'}
+        draggable={props.currentTool == 'editor'}
         onDragMove={onDragEvt}
         onDragEnd={onDragEvt}
         onMouseOver={() => {
-          if (currentTool == 'editor') document.body.style.cursor = 'pointer';
+          if (props.currentTool == 'editor') document.body.style.cursor = 'pointer';
         }}
         onMouseOut={() => {
           document.body.style.cursor = 'default';
         }}
         x={isMin ? points.xmin : points.xmax}
         y={isMin ? points.ymin : points.ymax}
-        radius={5 / scale}
+        radius={5 / props.scale}
         fill={color}
       />
     );
   }
   // Create dots
   return [
-    <Group key={annotation.annotationId}>
+    <Group key={props.annotation.annotationId}>
       {rect}
       {createDot(true)}
       {createDot(false)}

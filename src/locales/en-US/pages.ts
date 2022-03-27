@@ -106,7 +106,7 @@ export default {
   'pages.toolBar.clearMark': 'ClearMark',
   'pages.toolBar.interactor': 'Interactor',
   'pages.toolBar.segmentThreshold': 'SegmentThreshold',
-  'pages.toolBar.diaphaneity': 'Siaphaneity',
+  'pages.toolBar.transparency': 'Transparency',
   'pages.toolBar.visualRadius': 'VisualRadius',
   'pages.toolBar.determineOutline': 'DetermineOutline',
   'pages.toolBar.divideData': 'DivideData',

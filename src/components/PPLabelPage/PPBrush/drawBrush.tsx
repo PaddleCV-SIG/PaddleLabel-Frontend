@@ -5,6 +5,7 @@ import type Konva from 'konva';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
 import { Line, Group } from 'react-konva';
+import { PPDrawFuncProps } from '../PPStage';
 
 export type PPLineType = {
   width: number;
@@ -12,6 +13,17 @@ export type PPLineType = {
   points: number[];
   tool: ToolType;
 };
+
+function hexToRgb(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : null;
+}
 
 function createLine(
   width: number,
@@ -28,16 +40,18 @@ function createLine(
   };
 }
 
-function drawLine(annotation: Annotation<any[]>): ReactElement {
+function drawLine(props: PPDrawFuncProps): ReactElement {
   // console.log(`drawLine: `, annotation);
-  if (!annotation || !annotation.points) return <></>;
+  if (!props.annotation || !props.annotation.points) return <></>;
   const res = [];
-  for (const line of annotation.points) {
+  for (const line of props.annotation.points) {
     // console.log(`rendering line: `, line.points);
     if (!line.width || !line.color || !line.tool) continue;
+    const rgb = hexToRgb(line.color);
+    if (!rgb) continue;
     res.push(
       <Line
-        stroke={line.color}
+        stroke={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${props.transparency * 0.01})`}
         strokeWidth={line.width}
         globalCompositeOperation={line.tool === 'brush' ? 'source-over' : 'destination-out'}
         lineCap="round"

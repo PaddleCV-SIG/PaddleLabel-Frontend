@@ -5,6 +5,7 @@ import type Konva from 'konva';
 import { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Line } from 'react-konva';
+import { PPDrawFuncProps } from '../PPStage';
 
 export type PPPolygonType = {
   color: string;
@@ -30,24 +31,18 @@ function createPolygon(color?: string, points?: number[]): PPPolygonType | undef
   };
 }
 
-function drawPolygon(
-  annotation: Annotation<PPPolygonType[]>,
-  onDrag: (anntation: Annotation<PPPolygonType[]>) => void,
-  onDragEnd: () => void,
-  scale: number,
-  currentTool: ToolType,
-  onSelect: (anntation: Annotation<PPPolygonType[]>) => void,
-  stageRef?: React.MutableRefObject<any>,
-  currentAnnotation?: Annotation<PPPolygonType[]>,
-): ReactElement[] {
-  if (!annotation || !annotation.points || !annotation.points[0]) return [<></>];
-  const points: number[] = annotation.points[0].points;
-  const color = annotation.points[0].color;
+function drawPolygon(props: PPDrawFuncProps): ReactElement[] {
+  if (!props.annotation || !props.annotation.points || !props.annotation.points[0]) return [<></>];
+  const points: number[] = props.annotation.points[0].points;
+  const color = props.annotation.points[0].color;
   const rgb = hexToRgb(color);
   if (!rgb) return [<></>];
 
-  const selected = currentAnnotation?.frontendId == annotation.frontendId;
-  const transparency = selected ? 0.5 : 0.1;
+  // const selected = props.currentAnnotation?.frontendId == props.annotation.frontendId;
+  const transparency = 0.3; // Polygon fixed 0.3
+  // let transparency = selected ? props.transparency * 0.01 + 0.02 : props.transparency * 0.01;
+  // if (transparency > 1) transparency = 1;
+  // if (transparency < 0) transparency = 0;
 
   // console.log(`drawPolygon, annotation: ${JSON.stringify(annotation)}`);
   // Create dots
@@ -61,14 +56,14 @@ function drawPolygon(
     pointElements.push(
       <Circle
         onMouseDown={() => {
-          if (currentTool == 'editor') onSelect(annotation);
+          if (props.currentTool == 'editor') props.onSelect(props.annotation);
         }}
-        draggable={currentTool == 'editor'}
+        draggable={props.currentTool == 'editor'}
         onDragMove={(evt) => {
           // console.log(`Circle onDrageMove`);
           evt.cancelBubble = true;
           // start Forbid drage cross image border
-          const stage: Stage = stageRef?.current;
+          const stage: Stage = props.stageRef?.current;
           const baseImage = stage.findOne('.baseImage');
           let reachBorder = false;
           let newPositionX = evt.target.x();
@@ -95,12 +90,12 @@ function drawPolygon(
           // End cross border control
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
-          const newAnno = { ...annotation, points: [{ color: color, points: points }] };
-          onDrag(newAnno);
+          const newAnno = { ...props.annotation, points: [{ color: color, points: points }] };
+          props.onDrag(newAnno);
         }}
         onMouseOver={() => {
           // console.log(`Circle onMouseOver`);
-          if (currentTool == 'editor') document.body.style.cursor = 'pointer';
+          if (props.currentTool == 'editor') document.body.style.cursor = 'pointer';
         }}
         onMouseOut={() => {
           // console.log(`Circle onMouseOut`);
@@ -108,7 +103,7 @@ function drawPolygon(
         }}
         x={x}
         y={point}
-        radius={5 / scale}
+        radius={5 / props.scale}
         fill={color}
       />,
     );
@@ -116,10 +111,10 @@ function drawPolygon(
   });
   // Create polygon
   return [
-    <Group key={annotation.frontendId}>
+    <Group key={props.annotation.frontendId}>
       <Line
         onMouseOver={() => {
-          if (currentTool == 'editor') {
+          if (props.currentTool == 'editor') {
             document.body.style.cursor = 'pointer';
           }
         }}
@@ -127,10 +122,10 @@ function drawPolygon(
           document.body.style.cursor = 'default';
         }}
         onClick={() => {
-          if (currentTool == 'editor') onSelect(annotation);
+          if (props.currentTool == 'editor') props.onSelect(props.annotation);
         }}
         stroke={color}
-        strokeWidth={2 / scale}
+        strokeWidth={2 / props.scale}
         globalCompositeOperation="source-over"
         lineCap="round"
         points={points}
