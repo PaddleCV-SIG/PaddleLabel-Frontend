@@ -12,8 +12,8 @@ import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
 import PPPolygon from '@/components/PPLabelPage/PPPolygon';
-import drawBrush from '@/components/PPLabelPage/PPBrush/drawBrush';
-import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
+import drawBrush from '@/components/drawBrush';
+import drawPolygon from '@/components/drawPolygon';
 import PPMedicalSetting from '@/components/PPMedical/PPMedicalSetting';
 import { useIntl } from 'umi';
 

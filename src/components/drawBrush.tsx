@@ -5,7 +5,8 @@ import type Konva from 'konva';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
 import { Line, Group } from 'react-konva';
-import { PPDrawFuncProps } from '../PPStage';
+import { hexToRgb } from './drawUtils';
+import type { PPDrawFuncProps } from './PPLabelPage/PPStage';
 
 export type PPLineType = {
   width: number;
@@ -13,17 +14,6 @@ export type PPLineType = {
   points: number[];
   tool: ToolType;
 };
-
-function hexToRgb(hex: string) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : null;
-}
 
 function createLine(
   width: number,
@@ -81,14 +71,6 @@ function getTool(currentTool: ToolType, mouseButton: number): ToolType {
  * @param annotations
  * @returns
  */
-function getMaxId(annotations: Annotation<PPLineType[]>[]): any {
-  let maxId = 0;
-  for (const annotation of annotations) {
-    if (!annotation || !annotation.frontendId) continue;
-    if (annotation.frontendId > maxId) maxId = annotation.frontendId;
-  }
-  return maxId;
-}
 
 export default function (props: {
   currentLabel: Label;

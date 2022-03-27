@@ -10,7 +10,7 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import PPRectangle from '@/components/PPLabelPage/PPRectangle';
-import drawRectangle from '@/components/PPLabelPage/PPRectangle/drawRectangle';
+import drawRectangle from '@/components/drawRectangle';
 import { Button, Progress, Spin, message } from 'antd';
 import { PageInit } from '@/services/utils';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';

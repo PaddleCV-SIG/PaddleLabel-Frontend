@@ -1,27 +1,17 @@
-import { Annotation } from '@/models/Annotation';
-import { Label } from '@/models/Label';
-import { ToolType } from '@/models/ToolType';
+import type { Annotation } from '@/models/Annotation';
+import type { Label } from '@/models/Label';
+import type { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
-import { Stage } from 'konva/lib/Stage';
+import type { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Line } from 'react-konva';
-import { PPDrawFuncProps } from '../PPStage';
+import { hexToRgb } from './drawUtils';
+import type { PPDrawFuncProps } from './PPLabelPage/PPStage';
 
 export type PPPolygonType = {
   color: string;
   points: number[];
 };
-
-function hexToRgb(hex: string) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result
-    ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-      }
-    : null;
-}
 
 function createPolygon(color?: string, points?: number[]): PPPolygonType | undefined {
   if (!color || !points) return undefined;

@@ -9,7 +9,7 @@ import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import type { Annotation } from '@/models/annotation';
 import PPPolygon from '@/components/PPLabelPage/PPPolygon';
-import drawPolygon from '@/components/PPLabelPage/PPPolygon/drawPolygon';
+import drawPolygon from '@/components/drawPolygon';
 import { Button, Progress } from 'antd';
 import { useIntl } from 'umi';
 
