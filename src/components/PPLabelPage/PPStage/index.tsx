@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Annotation } from '@/models/annotation';
+import { Annotation } from '@/models/Annotation';
 import { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
-import { Stage as StageType } from 'konva/lib/Stage';
-import React, { Props, ReactElement, useEffect, useRef, useState } from 'react';
-import { Layer, Stage, Image, Transformer, Group } from 'react-konva';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { Layer, Stage, Image } from 'react-konva';
 import useImage from 'use-image';
-import { PPLineType } from '../PPBrush/drawBrush';
 import styles from './index.less';
 
 // Mock Data
@@ -106,12 +104,12 @@ const Component: React.FC<PPStageProps> = (props) => {
   // Handle layer events
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // e.cancelBubble = true;
-    console.log(
-      `PPStage onMouseDown, offsetXY:`,
-      -canvasWidth / 2 - dragEndPos.x,
-      -canvasHeight / 2 - dragEndPos.y,
-      props.scale,
-    );
+    // console.log(
+    //   `PPStage onMouseDown, offsetXY:`,
+    //   -canvasWidth / 2 - dragEndPos.x,
+    //   -canvasHeight / 2 - dragEndPos.y,
+    //   props.scale,
+    // );
     if (props.onMouseDown)
       props.onMouseDown(
         e,
@@ -149,7 +147,7 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   const shapes = [];
   if (props.annotations) {
-    console.log('PPStage rendering annotations:', props.annotations);
+    // console.log('PPStage rendering annotations:', props.annotations);
     for (const annotation of props.annotations) {
       if (!annotation) continue;
       let func;

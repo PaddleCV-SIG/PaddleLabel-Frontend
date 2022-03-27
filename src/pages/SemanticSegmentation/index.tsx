@@ -135,7 +135,15 @@ const Page: React.FC = () => {
         >
           {polygonBtn}
         </PPPolygon>
-        <PPToolBarButton imgSrc="./pics/buttons/edit.png">{edit}</PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/edit.png"
+          onClick={() => {
+            setCurrentTool('editor');
+            setCurrentAnnotation(undefined);
+          }}
+        >
+          {edit}
+        </PPToolBarButton>
         <PPBrush
           size={brushSize}
           active={currentTool == 'brush'}
