@@ -1,1 +1,0 @@
-(self.webpackChunkpp_label_frontend=self.webpackChunkpp_label_frontend||[]).push([[540],{15746:function(u,s,_){"use strict";var e=_(21584);s.Z=e.Z},89032:function(u,s,_){"use strict";var e=_(38663),t=_.n(e),l=_(6999)},71230:function(u,s,_){"use strict";var e=_(92820);s.Z=e.Z},13062:function(u,s,_){"use strict";var e=_(38663),t=_.n(e),l=_(6999)}}]);
