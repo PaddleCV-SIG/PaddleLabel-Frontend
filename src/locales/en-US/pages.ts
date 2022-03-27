@@ -105,7 +105,7 @@ export default {
   'pages.toolBar.edit': 'Edit',
   'pages.toolBar.clearMark': 'ClearMark',
   'pages.toolBar.interactor': 'Interactor',
-  'pages.toolBar.segmentThreshold': 'SegmentThreshold',
+  'pages.toolBar.segmentThreshold': 'Segment Threshold',
   'pages.toolBar.transparency': 'Transparency',
   'pages.toolBar.visualRadius': 'VisualRadius',
   'pages.toolBar.determineOutline': 'DetermineOutline',
