@@ -28,15 +28,7 @@ function createLine(
   };
 }
 
-function drawLine(
-  annotation: Annotation<any[]>,
-  onDrag: (annotation: Annotation<any[]>) => void,
-  onDragEnd: () => void,
-  scale: number,
-  currentTool: ToolType,
-  onSelect: (annotation: Annotation<any[]>) => void,
-  currentAnnotation?: Annotation<any[]>,
-): ReactElement {
+function drawLine(annotation: Annotation<any[]>): ReactElement {
   // console.log(`drawLine: `, annotation);
   if (!annotation || !annotation.points) return <></>;
   const res = [];

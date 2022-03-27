@@ -105,9 +105,9 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   // Handle layer events
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    e.cancelBubble = true;
+    // e.cancelBubble = true;
     console.log(
-      `PPStage onMouseDown`,
+      `PPStage onMouseDown, offsetXY:`,
       -canvasWidth / 2 - dragEndPos.x,
       -canvasHeight / 2 - dragEndPos.y,
       props.scale,
@@ -121,7 +121,7 @@ const Component: React.FC<PPStageProps> = (props) => {
       );
   };
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    e.cancelBubble = true;
+    // e.cancelBubble = true;
     if (props.onMouseMove)
       props.onMouseMove(
         e,
@@ -131,7 +131,7 @@ const Component: React.FC<PPStageProps> = (props) => {
       );
   };
   const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    e.cancelBubble = true;
+    // e.cancelBubble = true;
     if (props.onMouseUp)
       props.onMouseUp(
         e,
@@ -179,8 +179,6 @@ const Component: React.FC<PPStageProps> = (props) => {
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}
           onContextMenu={onContextMenu}
-          x={dragEndPos.x}
-          y={dragEndPos.y}
         >
           {func(
             annotation,
@@ -209,42 +207,27 @@ const Component: React.FC<PPStageProps> = (props) => {
       className={styles.stage}
       ref={stageRef}
       // Can not apply scale on Stage cuz it always scale from left corner
+      draggable={draggable}
+      onDragMove={(evt) => {
+        if (props.currentTool != 'mover') return;
+      }}
+      onDragEnd={(evt) => {
+        if (props.currentTool != 'mover') return;
+        console.log(`dragEndPosX,Y: (${evt.target.x()},${evt.target.y()})`);
+        setDragEndPos({
+          x: evt.target.x(),
+          y: evt.target.y(),
+        });
+      }}
     >
       <Layer
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={onMouseUp}
         onContextMenu={onContextMenu}
-        draggable={draggable}
         scaleX={props.scale}
         scaleY={props.scale}
-        onDragMove={(evt) => {
-          if (props.currentTool != 'mover') return;
-          if (!stageRef.current) return;
-          const stage: StageType = stageRef.current;
-          stage.find('.annotation').forEach((anno) => {
-            anno.setPosition({
-              x: evt.target.x(),
-              y: evt.target.y(),
-            });
-          });
-        }}
-        onDragEnd={(evt) => {
-          if (props.currentTool != 'mover') return;
-          console.log(`dragEndPosX,Y: (${evt.target.x()},${evt.target.y()})`);
-          setDragEndPos({
-            x: evt.target.x(),
-            y: evt.target.y(),
-          });
-          if (!stageRef.current) return;
-          const stage: StageType = stageRef.current;
-          stage.find('.annotation').forEach((anno) =>
-            anno.setPosition({
-              x: evt.target.x(),
-              y: evt.target.y(),
-            }),
-          );
-        }}
+        draggable={false}
       >
         <Image
           name="baseImage"
