@@ -50,6 +50,7 @@ const Component: React.FC<Props> = (props) => {
               onChange={(newSize) => {
                 props.onChange?.call(0, newSize);
               }}
+              tooltipVisible={false}
             />
           </Col>
           <Col span={8}>
@@ -60,6 +61,7 @@ const Component: React.FC<Props> = (props) => {
               onChange={(newSize) => {
                 props.onChange?.call(0, newSize);
               }}
+              step={10}
             />
           </Col>
         </Row>
