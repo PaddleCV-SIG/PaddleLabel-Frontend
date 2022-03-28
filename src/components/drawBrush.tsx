@@ -5,7 +5,7 @@ import type Konva from 'konva';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
 import { Line, Group } from 'react-konva';
-import { hexToRgb } from './drawUtils';
+import { getMaxId, hexToRgb } from './drawUtils';
 import type { PPDrawFuncProps } from './PPLabelPage/PPStage';
 
 export type PPLineType = {
@@ -30,7 +30,7 @@ function createLine(
   };
 }
 
-function drawLine(props: PPDrawFuncProps): ReactElement {
+function drawLine(props: PPDrawFuncProps<PPLineType[]>): ReactElement {
   // console.log(`drawLine: `, annotation);
   if (!props.annotation || !props.annotation.points) return <></>;
   const res = [];
@@ -39,9 +39,10 @@ function drawLine(props: PPDrawFuncProps): ReactElement {
     if (!line.width || !line.color || !line.tool) continue;
     const rgb = hexToRgb(line.color);
     if (!rgb) continue;
+    const transparency = line.tool == 'rubber' ? 1 : props.transparency * 0.01;
     res.push(
       <Line
-        stroke={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${props.transparency * 0.01})`}
+        stroke={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${transparency})`}
         strokeWidth={line.width}
         globalCompositeOperation={line.tool === 'brush' ? 'source-over' : 'destination-out'}
         lineCap="round"
