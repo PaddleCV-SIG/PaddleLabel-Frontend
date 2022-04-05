@@ -1,4 +1,5 @@
 import { Col, InputNumber, Popover, Row, Slider } from 'antd';
+import { TooltipPlacement } from 'antd/lib/tooltip';
 import React, { useEffect, useState } from 'react';
 import PPToolBarButton from '../PPToolBarButton';
 import styles from './index.less';
@@ -14,7 +15,8 @@ type Props = {
   onClick?: React.MouseEventHandler<HTMLElement>;
   onChange?: (size: number) => void;
   imgSrc?: string;
-  disLoc?: string;
+  disLoc?: TooltipPlacement;
+  active?: boolean;
 };
 
 const Component: React.FC<Props> = (props) => {
@@ -32,7 +34,7 @@ const Component: React.FC<Props> = (props) => {
   }
   useEffect(() => {
     setSize(props.size);
-    console.log(`props.size changed to:${props.size}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.size]);
 
   return (
@@ -69,7 +71,7 @@ const Component: React.FC<Props> = (props) => {
       trigger={'hover'}
     >
       {' '}
-      <PPToolBarButton imgSrc={props.imgSrc || ''} onClick={props.onClick}>
+      <PPToolBarButton imgSrc={props.imgSrc || ''} onClick={props.onClick} active={props.active}>
         {props.children}
       </PPToolBarButton>
     </Popover>

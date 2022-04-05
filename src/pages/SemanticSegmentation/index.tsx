@@ -3,14 +3,10 @@ import { Button, Progress } from 'antd';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
-import PPBrush from '@/components/PPLabelPage/PPBrush';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
-import PPPolygon from '@/components/PPLabelPage/PPPolygon';
-import drawBrush from '@/components/drawBrush';
-import drawPolygon from '@/components/drawPolygon';
 import { useIntl } from 'umi';
 import { Annotation } from '@/models/Annotation';
 import { ToolType } from '@/models/ToolType';
@@ -18,6 +14,8 @@ import { Label } from '@/models/Label';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import PPDivideDataModal from '@/components/PPLabelPage/PPDivideDataModal';
 import PPExportModal from '@/components/PPLabelPage/PPExportModal';
+import PPBrush from '@/components/PPDrawTool/PPBrush';
+import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 
 export const MOST_HISTORY_STEPS = 40;
 
@@ -69,13 +67,15 @@ const Page: React.FC = () => {
     setAnnotations(newAnnos);
   };
 
-  const brush = drawBrush({
+  const drawToolParam = {
+    dataId: 0,
     currentLabel: currentLabel,
     brushSize: brushSize,
+    scale: scale,
     currentTool: currentTool,
     annotations: annotations,
     currentAnnotation: currentAnnotation,
-    onAnnotationAdd: (annotation) => {
+    onAnnotationAdd: (annotation: Annotation<any>) => {
       const newAnnos = annotations.concat([annotation]);
       setAnnotations(newAnnos);
       if (!currentAnnotation) setCurrentAnnotation(annotation);
@@ -84,26 +84,10 @@ const Page: React.FC = () => {
     onMouseUp: () => {
       recordHistory({ annos: annotations, currAnno: currentAnnotation });
     },
-  });
-
-  const polygon = drawPolygon({
-    currentLabel: currentLabel,
-    brushSize: brushSize,
-    currentTool: currentTool,
-    annotations: annotations,
-    currentAnnotation: currentAnnotation,
-    onAnnotationAdd: (annotation) => {
-      const newAnnos = annotations.concat([annotation]);
-      setAnnotations(newAnnos);
-      if (!currentAnnotation) setCurrentAnnotation(annotation);
-    },
-    onAnnotationModify: onAnnotationModify,
-    onMouseUp: () => {
-      recordHistory({ annos: annotations, currAnno: currentAnnotation });
-    },
-  });
-
-  const dr = currentTool == 'polygon' ? polygon : brush;
+  };
+  const brush = PPBrush(drawToolParam);
+  const polygon = PPPolygon(drawToolParam);
+  const drawTool = currentTool == 'polygon' ? polygon : brush;
 
   const polygonBtn = useIntl().formatMessage({ id: 'pages.toolBar.polygon' });
   const brushBtn = useIntl().formatMessage({ id: 'pages.toolBar.brush' });
@@ -126,7 +110,8 @@ const Page: React.FC = () => {
   return (
     <PPLabelPageContainer className="segment">
       <PPToolBar>
-        <PPPolygon
+        <PPToolBarButton
+          imgSrc="./pics/buttons/polygon.png"
           active={currentTool == 'polygon'}
           onClick={() => {
             setCurrentTool('polygon');
@@ -134,7 +119,7 @@ const Page: React.FC = () => {
           }}
         >
           {polygonBtn}
-        </PPPolygon>
+        </PPToolBarButton>
         <PPToolBarButton
           active={currentTool == 'editor'}
           imgSrc="./pics/buttons/edit.png"
@@ -145,7 +130,8 @@ const Page: React.FC = () => {
         >
           {edit}
         </PPToolBarButton>
-        <PPBrush
+        <PPSetButton
+          imgSrc="./pics/buttons/brush.png"
           size={brushSize}
           active={currentTool == 'brush'}
           onClick={() => {
@@ -159,8 +145,8 @@ const Page: React.FC = () => {
           }}
         >
           {brushBtn}
-        </PPBrush>
-        <PPBrush
+        </PPSetButton>
+        <PPSetButton
           size={brushSize}
           active={currentTool == 'rubber'}
           onClick={() => {
@@ -175,7 +161,7 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/rubber.png"
         >
           {rubber}
-        </PPBrush>
+        </PPSetButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
@@ -240,13 +226,14 @@ const Page: React.FC = () => {
             onAnnotationModifyComplete={() => {
               recordHistory({ annos: annotations, currAnno: currentAnnotation });
             }}
-            onMouseDown={dr.onMouseDown}
-            onMouseMove={dr.onMouseMove}
-            onMouseUp={dr.onMouseUp}
-            createPolygonFunc={polygon.createElementsFunc}
-            createBrushFunc={brush.createElementsFunc}
             imgSrc={undefined}
             transparency={transparency}
+            onAnnotationAdd={(annotation) => {
+              const newAnnos = annotations.concat([annotation]);
+              setAnnotations(newAnnos);
+              if (!currentAnnotation) setCurrentAnnotation(annotation);
+            }}
+            drawTool={drawTool}
           />
         </div>
         <div className="pblock">

@@ -5,8 +5,7 @@ import type Konva from 'konva';
 import type { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Line } from 'react-konva';
-import { hexToRgb } from './drawUtils';
-import type { PPDrawFuncProps } from './PPLabelPage/PPStage';
+import { hexToRgb, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 
 export type PPPolygonType = {
   color: string;
@@ -21,10 +20,10 @@ function createPolygon(color?: string, points?: number[]): PPPolygonType | undef
   };
 }
 
-function drawPolygon(props: PPDrawFuncProps): ReactElement[] {
-  if (!props.annotation || !props.annotation.points || !props.annotation.points[0]) return [<></>];
-  const points: number[] = props.annotation.points[0].points;
-  const color = props.annotation.points[0].color;
+function drawPolygon(props: PPRenderFuncProps): ReactElement[] {
+  if (!props.annotation || !props.annotation.lines || !props.annotation.lines[0]) return [<></>];
+  const points: number[] = props.annotation.lines[0].points;
+  const color = props.annotation.lines[0].color;
   const rgb = hexToRgb(color);
   if (!rgb) return [<></>];
 
@@ -136,8 +135,9 @@ function drawPolygon(props: PPDrawFuncProps): ReactElement[] {
  * @param annotations
  * @returns
  */
-function getMaxId(annotations: Annotation<PPPolygonType[]>[]): any {
+function getMaxId(annotations?: Annotation<PPPolygonType[]>[]): any {
   let maxId = 0;
+  if (!annotations) return maxId;
   for (const annotation of annotations) {
     if (!annotation || !annotation.frontendId) continue;
     if (annotation.frontendId > maxId) maxId = annotation.frontendId;
@@ -145,17 +145,7 @@ function getMaxId(annotations: Annotation<PPPolygonType[]>[]): any {
   return maxId;
 }
 
-export default function (props: {
-  currentLabel: Label;
-  brushSize?: number;
-  points?: number[];
-  currentTool?: ToolType;
-  annotations: Annotation<PPPolygonType[]>[];
-  currentAnnotation?: Annotation<PPPolygonType[]>;
-  onAnnotationAdd: (annotation: Annotation<PPPolygonType[]>) => void;
-  onAnnotationModify: (annotation: Annotation<PPPolygonType[]>) => void;
-  onMouseUp: () => void;
-}) {
+export default function (props: PPDrawToolProps<PPPolygonType[]>): PPDrawToolRet {
   const startNewPolygon = (
     e: Konva.KonvaEventObject<MouseEvent>,
     offsetX: number,
@@ -170,7 +160,7 @@ export default function (props: {
       type: 'polygon',
       frontendId: getMaxId(props.annotations) + 1,
       label: props.currentLabel,
-      points: [polygon],
+      lines: [polygon],
     });
   };
 
@@ -183,7 +173,7 @@ export default function (props: {
     if (!props.currentAnnotation) return;
     const mouseX = (e.evt.offsetX + offsetX) / scale;
     const mouseY = (e.evt.offsetY + offsetY) / scale;
-    const existLines = props.currentAnnotation.points || [];
+    const existLines = props.currentAnnotation.lines || [];
     const polygon = createPolygon(
       props.currentLabel?.color,
       existLines[0]?.points.concat([mouseX, mouseY]),

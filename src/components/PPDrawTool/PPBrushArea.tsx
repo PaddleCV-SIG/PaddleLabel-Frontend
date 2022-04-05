@@ -4,9 +4,10 @@ import type { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
 import type { ReactElement } from 'react';
 import { useState } from 'react';
+import { Stage as StageType } from 'konva/lib/Stage';
 import { Line, Group } from 'react-konva';
 import { getMaxId, hexToRgb } from './drawUtils';
-import type { PPDrawFuncProps } from './PPLabelPage/PPStage';
+import type { PPRenderFuncProps } from './PPLabelPage/PPStage';
 
 export type PPLineType = {
   width: number;
@@ -30,28 +31,11 @@ function createLine(
   };
 }
 
-function drawLine(props: PPDrawFuncProps<PPLineType[]>): ReactElement {
-  // console.log(`drawLine: `, annotation);
-  if (!props.annotation || !props.annotation.points) return <></>;
-  const res = [];
-  for (const line of props.annotation.points) {
-    // console.log(`rendering line: `, line.points);
-    if (!line.width || !line.color || !line.tool) continue;
-    const rgb = hexToRgb(line.color);
-    if (!rgb) continue;
-    const transparency = line.tool == 'rubber' ? 1 : props.transparency * 0.01;
-    res.push(
-      <Line
-        stroke={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${transparency})`}
-        strokeWidth={line.width}
-        globalCompositeOperation={line.tool === 'brush' ? 'source-over' : 'destination-out'}
-        lineCap="round"
-        points={line.points}
-        tension={1}
-      />,
-    );
-  }
-  return <Group draggable={false}>{res}</Group>;
+/**
+ * Don't need to draw
+ */
+function drawLine(): ReactElement {
+  return <></>;
 }
 
 /**
@@ -86,16 +70,19 @@ export default function (props: {
 }) {
   // console.log('drawBrush');
   const [currentTool, setCurrentTool] = useState<ToolType>();
+  const [painting, setPainting] = useState<boolean>(false);
 
   const OnMouseDown = (
     e: Konva.KonvaEventObject<MouseEvent>,
     offsetX: number,
     offsetY: number,
     scale: number,
+    stageRef?: React.RefObject<StageType>,
   ) => {
     if (
       (props.currentTool != 'brush' && props.currentTool != 'rubber') ||
-      !props.currentLabel?.color
+      !props.currentLabel?.color ||
+      !stageRef?.current
     )
       return;
     const mouseX = (e.evt.offsetX + offsetX) / scale;
@@ -104,33 +91,24 @@ export default function (props: {
     //   `e.evt.offsetX,Y: (${e.evt.offsetX},${e.evt.offsetY}). offsetX,Y: (${offsetX},${offsetY}). mouseX,Y: (${mouseX},${mouseY}). scale: ${scale}`,
     // );
     const tool = getTool(props.currentTool, e.evt.button);
-    const line = createLine(
-      props.brushSize || 10,
-      props.currentLabel?.color,
-      [mouseX, mouseY, mouseX, mouseY],
-      tool,
-    );
-    if (!line) return;
+    const layerRef = stageRef.current.findOne('.annotation');
+    const ctx = layerRef.toCanvas().getContext('2d');
+    console.log(`layerRef:`, layerRef, 'ctx:', ctx);
+    if (!ctx) return;
+    ctx.strokeStyle = props.currentLabel?.color;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.lineWidth = 5;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.beginPath();
+    ctx.moveTo(mouseX, mouseY);
+    ctx.lineTo(mouseX, mouseY);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+    layerRef._requestDraw();
     setCurrentTool(tool);
-    // No annotation is marking, start new
-    if (!props.currentAnnotation) {
-      // Do not start new marking with rubber
-      if (tool == 'rubber') return;
-      props.onAnnotationAdd({
-        type: tool,
-        frontendId: getMaxId(props.annotations) + 1,
-        label: props.currentLabel,
-        points: [line],
-      });
-    } else {
-      const anno = {
-        type: 'brush' as ToolType,
-        frontendId: props.currentAnnotation.frontendId,
-        label: props.currentAnnotation.label,
-        points: props.currentAnnotation.points?.concat([line]),
-      };
-      props.onAnnotationModify(anno);
-    }
+    setPainting(true);
   };
 
   const OnMouseMove = (
@@ -139,38 +117,16 @@ export default function (props: {
     offsetY: number,
     scale: number,
   ) => {
-    if (!currentTool || !props.currentAnnotation || !props.currentLabel.color) return;
+    if (!currentTool || !painting || !props.currentAnnotation || !props.currentLabel.color) return;
     const mouseX = (e.evt.offsetX + offsetX) / scale;
     const mouseY = (e.evt.offsetY + offsetY) / scale;
-    let newPoints = [mouseX, mouseY];
-    let newLines: PPLineType[] = [];
-    if (props.currentAnnotation?.points) {
-      newPoints =
-        props.currentAnnotation.points[props.currentAnnotation.points.length - 1].points.concat(
-          newPoints,
-        );
-      newLines = props.currentAnnotation.points;
-    }
-    const line = createLine(
-      props.brushSize || 10,
-      props.currentLabel.color,
-      newPoints,
-      currentTool,
-    );
-    if (!line) return;
-    newLines.pop();
-    newLines.push(line);
-    props.onAnnotationModify({
-      ...props.currentAnnotation,
-      points: newLines,
-      type: currentTool,
-    });
   };
 
   const OnMouseUp = () => {
     if (props.currentTool != 'brush' && props.currentTool != 'rubber') return;
     // console.log(`OnMouseUp`);
     setCurrentTool(undefined);
+    setPainting(false);
     props.onMouseUp();
   };
   return {

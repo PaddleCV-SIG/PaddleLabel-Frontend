@@ -5,8 +5,7 @@ import type Konva from 'konva';
 import type { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Rect } from 'react-konva';
-import { hexToRgb } from './drawUtils';
-import type { PPDrawFuncProps } from './PPLabelPage/PPStage';
+import { hexToRgb, PPRenderFuncProps } from './drawUtils';
 
 export type PPRectangleType = {
   xmin: number;
@@ -25,16 +24,16 @@ function createRectangle(points: number[]): PPRectangleType | undefined {
   };
 }
 
-function drawRectangle(props: PPDrawFuncProps): ReactElement[] {
+function drawRectangle(props: PPRenderFuncProps): ReactElement[] {
   // console.log(`drawRectangle, annotation:`, annotation);
   if (
     !props.annotation ||
-    !props.annotation.points ||
+    !props.annotation.lines ||
     !props.annotation.label ||
     !props.annotation.label.color
   )
     return [<></>];
-  const points: PPRectangleType = props.annotation.points;
+  const points: PPRectangleType = props.annotation.lines;
   const color = props.annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return [<></>];
@@ -184,7 +183,7 @@ export default function (props: {
       frontendId: findMaxId(props.annotations),
       type: 'rectangle',
       label: props.currentLabel,
-      points: Rectangle,
+      lines: Rectangle,
     });
   };
 
@@ -194,10 +193,10 @@ export default function (props: {
     offsetY: number,
     scale: number,
   ) => {
-    if (!props.currentAnnotation || !props.currentAnnotation.points) return;
+    if (!props.currentAnnotation || !props.currentAnnotation.lines) return;
     const mouseX = (e.evt.offsetX + offsetX) / scale;
     const mouseY = (e.evt.offsetY + offsetY) / scale;
-    const Rectangle: PPRectangleType = props.currentAnnotation.points;
+    const Rectangle: PPRectangleType = props.currentAnnotation.lines;
     if (!Rectangle) return;
     Rectangle.xmax = mouseX;
     Rectangle.ymax = mouseY;

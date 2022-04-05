@@ -5,11 +5,7 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
-import type { Label } from '@/models/label';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
-import type { Annotation } from '@/models/annotation';
-import PPPolygon from '@/components/PPLabelPage/PPPolygon';
-import drawPolygon from '@/components/drawPolygon';
 import { Button, Progress } from 'antd';
 import { useIntl } from 'umi';
 
@@ -145,7 +141,8 @@ const Page: React.FC = () => {
   return (
     <PPLabelPageContainer className={styles.key}>
       <PPToolBar>
-        <PPPolygon
+        <PPToolBarButton
+          imgSrc="./pics/buttons/polygon.png"
           active={currentTool == 'polygon'}
           onClick={() => {
             setCurrentTool('polygon');
@@ -153,7 +150,7 @@ const Page: React.FC = () => {
           }}
         >
           {polygonBtn}
-        </PPPolygon>
+        </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/edit.png">{edit}</PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
