@@ -1,11 +1,10 @@
 import type { Annotation } from '@/models/Annotation';
-import type { Label } from '@/models/Label';
 import type { ToolType } from '@/models/ToolType';
-import type Konva from 'konva';
 import type { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Line } from 'react-konva';
-import { hexToRgb, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
+import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
+import { hexToRgb } from './drawUtils';
 
 export type PPPolygonType = {
   color: string;
@@ -20,12 +19,12 @@ function createPolygon(color?: string, points?: number[]): PPPolygonType | undef
   };
 }
 
-function drawPolygon(props: PPRenderFuncProps): ReactElement[] {
-  if (!props.annotation || !props.annotation.lines || !props.annotation.lines[0]) return [<></>];
+function drawPolygon(props: PPRenderFuncProps): ReactElement {
+  if (!props.annotation || !props.annotation.lines || !props.annotation.lines[0]) return <></>;
   const points: number[] = props.annotation.lines[0].points;
   const color = props.annotation.lines[0].color;
   const rgb = hexToRgb(color);
-  if (!rgb) return [<></>];
+  if (!rgb) return <></>;
 
   // const selected = props.currentAnnotation?.frontendId == props.annotation.frontendId;
   const transparency = 0.3; // Polygon fixed 0.3
@@ -101,7 +100,7 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement[] {
     x = undefined;
   });
   // Create polygon
-  return [
+  return (
     <Group key={props.annotation.frontendId}>
       <Line
         onMouseOver={() => {
@@ -125,8 +124,8 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement[] {
         fill={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${transparency})`}
       />
       {pointElements}
-    </Group>,
-  ];
+    </Group>
+  );
 }
 
 /**
@@ -146,17 +145,11 @@ function getMaxId(annotations?: Annotation<PPPolygonType[]>[]): any {
 }
 
 export default function (props: PPDrawToolProps<PPPolygonType[]>): PPDrawToolRet {
-  const startNewPolygon = (
-    e: Konva.KonvaEventObject<MouseEvent>,
-    offsetX: number,
-    offsetY: number,
-    scale: number,
-  ) => {
-    const mouseX = (e.evt.offsetX + offsetX) / scale;
-    const mouseY = (e.evt.offsetY + offsetY) / scale;
+  const startNewPolygon = (mouseX: number, mouseY: number) => {
     const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY]);
     if (!polygon) return;
     props.onAnnotationAdd({
+      dataId: props.dataId,
       type: 'polygon',
       frontendId: getMaxId(props.annotations) + 1,
       label: props.currentLabel,
@@ -164,15 +157,8 @@ export default function (props: PPDrawToolProps<PPPolygonType[]>): PPDrawToolRet
     });
   };
 
-  const addDotToPolygon = (
-    e: Konva.KonvaEventObject<MouseEvent>,
-    offsetX: number,
-    offsetY: number,
-    scale: number,
-  ) => {
+  const addDotToPolygon = (mouseX: number, mouseY: number) => {
     if (!props.currentAnnotation) return;
-    const mouseX = (e.evt.offsetX + offsetX) / scale;
-    const mouseY = (e.evt.offsetY + offsetY) / scale;
     const existLines = props.currentAnnotation.lines || [];
     const polygon = createPolygon(
       props.currentLabel?.color,
@@ -180,6 +166,7 @@ export default function (props: PPDrawToolProps<PPPolygonType[]>): PPDrawToolRet
     );
     if (!polygon) return;
     const anno = {
+      dataId: props.dataId,
       type: 'polygon' as ToolType,
       frontendId: props.currentAnnotation.frontendId,
       label: props.currentAnnotation.label,
@@ -188,18 +175,13 @@ export default function (props: PPDrawToolProps<PPPolygonType[]>): PPDrawToolRet
     props.onAnnotationModify(anno);
   };
 
-  const OnMouseDown = (
-    e: Konva.KonvaEventObject<MouseEvent>,
-    offsetX: number,
-    offsetY: number,
-    scale: number,
-  ) => {
+  const OnMouseDown = (param: EvtProps) => {
     if (props.currentTool != 'polygon') return;
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
-      startNewPolygon(e, offsetX, offsetY, scale);
+      startNewPolygon(param.mouseX, param.mouseY);
     } else {
-      addDotToPolygon(e, offsetX, offsetY, scale);
+      addDotToPolygon(param.mouseX, param.mouseY);
     }
   };
 

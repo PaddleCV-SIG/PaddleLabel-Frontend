@@ -1,9 +1,9 @@
 import type { ToolType } from '@/models/ToolType';
-import type { Props, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { useState } from 'react';
-import { Line, Group, Image } from 'react-konva';
+import { Group, Image } from 'react-konva';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
-import { getMaxId, hexToRgb } from './drawUtils';
+import { getMaxId } from './drawUtils';
 
 export type PPLineType = {
   width: number;
@@ -82,13 +82,8 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       !props.currentLabel?.color
     )
       return;
-    // const mouseX = param.e.evt.offsetX / props.scale + param.offsetX;
-    // const mouseY = param.e.evt.offsetY / props.scale + param.offsetY;
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
-    console.log(
-      `e.evt.offsetX,Y: (${param.e.evt.offsetX},${param.e.evt.offsetY}). offsetX,Y: (${param.offsetX},${param.offsetY}). mouseX,Y: (${mouseX},${mouseY}). scale: ${props.scale}`,
-    );
     const tool = getTool(props.currentTool, param.e.evt.button);
     const line = createLine(
       props.brushSize || 10,
@@ -123,8 +118,8 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
 
   const OnMouseMove = (param: EvtProps) => {
     if (!currentTool || !props.currentAnnotation || !props.currentLabel?.color) return;
-    const mouseX = (param.e.evt.offsetX + param.offsetX) / props.scale;
-    const mouseY = (param.e.evt.offsetY + param.offsetY) / props.scale;
+    const mouseX = param.mouseX;
+    const mouseY = param.mouseY;
     let newPoints = [mouseX, mouseY];
     let newLines: PPLineType[] = [];
     if (props.currentAnnotation?.lines) {

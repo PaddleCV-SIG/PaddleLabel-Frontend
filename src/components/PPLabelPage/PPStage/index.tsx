@@ -87,75 +87,17 @@ const Component: React.FC<PPStageProps> = (props) => {
     stageRef.current.container().style.cursor = getPointer(props.currentTool);
   }, [props.currentTool]);
 
-  // useEffect(() => {
-  //   const ctx = canvasRef.current?.getContext('2d');
-  //   if (!ctx) return;
-  //   // ctx.fillStyle = '#ff0000';
-  //   // ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  //   ctx.beginPath();
-  //   ctx.moveTo(100, 0);
-  //   ctx.lineTo(100, 0);
-  //   ctx.lineTo(200, 200);
-  //   ctx.moveTo(100, 200);
-  //   ctx.lineTo(100, 200);
-  //   ctx.lineTo(200, 100);
-  //   ctx.lineCap = 'round';
-  //   ctx.lineJoin = 'round';
-  //   ctx.lineWidth = 10;
-  //   ctx.strokeStyle = '#ff0000';
-  //   ctx.globalCompositeOperation = 'source-over';
-  //   ctx.closePath();
-  //   ctx.stroke();
-
-  //   ctx.beginPath();
-  //   ctx.moveTo(0, 0);
-  //   ctx.lineTo(0, 0);
-  //   ctx.lineTo(200, 200);
-  //   ctx.moveTo(0, 200);
-  //   ctx.lineTo(0, 200);
-  //   ctx.lineTo(200, 0);
-  //   ctx.lineCap = 'round';
-  //   ctx.lineJoin = 'round';
-  //   ctx.lineWidth = 10;
-  //   ctx.strokeStyle = '#290fff';
-  //   ctx.globalCompositeOperation = 'source-over';
-  //   ctx.closePath();
-  //   ctx.stroke();
-  //   console.log('rendered');
-  //   layerRef.current?.batchDraw();
-  // });
-
   const getEvtParam = (e: Konva.KonvaEventObject<MouseEvent>) => {
     return {
       e: e,
-      offsetX: -canvasWidth / 2 + (imageWith / 2) * props.scale - dragEndPos.x,
-      offsetY: -canvasHeight / 2 + (imageHeight / 2) * props.scale - dragEndPos.y,
-      mouseX:
-        (e.evt.offsetX - dragEndPos.x - canvasWidth / 2 + (imageWith / 2) * props.scale) /
-        props.scale,
-      mouseY:
-        (e.evt.offsetY - dragEndPos.y - canvasHeight / 2 + (imageHeight / 2) * props.scale) /
-        props.scale,
-      canvasRef: canvasRef,
-      layerRef: layerRef,
+      mouseX: (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWith / 2,
+      mouseY: (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2,
     };
   };
 
   // Handle layer events
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // e.cancelBubble = true;
-    // console.log(
-    //   `e.evt.offsetX: ${e.evt.offsetX}, - canvasWidth / 2: ${-canvasWidth / 2}, (imageWith / 2): ${
-    //     imageWith / 2
-    //   }, props.scale: ${props.scale}, dragEndPos.x: ${dragEndPos.x}.`,
-    // );
-    // console.log(
-    //   `e.evt.offsetY: ${e.evt.offsetY}, - canvasHeight / 2: ${
-    //     -canvasHeight / 2
-    //   }, (imageHeight / 2): ${imageHeight / 2}, props.scale: ${props.scale}, dragEndPos.y: ${
-    //     dragEndPos.y
-    //   }.`,
-    // );
     props.drawTool.onMouseDown(getEvtParam(e));
   };
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
