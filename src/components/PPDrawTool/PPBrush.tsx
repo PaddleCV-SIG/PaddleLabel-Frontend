@@ -39,12 +39,14 @@ function drawLine(props: PPRenderFuncProps<PPLineType[]>): ReactElement {
     return img;
   }
   for (const line of props.annotation.lines) {
+    // console.log(`drawing line: `, line);
     const points = line.points;
     ctx.beginPath();
     ctx.moveTo(points[0], points[1]);
-    for (let i = 0; i <= points.length / 2; i++) {
+    for (let i = 0; i <= points.length / 2 - 1; i++) {
       const x = points[2 * i];
       const y = points[2 * i + 1];
+      // console.log(`points.length: ${points.length}, i: ${i}, lineTo: ${x}, ${y}`);
       ctx.lineTo(x, y);
     }
     ctx.lineCap = 'round';
@@ -52,9 +54,10 @@ function drawLine(props: PPRenderFuncProps<PPLineType[]>): ReactElement {
     ctx.lineWidth = line.width;
     ctx.strokeStyle = line.color;
     ctx.globalCompositeOperation = line.tool == 'brush' ? 'source-over' : 'destination-out';
-    ctx.closePath();
+    // ctx.closePath();
     ctx.stroke();
   }
+  props.layerRef.current?.batchDraw();
   return <Group draggable={false}>{img}</Group>;
 }
 
@@ -79,8 +82,10 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       !props.currentLabel?.color
     )
       return;
-    const mouseX = (param.e.evt.offsetX + param.offsetX) / props.scale;
-    const mouseY = (param.e.evt.offsetY + param.offsetY) / props.scale;
+    // const mouseX = param.e.evt.offsetX / props.scale + param.offsetX;
+    // const mouseY = param.e.evt.offsetY / props.scale + param.offsetY;
+    const mouseX = param.mouseX;
+    const mouseY = param.mouseY;
     console.log(
       `e.evt.offsetX,Y: (${param.e.evt.offsetX},${param.e.evt.offsetY}). offsetX,Y: (${param.offsetX},${param.offsetY}). mouseX,Y: (${mouseX},${mouseY}). scale: ${props.scale}`,
     );
@@ -109,7 +114,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         type: 'brush' as ToolType,
         frontendId: props.currentAnnotation.frontendId,
         label: props.currentAnnotation.label,
-        points: props.currentAnnotation.lines?.concat([line]),
+        lines: props.currentAnnotation.lines?.concat([line]),
         dataId: props.dataId,
       };
       props.onAnnotationModify(anno);

@@ -37,6 +37,8 @@ export type EvtProps = {
   e: Konva.KonvaEventObject<MouseEvent>;
   offsetX: number;
   offsetY: number;
+  mouseX: number;
+  mouseY: number;
 };
 
 export type EvtType = (props: EvtProps) => void;
