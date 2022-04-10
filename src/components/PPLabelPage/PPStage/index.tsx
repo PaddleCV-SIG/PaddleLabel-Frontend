@@ -8,9 +8,13 @@ import { Layer as LayerType } from 'konva/lib/Layer';
 import React, { ReactElement, useEffect, useRef, useState } from 'react';
 import { Layer, Stage, Image, Group } from 'react-konva';
 import useImage from 'use-image';
-import styles from './index.less';
 import PPBrush from '@/components/PPDrawTool/PPBrush';
-import { EvtProps, PPDrawToolRet } from '@/components/PPDrawTool/drawUtils';
+import {
+  EvtProps,
+  PPDrawToolRet,
+  PPRenderFuncProps,
+  RubberAnno,
+} from '@/components/PPDrawTool/drawUtils';
 
 // Mock Data
 const imgSrc = './pics/basketball.jpg';
@@ -67,7 +71,24 @@ const Component: React.FC<PPStageProps> = (props) => {
     }
   }
 
-  // Decide render method
+  // Try to decode binfile
+  useEffect(() => {
+    console.log('try to decode');
+    const oReq = new XMLHttpRequest();
+    oReq.open('GET', '/test-10.bin', true);
+    oReq.responseType = 'arraybuffer';
+    oReq.onload = function (oEvent) {
+      console.log('onload');
+      const arraybuffer = oReq.response;
+      const barray = new Uint8Array(arraybuffer);
+      console.log(arraybuffer, barray);
+      for (const byte of barray) {
+        console.log(byte);
+      }
+    };
+
+    oReq.send();
+  }, []);
 
   useEffect(() => {
     // Listen to window resize event
@@ -92,6 +113,8 @@ const Component: React.FC<PPStageProps> = (props) => {
       e: e,
       mouseX: (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWith / 2,
       mouseY: (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2,
+      canvasRef: canvasRef,
+      layerRef: layerRef,
     };
   };
 
@@ -116,24 +139,23 @@ const Component: React.FC<PPStageProps> = (props) => {
   const shapes = [];
   if (props.annotations) {
     // console.log('PPStage rendering annotations:', props.annotations);
-    const ctx = canvasRef.current?.getContext('2d');
-    if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    const param: PPRenderFuncProps = {
+      onDrag: props.onAnnotationModify,
+      onDragEnd: props.onAnnotationModifyComplete,
+      scale: props.scale,
+      currentTool: props.currentTool,
+      onSelect: props.setCurrentAnnotation,
+      stageRef: stageRef,
+      currentAnnotation: props.currentAnnotation,
+      transparency: transparency,
+      canvasRef: canvasRef,
+    };
+    // Draw normal elements
     for (const annotation of props.annotations) {
       if (!annotation) continue;
-      const layer = props.drawTool.createElementsFunc({
-        annotation: annotation,
-        onDrag: props.onAnnotationModify,
-        onDragEnd: props.onAnnotationModifyComplete,
-        scale: props.scale,
-        currentTool: props.currentTool,
-        onSelect: props.setCurrentAnnotation,
-        stageRef: stageRef,
-        currentAnnotation: props.currentAnnotation,
-        transparency: transparency,
-        canvasRef: canvasRef,
-        layerRef: layerRef,
-      });
-      shapes.push(layer);
+      param.annotation = annotation;
+      const shape = props.drawTool.createElementsFunc(param);
+      shapes.push(shape);
     }
   }
 
@@ -152,7 +174,7 @@ const Component: React.FC<PPStageProps> = (props) => {
         height={canvasHeight}
         offsetX={-canvasWidth / 2}
         offsetY={-canvasHeight / 2}
-        className={styles.stage}
+        className="stage"
         ref={stageRef}
         // Can not apply scale on Stage cuz it always scale from left corner
         draggable={draggable}

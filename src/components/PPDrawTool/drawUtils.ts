@@ -17,7 +17,6 @@ export type PPRenderFuncProps<T = any> = {
   currentAnnotation?: Annotation<T>;
   transparency: number;
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  layerRef: React.RefObject<LayerType>;
 };
 
 export type PPDrawToolProps<T = any> = {
@@ -37,6 +36,8 @@ export type EvtProps = {
   e: Konva.KonvaEventObject<MouseEvent>;
   mouseX: number;
   mouseY: number;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  layerRef: React.RefObject<LayerType>;
 };
 
 export type EvtType = (props: EvtProps) => void;
