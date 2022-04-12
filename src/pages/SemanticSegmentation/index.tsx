@@ -36,12 +36,12 @@ const Page: React.FC = () => {
   const [currentLabel, setCurrentLabel] = useState<Label>();
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
   const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
-  const [brushSize, setBrushSize] = useState(10);
+  const [brushSize, setBrushSize] = useState(1);
   const [transparency, setTransparency] = useState(60);
-  const [scale, setScaleRaw] = useState(1);
+  const [scale, setScaleRaw] = useState(10);
   const setScale = (size: number) => {
     if (!size) setScaleRaw(1);
-    if (size < 0.1 || size > 3.0) setScaleRaw(1);
+    if (size < 0.1 || size > 20) setScaleRaw(1);
     else setScaleRaw(size);
   };
 

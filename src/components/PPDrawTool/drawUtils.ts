@@ -47,6 +47,14 @@ export type PPDrawToolRet<T = any> = {
   onMouseMove: EvtType;
   onMouseUp: EvtType;
   createElementsFunc: (props: PPRenderFuncProps<T>) => ReactElement;
+  colorAsFrontendId: (
+    canvasRef: React.RefObject<HTMLCanvasElement>,
+    layerRef: React.RefObject<LayerType>,
+  ) => void;
+  colorAsLabelColor: (
+    canvasRef: React.RefObject<HTMLCanvasElement>,
+    layerRef: React.RefObject<LayerType>,
+  ) => void;
 };
 
 export function getMaxId(annotations?: Annotation<any[]>[]): any {
@@ -68,4 +76,13 @@ export function hexToRgb(hex: string) {
         b: parseInt(result[3], 16),
       }
     : null;
+}
+
+export function componentToHex(c: number) {
+  const hex = c.toString(16);
+  return hex.length == 1 ? '0' + hex : hex;
+}
+
+export function rgbToHex(r: number, g: number, b: number) {
+  return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
