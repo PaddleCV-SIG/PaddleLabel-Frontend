@@ -57,7 +57,7 @@ const Component: React.FC<PPDivideDataProps> = (props) => {
           props
             .splitDataset(props.project.curr.projectId, {
               train: trainData * 0.01,
-              validation: validationData * 0.01,
+              val: validationData * 0.01,
               test: testData * 0.01,
             })
             .then(() => {

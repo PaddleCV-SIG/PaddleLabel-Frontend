@@ -523,7 +523,10 @@ function exportDataset(projectId, exportDir) {
       serviceUtils.parseError(err, message);
     });
 }
-async function splitDataset(projectId, props: { train: number; validation: number; test: number }) {
+async function splitDataset(
+  projectId: number,
+  props: { train: number; val: number; test: number },
+) {
   console.log('split param', props);
 
   return projectApi

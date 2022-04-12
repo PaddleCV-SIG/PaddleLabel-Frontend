@@ -30,7 +30,7 @@ export interface InlineResponse2001 {
    * @type {number}
    * @memberof InlineResponse2001
    */
-  validation?: number;
+  val?: number;
   /**
    *
    * @type {number}
@@ -52,7 +52,7 @@ export function InlineResponse2001FromJSONTyped(
   }
   return {
     train: !exists(json, 'train') ? undefined : json['train'],
-    validation: !exists(json, 'validation') ? undefined : json['validation'],
+    val: !exists(json, 'val') ? undefined : json['val'],
     test: !exists(json, 'test') ? undefined : json['test'],
   };
 }
@@ -66,7 +66,7 @@ export function InlineResponse2001ToJSON(value?: InlineResponse2001 | null): any
   }
   return {
     train: value.train,
-    validation: value.validation,
+    val: value.val,
     test: value.test,
   };
 }
