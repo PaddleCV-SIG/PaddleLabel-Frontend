@@ -6,8 +6,8 @@ import { Button } from 'antd';
 import { history, useIntl } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
 import { createInfo, camel2snake } from '@/services/utils';
-import type { Project } from '@/services/models/Project';
 import { ProjectUtils } from '@/services/utils';
+import type { Project } from '@/services/models/Project';
 
 export type _PPCardProps = {
   title?: string;
@@ -60,28 +60,15 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
   const saveProject = (values: any) => {
     if (!projectId) {
       projects
-        .create({
-          name: values.name,
-          description: values.description,
-          taskCategoryId: createInfo[props.taskCategory]['id'],
-          dataDir: values.dataDir,
-          labelDir: values.labelDir,
-        })
+        .create({ ...values, taskCategoryId: createInfo[props.taskCategory]['id'] })
         .then((project) => {
           history.push(`/${camel2snake(props.taskCategory)}?projectId=${project.projectId}`);
         })
         .catch(() => {});
     } else {
-      projects
-        .update(projectId, {
-          name: values.name,
-          description: values.description,
-          dataDir: values.dataDir,
-          labelDir: values.labelDir,
-        })
-        .then(() => {
-          history.push('/welcome');
-        });
+      projects.update(projectId, { ...values }).then(() => {
+        history.push('/welcome');
+      });
     }
   };
 
@@ -94,9 +81,12 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
       const initialValues = {
         name: project?.name,
         description: project?.description,
-        dataDir: project?.dataDir, // TODO: value.join is not a funx
+        dataDir: project?.dataDir,
+        labelDir: project?.labelDir,
+        subCategory: project?.subCategory,
       };
       form.setFieldsValue(initialValues);
+      console.log('form', form.getFieldInstance('subCategory'));
     });
   }, []);
 
@@ -110,6 +100,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
             size="large"
             style={{ marginTop: '5.69rem' }}
             onFinish={(values) => {
+              console.log(values);
               saveProject(values);
             }}
           >
@@ -132,7 +123,6 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
             >
               <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
             </Form.Item>
-
             <Form.Item
               name="dataDir"
               label={datasePath}
@@ -157,7 +147,24 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                 disabled={projectId == undefined ? false : true}
               />
             </Form.Item>
-
+            <Form.Item
+              name="labelDir"
+              label={'Label Path'}
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[
+                {
+                  required: false,
+                },
+              ]}
+              style={{ fontSize: '1.5rem' }}
+            >
+              <Input size="large" placeholder="Path to labels.txt" style={{ height: '3.13rem' }} />
+            </Form.Item>
             <Form.Item
               name="description"
               label={description}
@@ -174,9 +181,8 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               ]}
               style={{ fontSize: '1.5rem' }}
             >
-              <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
+              <Input size="large" placeholder="Project description" style={{ height: '3.13rem' }} />
             </Form.Item>
-
             <Form.Item
               name="maxPoints"
               label={maxPoints}
@@ -199,7 +205,27 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
             >
               <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
             </Form.Item>
-
+            <Form.Item
+              name="subCategory"
+              label="Project Sub Category"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[{ required: false }]}
+              style={{
+                fontSize: '1.5rem',
+                display: props.taskCategory == 'classification' ? undefined : 'none',
+              }}
+            >
+              <Radio.Group size="large" style={{ height: '3.13rem' }}>
+                <Radio value={'single_class'}>{'Single Class'}</Radio>
+                <Radio value={'multi_class'}>{'Multi Class'}</Radio>
+              </Radio.Group>
+            </Form.Item>
+            ,
             <Form.Item
               name="segmentationMode"
               label={annotationMode}
