@@ -121,13 +121,13 @@ const Component: React.FC<PPStageProps> = (props) => {
   // Handle layer events
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // e.cancelBubble = true;
-    props.drawTool.onMouseDown(getEvtParam(e));
+    props.drawTool?.onMouseDown(getEvtParam(e));
   };
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    props.drawTool.onMouseMove(getEvtParam(e));
+    props.drawTool?.onMouseMove(getEvtParam(e));
   };
   const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    props.drawTool.onMouseUp(getEvtParam(e));
+    props.drawTool?.onMouseUp(getEvtParam(e));
   };
   const onContextMenu = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // console.log('imgLayer onContextMenu');
