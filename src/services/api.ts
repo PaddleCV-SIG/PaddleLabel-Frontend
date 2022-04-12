@@ -24,64 +24,13 @@ export const annotationApi = new AnnotationApi(config);
 export function toDict(arr: any[]) {
   return JSON.parse(JSON.stringify(arr));
 }
-export const indexOf = ( item:any, arr:any[],key:string) => {
-  if (!key)
-    return -1;
-  for(let idx=0; idx<arr.length; idx++) {
-    if( item[key] == arr[idx][key])
-      return idx;
-    }
-  return -1;
-}
-
-export function camel2snake(name: string) {
-  if (!name) return name;
-  return name.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
-}
-
-export function snake2camel(name: string) {
-  if (!name) return name;
-  name
-    .toLowerCase()
-    .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''));
-  return name;
-}
-export const createInfo = {
-  classification: {
-    name: 'Image Classification',
-    avatar: './pics/classification.jpg',
-    id: 1,
-  },
-  detection: { name: 'Detection', avatar: './pics/object_detection.jpg', id: 2 },
-  semanticSegmentation: {
-    name: 'Semantic Segmentation',
-    avatar: './pics/semantic_segmentation.jpg',
-    id: 3,
-  },
-  instanceSegmentation: {
-    name: 'Instance Segmentation',
-    avatar: './pics/instance_segmentation.jpg',
-    id: 4,
-  },
-  keypointDetection: {
-    name: 'Keypoint Detection',
-    avatar: './pics/keypoint_detection.jpg',
-    id: 5,
-  },
-};
-
-export const setLabelActive = (labels, anns) => {
-  let labs = [...labels];
-  for(const idx in labels)
-    labs[idx].active=false;
-  for(const idx in labels) {
-    if(indexOf(labels[idx], anns, 'labelId') != -1) {
-      labs[idx].active = true;
-    }
+export const indexOf = (item: any, arr: any[], key: string) => {
+  if (!key) return -1;
+  for (let idx = 0; idx < arr.length; idx++) {
+    if (item[key] == arr[idx][key]) return idx;
   }
-  console.log("activa labs", labs);
-  return labs;
-}
+  return -1;
+};
 
 /* project related*/
 export async function getProjects(setProjects) {

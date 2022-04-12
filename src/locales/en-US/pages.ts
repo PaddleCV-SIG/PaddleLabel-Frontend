@@ -69,7 +69,7 @@ export default {
   'pages.searchTable.batchApproval': 'batch approval',
   'pages.welcome.edit': 'Edit',
   'pages.welcome.label': 'Label',
-  'pages.welcome.deleted': 'Deleted',
+  'pages.welcome.remove': 'Delete',
   'pages.welcome.myProjects': 'My Projects',
   'pages.welcome.createProject': 'Create Project',
   'pages.welcome.sampleProject': 'Sample Project',
@@ -102,7 +102,7 @@ export default {
   'pages.toolBar.reDo': 'ReDo',
   'pages.toolBar.save': 'Save',
   'pages.toolBar.autoSave':
-    "Annotation results are saved automatically in this type of project, you don't need to click save.",
+    'Annotation results are saved automatically in this type of project, no need to click save.',
   'pages.toolBar.edit': 'Edit',
   'pages.toolBar.clearMark': 'ClearMark',
   'pages.toolBar.interactor': 'Interactor',
@@ -121,6 +121,6 @@ export default {
   'pages.Maps.boundary': 'Boundary',
   'pages.Maps.remoteSensing': 'Remote Sensing',
   'pages.Maps.grids': 'Grids',
-  'pages.ProjectDetail.taskNot': 'The task category does not exist in the URL',
-  'pages.ProjectDetail.taskCtg': 'Invalid task category: ',
+  'pages.ProjectDetail.noTaskCategory': 'Task category not present in URL',
+  'pages.ProjectDetail.invalidTaskCategory': 'Invalid task category: ',
 };

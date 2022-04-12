@@ -5,7 +5,7 @@ import styles from './index.less';
 import { Button } from 'antd';
 import { history, useIntl } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, camel2snake } from '@/services/api';
+import { createInfo, camel2snake } from '@/services/utils';
 import type { Project } from '@/services/models/Project';
 import { ProjectUtils } from '@/services/utils';
 

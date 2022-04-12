@@ -3,27 +3,27 @@ import { message } from 'antd';
 import { history, useIntl } from 'umi';
 import PPCreater from '@/components/PPCreater';
 import PPContainer from '@/components/PPContainer';
-import { createInfo } from '@/services/api';
 import serviceUtils from '@/services/serviceUtils';
-import { snake2camel } from '@/services/utils';
+import { createInfo, snake2camel } from '@/services/utils';
 
 const Project: React.FC = () => {
-  const taskNot = useIntl().formatMessage({ id: 'pages.ProjectDetail.taskNot' });
+  const noTaskCategory = useIntl().formatMessage({ id: 'pages.ProjectDetail.noTaskCategory' });
+  const invalidTaskCategory = useIntl().formatMessage({
+    id: 'pages.ProjectDetail.invalidTaskCategory',
+  });
 
   // 1. get taskCategory and ensure exist + valid
   const taskCategory = snake2camel(serviceUtils.getQueryVariable('taskCategory'));
-  const taskCtg = useIntl().formatMessage(
-    { id: 'pages.ProjectDetail.taskCtg' },
-    { category: taskCategory },
-  );
 
   if (!taskCategory) {
-    message.error(taskNot);
+    message.error(noTaskCategory);
     history.push('/');
+    return null;
   }
   if (!(taskCategory in createInfo)) {
-    message.error(taskCtg);
+    message.error(invalidTaskCategory + ' ' + taskCategory);
     history.push('/');
+    return null;
   }
   return (
     <PPContainer>
