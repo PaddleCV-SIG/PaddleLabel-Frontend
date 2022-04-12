@@ -24,7 +24,7 @@ export interface Label {
    * @type {number}
    * @memberof Label
    */
-  labelId: number;
+  labelId?: number;
   /**
    *
    * @type {number}
@@ -78,7 +78,7 @@ export function LabelFromJSONTyped(json: any, ignoreDiscriminator: boolean): Lab
     return json;
   }
   return {
-    labelId: json['label_id'],
+    labelId: !exists(json, 'label_id') ? undefined : json['label_id'],
     projectId: !exists(json, 'project_id') ? undefined : json['project_id'],
     name: json['name'],
     color: !exists(json, 'color') ? undefined : json['color'],

@@ -1,48 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Space } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 import PPContainer from '@/components/PPContainer';
 import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
 import PPTable from '@/components/PPTable';
 import PPButton from '@/components/PPButton';
-import CreateButton from '@/components/CreatButton'; // TODO: start with pp?
+import PPCreateButton from '@/components/PPCreatButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { history, useIntl } from 'umi';
-import type { Project } from '@/services';
-import serviceUtils from '@/services/serviceUtils';
-
-import { projectApi } from '@/services/api';
-
 import { toDict, ProjectUtils } from '@/services/utils';
-
-export const PROJECT_INFO_KEY = 'projectInfo';
-export const refreshProject = async (id?: string) => {
-  const projectId = id == undefined ? serviceUtils.getQueryVariable('projectId') : id;
-  if (!projectId) {
-    message.error("projectId isn't passed in nor present in url!");
-    history.push('/');
-    return;
-  }
-  const projectInfo = localStorage.getItem(PROJECT_INFO_KEY);
-  if (projectInfo) {
-    return JSON.parse(projectInfo);
-  }
-
-  const res = await projectApi.get(projectId);
-  if (!res) {
-    message.error(`Cannot find project: ${projectId}!`);
-    history.push('/');
-    return;
-  }
-  localStorage.setItem(PROJECT_INFO_KEY, JSON.stringify(res));
-  return res;
-};
+import type { ColumnsType } from 'antd/es/table';
+import type { Project } from '@/services';
 
 const Projects: React.FC = () => {
   const edit = useIntl().formatMessage({ id: 'pages.welcome.edit' });
   const label = useIntl().formatMessage({ id: 'pages.welcome.label' });
-  const deleted = useIntl().formatMessage({ id: 'pages.welcome.deleted' });
+  const remove = useIntl().formatMessage({ id: 'pages.welcome.remove' });
   const myProjects = useIntl().formatMessage({ id: 'pages.welcome.myProjects' });
   const createProject = useIntl().formatMessage({ id: 'pages.welcome.createProject' });
 
@@ -101,7 +74,7 @@ const Projects: React.FC = () => {
             color={'rgba(207,63,0,1)'}
             onClick={() => projects.remove(project)}
           >
-            {deleted}
+            {remove}
           </PPButton>
         </Space>
       ),
@@ -110,18 +83,18 @@ const Projects: React.FC = () => {
 
   // if found no project, return create project button
   // TODO: beautify frontend
-  if (!projects.all)
+  if (!projects.all?.length)
     return (
       <Row style={{ marginTop: 20 }}>
         <Col span={24}>
           <PPBlock title={myProjects}>
-            <CreateButton
+            <PPCreateButton
               onClick={() => {
                 history.push('/project_creation');
               }}
             >
               {createProject}
-            </CreateButton>
+            </PPCreateButton>
           </PPBlock>
         </Col>
       </Row>
@@ -160,13 +133,13 @@ const Welcome: React.FC = () => {
     <PPContainer>
       <Row gutter={[20, 20]}>
         <Col span={24}>
-          <CreateButton
+          <PPCreateButton
             onClick={() => {
               history.push('/project_creation');
             }}
           >
             {createProject}
-          </CreateButton>
+          </PPCreateButton>
         </Col>
       </Row>
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>

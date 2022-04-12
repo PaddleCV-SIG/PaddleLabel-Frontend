@@ -68,7 +68,7 @@ export default {
 
   'pages.welcome.edit': '编辑',
   'pages.welcome.label': '标注',
-  'pages.welcome.deleted': '删除',
+  'pages.welcome.remove': '删除',
   'pages.welcome.myProjects': '我的项目',
   'pages.welcome.createProject': '创建项目',
   'pages.welcome.sampleProject': '项目样例',

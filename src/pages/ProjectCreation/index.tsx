@@ -4,7 +4,7 @@ import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
 import PPContainer from '@/components/PPContainer';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { createInfo } from '@/services/api';
+import { createInfo } from '@/services/utils';
 
 const Project: React.FC = () => {
   function createButtons() {
@@ -15,10 +15,10 @@ const Project: React.FC = () => {
           <PPCard
             height={360}
             width={310}
-            imgSrc={info['avatar']}
+            imgSrc={info.avatar}
             href={'/project_detail?taskCategory=' + taskCategory}
           >
-            {info['name']}
+            {info.name}
           </PPCard>
         </PPOverlapCol>,
       );

@@ -74,7 +74,8 @@
     "react-konva": "^17.0.2-5",
     "react-leaflet": "2.8.0",
     "umi": "^3.5.0",
-    "use-image": "^1.0.8"
+    "use-image": "^1.0.8",
+    "yarn": "^1.22.18"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.1.0",

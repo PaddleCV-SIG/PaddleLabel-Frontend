@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove this
 
 import { message } from 'antd';
-import { history } from 'umi';
-
 import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services';
 import { ProjectApi, TaskApi, DataApi, AnnotationApi, LabelApi } from '@/services';
@@ -23,6 +21,30 @@ const labelApi = new LabelApi(config);
 export type UseStateType = <S>(initialState?: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
 export type UseEffectType = (effect: EffectCallback, deps?: DependencyList | undefined) => void;
 
+export const createInfo = {
+  classification: {
+    name: 'Image Classification',
+    avatar: './pics/classification.jpg',
+    id: 1,
+  },
+  detection: { name: 'Detection', avatar: './pics/object_detection.jpg', id: 2 },
+  semanticSegmentation: {
+    name: 'Semantic Segmentation',
+    avatar: './pics/semantic_segmentation.jpg',
+    id: 3,
+  },
+  instanceSegmentation: {
+    name: 'Instance Segmentation',
+    avatar: './pics/instance_segmentation.jpg',
+    id: 4,
+  },
+  keypointDetection: {
+    name: 'Keypoint Detection',
+    avatar: './pics/keypoint_detection.jpg',
+    id: 5,
+  },
+};
+
 // TODO: all should default to undefined or []
 // TODO: check create for missing xxId
 
@@ -38,6 +60,11 @@ export function snake2camel(name: string) {
     .toLowerCase()
     .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''));
   return name;
+}
+
+export function camel2snake(name: string) {
+  if (!name) return name;
+  return name.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 }
 
 /*
@@ -523,7 +550,10 @@ function exportDataset(projectId, exportDir) {
       serviceUtils.parseError(err, message);
     });
 }
-async function splitDataset(projectId, props: { train: number; validation: number; test: number }) {
+async function splitDataset(
+  projectId: number,
+  props: { train: number; val: number; test: number },
+) {
   console.log('split param', props);
 
   return projectApi

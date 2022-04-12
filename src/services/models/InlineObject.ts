@@ -30,7 +30,7 @@ export interface InlineObject {
    * @type {number}
    * @memberof InlineObject
    */
-  validation?: number;
+  val?: number;
   /**
    *
    * @type {number}
@@ -49,7 +49,7 @@ export function InlineObjectFromJSONTyped(json: any, ignoreDiscriminator: boolea
   }
   return {
     train: !exists(json, 'train') ? undefined : json['train'],
-    validation: !exists(json, 'validation') ? undefined : json['validation'],
+    val: !exists(json, 'val') ? undefined : json['val'],
     test: !exists(json, 'test') ? undefined : json['test'],
   };
 }
@@ -63,7 +63,7 @@ export function InlineObjectToJSON(value?: InlineObject | null): any {
   }
   return {
     train: value.train,
-    validation: value.validation,
+    val: value.val,
     test: value.test,
   };
 }

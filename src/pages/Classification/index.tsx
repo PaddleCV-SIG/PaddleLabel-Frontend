@@ -35,6 +35,7 @@ const Page: React.FC = () => {
   const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
   const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
   const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
+  const autoSave = useIntl().formatMessage({ id: 'pages.toolBar.autoSave' });
   const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
   const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
 
@@ -81,8 +82,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
           onClick={() => {
-            // Classification tasks save automatically
-            message.success('Save Success');
+            message.success(autoSave);
           }}
         >
           {save}
