@@ -1,6 +1,6 @@
 {
   "/PP-Label-Frontend/umi.css": "/PP-Label-Frontend/umi.72805aeb.css",
-  "/PP-Label-Frontend/umi.js": "/PP-Label-Frontend/umi.fb594286.js",
+  "/PP-Label-Frontend/umi.js": "/PP-Label-Frontend/umi.1871be4f.js",
   "/PP-Label-Frontend/t__plugin-layout__Layout.css": "/PP-Label-Frontend/t__plugin-layout__Layout.8d307a99.chunk.css",
   "/PP-Label-Frontend/t__plugin-layout__Layout.js": "/PP-Label-Frontend/t__plugin-layout__Layout.19df8bc4.async.js",
   "/PP-Label-Frontend/p__user__Login.css": "/PP-Label-Frontend/p__user__Login.e595218c.chunk.css",
@@ -51,8 +51,8 @@
   "/PP-Label-Frontend/694.e2705309.chunk.css": "/PP-Label-Frontend/694.e2705309.chunk.css",
   "/PP-Label-Frontend/694.1bb3e033.async.js": "/PP-Label-Frontend/694.1bb3e033.async.js",
   "/PP-Label-Frontend/727.1b8f35b1.async.js": "/PP-Label-Frontend/727.1b8f35b1.async.js",
-  "/PP-Label-Frontend/507.9946050c.async.js": "/PP-Label-Frontend/507.9946050c.async.js",
-  "/PP-Label-Frontend/813.81c01c4a.async.js": "/PP-Label-Frontend/813.81c01c4a.async.js",
+  "/PP-Label-Frontend/507.68088146.async.js": "/PP-Label-Frontend/507.68088146.async.js",
+  "/PP-Label-Frontend/813.aaad9b72.async.js": "/PP-Label-Frontend/813.aaad9b72.async.js",
   "/PP-Label-Frontend/pics/basketball.jpg": "/PP-Label-Frontend/pics/basketball.jpg",
   "/PP-Label-Frontend/pics/illustration.jpg": "/PP-Label-Frontend/pics/illustration.jpg",
   "/PP-Label-Frontend/pics/background.png": "/PP-Label-Frontend/pics/background.png",
@@ -90,6 +90,7 @@
   "/PP-Label-Frontend/pro_icon.svg": "/PP-Label-Frontend/pro_icon.svg",
   "/PP-Label-Frontend/pics/buttons/intelligent_interaction.png": "/PP-Label-Frontend/pics/buttons/intelligent_interaction.png",
   "/PP-Label-Frontend/assets/images/marker-shadow.png": "/PP-Label-Frontend/assets/images/marker-shadow.png",
+  "/PP-Label-Frontend/pics/32_23.jpg": "/PP-Label-Frontend/pics/32_23.jpg",
   "/PP-Label-Frontend/pics/buttons/next.png": "/PP-Label-Frontend/pics/buttons/next.png",
   "/PP-Label-Frontend/pics/buttons/prev.png": "/PP-Label-Frontend/pics/buttons/prev.png",
   "/PP-Label-Frontend/pics/buttons/round_rubber.png": "/PP-Label-Frontend/pics/buttons/round_rubber.png",
@@ -115,5 +116,6 @@
   "/PP-Label-Frontend/pics/buttons/save.png": "/PP-Label-Frontend/pics/buttons/save.png",
   "/PP-Label-Frontend/pics/buttons/rectangle.png": "/PP-Label-Frontend/pics/buttons/rectangle.png",
   "/PP-Label-Frontend/pics/buttons/data_division.png": "/PP-Label-Frontend/pics/buttons/data_division.png",
-  "/PP-Label-Frontend/CNAME": "/PP-Label-Frontend/CNAME"
+  "/PP-Label-Frontend/CNAME": "/PP-Label-Frontend/CNAME",
+  "/PP-Label-Frontend/test-10.bin": "/PP-Label-Frontend/test-10.bin"
 }
