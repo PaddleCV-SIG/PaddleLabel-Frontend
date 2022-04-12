@@ -110,7 +110,7 @@ const Projects: React.FC = () => {
 
   // if found no project, return create project button
   // TODO: beautify frontend
-  if (!projects.all)
+  if (!projects.all?.length)
     return (
       <Row style={{ marginTop: 20 }}>
         <Col span={24}>

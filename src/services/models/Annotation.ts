@@ -32,6 +32,12 @@ export interface Annotation {
    * @type {number}
    * @memberof Annotation
    */
+  readonly frontendId?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof Annotation
+   */
   taskId?: number;
   /**
    *
@@ -93,6 +99,7 @@ export function AnnotationFromJSONTyped(json: any, ignoreDiscriminator: boolean)
   }
   return {
     annotationId: !exists(json, 'annotation_id') ? undefined : json['annotation_id'],
+    frontendId: !exists(json, 'frontend_id') ? undefined : json['frontend_id'],
     taskId: !exists(json, 'task_id') ? undefined : json['task_id'],
     labelId: !exists(json, 'label_id') ? undefined : json['label_id'],
     label: !exists(json, 'label') ? undefined : LabelFromJSON(json['label']),

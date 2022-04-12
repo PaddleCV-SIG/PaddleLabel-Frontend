@@ -2,6 +2,9 @@
 
 # dependencies
 **/node_modules
+package-lock.json
+yarn.lock
+
 # roadhog-api-doc ignore
 /src/utils/request-temp.js
 _roadhog-api-doc
