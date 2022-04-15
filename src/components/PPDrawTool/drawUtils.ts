@@ -1,20 +1,20 @@
 import type { Annotation } from '@/models/Annotation';
-import { ToolType } from '@/models/ToolType';
-import { Label } from '@/models/Label';
-import { Stage as StageType } from 'konva/lib/Stage';
-import { Layer as LayerType } from 'konva/lib/Layer';
-import Konva from 'konva';
-import { ReactElement } from 'react';
+import type { ToolType } from '@/models/ToolType';
+import type { Label } from '@/models/Label';
+import type { Stage as StageType } from 'konva/lib/Stage';
+import type { Layer as LayerType } from 'konva/lib/Layer';
+import type Konva from 'konva';
+import type { ReactElement } from 'react';
 
-export type PPRenderFuncProps<T = any> = {
-  annotation: Annotation<T>;
-  onDrag: (anntation: Annotation<T>) => void;
+export type PPRenderFuncProps = {
+  annotation: Annotation;
+  onDrag: (anntation: Annotation) => void;
   onDragEnd: () => void;
   scale: number;
   currentTool: ToolType;
-  onSelect: (anntation: Annotation<T>) => void;
+  onSelect: (anntation: Annotation) => void;
   stageRef: React.RefObject<StageType>;
-  currentAnnotation?: Annotation<T>;
+  currentAnnotation?: Annotation;
   transparency: number;
   canvasRef: React.RefObject<HTMLCanvasElement>;
 };
@@ -25,11 +25,12 @@ export type PPDrawToolProps<T = any> = {
   scale: number;
   dataId: number;
   currentTool?: ToolType;
-  annotations?: Annotation<T>[];
-  currentAnnotation?: Annotation<T>;
-  onAnnotationAdd: (annotation: Annotation<T>) => void;
-  onAnnotationModify: (annotation: Annotation<T>) => void;
+  annotations?: Annotation[];
+  currentAnnotation?: Annotation;
+  onAnnotationAdd: (annotation: Annotation) => void;
+  onAnnotationModify: (annotation: Annotation) => void;
   onMouseUp: () => void;
+  frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
 };
 
 export type EvtProps = {
@@ -46,18 +47,10 @@ export type PPDrawToolRet<T = any> = {
   onMouseDown: EvtType;
   onMouseMove: EvtType;
   onMouseUp: EvtType;
-  createElementsFunc: (props: PPRenderFuncProps<T>) => ReactElement;
-  colorAsFrontendId: (
-    canvasRef: React.RefObject<HTMLCanvasElement>,
-    layerRef: React.RefObject<LayerType>,
-  ) => void;
-  colorAsLabelColor: (
-    canvasRef: React.RefObject<HTMLCanvasElement>,
-    layerRef: React.RefObject<LayerType>,
-  ) => void;
+  drawAnnotation: (props: PPRenderFuncProps) => ReactElement;
 };
 
-export function getMaxId(annotations?: Annotation<any[]>[]): any {
+export function getMaxId(annotations?: Annotation[]): any {
   let maxId = 0;
   if (!annotations) return maxId;
   for (const annotation of annotations) {

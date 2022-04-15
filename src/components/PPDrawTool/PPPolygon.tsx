@@ -194,6 +194,7 @@ export default function (props: PPDrawToolProps<PPPolygonType[]>): PPDrawToolRet
     onMouseDown: OnMouseDown,
     onMouseMove: () => {},
     onMouseUp: OnMouseUp,
-    createElementsFunc: drawPolygon,
+    drawAnnotation: drawPolygon,
+    drawLineInData: drawLineInData,
   };
 }

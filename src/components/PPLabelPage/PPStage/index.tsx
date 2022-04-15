@@ -1,21 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Annotation } from '@/models/Annotation';
-import { ToolType } from '@/models/ToolType';
-import { Label } from '@/models/Label';
+import type { Annotation } from '@/models/Annotation';
+import type { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
-import { Stage as StageType } from 'konva/lib/Stage';
-import { Layer as LayerType } from 'konva/lib/Layer';
-import React, { Props, ReactElement, useEffect, useRef, useState } from 'react';
-import { Layer, Stage, Image, Group } from 'react-konva';
+import type { Stage as StageType } from 'konva/lib/Stage';
+import type { Layer as LayerType } from 'konva/lib/Layer';
+import React, { useEffect, useRef, useState } from 'react';
+import { Layer, Stage, Image } from 'react-konva';
 import useImage from 'use-image';
-import PPBrush from '@/components/PPDrawTool/PPBrush';
-import {
-  EvtProps,
-  PPDrawToolRet,
-  PPRenderFuncProps,
-  rgbToHex,
-  RubberAnno,
-} from '@/components/PPDrawTool/drawUtils';
+import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/drawUtils';
 
 // Mock Data
 const imgSrc = './pics/32_23.jpg';
@@ -37,15 +29,16 @@ function getPointer(toolType: ToolType) {
 export type PPStageProps = {
   imgSrc?: string;
   scale: number;
-  annotations?: Annotation<any>[];
+  annotations?: Annotation[];
   currentTool: ToolType;
-  currentAnnotation?: Annotation<any>;
-  setCurrentAnnotation: (anntation: Annotation<any>) => void;
-  onAnnotationAdd: (anntation: Annotation<any>) => void;
-  onAnnotationModify: (annotation: Annotation<any>) => void;
+  currentAnnotation?: Annotation;
+  setCurrentAnnotation: (anntation: Annotation) => void;
+  onAnnotationAdd: (anntation: Annotation) => void;
+  onAnnotationModify: (annotation: Annotation) => void;
   onAnnotationModifyComplete: () => void;
   transparency: number;
   drawTool: PPDrawToolRet;
+  frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
@@ -74,25 +67,6 @@ const Component: React.FC<PPStageProps> = (props) => {
       setCanvasHeight(parent.clientHeight);
     }
   }
-
-  // Try to decode binfile
-  useEffect(() => {
-    console.log('try to decode');
-    const oReq = new XMLHttpRequest();
-    oReq.open('GET', '/test-10.bin', true);
-    oReq.responseType = 'arraybuffer';
-    oReq.onload = function (oEvent) {
-      console.log('onload');
-      const arraybuffer = oReq.response;
-      const barray = new Uint8Array(arraybuffer);
-      console.log(arraybuffer, barray);
-      for (const byte of barray) {
-        console.log(byte);
-      }
-    };
-
-    oReq.send();
-  }, []);
 
   useEffect(() => {
     // Listen to window resize event
@@ -162,56 +136,18 @@ const Component: React.FC<PPStageProps> = (props) => {
       canvasRef: canvasRef,
     };
     // Draw normal elements
+    // Clear canvas
+    const ctx = canvasRef.current?.getContext('2d');
+    if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     for (const annotation of props.annotations) {
       if (!annotation) continue;
       param.annotation = annotation;
-      const shape = props.drawTool.createElementsFunc(param);
+      const shape = props.drawTool.drawAnnotation(param);
       shapes.push(shape);
     }
+    // Re-draw layer
+    layerRef.current?.batchDraw();
   }
-
-  function dumpBinary() {
-    const ctx = canvasRef.current?.getContext('2d');
-    if (!ctx) return;
-
-    // const pixelRatio = window.devicePixelRatio * 2;
-    // ctx.scale(pixelRatio, pixelRatio);
-    props.drawTool.colorAsFrontendId(canvasRef, layerRef);
-    // const data = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height).data;
-    // console.log('ctx getImageData.data:', data);
-    // const barray = new Uint8Array(data.length / 4);
-    // for (let i = 0; i < data.length; i += 4) {
-    //   // const frontendIdStr = parseInt(
-    //   //   rgbToHex(data[i], data[i + 1], data[i + 2]).replace('#', ''),
-    //   //   16,
-    //   // ).toString(10);
-    //   // const frontendId = Math.round(parseInt(frontendIdStr, 10) * 0.01);
-    //   if (data[i]) console.log('data[i]:', data[i]);
-    //   if (data[i + 1]) console.log('data[i + 1]', data[i + 1]);
-    //   if (data[i + 2]) console.log('data[i + 2]', data[i + 2]);
-    //   if (data[i + 3]) console.log('data[i + 3]', data[i + 3]);
-    //   barray[i / 4] = data[i + 2];
-    // }
-    // const blob = new Blob([barray], { type: 'application/octet-stream' });
-    // const elem = window.document.createElement('a');
-    // elem.href = window.URL.createObjectURL(blob);
-    // // elem.href = canvasRef.current.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-    // elem.download = 'test.bmp';
-    // document.body.appendChild(elem);
-    // elem.click();
-    // document.body.removeChild(elem);
-    // props.drawTool.colorAsLabelColor(canvasRef, layerRef);
-  }
-
-  useEffect(() => {
-    const highestId = window.setTimeout(() => {
-      for (let i = highestId; i >= 0; i--) {
-        window.clearInterval(i);
-      }
-    }, 0);
-    setTimeout(dumpBinary, 10000);
-    console.log(`start dump`);
-  });
 
   const draggable = props.currentTool == 'mover';
 

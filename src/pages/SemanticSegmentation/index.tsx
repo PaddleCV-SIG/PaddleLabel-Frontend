@@ -8,9 +8,9 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import { useIntl } from 'umi';
-import { Annotation } from '@/models/Annotation';
-import { ToolType } from '@/models/ToolType';
-import { Label } from '@/models/Label';
+import type { Annotation } from '@/models/Annotation';
+import type { ToolType } from '@/models/ToolType';
+import type { Label } from '@/models/Label';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import PPDivideDataModal from '@/components/PPLabelPage/PPDivideDataModal';
 import PPExportModal from '@/components/PPLabelPage/PPExportModal';
@@ -22,8 +22,8 @@ export const MOST_HISTORY_STEPS = 40;
 export type HistoryType = {
   index: number;
   items: {
-    currentAnnotation?: Annotation<any>;
-    annotations: Annotation<any>[];
+    currentAnnotation?: Annotation;
+    annotations: Annotation[];
   }[];
 };
 
@@ -34,8 +34,9 @@ const Page: React.FC = () => {
 
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [currentLabel, setCurrentLabel] = useState<Label>();
-  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation<any>>();
-  const [annotations, setAnnotations] = useState<Annotation<any>[]>([]);
+  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
+  const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [frontendId, setFrontendId] = useState<number>(0);
   const [brushSize, setBrushSize] = useState(1);
   const [transparency, setTransparency] = useState(60);
   const [scale, setScaleRaw] = useState(10);
@@ -45,7 +46,7 @@ const Page: React.FC = () => {
     else setScaleRaw(size);
   };
 
-  const setCurrentAnnotation = (anno?: Annotation<any>) => {
+  const setCurrentAnnotation = (anno?: Annotation) => {
     setCurrentAnnotationRaw(anno);
     if (anno?.label) setCurrentLabel(anno.label);
   };
@@ -54,8 +55,8 @@ const Page: React.FC = () => {
     initHistory();
   }, []);
 
-  const onAnnotationModify = (annotation: Annotation<any>) => {
-    const newAnnos: Annotation<any>[] = [];
+  const onAnnotationModify = (annotation: Annotation) => {
+    const newAnnos: Annotation[] = [];
     for (let i = 0; i < annotations.length; i++) {
       if (annotations[i].frontendId == annotation.frontendId) {
         newAnnos.push(annotation);
@@ -75,7 +76,7 @@ const Page: React.FC = () => {
     currentTool: currentTool,
     annotations: annotations,
     currentAnnotation: currentAnnotation,
-    onAnnotationAdd: (annotation: Annotation<any>) => {
+    onAnnotationAdd: (annotation: Annotation) => {
       const newAnnos = annotations.concat([annotation]);
       setAnnotations(newAnnos);
       if (!currentAnnotation) setCurrentAnnotation(annotation);
@@ -88,25 +89,6 @@ const Page: React.FC = () => {
   const brush = PPBrush(drawToolParam);
   const polygon = PPPolygon(drawToolParam);
   const drawTool = currentTool == 'polygon' ? polygon : brush;
-
-  const polygonBtn = useIntl().formatMessage({ id: 'pages.toolBar.polygon' });
-  const brushBtn = useIntl().formatMessage({ id: 'pages.toolBar.brush' });
-  const rubber = useIntl().formatMessage({ id: 'pages.toolBar.rubber' });
-  const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
-  const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
-  const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
-  const unDo = useIntl().formatMessage({ id: 'pages.toolBar.unDo' });
-  const reDo = useIntl().formatMessage({ id: 'pages.toolBar.reDo' });
-  const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
-  const edit = useIntl().formatMessage({ id: 'pages.toolBar.edit' });
-  const clearMark = useIntl().formatMessage({ id: 'pages.toolBar.clearMark' });
-  const interactor = useIntl().formatMessage({ id: 'pages.toolBar.interactor' });
-  const segmentThreshold = useIntl().formatMessage({ id: 'pages.toolBar.segmentThreshold' });
-  const visualRadius = useIntl().formatMessage({ id: 'pages.toolBar.visualRadius' });
-  const determineOutline = useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' });
-  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
-  const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
-
   return (
     <PPLabelPageContainer className="segment">
       <PPToolBar>
@@ -118,7 +100,7 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
           }}
         >
-          {polygonBtn}
+          {useIntl().formatMessage({ id: 'pages.toolBar.polygon' })}
         </PPToolBarButton>
         <PPToolBarButton
           active={currentTool == 'editor'}
@@ -128,7 +110,7 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
           }}
         >
-          {edit}
+          {useIntl().formatMessage({ id: 'pages.toolBar.edit' })}
         </PPToolBarButton>
         <PPSetButton
           imgSrc="./pics/buttons/brush.png"
@@ -144,7 +126,7 @@ const Page: React.FC = () => {
             setBrushSize(newBrushSize);
           }}
         >
-          {brushBtn}
+          {useIntl().formatMessage({ id: 'pages.toolBar.brush' })}
         </PPSetButton>
         <PPSetButton
           size={brushSize}
@@ -160,7 +142,7 @@ const Page: React.FC = () => {
           }}
           imgSrc="./pics/buttons/rubber.png"
         >
-          {rubber}
+          {useIntl().formatMessage({ id: 'pages.toolBar.rubber' })}
         </PPSetButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
@@ -168,7 +150,7 @@ const Page: React.FC = () => {
             setScale(scale + 0.1);
           }}
         >
-          {zoomIn}
+          {useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' })}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
@@ -176,9 +158,11 @@ const Page: React.FC = () => {
             setScale(scale - 0.1);
           }}
         >
-          {zoomOut}
+          {useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' })}
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/save.png">{save}</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/save.png">
+          {useIntl().formatMessage({ id: 'pages.toolBar.save' })}
+        </PPToolBarButton>
         <PPToolBarButton
           active={currentTool == 'mover'}
           imgSrc="./pics/buttons/move.png"
@@ -186,7 +170,7 @@ const Page: React.FC = () => {
             setCurrentTool('mover');
           }}
         >
-          {move}
+          {useIntl().formatMessage({ id: 'pages.toolBar.move' })}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
@@ -198,7 +182,7 @@ const Page: React.FC = () => {
             }
           }}
         >
-          {unDo}
+          {useIntl().formatMessage({ id: 'pages.toolBar.unDo' })}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
@@ -210,9 +194,11 @@ const Page: React.FC = () => {
             }
           }}
         >
-          {reDo}
+          {useIntl().formatMessage({ id: 'pages.toolBar.reDo' })}
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">{clearMark}</PPToolBarButton>
+        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">
+          {useIntl().formatMessage({ id: 'pages.toolBar.clearMark' })}
+        </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
         <div className="draw">
@@ -226,6 +212,7 @@ const Page: React.FC = () => {
             onAnnotationModifyComplete={() => {
               recordHistory({ annos: annotations, currAnno: currentAnnotation });
             }}
+            frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
             imgSrc={undefined}
             transparency={transparency}
             onAnnotationAdd={(annotation) => {
@@ -276,10 +263,10 @@ const Page: React.FC = () => {
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
-          {interactor}
+          {useIntl().formatMessage({ id: 'pages.toolBar.interactor' })}
         </PPToolBarButton>
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
-          {segmentThreshold}
+          {useIntl().formatMessage({ id: 'pages.toolBar.segmentThreshold' })}
         </PPSetButton>
         <PPSetButton
           imgSrc="./pics/buttons/alpha.png"
@@ -294,7 +281,7 @@ const Page: React.FC = () => {
           {useIntl().formatMessage({ id: 'pages.toolBar.transparency' })}
         </PPSetButton>
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
-          {visualRadius}
+          {useIntl().formatMessage({ id: 'pages.toolBar.visualRadius' })}
         </PPSetButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
@@ -302,7 +289,7 @@ const Page: React.FC = () => {
             setDivideModalVisible(true);
           }}
         >
-          {divideData}
+          {useIntl().formatMessage({ id: 'pages.toolBar.divideData' })}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/export.png"
@@ -310,7 +297,7 @@ const Page: React.FC = () => {
             setExportModalVisible(true);
           }}
         >
-          {exportBtn}
+          {useIntl().formatMessage({ id: 'pages.toolBar.export' })}
         </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
@@ -323,7 +310,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
             }}
           >
-            {determineOutline}
+            {useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' })}
           </Button>
         </div>
         <PPLabelList
@@ -358,7 +345,7 @@ const Page: React.FC = () => {
           }}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
-          onAnnotationDelete={(annotation: Annotation<any>) => {
+          onAnnotationDelete={(annotation: Annotation) => {
             setAnnotations(annotations.filter((x) => x.frontendId != annotation.frontendId));
             setCurrentAnnotation(undefined);
           }}
