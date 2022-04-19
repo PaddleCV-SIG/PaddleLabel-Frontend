@@ -13,11 +13,12 @@ import type { ColumnsType } from 'antd/es/table';
 import type { Project } from '@/services';
 
 const Projects: React.FC = () => {
-  const edit = useIntl().formatMessage({ id: 'pages.welcome.edit' });
-  const label = useIntl().formatMessage({ id: 'pages.welcome.label' });
-  const remove = useIntl().formatMessage({ id: 'pages.welcome.remove' });
-  const myProjects = useIntl().formatMessage({ id: 'pages.welcome.myProjects' });
-  const createProject = useIntl().formatMessage({ id: 'pages.welcome.createProject' });
+  const intl = useIntl();
+  const edit = intl.formatMessage({ id: 'pages.welcome.edit' });
+  const label = intl.formatMessage({ id: 'pages.welcome.label' });
+  const remove = intl.formatMessage({ id: 'pages.welcome.remove' });
+  const myProjects = intl.formatMessage({ id: 'pages.welcome.myProjects' });
+  const createProject = intl.formatMessage({ id: 'pages.welcome.createProject' });
 
   console.log('render projects');
   const projects = ProjectUtils(useState);
@@ -112,22 +113,23 @@ const Projects: React.FC = () => {
 };
 
 const Welcome: React.FC = () => {
-  const createProject = useIntl().formatMessage({ id: 'pages.welcome.createProject' });
-  const sampleProject = useIntl().formatMessage({ id: 'pages.welcome.sampleProject' });
-  const imageClassification = useIntl().formatMessage({ id: 'pages.welcome.imageClassification' });
-  const objectDetection = useIntl().formatMessage({ id: 'pages.welcome.objectDetection' });
-  const instanceSegmentation = useIntl().formatMessage({
+  const intl = useIntl();
+  const createProject = intl.formatMessage({ id: 'pages.welcome.createProject' });
+  const sampleProject = intl.formatMessage({ id: 'pages.welcome.sampleProject' });
+  const imageClassification = intl.formatMessage({ id: 'pages.welcome.imageClassification' });
+  const objectDetection = intl.formatMessage({ id: 'pages.welcome.objectDetection' });
+  const instanceSegmentation = intl.formatMessage({
     id: 'pages.welcome.instanceSegmentation',
   });
-  const semanticSegmentation = useIntl().formatMessage({
+  const semanticSegmentation = intl.formatMessage({
     id: 'pages.welcome.semanticSegmentation',
   });
-  const keypointDetection = useIntl().formatMessage({ id: 'pages.welcome.keypointDetection' });
-  const trainingKnowledge = useIntl().formatMessage({ id: 'pages.welcome.trainingKnowledge' });
-  const paddleClas = useIntl().formatMessage({ id: 'pages.welcome.paddleClas' });
-  const paddleDet = useIntl().formatMessage({ id: 'pages.welcome.paddleDet' });
-  const paddleSeg = useIntl().formatMessage({ id: 'pages.welcome.paddleSeg' });
-  const paddleX = useIntl().formatMessage({ id: 'pages.welcome.paddleX' });
+  const keypointDetection = intl.formatMessage({ id: 'pages.welcome.keypointDetection' });
+  const trainingKnowledge = intl.formatMessage({ id: 'pages.welcome.trainingKnowledge' });
+  const paddleClas = intl.formatMessage({ id: 'pages.welcome.paddleClas' });
+  const paddleDet = intl.formatMessage({ id: 'pages.welcome.paddleDet' });
+  const paddleSeg = intl.formatMessage({ id: 'pages.welcome.paddleSeg' });
+  const paddleX = intl.formatMessage({ id: 'pages.welcome.paddleX' });
 
   return (
     <PPContainer>

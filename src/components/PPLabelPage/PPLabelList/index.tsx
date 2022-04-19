@@ -20,10 +20,11 @@ export type PPLabelListProps = {
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
-  const addLabel = useIntl().formatMessage({
+  const intl = useIntl();
+  const addLabel = intl.formatMessage({
     id: 'component.PPLabelList.addLabel',
   });
-  const labelList = useIntl().formatMessage({ id: 'component.PPLabelList.labelList' });
+  const labelList = intl.formatMessage({ id: 'component.PPLabelList.labelList' });
 
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
 

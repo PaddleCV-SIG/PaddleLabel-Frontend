@@ -29,18 +29,19 @@ const menu = (
   </Menu>
 );
 
-const component: React.FC<PPCDRGBSetting> = () => {
-  const r = useIntl().formatMessage({ id: 'component.PPRS.r' });
-  const g = useIntl().formatMessage({ id: 'component.PPRS.g' });
-  const b = useIntl().formatMessage({ id: 'component.PPRS.b' });
-  const dataInformation = useIntl().formatMessage({ id: 'component.PPRS.dataInformation' });
-  const fileName = useIntl().formatMessage({ id: 'component.PPRS.fileName' });
-  const row = useIntl().formatMessage({ id: 'component.PPRS.row' });
-  const column = useIntl().formatMessage({ id: 'component.PPRS.column' });
-  const bands = useIntl().formatMessage({ id: 'component.PPRS.bands' });
-  const dataType = useIntl().formatMessage({ id: 'component.PPRS.dataType' });
-  const EPSG = useIntl().formatMessage({ id: 'component.PPRS.EPSG' });
-  const unit = useIntl().formatMessage({ id: 'component.PPRS.unit' });
+const Component: React.FC<PPCDRGBSetting> = () => {
+  const intl = useIntl();
+  const r = intl.formatMessage({ id: 'component.PPRS.r' });
+  const g = intl.formatMessage({ id: 'component.PPRS.g' });
+  const b = intl.formatMessage({ id: 'component.PPRS.b' });
+  const dataInformation = intl.formatMessage({ id: 'component.PPRS.dataInformation' });
+  const fileName = intl.formatMessage({ id: 'component.PPRS.fileName' });
+  const row = intl.formatMessage({ id: 'component.PPRS.row' });
+  const column = intl.formatMessage({ id: 'component.PPRS.column' });
+  const bands = intl.formatMessage({ id: 'component.PPRS.bands' });
+  const dataType = intl.formatMessage({ id: 'component.PPRS.dataType' });
+  const EPSG = intl.formatMessage({ id: 'component.PPRS.EPSG' });
+  const unit = intl.formatMessage({ id: 'component.PPRS.unit' });
 
   return (
     <div>
@@ -120,4 +121,4 @@ const component: React.FC<PPCDRGBSetting> = () => {
     </div>
   );
 };
-export default component;
+export default Component;

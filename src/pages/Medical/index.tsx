@@ -9,6 +9,7 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import PPMedicalSetting from '@/components/PPMedical/PPMedicalSetting';
+import PPBrush from '@/components/PPDrawTool/PPBrush';
 import { useIntl } from 'umi';
 
 export type ToolType = 'polygon' | 'brush' | 'rubber' | 'mover' | undefined;
@@ -153,25 +154,26 @@ const Page: React.FC = () => {
 
   const dr = currentTool == 'polygon' ? polygon : brush;
 
-  const polygonBtn = useIntl().formatMessage({ id: 'pages.toolBar.polygon' });
-  const brushBtn = useIntl().formatMessage({ id: 'pages.toolBar.brush' });
-  const rubber = useIntl().formatMessage({ id: 'pages.toolBar.rubber' });
-  const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
-  const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
-  const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
-  const unDo = useIntl().formatMessage({ id: 'pages.toolBar.unDo' });
-  const reDo = useIntl().formatMessage({ id: 'pages.toolBar.reDo' });
-  const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
-  const edit = useIntl().formatMessage({ id: 'pages.toolBar.edit' });
-  const clearMark = useIntl().formatMessage({ id: 'pages.toolBar.clearMark' });
-  const interactor = useIntl().formatMessage({ id: 'pages.toolBar.interactor' });
-  const segmentThreshold = useIntl().formatMessage({ id: 'pages.toolBar.segmentThreshold' });
-  const transparency = useIntl().formatMessage({ id: 'pages.toolBar.transparency' });
-  const visualRadius = useIntl().formatMessage({ id: 'pages.toolBar.visualRadius' });
-  const determineOutline = useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' });
-  const medicalSetting = useIntl().formatMessage({ id: 'pages.toolBar.medicalSetting' });
-  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
-  const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
+  const intl = useIntl();
+  const polygonBtn = intl.formatMessage({ id: 'pages.toolBar.polygon' });
+  const brushBtn = intl.formatMessage({ id: 'pages.toolBar.brush' });
+  const rubber = intl.formatMessage({ id: 'pages.toolBar.rubber' });
+  const zoomIn = intl.formatMessage({ id: 'pages.toolBar.zoomIn' });
+  const zoomOut = intl.formatMessage({ id: 'pages.toolBar.zoomOut' });
+  const move = intl.formatMessage({ id: 'pages.toolBar.move' });
+  const unDo = intl.formatMessage({ id: 'pages.toolBar.unDo' });
+  const reDo = intl.formatMessage({ id: 'pages.toolBar.reDo' });
+  const save = intl.formatMessage({ id: 'pages.toolBar.save' });
+  const edit = intl.formatMessage({ id: 'pages.toolBar.edit' });
+  const clearMark = intl.formatMessage({ id: 'pages.toolBar.clearMark' });
+  const interactor = intl.formatMessage({ id: 'pages.toolBar.interactor' });
+  const segmentThreshold = intl.formatMessage({ id: 'pages.toolBar.segmentThreshold' });
+  const transparency = intl.formatMessage({ id: 'pages.toolBar.transparency' });
+  const visualRadius = intl.formatMessage({ id: 'pages.toolBar.visualRadius' });
+  const determineOutline = intl.formatMessage({ id: 'pages.toolBar.determineOutline' });
+  const medicalSetting = intl.formatMessage({ id: 'pages.toolBar.medicalSetting' });
+  const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
+  const exportBtn = intl.formatMessage({ id: 'pages.toolBar.export' });
 
   return (
     <PPLabelPageContainer className={styles.segment}>

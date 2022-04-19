@@ -7,8 +7,9 @@ import serviceUtils from '@/services/serviceUtils';
 import { createInfo, snake2camel } from '@/services/utils';
 
 const Project: React.FC = () => {
-  const noTaskCategory = useIntl().formatMessage({ id: 'pages.ProjectDetail.noTaskCategory' });
-  const invalidTaskCategory = useIntl().formatMessage({
+  const intl = useIntl();
+  const noTaskCategory = intl.formatMessage({ id: 'pages.ProjectDetail.noTaskCategory' });
+  const invalidTaskCategory = intl.formatMessage({
     id: 'pages.ProjectDetail.invalidTaskCategory',
   });
 

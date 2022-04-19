@@ -8,9 +8,10 @@ export type PPMedicalSettingProps = {
   wlValue?: number;
 };
 
-const component: React.FC<PPMedicalSettingProps> = (props) => {
-  const windowWidth = useIntl().formatMessage({ id: 'component.PPMedical.windowWidth' });
-  const windowLevel = useIntl().formatMessage({ id: 'component.PPMedical.windowLevel' });
+const Component: React.FC<PPMedicalSettingProps> = (props) => {
+  const intl = useIntl();
+  const windowWidth = intl.formatMessage({ id: 'component.PPMedical.windowWidth' });
+  const windowLevel = intl.formatMessage({ id: 'component.PPMedical.windowLevel' });
 
   return (
     <div>
@@ -45,4 +46,4 @@ const component: React.FC<PPMedicalSettingProps> = (props) => {
     </div>
   );
 };
-export default component;
+export default Component;

@@ -46,16 +46,17 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
   const projectId = serviceUtils.getQueryVariable('projectId');
   console.log('render ppcreater', props, projectId);
 
-  const projectName = useIntl().formatMessage({ id: 'component.PPCreater.projectName' });
-  const datasePath = useIntl().formatMessage({ id: 'component.PPCreater.datasePath' });
-  const description = useIntl().formatMessage({ id: 'component.PPCreater.description' });
-  const maxPoints = useIntl().formatMessage({ id: 'component.PPCreater.maxPoints' });
-  const annotationMode = useIntl().formatMessage({ id: 'component.PPCreater.annotationMode' });
-  const pixelMode = useIntl().formatMessage({ id: 'component.PPCreater.pixelMode' });
-  const polygonMode = useIntl().formatMessage({ id: 'component.PPCreater.polygonMode' });
-  const update = useIntl().formatMessage({ id: 'component.PPCreater.update' });
-  const create = useIntl().formatMessage({ id: 'component.PPCreater.create' });
-  const cancel = useIntl().formatMessage({ id: 'component.PPCreater.cancel' });
+  const intl = useIntl();
+  const projectName = intl.formatMessage({ id: 'component.PPCreater.projectName' });
+  const datasePath = intl.formatMessage({ id: 'component.PPCreater.datasePath' });
+  const description = intl.formatMessage({ id: 'component.PPCreater.description' });
+  const maxPoints = intl.formatMessage({ id: 'component.PPCreater.maxPoints' });
+  const annotationMode = intl.formatMessage({ id: 'component.PPCreater.annotationMode' });
+  const pixelMode = intl.formatMessage({ id: 'component.PPCreater.pixelMode' });
+  const polygonMode = intl.formatMessage({ id: 'component.PPCreater.polygonMode' });
+  const update = intl.formatMessage({ id: 'component.PPCreater.update' });
+  const create = intl.formatMessage({ id: 'component.PPCreater.create' });
+  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
 
   const saveProject = (values: any) => {
     if (!projectId) {

@@ -40,13 +40,14 @@ export type PPCardProps = {
 const PPSegMode: React.FC<PPCardProps> = (props) => {
   const [form] = Form.useForm();
 
-  const note = useIntl().formatMessage({ id: 'component.PPSegMode.note' });
-  const general = useIntl().formatMessage({ id: 'component.PPSegMode.general' });
-  const medical = useIntl().formatMessage({ id: 'component.PPSegMode.medical' });
-  const remoteSensing = useIntl().formatMessage({ id: 'component.PPSegMode.remoteSensing' });
-  const changeDetection = useIntl().formatMessage({ id: 'component.PPSegMode.changeDetection' });
-  const ok = useIntl().formatMessage({ id: 'component.PPSegMode.ok' });
-  const cancel = useIntl().formatMessage({ id: 'component.PPCreater.cancel' });
+  const intl = useIntl();
+  const note = intl.formatMessage({ id: 'component.PPSegMode.note' });
+  const general = intl.formatMessage({ id: 'component.PPSegMode.general' });
+  const medical = intl.formatMessage({ id: 'component.PPSegMode.medical' });
+  const remoteSensing = intl.formatMessage({ id: 'component.PPSegMode.remoteSensing' });
+  const changeDetection = intl.formatMessage({ id: 'component.PPSegMode.changeDetection' });
+  const ok = intl.formatMessage({ id: 'component.PPSegMode.ok' });
+  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
 
   return (
     <div className={styles.shadow} style={props.style}>

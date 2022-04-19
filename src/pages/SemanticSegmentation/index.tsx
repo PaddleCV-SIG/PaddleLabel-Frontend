@@ -86,6 +86,7 @@ const Page: React.FC = () => {
       recordHistory({ annos: annotations, currAnno: currentAnnotation });
     },
   };
+  const intl = useIntl();
   const brush = PPBrush(drawToolParam);
   const polygon = PPPolygon(drawToolParam);
   const drawTool = currentTool == 'polygon' ? polygon : brush;
@@ -100,7 +101,7 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.polygon' })}
+          {intl.formatMessage({ id: 'pages.toolBar.polygon' })}
         </PPToolBarButton>
         <PPToolBarButton
           active={currentTool == 'editor'}
@@ -110,7 +111,7 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.edit' })}
+          {intl.formatMessage({ id: 'pages.toolBar.edit' })}
         </PPToolBarButton>
         <PPSetButton
           imgSrc="./pics/buttons/brush.png"
@@ -126,7 +127,7 @@ const Page: React.FC = () => {
             setBrushSize(newBrushSize);
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.brush' })}
+          {intl.formatMessage({ id: 'pages.toolBar.brush' })}
         </PPSetButton>
         <PPSetButton
           size={brushSize}
@@ -142,7 +143,7 @@ const Page: React.FC = () => {
           }}
           imgSrc="./pics/buttons/rubber.png"
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.rubber' })}
+          {intl.formatMessage({ id: 'pages.toolBar.rubber' })}
         </PPSetButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
@@ -150,7 +151,7 @@ const Page: React.FC = () => {
             setScale(scale + 0.1);
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' })}
+          {intl.formatMessage({ id: 'pages.toolBar.zoomIn' })}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
@@ -158,10 +159,10 @@ const Page: React.FC = () => {
             setScale(scale - 0.1);
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' })}
+          {intl.formatMessage({ id: 'pages.toolBar.zoomOut' })}
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/save.png">
-          {useIntl().formatMessage({ id: 'pages.toolBar.save' })}
+          {intl.formatMessage({ id: 'pages.toolBar.save' })}
         </PPToolBarButton>
         <PPToolBarButton
           active={currentTool == 'mover'}
@@ -170,7 +171,7 @@ const Page: React.FC = () => {
             setCurrentTool('mover');
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.move' })}
+          {intl.formatMessage({ id: 'pages.toolBar.move' })}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
@@ -182,7 +183,7 @@ const Page: React.FC = () => {
             }
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.unDo' })}
+          {intl.formatMessage({ id: 'pages.toolBar.unDo' })}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
@@ -194,10 +195,10 @@ const Page: React.FC = () => {
             }
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.reDo' })}
+          {intl.formatMessage({ id: 'pages.toolBar.reDo' })}
         </PPToolBarButton>
         <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">
-          {useIntl().formatMessage({ id: 'pages.toolBar.clearMark' })}
+          {intl.formatMessage({ id: 'pages.toolBar.clearMark' })}
         </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
@@ -263,10 +264,10 @@ const Page: React.FC = () => {
       </div>
       <PPToolBar disLoc="right">
         <PPToolBarButton imgSrc="./pics/buttons/intelligent_interaction.png">
-          {useIntl().formatMessage({ id: 'pages.toolBar.interactor' })}
+          {intl.formatMessage({ id: 'pages.toolBar.interactor' })}
         </PPToolBarButton>
         <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
-          {useIntl().formatMessage({ id: 'pages.toolBar.segmentThreshold' })}
+          {intl.formatMessage({ id: 'pages.toolBar.segmentThreshold' })}
         </PPSetButton>
         <PPSetButton
           imgSrc="./pics/buttons/alpha.png"
@@ -278,10 +279,10 @@ const Page: React.FC = () => {
             setTransparency(newSize);
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.transparency' })}
+          {intl.formatMessage({ id: 'pages.toolBar.transparency' })}
         </PPSetButton>
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
-          {useIntl().formatMessage({ id: 'pages.toolBar.visualRadius' })}
+          {intl.formatMessage({ id: 'pages.toolBar.visualRadius' })}
         </PPSetButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
@@ -289,7 +290,7 @@ const Page: React.FC = () => {
             setDivideModalVisible(true);
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.divideData' })}
+          {intl.formatMessage({ id: 'pages.toolBar.divideData' })}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/export.png"
@@ -297,7 +298,7 @@ const Page: React.FC = () => {
             setExportModalVisible(true);
           }}
         >
-          {useIntl().formatMessage({ id: 'pages.toolBar.export' })}
+          {intl.formatMessage({ id: 'pages.toolBar.export' })}
         </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
@@ -310,7 +311,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
             }}
           >
-            {useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' })}
+            {intl.formatMessage({ id: 'pages.toolBar.determineOutline' })}
           </Button>
         </div>
         <PPLabelList

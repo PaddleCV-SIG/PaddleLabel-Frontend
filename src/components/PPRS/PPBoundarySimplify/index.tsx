@@ -29,13 +29,14 @@ const menu = (
   </Menu>
 );
 
-const component: React.FC<PPBoundarySimplify> = () => {
-  const pdParameter = useIntl().formatMessage({ id: 'component.PPRS.pdParameter' });
-  const simplifiedDistance = useIntl().formatMessage({
+const Component: React.FC<PPBoundarySimplify> = () => {
+  const intl = useIntl();
+  const pdParameter = intl.formatMessage({ id: 'component.PPRS.pdParameter' });
+  const simplifiedDistance = intl.formatMessage({
     id: 'component.PPRS.simplifiedDistance',
   });
-  const simplifiedAngle = useIntl().formatMessage({ id: 'component.PPRS.simplifiedAngle' });
-  const threshold = useIntl().formatMessage({ id: 'component.PPRS.threshold' });
+  const simplifiedAngle = intl.formatMessage({ id: 'component.PPRS.simplifiedAngle' });
+  const threshold = intl.formatMessage({ id: 'component.PPRS.threshold' });
 
   return (
     <div>
@@ -78,4 +79,4 @@ const component: React.FC<PPBoundarySimplify> = () => {
     </div>
   );
 };
-export default component;
+export default Component;

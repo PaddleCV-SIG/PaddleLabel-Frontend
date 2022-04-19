@@ -8,10 +8,11 @@ export type PPGrids = {
   onClick?: React.MouseEventHandler<HTMLElement>;
 };
 
-const component: React.FC<PPGrids> = () => {
-  const gridSize = useIntl().formatMessage({ id: 'component.PPRS.gridSize' });
-  const overlap = useIntl().formatMessage({ id: 'component.PPRS.overlap' });
-  const completed = useIntl().formatMessage(
+const Component: React.FC<PPGrids> = () => {
+  const intl = useIntl();
+  const gridSize = intl.formatMessage({ id: 'component.PPRS.gridSize' });
+  const overlap = intl.formatMessage({ id: 'component.PPRS.overlap' });
+  const completed = intl.formatMessage(
     { id: 'component.PPRS.completed' },
     {
       show: 1,
@@ -43,4 +44,4 @@ const component: React.FC<PPGrids> = () => {
     </div>
   );
 };
-export default component;
+export default Component;
