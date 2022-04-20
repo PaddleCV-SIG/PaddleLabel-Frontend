@@ -3,7 +3,7 @@
 import { message } from 'antd';
 import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services';
-import { ProjectApi, TaskApi, DataApi, AnnotationApi, LabelApi } from '@/services';
+import { ProjectApi, TaskApi, DataApi, AnnotationApi, LabelApi, ManageApi } from '@/services';
 import { Configuration } from '@/services';
 import { DependencyList, Dispatch, EffectCallback, SetStateAction } from 'react';
 import { Label } from '@/models/Label';
@@ -17,6 +17,7 @@ const taskApi = new TaskApi(config);
 const dataApi = new DataApi(config);
 const annotationApi = new AnnotationApi(config);
 const labelApi = new LabelApi(config);
+const manageApi = new ManageApi(config);
 
 export type UseStateType = <S>(initialState?: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
 export type UseEffectType = (effect: EffectCallback, deps?: DependencyList | undefined) => void;
@@ -49,6 +50,18 @@ export const createInfo = {
 // TODO: check create for missing xxId
 
 /* helper functions */
+export async function getVersion() {
+  try {
+    const version = await manageApi.getVersion();
+    return version;
+  } catch (err) {
+    message.error(
+      'Backend unavaliable, please make sure backend is running and check ur internet connection.',
+    );
+    return false;
+  }
+}
+
 // TODO: a more elegent way
 export const toDict = (arr: any[]) => {
   return JSON.parse(JSON.stringify(arr));

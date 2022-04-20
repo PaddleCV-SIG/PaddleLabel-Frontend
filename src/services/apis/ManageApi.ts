@@ -21,7 +21,7 @@ export class ManageApi extends runtime.BaseAPI {
   /**
    * Your GET endpoint
    */
-  async getRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<void>> {
+  async getVersionRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<void>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -42,7 +42,7 @@ export class ManageApi extends runtime.BaseAPI {
   /**
    * Your GET endpoint
    */
-  async get(initOverrides?: RequestInit): Promise<void> {
-    await this.getRaw(initOverrides);
+  async getVersion(initOverrides?: RequestInit): Promise<void> {
+    await this.getVersionRaw(initOverrides);
   }
 }

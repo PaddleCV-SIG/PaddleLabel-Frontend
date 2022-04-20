@@ -8,7 +8,7 @@ import PPButton from '@/components/PPButton';
 import PPCreateButton from '@/components/PPCreatButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { history, useIntl } from 'umi';
-import { toDict, ProjectUtils } from '@/services/utils';
+import { toDict, ProjectUtils, getVersion } from '@/services/utils';
 import type { ColumnsType } from 'antd/es/table';
 import type { Project } from '@/services';
 
@@ -23,7 +23,10 @@ const Projects: React.FC = () => {
   console.log('render projects');
   const projects = ProjectUtils(useState);
   useEffect(() => {
-    projects.getAll();
+    getVersion().then((version) => {
+      console.log('backend version', version);
+      if (version != false) projects.getAll();
+    });
   }, []);
 
   const columns: ColumnsType<Project> = [
