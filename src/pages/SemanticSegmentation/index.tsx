@@ -85,6 +85,7 @@ const Page: React.FC = () => {
     onMouseUp: () => {
       recordHistory({ annos: annotations, currAnno: currentAnnotation });
     },
+    frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
   };
   const brush = PPBrush(drawToolParam);
   const polygon = PPPolygon(drawToolParam);
