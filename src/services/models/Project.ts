@@ -14,6 +14,12 @@
 
 import { exists, mapValues } from '../runtime';
 import { Label, LabelFromJSON, LabelFromJSONTyped, LabelToJSON } from './Label';
+import {
+  ProjectOtherSettings,
+  ProjectOtherSettingsFromJSON,
+  ProjectOtherSettingsFromJSONTyped,
+  ProjectOtherSettingsToJSON,
+} from './ProjectOtherSettings';
 
 /**
  * Contains project details and settings
@@ -88,11 +94,11 @@ export interface Project {
    */
   readonly modified?: string | null;
   /**
-   * Project settings that are different across annotation task categories
-   * @type {string}
+   *
+   * @type {ProjectOtherSettings}
    * @memberof Project
    */
-  otherSettings?: string;
+  otherSettings?: ProjectOtherSettings;
 }
 
 export function ProjectFromJSON(json: any): Project {
@@ -115,7 +121,9 @@ export function ProjectFromJSONTyped(json: any, ignoreDiscriminator: boolean): P
     subCategory: !exists(json, 'sub_category') ? undefined : json['sub_category'],
     created: !exists(json, 'created') ? undefined : json['created'],
     modified: !exists(json, 'modified') ? undefined : json['modified'],
-    otherSettings: !exists(json, 'other_settings') ? undefined : json['other_settings'],
+    otherSettings: !exists(json, 'other_settings')
+      ? undefined
+      : ProjectOtherSettingsFromJSON(json['other_settings']),
   };
 }
 
@@ -134,6 +142,6 @@ export function ProjectToJSON(value?: Project | null): any {
     label_dir: value.labelDir,
     labels: value.labels === undefined ? undefined : (value.labels as Array<any>).map(LabelToJSON),
     sub_category: value.subCategory,
-    other_settings: value.otherSettings,
+    other_settings: ProjectOtherSettingsToJSON(value.otherSettings),
   };
 }

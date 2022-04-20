@@ -1,6 +1,7 @@
 apis/AnnotationApi.ts
 apis/DataApi.ts
 apis/LabelApi.ts
+apis/ManageApi.ts
 apis/ProjectApi.ts
 apis/RpcApi.ts
 apis/TagApi.ts
@@ -19,6 +20,7 @@ models/InlineResponse200.ts
 models/InlineResponse2001.ts
 models/Label.ts
 models/Project.ts
+models/ProjectOtherSettings.ts
 models/Tag.ts
 models/TagTask.ts
 models/Task.ts
