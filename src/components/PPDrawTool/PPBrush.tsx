@@ -21,7 +21,7 @@ function createLine(param: CanvasLineType): string {
     param.frontendId == undefined
   )
     return '';
-  const frontendId = param.type == 'brush' ? 0 : param.frontendId;
+  const frontendId = param.type == 'rubber' ? 0 : param.frontendId;
   return `${param.width},${frontendId},${param.points.join(',')}`;
 }
 
@@ -34,16 +34,29 @@ function drawAnnotation(param: PPRenderFuncProps) {
   if (!result) return <></>;
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
+  // console.log(`PPBrush.drawAnnotation, result:`, result);
   let points: number[] = [];
   let startIndex = 0;
   for (let i = 0; i < result.length; i++) {
     // Number end
     if (result.at(i) == ',') {
+      // console.log(
+      //   `PPBrush.drawAnnotation, Number end:`,
+      //   parseFloat(result.slice(startIndex, i)),
+      //   `i:`,
+      //   i,
+      // );
       points.push(parseFloat(result.slice(startIndex, i)));
       startIndex = i + 1;
     }
     // Array end
     else if (result.at(i) == '|') {
+      // console.log(
+      //   `PPBrush.drawAnnotation, Array end:`,
+      //   parseFloat(result.slice(startIndex, i)),
+      //   `i:`,
+      //   i,
+      // );
       points.push(parseFloat(result.slice(startIndex, i)));
       renderPoints(points, ctx, annotation);
       points = [];
@@ -51,6 +64,12 @@ function drawAnnotation(param: PPRenderFuncProps) {
     }
     // result end
     else if (i == result.length - 1) {
+      // console.log(
+      //   `PPBrush.drawAnnotation, result end:`,
+      //   parseFloat(result.slice(startIndex, result.length)),
+      //   `i:`,
+      //   i,
+      // );
       points.push(parseFloat(result.slice(startIndex, result.length)));
       renderPoints(points, ctx, annotation);
     }
@@ -59,6 +78,7 @@ function drawAnnotation(param: PPRenderFuncProps) {
 }
 
 function renderPoints(points: number[], ctx: CanvasRenderingContext2D, annotation: Annotation) {
+  // console.log(`renderPoints: `, points, annotation, annotation.label?.color, ctx);
   // Draw shape
   if (points.length < 4) {
     console.log('found incorrect points:', points);
@@ -67,14 +87,14 @@ function renderPoints(points: number[], ctx: CanvasRenderingContext2D, annotatio
   const width = points[0];
   const frontendId = points[1];
   if (width == 0) {
-    renderPixel(ctx, points.slice(2), annotation?.label?.color);
+    renderPixel(ctx, points.slice(2), annotation.label?.color);
     return;
   }
   if (frontendId == 0) {
     renderBrush(ctx, width, points.slice(2), undefined);
     return;
   }
-  renderBrush(ctx, width, points.slice(2), annotation?.label?.color);
+  renderBrush(ctx, width, points.slice(2), annotation.label?.color);
 }
 
 function renderBrush(
@@ -83,6 +103,7 @@ function renderBrush(
   points: number[], // x1, y1, x2, y2
   color: string | undefined, // No color means rubber
 ) {
+  // console.log(`renderBrush: `, points, width, color, ctx);
   ctx.beginPath();
   ctx.moveTo(points[0], points[1]);
   for (let i = 0; i <= points.length / 2 - 1; i++) {
@@ -99,6 +120,7 @@ function renderBrush(
   ctx.stroke();
 }
 function renderPixel(ctx: CanvasRenderingContext2D, points: number[], color: string | undefined) {
+  // console.log(`renderPixel: `, points, color, ctx);
   ctx.globalCompositeOperation = color ? 'source-over' : 'destination-out';
   if (color) ctx.fillStyle = color;
   for (let i = 0; i <= points.length / 2 - 1; i++) {
@@ -149,7 +171,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const frontendId =
       props.frontendIdOps.frontendId > 0
         ? props.frontendIdOps.frontendId
-        : getMaxFrontendId(props.annotations);
+        : getMaxFrontendId(props.annotations) + 1;
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
     const line = createLine({
       width: props.brushSize || 10,
@@ -158,13 +180,14 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       type: tool,
       frontendId: frontendId,
     });
+    // console.log(line);
     if (!line) return;
     setCurrentTool(tool);
-    const anno = {
+    const anno: Annotation = {
       dataId: props.dataId,
       label: props.currentLabel,
       frontendId: frontendId,
-      lines: line,
+      result: line,
     };
     props.onAnnotationAdd(anno);
   };

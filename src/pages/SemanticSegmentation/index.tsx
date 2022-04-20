@@ -27,28 +27,47 @@ export type HistoryType = {
   }[];
 };
 
+function getMaxLableId(labels: Label[]) {
+  let max = 0;
+  if (!labels) return max;
+  for (const label of labels) {
+    if (!label.labelId) continue;
+    if (label.labelId > max) max = label.labelId;
+  }
+  return max;
+}
+
 const Page: React.FC = () => {
   const [labels, setLabels] = useState<Label[]>([]);
   const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
   const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
-  const [currentLabel, setCurrentLabel] = useState<Label>();
+  const [activeLabelIds, setActiveLabelIds] = useState<Set<number>>(new Set());
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [frontendId, setFrontendId] = useState<number>(0);
-  const [brushSize, setBrushSize] = useState(1);
+  const [brushSize, setBrushSize] = useState(10);
   const [transparency, setTransparency] = useState(60);
-  const [scale, setScaleRaw] = useState(10);
+  const [scale, setScaleRaw] = useState(1);
   const setScale = (size: number) => {
     if (!size) setScaleRaw(1);
     if (size < 0.1 || size > 20) setScaleRaw(1);
     else setScaleRaw(size);
   };
 
+  const setCurrentLabel = (label?: Label) => {
+    const set = new Set<number>();
+    if (label?.labelId) set.add(label.labelId);
+    setActiveLabelIds(set);
+    // console.log(set, label);
+  };
+
   const setCurrentAnnotation = (anno?: Annotation) => {
     setCurrentAnnotationRaw(anno);
     if (anno?.label) setCurrentLabel(anno.label);
+    if (!anno) setFrontendId(0);
+    else setFrontendId(anno.frontendId);
   };
 
   useEffect(() => {
@@ -56,21 +75,15 @@ const Page: React.FC = () => {
   }, []);
 
   const onAnnotationModify = (annotation: Annotation) => {
-    const newAnnos: Annotation[] = [];
-    for (let i = 0; i < annotations.length; i++) {
-      if (annotations[i].frontendId == annotation.frontendId) {
-        newAnnos.push(annotation);
-      } else {
-        newAnnos.push(annotations[i]);
-      }
-    }
+    annotations.pop();
+    annotations.push(annotation);
     setCurrentAnnotation(annotation);
-    setAnnotations(newAnnos);
+    setAnnotations(annotations);
   };
 
   const drawToolParam = {
     dataId: 0,
-    currentLabel: currentLabel,
+    currentLabel: labels.find((x) => x.labelId == activeLabelIds.values().next().value),
     brushSize: brushSize,
     scale: scale,
     currentTool: currentTool,
@@ -79,12 +92,13 @@ const Page: React.FC = () => {
     onAnnotationAdd: (annotation: Annotation) => {
       const newAnnos = annotations.concat([annotation]);
       setAnnotations(newAnnos);
-      if (!currentAnnotation) setCurrentAnnotation(annotation);
+      setCurrentAnnotation(annotation);
     },
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
       recordHistory({ annos: annotations, currAnno: currentAnnotation });
     },
+    frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
   };
   const intl = useIntl();
   const brush = PPBrush(drawToolParam);
@@ -316,7 +330,7 @@ const Page: React.FC = () => {
         </div>
         <PPLabelList
           labels={labels}
-          activeIds={new Set([currentLabel])}
+          activeIds={activeLabelIds}
           onLabelSelect={(selected) => {
             setCurrentLabel(selected);
             setCurrentAnnotation(undefined);
@@ -330,12 +344,16 @@ const Page: React.FC = () => {
               }
             }
             setLabels(newLabels);
-            if (currentLabel?.labelId == deleted.labelId) setCurrentLabel(undefined);
+            if (deleted.labelId && activeLabelIds.has(deleted.labelId)) setCurrentLabel(undefined);
           }}
           onLabelAdd={(lab) => {
+            if (!lab.labelId) {
+              lab.labelId = getMaxLableId(labels) + 1;
+            }
             labels.push(lab);
             setLabels(labels);
             setCurrentLabel(lab);
+            setCurrentAnnotation(undefined);
           }}
         />
         <PPAnnotationList

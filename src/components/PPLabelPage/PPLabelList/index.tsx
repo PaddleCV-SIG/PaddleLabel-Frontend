@@ -9,7 +9,7 @@ import { useIntl } from 'umi';
 
 export type PPLabelListProps = {
   labels?: Label[]; // the label from utils, LabelUtils()
-  activeIds?: Set;
+  activeIds?: Set<any>;
   selectedLabel?: Label;
   hideEye?: boolean;
   hideColorPicker?: boolean;

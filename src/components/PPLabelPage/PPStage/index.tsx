@@ -10,8 +10,8 @@ import useImage from 'use-image';
 import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/drawUtils';
 
 // Mock Data
-const imgSrc = './pics/32_23.jpg';
-// const imgSrc = './pics/basketball.jpg';
+// const imgSrc = './pics/32_23.jpg';
+const imgSrc = './pics/basketball.jpg';
 
 // Calculate current mouse pointer
 function getPointer(toolType: ToolType) {
@@ -47,7 +47,7 @@ const Component: React.FC<PPStageProps> = (props) => {
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
 
-  console.log(`imageWidth,imageHeight: `, imageWith, imageHeight);
+  // console.log(`imageWidth,imageHeight: `, imageWith, imageHeight);
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
@@ -195,7 +195,7 @@ const Component: React.FC<PPStageProps> = (props) => {
         }}
         onDragEnd={(evt) => {
           if (props.currentTool != 'mover') return;
-          console.log(`dragEndPosX,Y: (${evt.target.x()},${evt.target.y()})`);
+          // console.log(`dragEndPosX,Y: (${evt.target.x()},${evt.target.y()})`);
           setDragEndPos({
             x: evt.target.x(),
             y: evt.target.y(),

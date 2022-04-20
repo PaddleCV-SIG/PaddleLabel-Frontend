@@ -20,7 +20,7 @@ export type PPRenderFuncProps = {
   canvasRef: React.RefObject<HTMLCanvasElement>;
 };
 
-export type PPDrawToolProps<T = any> = {
+export type PPDrawToolProps = {
   currentLabel?: Label;
   brushSize?: number;
   scale: number;
@@ -44,7 +44,7 @@ export type EvtProps = {
 
 export type EvtType = (props: EvtProps) => void;
 
-export type PPDrawToolRet<T = any> = {
+export type PPDrawToolRet = {
   onMouseDown: EvtType;
   onMouseMove: EvtType;
   onMouseUp: EvtType;

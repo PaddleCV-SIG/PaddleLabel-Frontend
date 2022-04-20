@@ -22,6 +22,13 @@ const Component: React.FC<PPLabelListProps> = (props) => {
   });
   const addAnnotation = intl.formatMessage({ id: 'component.PPAnnotationList.addAnnotation' });
 
+  const added = new Set();
+  const items: Annotation[] = [];
+  for (const anno of props.annotations) {
+    if (added.has(anno.frontendId)) continue;
+    items.push(anno);
+    added.add(anno.frontendId);
+  }
   return (
     <>
       <List
@@ -29,7 +36,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         size="large"
         header={<div className={styles.listHeader}>{annotationList}</div>}
         bordered
-        dataSource={props.annotations}
+        dataSource={items}
         renderItem={(item) => {
           return (
             <PPAnnotationListItem
