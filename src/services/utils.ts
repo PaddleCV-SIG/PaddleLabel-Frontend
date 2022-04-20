@@ -1,13 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove this
 
+import type { DependencyList, Dispatch, EffectCallback, SetStateAction } from 'react';
 import { message } from 'antd';
+import { history } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services';
-import { ProjectApi, TaskApi, DataApi, AnnotationApi, LabelApi, ManageApi } from '@/services';
-import { Configuration } from '@/services';
-import { DependencyList, Dispatch, EffectCallback, SetStateAction } from 'react';
-import { Label } from '@/models/Label';
-import type { ToolType, Annotation } from '@/models/Annotation';
+import {
+  ProjectApi,
+  TaskApi,
+  DataApi,
+  AnnotationApi,
+  LabelApi,
+  ManageApi,
+  Configuration,
+} from '@/services';
+
+import type { ToolType, Annotation, Label } from '@/models/';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -652,7 +660,11 @@ export const PageInit = (
 
   useEffect(() => {
     // when all task is set, set current task
-    if (task.all && task.all.length != 0) {
+    if (task.all) {
+      if (task.all.length == 0) {
+        history.push(`/project_overview?projectId=${project.curr?.projectId}`);
+        return;
+      }
       const currTaskId = localStorage.getItem('currTaskId');
       if (currTaskId != null) {
         for (let idx = 0; idx < task.all.length; idx++) {

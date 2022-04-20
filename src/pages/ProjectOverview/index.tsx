@@ -153,19 +153,37 @@ const TaskList: React.FC = () => {
         >
           {'Export Dataset'}
         </Button>
-        <Button
-          type="primary"
-          onClick={() => {
-            setImportModalVisible(true);
-          }}
-        >
-          {'Import Additional Data'}
-        </Button>
+        {(() => {
+          if (task.all?.length != 0)
+            return (
+              <Button
+                type="primary"
+                onClick={() => {
+                  setImportModalVisible(true);
+                }}
+              >
+                {'Import Additional Data'}
+              </Button>
+            );
+          return null;
+        })()}
       </PPBlock>
-
       <PPBlock title={'Tasks'}>
-        {`Task Count: ${task.all?.length}`}
-        <Table columns={columns} dataSource={toDict(task.all)} onChange={onChange} />
+        <p>{`Task Count: ${task.all?.length} \n`}</p>
+        {(() => {
+          if (task.all?.length == 0)
+            return (
+              <Button
+                type="primary"
+                onClick={() => {
+                  setImportModalVisible(true);
+                }}
+              >
+                {'Import Data'}
+              </Button>
+            );
+          return <Table columns={columns} dataSource={toDict(task.all)} onChange={onChange} />;
+        })()}
       </PPBlock>
 
       <PPDivideDataModal

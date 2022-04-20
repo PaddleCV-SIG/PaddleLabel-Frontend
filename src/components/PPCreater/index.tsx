@@ -224,11 +224,11 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               <Radio.Group
                 size="large"
                 style={{ height: '3.13rem' }}
-                defaultValue={
-                  createInfo[props.taskCategory].labelFormats
-                    ? Object.keys(createInfo[props.taskCategory].labelFormats)[0]
-                    : undefined
-                }
+                // defaultValue={
+                //   createInfo[props.taskCategory].labelFormats
+                //     ? Object.keys(createInfo[props.taskCategory].labelFormats)[0]
+                //     : undefined
+                // }
               >
                 {Object.entries(createInfo[props.taskCategory].labelFormats).map(([k, v]) => (
                   <Radio value={k}>{v}</Radio>
