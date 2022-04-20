@@ -27,6 +27,16 @@ export type HistoryType = {
   }[];
 };
 
+function getMaxLableId(labels: Label[]) {
+  let max = 0;
+  if (!labels) return max;
+  for (const label of labels) {
+    if (!label.labelId) continue;
+    if (label.labelId > max) max = label.labelId;
+  }
+  return max;
+}
+
 const Page: React.FC = () => {
   const [labels, setLabels] = useState<Label[]>([]);
   const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
@@ -50,7 +60,7 @@ const Page: React.FC = () => {
     const set = new Set<number>();
     if (label?.labelId) set.add(label.labelId);
     setActiveLabelIds(set);
-    console.log(set, label);
+    // console.log(set, label);
   };
 
   const setCurrentAnnotation = (anno?: Annotation) => {
@@ -73,7 +83,7 @@ const Page: React.FC = () => {
 
   const drawToolParam = {
     dataId: 0,
-    currentLabel: labels.at(activeLabelIds.values().next().value),
+    currentLabel: labels.find((x) => x.labelId == activeLabelIds.values().next().value),
     brushSize: brushSize,
     scale: scale,
     currentTool: currentTool,
@@ -337,6 +347,9 @@ const Page: React.FC = () => {
             if (deleted.labelId && activeLabelIds.has(deleted.labelId)) setCurrentLabel(undefined);
           }}
           onLabelAdd={(lab) => {
+            if (!lab.labelId) {
+              lab.labelId = getMaxLableId(labels) + 1;
+            }
             labels.push(lab);
             setLabels(labels);
             setCurrentLabel(lab);

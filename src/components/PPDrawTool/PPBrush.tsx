@@ -180,7 +180,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       type: tool,
       frontendId: frontendId,
     });
-    console.log(line);
+    // console.log(line);
     if (!line) return;
     setCurrentTool(tool);
     const anno: Annotation = {
