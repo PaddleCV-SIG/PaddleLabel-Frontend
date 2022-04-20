@@ -15,7 +15,6 @@ import type { Project } from '@/services';
 
 const Projects: React.FC = () => {
   const intl = useIntl();
-  const edit = intl.formatMessage({ id: 'pages.welcome.edit' });
   const label = intl.formatMessage({ id: 'pages.welcome.label' });
   const remove = intl.formatMessage({ id: 'pages.welcome.remove' });
   const myProjects = intl.formatMessage({ id: 'pages.welcome.myProjects' });
@@ -54,22 +53,10 @@ const Projects: React.FC = () => {
             height="1.875rem"
             color={'rgba(241,162,0,1)'}
             onClick={() => {
-              history.push(`/task_list?projectId=${project.projectId}`);
+              history.push(`/project_overview?projectId=${project.projectId}`);
             }}
           >
-            {'Task List'}
-          </PPButton>
-          <PPButton
-            width="4.375rem"
-            height="1.875rem"
-            color={'rgba(241,162,0,1)'}
-            onClick={() => {
-              history.push(
-                `/project_detail?taskCategory=${project.taskCategory.name}&projectId=${project.projectId}`,
-              );
-            }}
-          >
-            {edit}
+            {'Overview'}
           </PPButton>
           <PPButton
             width="4.375rem"

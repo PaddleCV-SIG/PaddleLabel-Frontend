@@ -16,31 +16,31 @@ import { exists, mapValues } from '../runtime';
 /**
  *
  * @export
- * @interface InlineObject2
+ * @interface InlineObject5
  */
-export interface InlineObject2 {
+export interface InlineObject5 {
   /**
    *
    * @type {string}
-   * @memberof InlineObject2
+   * @memberof InlineObject5
    */
-  importDir?: string;
+  path?: string;
 }
 
-export function InlineObject2FromJSON(json: any): InlineObject2 {
-  return InlineObject2FromJSONTyped(json, false);
+export function InlineObject5FromJSON(json: any): InlineObject5 {
+  return InlineObject5FromJSONTyped(json, false);
 }
 
-export function InlineObject2FromJSONTyped(json: any, ignoreDiscriminator: boolean): InlineObject2 {
+export function InlineObject5FromJSONTyped(json: any, ignoreDiscriminator: boolean): InlineObject5 {
   if (json === undefined || json === null) {
     return json;
   }
   return {
-    importDir: !exists(json, 'import_dir') ? undefined : json['import_dir'],
+    path: !exists(json, 'path') ? undefined : json['path'],
   };
 }
 
-export function InlineObject2ToJSON(value?: InlineObject2 | null): any {
+export function InlineObject5ToJSON(value?: InlineObject5 | null): any {
   if (value === undefined) {
     return undefined;
   }
@@ -48,6 +48,6 @@ export function InlineObject2ToJSON(value?: InlineObject2 | null): any {
     return null;
   }
   return {
-    import_dir: value.importDir,
+    path: value.path,
   };
 }

@@ -13,10 +13,10 @@
  */
 
 import * as runtime from '../runtime';
-import { InlineObject4, InlineObject4FromJSON, InlineObject4ToJSON } from '../models';
+import { InlineObject5, InlineObject5FromJSON, InlineObject5ToJSON } from '../models';
 
 export interface GetFoldersRequest {
-  inlineObject4?: InlineObject4;
+  inlineObject5?: InlineObject5;
 }
 
 /**
@@ -41,7 +41,7 @@ export class RpcApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject4ToJSON(requestParameters.inlineObject4),
+        body: InlineObject5ToJSON(requestParameters.inlineObject5),
       },
       initOverrides,
     );
@@ -51,7 +51,7 @@ export class RpcApi extends runtime.BaseAPI {
 
   /**
    */
-  async getFolders(inlineObject4?: InlineObject4, initOverrides?: RequestInit): Promise<void> {
-    await this.getFoldersRaw({ inlineObject4: inlineObject4 }, initOverrides);
+  async getFolders(inlineObject5?: InlineObject5, initOverrides?: RequestInit): Promise<void> {
+    await this.getFoldersRaw({ inlineObject5: inlineObject5 }, initOverrides);
   }
 }

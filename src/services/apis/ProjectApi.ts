@@ -23,6 +23,9 @@ import {
   InlineObject1,
   InlineObject1FromJSON,
   InlineObject1ToJSON,
+  InlineObject2,
+  InlineObject2FromJSON,
+  InlineObject2ToJSON,
   InlineResponse200,
   InlineResponse200FromJSON,
   InlineResponse200ToJSON,
@@ -80,6 +83,11 @@ export interface GetTagsRequest {
 
 export interface GetTasksRequest {
   projectId: string;
+}
+
+export interface ImportDatasetRequest {
+  projectId: string;
+  inlineObject2?: InlineObject2;
 }
 
 export interface RemoveRequest {
@@ -510,6 +518,55 @@ export class ProjectApi extends runtime.BaseAPI {
   async getTasks(projectId: string, initOverrides?: RequestInit): Promise<Array<Task>> {
     const response = await this.getTasksRaw({ projectId: projectId }, initOverrides);
     return await response.value();
+  }
+
+  /**
+   */
+  async importDatasetRaw(
+    requestParameters: ImportDatasetRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling importDataset.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/import`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: InlineObject2ToJSON(requestParameters.inlineObject2),
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   */
+  async importDataset(
+    projectId: string,
+    inlineObject2?: InlineObject2,
+    initOverrides?: RequestInit,
+  ): Promise<void> {
+    await this.importDatasetRaw(
+      { projectId: projectId, inlineObject2: inlineObject2 },
+      initOverrides,
+    );
   }
 
   /**

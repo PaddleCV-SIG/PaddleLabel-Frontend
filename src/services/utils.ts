@@ -392,6 +392,7 @@ export const TaskUtils = (useState: UseStateType) => {
   return {
     currIdx,
     all,
+    setAll,
     turnTo,
     getAll,
     nextTask,
@@ -543,10 +544,6 @@ export const DataUtils = (useState: UseStateType) => {
     },
     get imgSrc() {
       if (all && all[currIdx]) {
-        // console.log(
-        //   'imgsrc',
-        //   `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`,
-        // );
         return `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`;
       }
       return ``;
@@ -554,7 +551,7 @@ export const DataUtils = (useState: UseStateType) => {
   };
 };
 
-function exportDataset(projectId, exportDir) {
+export function exportDataset(projectId, exportDir) {
   return projectApi
     .exportDataset(projectId, { exportDir: exportDir })
     .then((res) => {
@@ -565,7 +562,21 @@ function exportDataset(projectId, exportDir) {
       serviceUtils.parseError(err, message);
     });
 }
-async function splitDataset(
+export function importDataset(projectId, importDir) {
+  console.log('import dataset', projectId, importDir);
+  return projectApi
+    .importDataset(projectId, { importDir: importDir })
+    .then((res) => {
+      message.success('Additional data imported');
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log('import error', err);
+      serviceUtils.parseError(err, message);
+    });
+}
+
+export async function splitDataset(
   projectId: number,
   props: { train: number; val: number; test: number },
 ) {
@@ -621,13 +632,32 @@ export const PageInit = (
       return;
     });
     label.getAll(projectId);
-    task.getAll(projectId);
+    const allTasks = JSON.parse(localStorage.getItem('currentTasks'));
+    if (allTasks) {
+      task.setAll(allTasks);
+    } else {
+      task.getAll(projectId);
+    }
+    localStorage.removeItem('currentTasks');
     project.getProgress(projectId);
   }, []);
 
   useEffect(() => {
     // when all task is set, set current task
-    if (task.all && task.all.length != 0) task.turnTo(0);
+    if (task.all && task.all.length != 0) {
+      const currTaskId = localStorage.getItem('currTaskId');
+      if (currTaskId != null) {
+        for (let idx = 0; idx < task.all.length; idx++) {
+          if (task.all[idx].taskId == currTaskId) {
+            task.turnTo(idx);
+            break;
+          }
+        }
+        localStorage.removeItem('currTaskId');
+      } else {
+        task.turnTo(0);
+      }
+    }
   }, [task.all]);
 
   useEffect(() => {
