@@ -44,7 +44,7 @@ export interface Task {
    * @type {Array<string>}
    * @memberof Task
    */
-  datas?: Array<string>;
+  dataPaths?: Array<string>;
   /**
    *
    * @type {Array<Annotation>}
@@ -88,7 +88,7 @@ export function TaskFromJSONTyped(json: any, ignoreDiscriminator: boolean): Task
   return {
     taskId: !exists(json, 'task_id') ? undefined : json['task_id'],
     projectId: json['project_id'],
-    datas: !exists(json, 'datas') ? undefined : json['datas'],
+    dataPaths: !exists(json, 'data_paths') ? undefined : json['data_paths'],
     annotations: !exists(json, 'annotations')
       ? undefined
       : (json['annotations'] as Array<any>).map(AnnotationFromJSON),
@@ -108,7 +108,7 @@ export function TaskToJSON(value?: Task | null): any {
   }
   return {
     project_id: value.projectId,
-    datas: value.datas,
+    data_paths: value.dataPaths,
     annotations:
       value.annotations === undefined
         ? undefined

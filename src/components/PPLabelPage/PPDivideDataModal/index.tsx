@@ -22,12 +22,12 @@ const Component: React.FC<PPDivideDataProps> = (props) => {
   const [testData, setTestData] = useState<number>(20);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
-  const train = useIntl().formatMessage({ id: 'component.PPDivideDataModal.train' });
-  const validation = useIntl().formatMessage({ id: 'component.PPDivideDataModal.validation' });
-  const test = useIntl().formatMessage({ id: 'component.PPDivideDataModal.test' });
-  const cancel = useIntl().formatMessage({ id: 'component.PPCreater.cancel' });
-  const ok = useIntl().formatMessage({ id: 'component.PPSegMode.ok' });
+  const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
+  const train = intl.formatMessage({ id: 'component.PPDivideDataModal.train' });
+  const validation = intl.formatMessage({ id: 'component.PPDivideDataModal.validation' });
+  const test = intl.formatMessage({ id: 'component.PPDivideDataModal.test' });
+  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
+  const ok = intl.formatMessage({ id: 'component.PPSegMode.ok' });
 
   const [form] = Form.useForm();
 

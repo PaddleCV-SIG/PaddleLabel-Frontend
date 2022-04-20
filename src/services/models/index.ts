@@ -11,6 +11,7 @@ export * from './InlineResponse200';
 export * from './InlineResponse2001';
 export * from './Label';
 export * from './Project';
+export * from './ProjectOtherSettings';
 export * from './Tag';
 export * from './TagTask';
 export * from './Task';

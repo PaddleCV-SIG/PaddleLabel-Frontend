@@ -72,7 +72,7 @@ export default {
   'pages.welcome.remove': 'Delete',
   'pages.welcome.myProjects': 'My Projects',
   'pages.welcome.createProject': 'Create Project',
-  'pages.welcome.sampleProject': 'Sample Project',
+  'pages.welcome.sampleProject': 'Sample Projects',
   'pages.welcome.imageClassification': 'Image Classification',
   'pages.welcome.objectDetection': 'Object Detection',
   'pages.welcome.instanceSegmentation': 'Instance Segmentation',

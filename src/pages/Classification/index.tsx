@@ -31,13 +31,14 @@ const Page: React.FC = () => {
   const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
   const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
-  const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
-  const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
-  const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
-  const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
-  const autoSave = useIntl().formatMessage({ id: 'pages.toolBar.autoSave' });
-  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
-  const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
+  const intl = useIntl();
+  const zoomIn = intl.formatMessage({ id: 'pages.toolBar.zoomIn' });
+  const zoomOut = intl.formatMessage({ id: 'pages.toolBar.zoomOut' });
+  const move = intl.formatMessage({ id: 'pages.toolBar.move' });
+  const save = intl.formatMessage({ id: 'pages.toolBar.save' });
+  const autoSave = intl.formatMessage({ id: 'pages.toolBar.autoSave' });
+  const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
+  const exportBtn = intl.formatMessage({ id: 'pages.toolBar.export' });
 
   function selectLabel(selected) {
     // after toggle is active, add ann

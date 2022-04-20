@@ -16,10 +16,11 @@ export type PPLabelListProps = {
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
-  const annotationList = useIntl().formatMessage({
+  const intl = useIntl();
+  const annotationList = intl.formatMessage({
     id: 'component.PPAnnotationList.annotationList',
   });
-  const addAnnotation = useIntl().formatMessage({ id: 'component.PPAnnotationList.addAnnotation' });
+  const addAnnotation = intl.formatMessage({ id: 'component.PPAnnotationList.addAnnotation' });
 
   return (
     <>

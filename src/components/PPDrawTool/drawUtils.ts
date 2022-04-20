@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type { Annotation } from '@/models/Annotation';
 import type { ToolType } from '@/models/ToolType';
 import type { Label } from '@/models/Label';

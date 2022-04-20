@@ -125,18 +125,19 @@ const Page: React.FC = () => {
 
   const dr = polygon;
 
-  const polygonBtn = useIntl().formatMessage({ id: 'pages.toolBar.polygon' });
-  const zoomIn = useIntl().formatMessage({ id: 'pages.toolBar.zoomIn' });
-  const zoomOut = useIntl().formatMessage({ id: 'pages.toolBar.zoomOut' });
-  const move = useIntl().formatMessage({ id: 'pages.toolBar.move' });
-  const unDo = useIntl().formatMessage({ id: 'pages.toolBar.unDo' });
-  const reDo = useIntl().formatMessage({ id: 'pages.toolBar.reDo' });
-  const save = useIntl().formatMessage({ id: 'pages.toolBar.save' });
-  const edit = useIntl().formatMessage({ id: 'pages.toolBar.edit' });
-  const clearMark = useIntl().formatMessage({ id: 'pages.toolBar.clearMark' });
-  const determineOutline = useIntl().formatMessage({ id: 'pages.toolBar.determineOutline' });
-  const divideData = useIntl().formatMessage({ id: 'pages.toolBar.divideData' });
-  const exportBtn = useIntl().formatMessage({ id: 'pages.toolBar.export' });
+  const intl = useIntl();
+  const polygonBtn = intl.formatMessage({ id: 'pages.toolBar.polygon' });
+  const zoomIn = intl.formatMessage({ id: 'pages.toolBar.zoomIn' });
+  const zoomOut = intl.formatMessage({ id: 'pages.toolBar.zoomOut' });
+  const move = intl.formatMessage({ id: 'pages.toolBar.move' });
+  const unDo = intl.formatMessage({ id: 'pages.toolBar.unDo' });
+  const reDo = intl.formatMessage({ id: 'pages.toolBar.reDo' });
+  const save = intl.formatMessage({ id: 'pages.toolBar.save' });
+  const edit = intl.formatMessage({ id: 'pages.toolBar.edit' });
+  const clearMark = intl.formatMessage({ id: 'pages.toolBar.clearMark' });
+  const determineOutline = intl.formatMessage({ id: 'pages.toolBar.determineOutline' });
+  const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
+  const exportBtn = intl.formatMessage({ id: 'pages.toolBar.export' });
 
   return (
     <PPLabelPageContainer className={styles.key}>

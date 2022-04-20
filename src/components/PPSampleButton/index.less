@@ -1,0 +1,22 @@
+@import (reference) '~antd/es/style/themes/index';
+
+#createBtn {
+  min-width: 13.75rem;
+  min-height: 3.75rem;
+  padding: 0;
+  color: @primary-color;
+  font-size: 1.625rem;
+  line-height: 3.75rem;
+  border-radius: 0.125rem;
+  :global(.anticon) {
+    font-size: 1.125rem;
+    line-height: 3.75rem;
+    vertical-align: middle;
+  }
+  :global(.anticon + span) {
+    margin-left: 0;
+  }
+  :global(span + .anticon) {
+    margin-left: 0;
+  }
+}

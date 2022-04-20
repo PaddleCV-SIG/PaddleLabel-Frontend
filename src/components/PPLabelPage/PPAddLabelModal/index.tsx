@@ -51,11 +51,12 @@ const generatedColorList: string[] = [
 ];
 
 const Component: React.FC<PPAddLabelProps> = (props) => {
-  const selectColor = useIntl().formatMessage({ id: 'component.PPAddLabelModal.selectColor' });
-  const addLabel = useIntl().formatMessage({ id: 'component.PPAddLabelModal.addLabel' });
-  const labelName = useIntl().formatMessage({ id: 'component.PPAddLabelModal.labelName' });
-  const cancel = useIntl().formatMessage({ id: 'component.PPCreater.cancel' });
-  const ok = useIntl().formatMessage({ id: 'component.PPSegMode.ok' });
+  const intl = useIntl();
+  const selectColor = intl.formatMessage({ id: 'component.PPAddLabelModal.selectColor' });
+  const addLabel = intl.formatMessage({ id: 'component.PPAddLabelModal.addLabel' });
+  const labelName = intl.formatMessage({ id: 'component.PPAddLabelModal.labelName' });
+  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
+  const ok = intl.formatMessage({ id: 'component.PPSegMode.ok' });
 
   const [newLabelColor, setNewLabelColor] = useState<string>(
     props.defaultLabel?.color || generatedColorList[props.order || 0],

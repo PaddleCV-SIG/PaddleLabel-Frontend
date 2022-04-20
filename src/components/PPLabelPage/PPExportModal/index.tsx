@@ -16,14 +16,14 @@ const Component: React.FC<PPExportProps> = (props) => {
   const intl = useIntl();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const cancel = useIntl().formatMessage({ id: 'component.PPCreater.cancel' });
+  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
 
   const [form] = Form.useForm();
 
   return (
     <Modal
       className={styles.modal}
-      title={useIntl().formatMessage({ id: 'component.PPExportModal.title' })}
+      title={intl.formatMessage({ id: 'component.PPExportModal.title' })}
       visible={props.visible}
       onCancel={props.onCancel}
       footer={null}
