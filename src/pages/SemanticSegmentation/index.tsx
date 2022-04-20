@@ -49,6 +49,8 @@ const Page: React.FC = () => {
   const setCurrentAnnotation = (anno?: Annotation) => {
     setCurrentAnnotationRaw(anno);
     if (anno?.label) setCurrentLabel(anno.label);
+    if (!anno) setFrontendId(0);
+    else setFrontendId(anno.frontendId);
   };
 
   useEffect(() => {
