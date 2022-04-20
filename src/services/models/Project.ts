@@ -80,7 +80,7 @@ export interface Project {
    * @type {string}
    * @memberof Project
    */
-  subCategory?: string;
+  labelFormat?: string;
   /**
    * Project creation timestamp in UTC
    * @type {string}
@@ -118,7 +118,7 @@ export function ProjectFromJSONTyped(json: any, ignoreDiscriminator: boolean): P
     dataDir: !exists(json, 'data_dir') ? undefined : json['data_dir'],
     labelDir: !exists(json, 'label_dir') ? undefined : json['label_dir'],
     labels: !exists(json, 'labels') ? undefined : (json['labels'] as Array<any>).map(LabelFromJSON),
-    subCategory: !exists(json, 'sub_category') ? undefined : json['sub_category'],
+    labelFormat: !exists(json, 'label_format') ? undefined : json['label_format'],
     created: !exists(json, 'created') ? undefined : json['created'],
     modified: !exists(json, 'modified') ? undefined : json['modified'],
     otherSettings: !exists(json, 'other_settings')
@@ -141,7 +141,7 @@ export function ProjectToJSON(value?: Project | null): any {
     data_dir: value.dataDir,
     label_dir: value.labelDir,
     labels: value.labels === undefined ? undefined : (value.labels as Array<any>).map(LabelToJSON),
-    sub_category: value.subCategory,
+    label_format: value.labelFormat,
     other_settings: ProjectOtherSettingsToJSON(value.otherSettings),
   };
 }

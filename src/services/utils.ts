@@ -27,17 +27,25 @@ export const createInfo = {
     name: 'Image Classification',
     avatar: './pics/classification.jpg',
     id: 1,
+    labelFormats: { single_class: 'Single Class', multi_class: 'Multi Class' },
   },
-  detection: { name: 'Detection', avatar: './pics/object_detection.jpg', id: 2 },
+  detection: {
+    name: 'Detection',
+    avatar: './pics/object_detection.jpg',
+    id: 2,
+    labelFormats: { coco: 'COCO', voc: 'VOC' },
+  },
   semanticSegmentation: {
     name: 'Semantic Segmentation',
     avatar: './pics/semantic_segmentation.jpg',
     id: 3,
+    labelFormats: { mask: 'Mask', polygon: 'Polygon' },
   },
   instanceSegmentation: {
     name: 'Instance Segmentation',
     avatar: './pics/instance_segmentation.jpg',
     id: 4,
+    labelFormats: { mask: 'Mask', polygon: 'Polygon' },
   },
   keypointDetection: {
     name: 'Keypoint Detection',
