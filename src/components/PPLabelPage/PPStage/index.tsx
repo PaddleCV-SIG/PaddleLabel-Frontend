@@ -10,8 +10,8 @@ import useImage from 'use-image';
 import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/drawUtils';
 
 // Mock Data
-const imgSrc = './pics/32_23.jpg';
-// const imgSrc = './pics/basketball.jpg';
+// const imgSrc = './pics/32_23.jpg';
+const imgSrc = './pics/basketball.jpg';
 
 // Calculate current mouse pointer
 function getPointer(toolType: ToolType) {
@@ -123,7 +123,7 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   const shapes = [];
   if (props.annotations) {
-    console.log('PPStage rendering annotations:', props.annotations);
+    // console.log('PPStage rendering annotations:', props.annotations);
     const param: PPRenderFuncProps = {
       onDrag: props.onAnnotationModify,
       onDragEnd: props.onAnnotationModifyComplete,

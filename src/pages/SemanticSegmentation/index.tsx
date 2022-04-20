@@ -33,17 +33,24 @@ const Page: React.FC = () => {
   const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
-  const [currentLabel, setCurrentLabel] = useState<Label>();
+  const [activeLabelIds, setActiveLabelIds] = useState<Set<number>>(new Set());
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [frontendId, setFrontendId] = useState<number>(0);
-  const [brushSize, setBrushSize] = useState(1);
+  const [brushSize, setBrushSize] = useState(10);
   const [transparency, setTransparency] = useState(60);
-  const [scale, setScaleRaw] = useState(10);
+  const [scale, setScaleRaw] = useState(1);
   const setScale = (size: number) => {
     if (!size) setScaleRaw(1);
     if (size < 0.1 || size > 20) setScaleRaw(1);
     else setScaleRaw(size);
+  };
+
+  const setCurrentLabel = (label?: Label) => {
+    const set = new Set<number>();
+    if (label?.labelId) set.add(label.labelId);
+    setActiveLabelIds(set);
+    console.log(set, label);
   };
 
   const setCurrentAnnotation = (anno?: Annotation) => {
@@ -66,7 +73,7 @@ const Page: React.FC = () => {
 
   const drawToolParam = {
     dataId: 0,
-    currentLabel: currentLabel,
+    currentLabel: labels.at(activeLabelIds.values().next().value),
     brushSize: brushSize,
     scale: scale,
     currentTool: currentTool,
@@ -313,7 +320,7 @@ const Page: React.FC = () => {
         </div>
         <PPLabelList
           labels={labels}
-          activeIds={new Set([currentLabel])}
+          activeIds={activeLabelIds}
           onLabelSelect={(selected) => {
             setCurrentLabel(selected);
             setCurrentAnnotation(undefined);
@@ -327,12 +334,13 @@ const Page: React.FC = () => {
               }
             }
             setLabels(newLabels);
-            if (currentLabel?.labelId == deleted.labelId) setCurrentLabel(undefined);
+            if (deleted.labelId && activeLabelIds.has(deleted.labelId)) setCurrentLabel(undefined);
           }}
           onLabelAdd={(lab) => {
             labels.push(lab);
             setLabels(labels);
             setCurrentLabel(lab);
+            setCurrentAnnotation(undefined);
           }}
         />
         <PPAnnotationList
