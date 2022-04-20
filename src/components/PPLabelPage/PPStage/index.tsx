@@ -123,7 +123,7 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   const shapes = [];
   if (props.annotations) {
-    // console.log('PPStage rendering annotations:', props.annotations);
+    console.log('PPStage rendering annotations:', props.annotations);
     const param: PPRenderFuncProps = {
       onDrag: props.onAnnotationModify,
       onDragEnd: props.onAnnotationModifyComplete,

@@ -56,16 +56,10 @@ const Page: React.FC = () => {
   }, []);
 
   const onAnnotationModify = (annotation: Annotation) => {
-    const newAnnos: Annotation[] = [];
-    for (let i = 0; i < annotations.length; i++) {
-      if (annotations[i].frontendId == annotation.frontendId) {
-        newAnnos.push(annotation);
-      } else {
-        newAnnos.push(annotations[i]);
-      }
-    }
+    annotations.pop();
+    annotations.push(annotation);
     setCurrentAnnotation(annotation);
-    setAnnotations(newAnnos);
+    setAnnotations(annotations);
   };
 
   const drawToolParam = {
@@ -79,7 +73,7 @@ const Page: React.FC = () => {
     onAnnotationAdd: (annotation: Annotation) => {
       const newAnnos = annotations.concat([annotation]);
       setAnnotations(newAnnos);
-      if (!currentAnnotation) setCurrentAnnotation(annotation);
+      setCurrentAnnotation(annotation);
     },
     onAnnotationModify: onAnnotationModify,
     onMouseUp: () => {
