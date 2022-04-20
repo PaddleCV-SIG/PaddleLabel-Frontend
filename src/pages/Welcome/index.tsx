@@ -24,7 +24,6 @@ const Projects: React.FC = () => {
   const projects = ProjectUtils(useState);
   useEffect(() => {
     getVersion().then((version) => {
-      console.log('backend version', version);
       if (version != false) projects.getAll();
     });
   }, []);
@@ -50,6 +49,16 @@ const Projects: React.FC = () => {
       align: 'center',
       render: (text, project) => (
         <Space size="middle">
+          <PPButton
+            width="4.375rem"
+            height="1.875rem"
+            color={'rgba(241,162,0,1)'}
+            onClick={() => {
+              history.push(`/task_list?projectId=${project.projectId}`);
+            }}
+          >
+            {'Task List'}
+          </PPButton>
           <PPButton
             width="4.375rem"
             height="1.875rem"

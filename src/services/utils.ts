@@ -64,6 +64,8 @@ export async function getVersion() {
 
 // TODO: a more elegent way
 export const toDict = (arr: any[]) => {
+  if (arr == undefined) return [];
+  console.log('arr', arr);
   return JSON.parse(JSON.stringify(arr));
 };
 
