@@ -21,16 +21,10 @@ import { exists, mapValues } from '../runtime';
 export interface InlineObject3 {
   /**
    *
-   * @type {string}
+   * @type {number}
    * @memberof InlineObject3
    */
-  username: string;
-  /**
-   *
-   * @type {string}
-   * @memberof InlineObject3
-   */
-  password: string;
+  tagId?: number;
 }
 
 export function InlineObject3FromJSON(json: any): InlineObject3 {
@@ -42,8 +36,7 @@ export function InlineObject3FromJSONTyped(json: any, ignoreDiscriminator: boole
     return json;
   }
   return {
-    username: json['username'],
-    password: json['password'],
+    tagId: !exists(json, 'tag_id') ? undefined : json['tag_id'],
   };
 }
 
@@ -55,7 +48,6 @@ export function InlineObject3ToJSON(value?: InlineObject3 | null): any {
     return null;
   }
   return {
-    username: value.username,
-    password: value.password,
+    tag_id: value.tagId,
   };
 }

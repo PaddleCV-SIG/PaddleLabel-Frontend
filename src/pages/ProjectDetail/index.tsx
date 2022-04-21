@@ -19,12 +19,10 @@ const Project: React.FC = () => {
   if (!taskCategory) {
     message.error(noTaskCategory);
     history.push('/');
-    return null;
   }
   if (!(taskCategory in createInfo)) {
     message.error(invalidTaskCategory + ' ' + taskCategory);
     history.push('/');
-    return null;
   }
   return (
     <PPContainer>

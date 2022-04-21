@@ -1,4 +1,5 @@
-import { Col, Form, Input, Radio, Row } from 'antd';
+import { Col, Form, Input, message, Radio, Row } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
 import React, { useState, useEffect } from 'react';
 import styles from './index.less';
@@ -51,9 +52,6 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
   const datasePath = intl.formatMessage({ id: 'component.PPCreater.datasePath' });
   const description = intl.formatMessage({ id: 'component.PPCreater.description' });
   const maxPoints = intl.formatMessage({ id: 'component.PPCreater.maxPoints' });
-  const annotationMode = intl.formatMessage({ id: 'component.PPCreater.annotationMode' });
-  const pixelMode = intl.formatMessage({ id: 'component.PPCreater.pixelMode' });
-  const polygonMode = intl.formatMessage({ id: 'component.PPCreater.polygonMode' });
   const update = intl.formatMessage({ id: 'component.PPCreater.update' });
   const create = intl.formatMessage({ id: 'component.PPCreater.create' });
   const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
@@ -72,7 +70,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
       });
     }
   };
-
+  // const taskCategory = props.taskCategory;
   const title = props.taskCategory ? createInfo[props.taskCategory]['name'] : null;
   const [form] = Form.useForm();
 
@@ -84,15 +82,15 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
         description: project?.description,
         dataDir: project?.dataDir,
         labelDir: project?.labelDir,
-        subCategory: project?.subCategory,
+        labelFromat: project?.labelFromat,
       };
       form.setFieldsValue(initialValues);
-      console.log('form', form.getFieldInstance('subCategory'));
     });
   }, []);
 
   return (
     <div className={styles.shadow} style={props.style}>
+      {/* TODO: increase left width and decrease right */}
       <div id="left" className={styles.block_l}>
         <_PPBlock title={title} style={{ height: 760, padding: '1.25rem 0' }}>
           <Form
@@ -126,7 +124,24 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
             </Form.Item>
             <Form.Item
               name="dataDir"
-              label={datasePath}
+              label={
+                <div>
+                  {datasePath}{' '}
+                  <QuestionCircleOutlined
+                    style={{ fontSize: '12px' }}
+                    onClick={() =>
+                      message.info({
+                        content:
+                          'The root directory of the dataset, where all images and labels are. Click for more detail.',
+                        onClick: () =>
+                          window.open(
+                            `https://github.com/PaddleCV-SIG/PP-Label/wiki/Dataset-Structure#${props.taskCategory}`,
+                          ),
+                      })
+                    }
+                  ></QuestionCircleOutlined>
+                </div>
+              }
               labelCol={{
                 span: 6,
               }}
@@ -149,24 +164,6 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               />
             </Form.Item>
             <Form.Item
-              name="labelDir"
-              label={'Label Path'}
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: false,
-                },
-              ]}
-              style={{ fontSize: '1.5rem' }}
-            >
-              <Input size="large" placeholder="Path to labels.txt" style={{ height: '3.13rem' }} />
-            </Form.Item>
-            <Form.Item
               name="description"
               label={description}
               labelCol={{
@@ -183,6 +180,60 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               style={{ fontSize: '1.5rem' }}
             >
               <Input size="large" placeholder="Project description" style={{ height: '3.13rem' }} />
+            </Form.Item>
+            <Form.Item
+              name="labelFormat"
+              label={
+                <div>
+                  {' '}
+                  Label Format
+                  <QuestionCircleOutlined
+                    style={{ fontSize: '12px' }}
+                    onClick={() =>
+                      message.info({
+                        content:
+                          'Choose the format to import/export dataset. Click here to see details.',
+                        onClick: () => {
+                          window.open(
+                            `https://github.com/PaddleCV-SIG/PP-Label/wiki/Dataset-Structure#${props.taskCategory}`,
+                          );
+                        },
+                      })
+                    }
+                  ></QuestionCircleOutlined>
+                </div>
+              }
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 16,
+              }}
+              rules={[
+                {
+                  required: createInfo[props.taskCategory].labelFormats != undefined,
+                  message: 'Please choose a label import/export format',
+                },
+              ]}
+              style={{
+                fontSize: '1.5rem',
+                display:
+                  createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
+              }}
+            >
+              <Radio.Group
+                size="large"
+                style={{ height: '3.13rem' }}
+                // defaultValue={
+                //   createInfo[props.taskCategory].labelFormats
+                //     ? Object.keys(createInfo[props.taskCategory].labelFormats)[0]
+                //     : undefined
+                // }
+              >
+                {Object.entries(createInfo[props.taskCategory].labelFormats).map(([k, v]) => (
+                  <Radio value={k}>{v}</Radio>
+                ))}
+              </Radio.Group>
             </Form.Item>
             <Form.Item
               name="maxPoints"
@@ -205,54 +256,6 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
               }}
             >
               <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
-            </Form.Item>
-            <Form.Item
-              name="subCategory"
-              label="Project Sub Category"
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[{ required: false }]}
-              style={{
-                fontSize: '1.5rem',
-                display: props.taskCategory == 'classification' ? undefined : 'none',
-              }}
-            >
-              <Radio.Group size="large" style={{ height: '3.13rem' }}>
-                <Radio value={'single_class'}>{'Single Class'}</Radio>
-                <Radio value={'multi_class'}>{'Multi Class'}</Radio>
-              </Radio.Group>
-            </Form.Item>
-            ,
-            <Form.Item
-              name="segmentationMode"
-              label={annotationMode}
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: props.taskCategory == 'semanticSegmentation',
-                  message: 'Please select task category!',
-                },
-              ]}
-              style={{
-                fontSize: '1.5rem',
-                display: props.taskCategory == 'semanticSegmentation' ? undefined : 'none',
-              }}
-            >
-              <div className={styles.goup}>
-                <Radio.Group size="large" style={{ height: '3.13rem' }}>
-                  <Radio value={1}>{pixelMode}</Radio>
-                  <Radio value={2}>{polygonMode}</Radio>
-                </Radio.Group>
-              </div>
             </Form.Item>
             <Form.Item
               wrapperCol={{
@@ -285,7 +288,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
       </div>
       <div id="right" className={styles.block_r}>
         <_PPBlock style={{ height: '43.63rem', padding: '0.5rem 0' }}>
-          <img src={props.imgSrc} style={{ height: '43.63rem', width: '60rem' }} />
+          <img src={props.imgSrc} style={{ width: '40rem' }} />
         </_PPBlock>
       </div>
     </div>

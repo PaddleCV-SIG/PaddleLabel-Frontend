@@ -1,13 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove this
 
+import type { DependencyList, Dispatch, EffectCallback, SetStateAction } from 'react';
 import { message } from 'antd';
+import { history } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services';
-import { ProjectApi, TaskApi, DataApi, AnnotationApi, LabelApi, ManageApi } from '@/services';
-import { Configuration } from '@/services';
-import { DependencyList, Dispatch, EffectCallback, SetStateAction } from 'react';
-import { Label } from '@/models/Label';
-import type { ToolType, Annotation } from '@/models/Annotation';
+import {
+  ProjectApi,
+  TaskApi,
+  DataApi,
+  AnnotationApi,
+  LabelApi,
+  ManageApi,
+  Configuration,
+} from '@/services';
+
+import type { ToolType, Annotation, Label } from '@/models/';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -27,17 +35,25 @@ export const createInfo = {
     name: 'Image Classification',
     avatar: './pics/classification.jpg',
     id: 1,
+    labelFormats: { single_class: 'Single Class', multi_class: 'Multi Class' },
   },
-  detection: { name: 'Detection', avatar: './pics/object_detection.jpg', id: 2 },
+  detection: {
+    name: 'Detection',
+    avatar: './pics/object_detection.jpg',
+    id: 2,
+    labelFormats: { coco: 'COCO', voc: 'VOC' },
+  },
   semanticSegmentation: {
     name: 'Semantic Segmentation',
     avatar: './pics/semantic_segmentation.jpg',
     id: 3,
+    labelFormats: { mask: 'Mask', polygon: 'Polygon' },
   },
   instanceSegmentation: {
     name: 'Instance Segmentation',
     avatar: './pics/instance_segmentation.jpg',
     id: 4,
+    labelFormats: { mask: 'Mask', polygon: 'Polygon' },
   },
   keypointDetection: {
     name: 'Keypoint Detection',
@@ -392,6 +408,7 @@ export const TaskUtils = (useState: UseStateType) => {
   return {
     currIdx,
     all,
+    setAll,
     turnTo,
     getAll,
     nextTask,
@@ -543,10 +560,6 @@ export const DataUtils = (useState: UseStateType) => {
     },
     get imgSrc() {
       if (all && all[currIdx]) {
-        // console.log(
-        //   'imgsrc',
-        //   `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`,
-        // );
         return `${baseUrl}/datas/${all[currIdx].dataId}/image?sault=${all[currIdx].sault}`;
       }
       return ``;
@@ -554,7 +567,7 @@ export const DataUtils = (useState: UseStateType) => {
   };
 };
 
-function exportDataset(projectId, exportDir) {
+export function exportDataset(projectId, exportDir) {
   return projectApi
     .exportDataset(projectId, { exportDir: exportDir })
     .then((res) => {
@@ -565,7 +578,21 @@ function exportDataset(projectId, exportDir) {
       serviceUtils.parseError(err, message);
     });
 }
-async function splitDataset(
+export function importDataset(projectId, importDir) {
+  console.log('import dataset', projectId, importDir);
+  return projectApi
+    .importDataset(projectId, { importDir: importDir })
+    .then((res) => {
+      message.success('Additional data imported');
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log('import error', err);
+      serviceUtils.parseError(err, message);
+    });
+}
+
+export async function splitDataset(
   projectId: number,
   props: { train: number; val: number; test: number },
 ) {
@@ -621,13 +648,36 @@ export const PageInit = (
       return;
     });
     label.getAll(projectId);
-    task.getAll(projectId);
+    const allTasks = JSON.parse(localStorage.getItem('currentTasks'));
+    if (allTasks) {
+      task.setAll(allTasks);
+    } else {
+      task.getAll(projectId);
+    }
+    localStorage.removeItem('currentTasks');
     project.getProgress(projectId);
   }, []);
 
   useEffect(() => {
     // when all task is set, set current task
-    if (task.all && task.all.length != 0) task.turnTo(0);
+    if (task.all) {
+      if (task.all.length == 0) {
+        history.push(`/project_overview?projectId=${project.curr?.projectId}`);
+        return;
+      }
+      const currTaskId = localStorage.getItem('currTaskId');
+      if (currTaskId != null) {
+        for (let idx = 0; idx < task.all.length; idx++) {
+          if (task.all[idx].taskId == currTaskId) {
+            task.turnTo(idx);
+            break;
+          }
+        }
+        localStorage.removeItem('currTaskId');
+      } else {
+        task.turnTo(0);
+      }
+    }
   }, [task.all]);
 
   useEffect(() => {

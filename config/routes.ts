@@ -25,9 +25,9 @@ export default [
     component: './Welcome',
   },
   {
-    path: '/task_list',
-    name: 'task list',
-    component: './TaskList',
+    path: '/project_overview',
+    name: 'Project Overview',
+    component: './ProjectOverview',
   },
   {
     path: '/project_creation',

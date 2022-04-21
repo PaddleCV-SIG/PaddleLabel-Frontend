@@ -16,6 +16,7 @@ models/InlineObject1.ts
 models/InlineObject2.ts
 models/InlineObject3.ts
 models/InlineObject4.ts
+models/InlineObject5.ts
 models/InlineResponse200.ts
 models/InlineResponse2001.ts
 models/Label.ts
