@@ -6,23 +6,21 @@ import { Circle, Group, Line } from 'react-konva';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import { hexToRgb } from './drawUtils';
 
-export type PPPolygonType = {
-  color: string;
-  points: number[];
-};
-
-function createPolygon(color?: string, points?: number[]): PPPolygonType | undefined {
+function createPolygon(color?: string, points?: number[]): string | undefined {
   if (!color || !points) return undefined;
-  return {
-    color: color,
-    points: points,
-  };
+  return points.join(',');
 }
 
 function drawPolygon(props: PPRenderFuncProps): ReactElement {
-  if (!props.annotation || !props.annotation.lines || !props.annotation.lines[0]) return <></>;
-  const points: number[] = props.annotation.lines[0].points;
-  const color = props.annotation.lines[0].color;
+  if (
+    !props.annotation ||
+    !props.annotation.result ||
+    props.annotation.result.length < 2 ||
+    !props.annotation.label?.color
+  )
+    return <></>;
+  const points: string[] = props.annotation.result.split(',');
+  const color = props.annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
 
@@ -38,7 +36,7 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
   const pointElements: ReactElement[] = [];
   points.forEach((point, index) => {
     if (!x) {
-      x = point;
+      x = parseInt(point);
       return;
     }
     pointElements.push(
@@ -134,7 +132,7 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
  * @param annotations
  * @returns
  */
-function getMaxId(annotations?: Annotation<PPPolygonType[]>[]): any {
+function getMaxId(annotations?: Annotation[]): any {
   let maxId = 0;
   if (!annotations) return maxId;
   for (const annotation of annotations) {
@@ -144,7 +142,7 @@ function getMaxId(annotations?: Annotation<PPPolygonType[]>[]): any {
   return maxId;
 }
 
-export default function (props: PPDrawToolProps<PPPolygonType[]>): PPDrawToolRet {
+export default function (props: PPDrawToolProps): PPDrawToolRet {
   const startNewPolygon = (mouseX: number, mouseY: number) => {
     const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY]);
     if (!polygon) return;
@@ -153,7 +151,7 @@ export default function (props: PPDrawToolProps<PPPolygonType[]>): PPDrawToolRet
       type: 'polygon',
       frontendId: getMaxId(props.annotations) + 1,
       label: props.currentLabel,
-      lines: [polygon],
+      result: polygon,
     });
   };
 
