@@ -8,7 +8,8 @@ import routes from './routes';
 
 const { REACT_APP_ENV } = process.env;
 
-const baseURL = REACT_APP_ENV == 'page' ? '/PP-Label-Frontend/' : '/';
+// const baseURL = REACT_APP_ENV == 'page' ? '/PP-Label-Frontend/' : '/';
+const baseURL = REACT_APP_ENV == 'page' ? '/PP-Label-Frontend/' : '/static/';
 console.log(`baseURL = ${baseURL}`);
 
 export default defineConfig({
@@ -66,20 +67,6 @@ export default defineConfig({
   publicPath: baseURL,
   // Fast Refresh
   fastRefresh: {},
-  openAPI: [
-    {
-      requestLibPath: "import { request } from 'umi'",
-      // Or the online version
-      // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-      schemaPath: join(__dirname, 'oneapi.json'),
-      mock: false,
-    },
-    {
-      requestLibPath: "import { request } from 'umi'",
-      schemaPath: 'https://gw.alipayobjects.com/os/antfincdn/CA1dOm%2631B/openapi.json',
-      projectName: 'swagger',
-    },
-  ],
   nodeModulesTransform: { type: 'none' },
   mfsu: {},
   webpack5: {},
