@@ -4,9 +4,10 @@ import { history, useIntl } from 'umi';
 import PPCreater from '@/components/PPCreater';
 import PPContainer from '@/components/PPContainer';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, snake2camel } from '@/services/utils';
+import { createInfo, snake2camel, getVersion } from '@/services/utils';
 
 const Project: React.FC = () => {
+  getVersion();
   const intl = useIntl();
   const noTaskCategory = intl.formatMessage({ id: 'pages.ProjectDetail.noTaskCategory' });
   const invalidTaskCategory = intl.formatMessage({

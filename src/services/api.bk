@@ -1,3 +1,5 @@
+!!! This file will be removed soon !!!
+
 import { message } from 'antd';
 import serviceUtils from '@/services/serviceUtils';
 
