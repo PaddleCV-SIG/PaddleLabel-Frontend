@@ -118,7 +118,7 @@ const Page: React.FC = () => {
   const intl = useIntl();
   const brush = PPBrush(drawToolParam);
   const polygon = PPPolygon(drawToolParam);
-  const drawTool = currentTool == 'polygon' ? polygon : brush;
+  const drawTool = { polygon: polygon, brush: brush };
   return (
     <PPLabelPageContainer className="segment">
       <PPToolBar>

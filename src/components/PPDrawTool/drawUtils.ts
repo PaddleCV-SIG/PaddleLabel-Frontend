@@ -39,6 +39,8 @@ export type EvtProps = {
   e: Konva.KonvaEventObject<MouseEvent>;
   mouseX: number;
   mouseY: number;
+  offsetX: number;
+  offsetY: number;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   layerRef: React.RefObject<LayerType>;
 };

@@ -1,5 +1,4 @@
 import type { Annotation } from '@/models/Annotation';
-import type { ToolType } from '@/models/ToolType';
 import type { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Line } from 'react-konva';
@@ -24,7 +23,6 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
 
-  console.log(props.annotation);
   // const selected = props.currentAnnotation?.frontendId == props.annotation.frontendId;
   const transparency = 0.3; // Polygon fixed 0.3
   // let transparency = selected ? props.transparency * 0.01 + 0.02 : props.transparency * 0.01;
@@ -98,7 +96,6 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
     );
     x = undefined;
   });
-  console.log({ pointElements });
   // Create polygon
   return (
     <Group key={props.annotation.frontendId}>
@@ -164,7 +161,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
     const anno = {
       dataId: props.dataId,
-      type: 'polygon' as ToolType,
+      type: 'polygon',
       frontendId: props.currentAnnotation.frontendId,
       label: props.currentAnnotation.label,
       result: result,
@@ -174,11 +171,13 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
 
   const OnMouseDown = (param: EvtProps) => {
     if (props.currentTool != 'polygon') return;
+    const mouseX = param.mouseX + param.offsetX;
+    const mouseY = param.mouseY + param.offsetY;
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
-      startNewPolygon(param.mouseX, param.mouseY);
+      startNewPolygon(mouseX, mouseY);
     } else {
-      addDotToPolygon(param.mouseX, param.mouseY);
+      addDotToPolygon(mouseX, mouseY);
     }
   };
 

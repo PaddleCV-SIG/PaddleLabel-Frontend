@@ -37,7 +37,7 @@ export type PPStageProps = {
   onAnnotationModify: (annotation: Annotation) => void;
   onAnnotationModifyComplete: () => void;
   transparency: number;
-  drawTool: PPDrawToolRet;
+  drawTool: { polygon: PPDrawToolRet; brush: PPDrawToolRet };
   frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
 };
 
@@ -46,6 +46,7 @@ const Component: React.FC<PPStageProps> = (props) => {
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
+  const drawTool = props.currentTool == 'polygon' ? props.drawTool.polygon : props.drawTool.brush;
 
   // console.log(`imageWidth,imageHeight: `, imageWith, imageHeight);
 
@@ -98,6 +99,8 @@ const Component: React.FC<PPStageProps> = (props) => {
       e: e,
       mouseX: (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2,
       mouseY: (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2,
+      offsetX: -imageWidth / 2,
+      offsetY: -imageHeight / 2,
       canvasRef: canvasRef,
       layerRef: layerRef,
     };
@@ -106,13 +109,13 @@ const Component: React.FC<PPStageProps> = (props) => {
   // Handle layer events
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // e.cancelBubble = true;
-    props.drawTool?.onMouseDown(getEvtParam(e));
+    drawTool?.onMouseDown(getEvtParam(e));
   };
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    props.drawTool?.onMouseMove(getEvtParam(e));
+    drawTool?.onMouseMove(getEvtParam(e));
   };
   const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    props.drawTool?.onMouseUp(getEvtParam(e));
+    drawTool?.onMouseUp(getEvtParam(e));
   };
   const onContextMenu = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // console.log('imgLayer onContextMenu');
@@ -123,7 +126,7 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   const shapes = [];
   if (props.annotations) {
-    // console.log('PPStage rendering annotations:', props.annotations);
+    console.log('PPStage rendering annotations:', props.annotations);
     const param: PPRenderFuncProps = {
       onDrag: props.onAnnotationModify,
       onDragEnd: props.onAnnotationModifyComplete,
@@ -142,7 +145,14 @@ const Component: React.FC<PPStageProps> = (props) => {
     for (const annotation of props.annotations) {
       if (!annotation) continue;
       param.annotation = annotation;
-      const shape = props.drawTool.drawAnnotation(param);
+      let shape;
+      if (annotation.type == 'polygon') {
+        shape = props.drawTool.polygon.drawAnnotation(param);
+      } else if (annotation.type == 'brush' || annotation.type == 'rubber') {
+        shape = props.drawTool.brush.drawAnnotation(param);
+      } else {
+        continue;
+      }
       shapes.push(shape);
     }
     // Re-draw layer
@@ -224,8 +234,6 @@ const Component: React.FC<PPStageProps> = (props) => {
           name="annotation"
           scaleX={props.scale}
           scaleY={props.scale}
-          offsetX={imageWidth / 2}
-          offsetY={imageHeight / 2}
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}
