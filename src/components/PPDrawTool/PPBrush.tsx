@@ -29,13 +29,12 @@ function createLine(param: CanvasLineType): string {
  * Color lines on canvas as label.color
  */
 function drawAnnotation(param: PPRenderFuncProps) {
-  console.log(`PPBrush.drawAnnotation, param:`, param);
   const { canvasRef, annotation } = param;
   const result = annotation.result;
   if (!result) return <></>;
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
-  console.log(`PPBrush.drawAnnotation, result:`, result);
+  // console.log(`PPBrush.drawAnnotation, result:`, result);
   let points: number[] = [];
   let startIndex = 0;
   for (let i = 0; i < result.length; i++) {
