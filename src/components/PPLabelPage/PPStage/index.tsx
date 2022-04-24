@@ -240,12 +240,12 @@ const Component: React.FC<PPStageProps> = (props) => {
           onContextMenu={onContextMenu}
           opacity={transparency}
         >
-          {shapes}
           <Image
             x={-(image?.width || 0) / 2}
             y={-(image?.height || 0) / 2}
             image={canvasRef.current || undefined}
           />
+          {shapes}
         </Layer>
       </Stage>
     </>

@@ -52,6 +52,7 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
           const baseImage = stage.findOne('.baseImage');
           let reachBorder = false;
           let newPositionX = evt.target.x();
+          console.log(`newPositionX before:`, newPositionX);
           if (newPositionX > baseImage.width() / 2) {
             newPositionX = baseImage.width() / 2;
             reachBorder = true;
@@ -60,7 +61,9 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
             newPositionX = -baseImage.width() / 2;
             reachBorder = true;
           }
+          console.log(`newPositionX after:`, newPositionX);
           let newPositionY = evt.target.y();
+          console.log(`newPositionY before:`, newPositionY);
           if (newPositionY > baseImage.height() / 2) {
             newPositionY = baseImage.height() / 2;
             reachBorder = true;
@@ -75,16 +78,17 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
           // End cross border control
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
-          const newAnno = { ...props.annotation, points: [{ color: color, points: points }] };
+          const newAnno = { ...props.annotation, result: points.join(',') };
+          console.log(newAnno);
           props.onDrag(newAnno);
         }}
         onMouseOver={() => {
-          // console.log(`Circle onMouseOver`);
+          console.log(`Circle onMouseOver`);
           if (props.currentTool == 'editor' && props.stageRef?.current)
             props.stageRef.current.container().style.cursor = 'cell';
         }}
         onMouseOut={() => {
-          // console.log(`Circle onMouseOut`);
+          console.log(`Circle onMouseOut`);
           if (props.currentTool == 'editor' && props.stageRef?.current)
             props.stageRef.current.container().style.cursor = 'default';
         }}

@@ -238,7 +238,7 @@ const Page: React.FC = () => {
             currentTool={currentTool}
             currentAnnotation={currentAnnotation}
             setCurrentAnnotation={setCurrentAnnotation}
-            onAnnotationModify={onAnnotationModify}
+            onAnnotationModify={modifyAnnoByFrontendId}
             onAnnotationModifyComplete={() => {
               recordHistory({ annos: annotations, currAnno: currentAnnotation });
             }}
