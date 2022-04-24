@@ -43,7 +43,7 @@ export type PPStageProps = {
 
 const Component: React.FC<PPStageProps> = (props) => {
   const [image] = useImage(props.imgSrc || imgSrc);
-  const imageWith = image?.width || 0;
+  const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
 
@@ -96,7 +96,7 @@ const Component: React.FC<PPStageProps> = (props) => {
   const getEvtParam = (e: Konva.KonvaEventObject<MouseEvent>) => {
     return {
       e: e,
-      mouseX: (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWith / 2,
+      mouseX: (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2,
       mouseY: (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2,
       canvasRef: canvasRef,
       layerRef: layerRef,
@@ -224,6 +224,8 @@ const Component: React.FC<PPStageProps> = (props) => {
           name="annotation"
           scaleX={props.scale}
           scaleY={props.scale}
+          offsetX={imageWidth / 2}
+          offsetY={imageHeight / 2}
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}

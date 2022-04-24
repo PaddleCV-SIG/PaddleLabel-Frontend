@@ -30,6 +30,7 @@ export type PPDrawToolProps = {
   currentAnnotation?: Annotation;
   onAnnotationAdd: (annotation: Annotation) => void;
   onAnnotationModify: (annotation: Annotation) => void;
+  modifyAnnoByFrontendId: (annotation: Annotation) => void;
   onMouseUp: () => void;
   frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
 };
