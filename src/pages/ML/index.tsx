@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Select, Input, Form, message } from 'antd';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
 import serviceUtils from '@/services/serviceUtils';
 import { ProjectUtils } from '@/services/utils';
 import { ModelUtils, getVersion } from '@/services/utils';
+import PPTrainModal from '@/components/ML/PPTrainModal';
+import PPExportModal from '@/components/ProjectOverview/PPExportModal';
 
 const ML: React.FC = () => {
   const project = ProjectUtils(useState);
   const projectId = serviceUtils.getQueryVariable('projectId');
   const model = ModelUtils(useState);
-  const projectSelect = useRef();
   const { Option } = Select;
   const [form] = Form.useForm();
 
@@ -28,26 +29,17 @@ const ML: React.FC = () => {
         );
         return;
       }
-      project.getCurr(projectId);
+      const pj = await project.getCurr(projectId);
+      if (pj?.otherSettings?.mlBackendUrl) model.setMlBackendUrl(pj?.otherSettings?.mlBackendUrl);
     }
     init();
   }, []);
 
-  function saveMlsettings(settings) {
-    const allModelSettings = project.curr.otherSettings?.models
-      ? project.curr.otherSettings?.models
-      : {};
-    allModelSettings[settings.modelName] = { trainBatchSize: settings.trainBatchSize };
-
-    project.curr.otherSettings.perviousModel = settings.modelName;
-    project.curr.otherSettings.models = allModelSettings;
-    project.update(project.curr.projectId, { otherSettings: project.curr.otherSettings });
-  }
-
   useEffect(() => {
     if (!project.curr) return;
-    const settings = project.curr.otherSettings;
-    const mod = settings.models ? settings.models[settings.perviousModel] : {};
+    const settings = project.curr.otherSettings ? project.curr.otherSettings : {};
+    const mod =
+      settings.models && settings.perviousModel ? settings.models[settings.perviousModel] : {};
     const initialValues = {
       mlBackendUrl: settings.mlBackendUrl,
       modelName: settings.perviousModel,
@@ -68,6 +60,27 @@ const ML: React.FC = () => {
     project.update(project.curr.projectId, { otherSettings: otherSettings });
   }
 
+  function saveMlsettings(settings) {
+    if (!project.curr) {
+      message.error('Please select model first!');
+      return;
+    }
+    const allModelSettings = project.curr.otherSettings?.models
+      ? project.curr.otherSettings.models
+      : {};
+    allModelSettings[settings.modelName] = { trainBatchSize: settings.trainBatchSize };
+
+    project.curr.otherSettings.perviousModel = settings.modelName;
+    project.curr.otherSettings.models = allModelSettings;
+    project.update(project.curr.projectId, { otherSettings: project.curr.otherSettings });
+    project.getCurr(projectId);
+  }
+
+  function trainModel(dataDir: string) {
+    const s = project.curr.otherSettings;
+    model.train(s.perviousModel, dataDir, s.models[s.perviousModel]);
+  }
+
   return (
     <PPContainer>
       <PPBlock>
@@ -76,7 +89,6 @@ const ML: React.FC = () => {
           placeholder="Select a project"
           onChange={(pjid) => project.getCurr(pjid)}
           value={project.curr?.projectId}
-          ref={projectSelect}
         >
           {project.all?.map((proj) => (
             <Option value={proj.projectId}>{proj.name}</Option>
@@ -84,8 +96,9 @@ const ML: React.FC = () => {
         </Select>
       </PPBlock>
 
-      <PPBlock>
-        <Button type={'primary'}>{'Train'}</Button>
+      <PPBlock hidden={project.curr == undefined}>
+        <PPTrainModal model={model} project={project.curr} trainModel={trainModel} />
+        <PPExportModal project={project.curr} />
         <Button type={'primary'}>{'Progress'}</Button>
         <Button type={'primary'}>{'Run Inference'}</Button>
       </PPBlock>
@@ -177,6 +190,17 @@ const ML: React.FC = () => {
           </Form.Item>
         </Form>
       </PPBlock>
+
+      {/* <PPTrainModal
+        visible={trainModelVisable}
+        trainModel={trainModel}
+        onCancel={() => {
+          setTrainModelVisable(false);
+        }}
+        onFinish={() => {
+          setTrainModelVisable(false);
+        }}
+      /> */}
     </PPContainer>
   );
 };

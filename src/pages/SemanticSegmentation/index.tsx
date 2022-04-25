@@ -12,8 +12,8 @@ import type { Annotation } from '@/models/Annotation';
 import type { ToolType } from '@/models/ToolType';
 import type { Label } from '@/models/Label';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
-import PPDivideDataModal from '@/components/PPLabelPage/PPDivideDataModal';
-import PPExportModal from '@/components/PPLabelPage/PPExportModal';
+// import PPDivideDataModal from '@/components/ProjectOverview/PPSplitDatasetModal';
+// import PPExportModal from '@/components/ProjectOverview/PPExportModal';
 import PPBrush from '@/components/PPDrawTool/PPBrush';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 
@@ -39,8 +39,8 @@ function getMaxLableId(labels: Label[]) {
 
 const Page: React.FC = () => {
   const [labels, setLabels] = useState<Label[]>([]);
-  const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
-  const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
+  // const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
+  // const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [activeLabelIds, setActiveLabelIds] = useState<Set<number>>(new Set());
@@ -385,7 +385,7 @@ const Page: React.FC = () => {
           }}
         />
       </div>
-      <PPDivideDataModal
+      {/* <PPDivideDataModal
         visible={divideModalVisible}
         // splitDataset={splitDataset}
         // project={project}
@@ -395,8 +395,8 @@ const Page: React.FC = () => {
         onFinish={() => {
           setDivideModalVisible(false);
         }}
-      />
-      <PPExportModal
+      /> */}
+      {/* <PPExportModal
         visible={exportModalVisible}
         // exportDataset={exportDataset}
         // project={project}
@@ -406,7 +406,7 @@ const Page: React.FC = () => {
         onFinish={() => {
           setExportModalVisible(false);
         }}
-      />
+      /> */}
     </PPLabelPageContainer>
   );
 };

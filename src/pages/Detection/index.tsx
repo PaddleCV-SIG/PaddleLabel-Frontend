@@ -15,8 +15,8 @@ import { PageInit } from '@/services/utils';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import type { Annotation } from '@/models/Annotation';
 import { useIntl } from 'umi';
-import PPDivideDataModal from '@/components/PPLabelPage/PPDivideDataModal';
-import PPExportModal from '@/components/PPLabelPage/PPExportModal';
+// import PPDivideDataModal from '@/components/ProjectOverview/PPSplitDatasetModal';
+// import PPExportModal from '@/components/PPLabelPage/PPExportModal';
 
 const Page: React.FC = () => {
   const [
@@ -323,7 +323,7 @@ const Page: React.FC = () => {
           }}
         />
       </div>
-      <PPDivideDataModal
+      {/* <PPDivideDataModal
         visible={divideModalVisible}
         splitDataset={splitDataset}
         project={project}
@@ -333,8 +333,8 @@ const Page: React.FC = () => {
         onFinish={() => {
           setDivideModalVisible(false);
         }}
-      />
-      <PPExportModal
+      /> */}
+      {/* <PPExportModal
         visible={exportModalVisible}
         exportDataset={exportDataset}
         project={project}
@@ -344,7 +344,7 @@ const Page: React.FC = () => {
         onFinish={() => {
           setExportModalVisible(false);
         }}
-      />
+      /> */}
     </PPLabelPageContainer>
   );
 };

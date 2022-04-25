@@ -174,9 +174,9 @@ export const ProjectUtils = (useState: UseStateType) => {
     return project;
   }
 
-  async function remove(project: Project | number) {
+  async function remove(project: Project | number | string) {
     console.log('remove project', project);
-    const projectId: number = typeof project == 'number' ? project : project.projectId;
+    const projectId: number = typeof project == 'object' ? project.projectId : +project;
     await projectApi.remove(projectId);
     getAll();
   }
@@ -565,7 +565,7 @@ export function exportDataset(projectId, exportDir) {
       serviceUtils.parseError(err, message);
     });
 }
-export function importDataset(projectId, importDir) {
+export function importDataset(projectId: number, importDir: string) {
   console.log('import dataset', projectId, importDir);
   return projectApi
     .importDataset(projectId, { importDir: importDir })
@@ -704,8 +704,8 @@ export const PageInit = (
 export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefined) {
   const [curr, setCurr] = useState<Model>();
   const [all, setAll] = useState<Model[]>();
-
-  const modelApi = new ModelApi(new Configuration({ basePath: mlBackendUrl }));
+  const [backendUrl, setBackendUrl] = useState<string>(mlBackendUrl);
+  let modelApi = new ModelApi(new Configuration({ basePath: backendUrl }));
 
   async function getAll() {
     try {
@@ -721,22 +721,38 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   }
 
   async function setMlBackendUrl(url: string) {
-    const modelManageApi = new ModelManageApi(new Configuration({ basePath: url }));
-    const isRunning: string = await modelManageApi.isRunning();
-    console.log('set url', isRunning.trim(), typeof isRunning.trim(), isRunning.trim() == 'true');
-    if (isRunning.trim() != 'true') {
-      message.error(`No ml backend detected at url ${url}`);
+    modelApi = new ModelApi(new Configuration({ basePath: url }));
+    setBackendUrl(url);
+    // const modelManageApi = new ModelManageApi(new Configuration({ basePath: url }));
+    // const isRunning: string = await modelManageApi.isRunning();
+    // console.log('set url', isRunning.trim(), typeof isRunning.trim(), isRunning.trim() == 'true');
+    // if (isRunning.trim() != 'true') {
+    //   message.error(`No ml backend detected at url ${url}`);
+    //   return;
+    // }
+    // modelApi.configuration.configuration.basePath = url;
+    // setBackendUrl(url);
+    getAll();
+    console.log('ml backend url set', url);
+  }
+
+  function train(modelName: string, dataDir: string, configs: object) {
+    console.log('model api url', modelApi.configuration.configuration.basePath);
+    if (!modelApi.configuration.configuration.basePath) {
+      message.error('Set ML backend url first!');
       return;
     }
-    modelApi.configuration.configuration.basePath = url;
-    getAll();
+    modelApi.train(modelName, { dataDir: dataDir, configs: configs }).catch((err) => {
+      serviceUtils.parseError(err, message);
+    });
   }
   return {
+    setMlBackendUrl,
     curr,
     all,
     getAll,
     setCurr,
     modelApi,
-    setMlBackendUrl,
+    train,
   };
 }

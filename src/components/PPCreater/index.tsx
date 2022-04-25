@@ -1,14 +1,12 @@
-import { Col, Form, Input, message, Radio, Row } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Col, Form, Input, Button, Radio, Row, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
-import React, { useState, useEffect } from 'react';
-import styles from './index.less';
-import { Button } from 'antd';
 import { history, useIntl } from 'umi';
+import styles from './index.less';
 import serviceUtils from '@/services/serviceUtils';
 import { createInfo, camel2snake } from '@/services/utils';
 import { ProjectUtils } from '@/services/utils';
-import type { Project } from '@/services/models/Project';
 
 export type _PPCardProps = {
   title?: string;
@@ -34,18 +32,16 @@ const _PPBlock: React.FC<_PPCardProps> = (props) => {
   );
 };
 
-export type PPCardProps = {
+export type PPCreaterProps = {
   taskCategory: string; // TODO: stricter
   imgSrc?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
-  project: Project;
 };
 
-const PPCreater: React.FC<PPCardProps> = (props) => {
+const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const projects = ProjectUtils(useState);
   const projectId = serviceUtils.getQueryVariable('projectId');
-  console.log('render ppcreater', props, projectId);
 
   const intl = useIntl();
   const projectName = intl.formatMessage({ id: 'component.PPCreater.projectName' });
@@ -71,20 +67,21 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
     }
   };
   // const taskCategory = props.taskCategory;
-  const title = props.taskCategory ? createInfo[props.taskCategory]['name'] : null;
+  const title = props.taskCategory ? createInfo[props.taskCategory].name : null;
   const [form] = Form.useForm();
 
   useEffect(() => {
     projects.getCurr(projectId).then((project) => {
       console.log('project', project);
-      const initialValues = {
+      const values = {
         name: project?.name,
         description: project?.description,
         dataDir: project?.dataDir,
         labelDir: project?.labelDir,
-        labelFromat: project?.labelFromat,
+        labelFormat: project?.labelFormat,
       };
-      form.setFieldsValue(initialValues);
+      console.log('values', values);
+      form.setFieldsValue(values);
     });
   }, []);
 
@@ -139,7 +136,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                           ),
                       })
                     }
-                  ></QuestionCircleOutlined>
+                  />
                 </div>
               }
               labelCol={{
@@ -200,7 +197,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                         },
                       })
                     }
-                  ></QuestionCircleOutlined>
+                  />
                 </div>
               }
               labelCol={{
@@ -221,17 +218,11 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                   createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
               }}
             >
-              <Radio.Group
-                size="large"
-                style={{ height: '3.13rem' }}
-                // defaultValue={
-                //   createInfo[props.taskCategory].labelFormats
-                //     ? Object.keys(createInfo[props.taskCategory].labelFormats)[0]
-                //     : undefined
-                // }
-              >
+              <Radio.Group size="large" style={{ height: '3.13rem' }}>
                 {Object.entries(createInfo[props.taskCategory].labelFormats).map(([k, v]) => (
-                  <Radio value={k}>{v}</Radio>
+                  <Radio key={k} value={k}>
+                    {v}
+                  </Radio>
                 ))}
               </Radio.Group>
             </Form.Item>
@@ -277,7 +268,7 @@ const PPCreater: React.FC<PPCardProps> = (props) => {
                 style={{ height: '2.5rem', width: '48%' }}
                 block
                 onClick={() => {
-                  history.push('/welcome');
+                  history.push(`/project_overview?projectId=${projectId}`);
                 }}
               >
                 {cancel}

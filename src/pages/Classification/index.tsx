@@ -8,8 +8,8 @@ import PPStage from '@/components/PPLabelPage/PPStage';
 import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
 import { useIntl } from 'umi';
-import PPDivideDataModal from '@/components/PPLabelPage/PPDivideDataModal';
-import PPExportModal from '@/components/PPLabelPage/PPExportModal';
+// import PPDivideDataModal from '@/components/ProjectOverview/PPSplitDatasetModal';
+// import PPExportModal from '@/components/PPLabelPage/PPExportModal';
 
 const Page: React.FC = () => {
   const [
@@ -21,15 +21,15 @@ const Page: React.FC = () => {
     data,
     project,
     label,
-    splitDataset,
-    exportDataset,
+    // splitDataset,
+    // exportDataset,
   ] = PageInit(useState, useEffect, {
     label: { oneHot: false, postSetCurr: selectLabel },
     tool: { defaultTool: 'mover' },
     effectTrigger: { postTaskChange: postTaskChange },
   });
-  const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
-  const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
+  // const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
+  // const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
   const intl = useIntl();
   const zoomIn = intl.formatMessage({ id: 'pages.toolBar.zoomIn' });
@@ -159,7 +159,7 @@ const Page: React.FC = () => {
           hideEye={true}
         />
       </div>
-      <PPDivideDataModal
+      {/* <PPDivideDataModal
         visible={divideModalVisible}
         splitDataset={splitDataset}
         project={project}
@@ -169,8 +169,8 @@ const Page: React.FC = () => {
         onFinish={() => {
           setDivideModalVisible(false);
         }}
-      />
-      <PPExportModal
+      /> */}
+      {/* <PPExportModal
         visible={exportModalVisible}
         exportDataset={exportDataset}
         project={project}
@@ -180,7 +180,7 @@ const Page: React.FC = () => {
         onFinish={() => {
           setExportModalVisible(false);
         }}
-      />
+      /> */}
     </PPLabelPageContainer>
   );
 };
