@@ -99,7 +99,21 @@ const ML: React.FC = () => {
       <PPBlock hidden={project.curr == undefined}>
         <PPTrainModal model={model} project={project.curr} trainModel={trainModel} />
         <PPExportModal project={project.curr} />
-        <Button type={'primary'}>{'Progress'}</Button>
+        <Button
+          type={'primary'}
+          onClick={() => {
+            if (!project.curr?.otherSettings?.mlBackendUrl) {
+              message.error('Set backend url first');
+              return;
+            }
+            window.open(
+              `${project.curr.otherSettings.mlBackendUrl.replace('model', 'visualdl')}`,
+              '_blank',
+            );
+          }}
+        >
+          {'Progress'}
+        </Button>
         <Button type={'primary'}>{'Run Inference'}</Button>
       </PPBlock>
 
