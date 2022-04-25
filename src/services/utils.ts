@@ -14,8 +14,9 @@ import {
   ManageApi,
   Configuration,
 } from '@/services';
-
 import type { ToolType, Annotation, Label } from '@/models/';
+import { ModelApi } from './ml';
+import type { Model } from './ml/models';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -227,7 +228,6 @@ export const ProjectUtils = (useState: UseStateType) => {
       return 0;
     }
   }
-
   return {
     all,
     getAll,
@@ -712,3 +712,36 @@ export const PageInit = (
     exportDataset,
   ];
 };
+
+// ml related
+export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefined) {
+  const [curr, setCurr] = useState<Model>();
+  const [all, setAll] = useState<Model[]>();
+
+  const modelApi = new ModelApi(new Configuration({ basePath: mlBackendUrl }));
+
+  async function getAll() {
+    try {
+      const models: Model[] = await modelApi.getAll();
+      setAll(models);
+      return models;
+    } catch (err) {
+      console.log('model getAll err', err);
+      serviceUtils.parseError(err, message);
+      return;
+    }
+  }
+
+  function setMlBackendUrl(url: string) {
+    modelApi.configuration.configuration.basePath = url;
+    getAll();
+  }
+  return {
+    curr,
+    all,
+    getAll,
+    setCurr,
+    modelApi,
+    setMlBackendUrl,
+  };
+}

@@ -30,6 +30,12 @@ export interface Model {
    * @type {string}
    * @memberof Model
    */
+  description?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Model
+   */
   taskCategory?: string;
   /**
    *
@@ -37,12 +43,6 @@ export interface Model {
    * @memberof Model
    */
   framework?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Model
-   */
-  comment?: string;
 }
 
 export function ModelFromJSON(json: any): Model {
@@ -55,9 +55,9 @@ export function ModelFromJSONTyped(json: any, ignoreDiscriminator: boolean): Mod
   }
   return {
     name: !exists(json, 'name') ? undefined : json['name'],
+    description: !exists(json, 'description') ? undefined : json['description'],
     taskCategory: !exists(json, 'task_category') ? undefined : json['task_category'],
     framework: !exists(json, 'framework') ? undefined : json['framework'],
-    comment: !exists(json, 'comment') ? undefined : json['comment'],
   };
 }
 
@@ -70,8 +70,8 @@ export function ModelToJSON(value?: Model | null): any {
   }
   return {
     name: value.name,
+    description: value.description,
     task_category: value.taskCategory,
     framework: value.framework,
-    comment: value.comment,
   };
 }

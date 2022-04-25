@@ -30,6 +30,11 @@ export default [
     component: './ProjectOverview',
   },
   {
+    path: '/ml',
+    name: 'Machine Learning',
+    component: './ML',
+  },
+  {
     path: '/project_creation',
     component: './ProjectCreation',
   },

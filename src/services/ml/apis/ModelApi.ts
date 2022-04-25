@@ -20,6 +20,9 @@ import {
   InlineObject1,
   InlineObject1FromJSON,
   InlineObject1ToJSON,
+  Model,
+  ModelFromJSON,
+  ModelToJSON,
 } from '../models';
 
 export interface EvalRequest {
@@ -99,7 +102,7 @@ export class ModelApi extends runtime.BaseAPI {
    * Get all models
    * Get all models
    */
-  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<void>> {
+  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Model>>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -114,15 +117,16 @@ export class ModelApi extends runtime.BaseAPI {
       initOverrides,
     );
 
-    return new runtime.VoidApiResponse(response);
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ModelFromJSON));
   }
 
   /**
    * Get all models
    * Get all models
    */
-  async getAll(initOverrides?: RequestInit): Promise<void> {
-    await this.getAllRaw(initOverrides);
+  async getAll(initOverrides?: RequestInit): Promise<Array<Model>> {
+    const response = await this.getAllRaw(initOverrides);
+    return await response.value();
   }
 
   /**

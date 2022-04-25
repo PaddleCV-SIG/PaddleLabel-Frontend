@@ -24,13 +24,7 @@ export interface ProjectOtherSettings {
    * @type {string}
    * @memberof ProjectOtherSettings
    */
-  labelNamesPath?: string;
-  /**
-   *
-   * @type {Array<string>}
-   * @memberof ProjectOtherSettings
-   */
-  splitFilePaths?: Array<string>;
+  mlBackendUrl?: string;
 }
 
 export function ProjectOtherSettingsFromJSON(json: any): ProjectOtherSettings {
@@ -45,8 +39,7 @@ export function ProjectOtherSettingsFromJSONTyped(
     return json;
   }
   return {
-    labelNamesPath: !exists(json, 'label_names_path') ? undefined : json['label_names_path'],
-    splitFilePaths: !exists(json, 'split_file_paths') ? undefined : json['split_file_paths'],
+    mlBackendUrl: !exists(json, 'mlBackendUrl') ? undefined : json['mlBackendUrl'],
   };
 }
 
@@ -58,7 +51,6 @@ export function ProjectOtherSettingsToJSON(value?: ProjectOtherSettings | null):
     return null;
   }
   return {
-    label_names_path: value.labelNamesPath,
-    split_file_paths: value.splitFilePaths,
+    mlBackendUrl: value.mlBackendUrl,
   };
 }
