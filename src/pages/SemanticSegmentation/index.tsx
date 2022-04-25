@@ -75,10 +75,24 @@ const Page: React.FC = () => {
   }, []);
 
   const onAnnotationModify = (annotation: Annotation) => {
+    if (!annotation) return;
     annotations.pop();
     annotations.push(annotation);
     setCurrentAnnotation(annotation);
     setAnnotations(annotations);
+  };
+
+  const modifyAnnoByFrontendId = (annotation: Annotation) => {
+    const newAnnos = [];
+    for (const anno of annotations) {
+      if (anno.frontendId == annotation.frontendId) {
+        newAnnos.push(annotation);
+      } else {
+        newAnnos.push(anno);
+      }
+    }
+    setCurrentAnnotation(annotation);
+    setAnnotations(newAnnos);
   };
 
   const drawToolParam = {
@@ -95,6 +109,7 @@ const Page: React.FC = () => {
       setCurrentAnnotation(annotation);
     },
     onAnnotationModify: onAnnotationModify,
+    modifyAnnoByFrontendId: modifyAnnoByFrontendId,
     onMouseUp: () => {
       recordHistory({ annos: annotations, currAnno: currentAnnotation });
     },
@@ -103,7 +118,7 @@ const Page: React.FC = () => {
   const intl = useIntl();
   const brush = PPBrush(drawToolParam);
   const polygon = PPPolygon(drawToolParam);
-  const drawTool = currentTool == 'polygon' ? polygon : brush;
+  const drawTool = { polygon: polygon, brush: brush };
   return (
     <PPLabelPageContainer className="segment">
       <PPToolBar>
@@ -223,7 +238,7 @@ const Page: React.FC = () => {
             currentTool={currentTool}
             currentAnnotation={currentAnnotation}
             setCurrentAnnotation={setCurrentAnnotation}
-            onAnnotationModify={onAnnotationModify}
+            onAnnotationModify={modifyAnnoByFrontendId}
             onAnnotationModifyComplete={() => {
               recordHistory({ annos: annotations, currAnno: currentAnnotation });
             }}

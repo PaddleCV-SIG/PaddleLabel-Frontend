@@ -188,6 +188,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       label: props.currentLabel,
       frontendId: frontendId,
       result: line,
+      type: 'brush',
     };
     props.onAnnotationAdd(anno);
   };
