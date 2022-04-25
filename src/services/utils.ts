@@ -15,7 +15,7 @@ import {
   Configuration,
 } from '@/services';
 import type { ToolType, Annotation, Label } from '@/models/';
-import { ModelApi } from './ml';
+import { ModelApi, ManageApi as ModelManageApi } from './ml';
 import type { Model } from './ml/models';
 
 const baseUrl = localStorage.getItem('basePath');
@@ -70,8 +70,10 @@ export const createInfo = {
 export async function getVersion() {
   try {
     const version = await manageApi.getVersion();
+    console.log('version', version);
     return version;
   } catch (err) {
+    console.log('err', err);
     message.error(
       'Backend unavaliable, please make sure backend is running and check ur internet connection.',
     );
@@ -150,7 +152,7 @@ export function LoadingUtils(useState: UseStateType) {
 
 export const ProjectUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Project[]>();
-  const [currIdx, setCurrIdx] = useState<number>();
+  const [curr, setCurr] = useState<Project>();
   const [progress, setProgress] = useState<number>();
 
   async function getAll() {
@@ -167,21 +169,9 @@ export const ProjectUtils = (useState: UseStateType) => {
 
   async function getCurr(projectId: string) {
     if (projectId == undefined) return undefined;
-    if (all && all.length > 1) {
-      message.error('Currently have multiple projects stored, use turnTo instead');
-      return;
-    }
-
     const project: Project = await projectApi.get(projectId);
-    setAll([project]);
-    setCurrIdx(0);
+    setCurr(project);
     return project;
-  }
-
-  // WARNING: untested
-  async function turnTo(turnToIdx: number) {
-    setCurrIdx(turnToIdx);
-    return all[turnToIdx];
   }
 
   async function remove(project: Project | number) {
@@ -213,6 +203,7 @@ export const ProjectUtils = (useState: UseStateType) => {
       });
   }
 
+  // todo: fix
   async function getProgress(projectId: number = undefined): Promise<number> {
     try {
       const pjId = projectId == undefined ? all[currIdx].projectId : projectId;
@@ -231,17 +222,13 @@ export const ProjectUtils = (useState: UseStateType) => {
   return {
     all,
     getAll,
+    curr,
     getCurr,
-    turnTo,
     remove,
     create,
     update,
     progress,
     getProgress,
-    get curr() {
-      if (!all) return undefined;
-      return all[currIdx];
-    },
   };
 };
 
@@ -723,6 +710,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   async function getAll() {
     try {
       const models: Model[] = await modelApi.getAll();
+      console.log('models', models);
       setAll(models);
       return models;
     } catch (err) {
@@ -732,7 +720,14 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     }
   }
 
-  function setMlBackendUrl(url: string) {
+  async function setMlBackendUrl(url: string) {
+    const modelManageApi = new ModelManageApi(new Configuration({ basePath: url }));
+    const isRunning: string = await modelManageApi.isRunning();
+    console.log('set url', isRunning.trim(), typeof isRunning.trim(), isRunning.trim() == 'true');
+    if (isRunning.trim() != 'true') {
+      message.error(`No ml backend detected at url ${url}`);
+      return;
+    }
     modelApi.configuration.configuration.basePath = url;
     getAll();
   }
