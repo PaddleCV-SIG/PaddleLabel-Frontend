@@ -153,7 +153,8 @@ export function LoadingUtils(useState: UseStateType) {
 export const ProjectUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Project[]>();
   const [curr, setCurr] = useState<Project>();
-  const [progress, setProgress] = useState<number>();
+  const [finished, setFinished] = useState<number>();
+  // const [progress, setProgress] = useState<number>();
 
   async function getAll() {
     try {
@@ -204,17 +205,17 @@ export const ProjectUtils = (useState: UseStateType) => {
   }
 
   // todo: fix
-  async function getProgress(projectId: number = undefined): Promise<number> {
+  async function getFinished(projectId: number = undefined): Promise<number> {
     try {
       const pjId = projectId == undefined ? curr.projectId : projectId;
       const stat = await projectApi.getProgress(pjId);
       if (!stat || stat.finished == undefined || stat.total == undefined)
         throw Error('empty progress');
-      const prog = Math.ceil((stat.finished / stat.total) * 100);
-      setProgress(prog);
-      return prog;
+      // const prog = Math.ceil((stat.finished / stat.total) * 100);
+      setFinished(stat.finished);
+      return stat.finished;
     } catch (err) {
-      console.log('get progress err', err);
+      console.log('get finished err', err);
       serviceUtils.parseError(err, message);
       return 0;
     }
@@ -227,8 +228,8 @@ export const ProjectUtils = (useState: UseStateType) => {
     remove,
     create,
     update,
-    progress,
-    getProgress,
+    finished,
+    getFinished,
   };
 };
 
@@ -448,7 +449,7 @@ export function AnnotationUtils(
       // sync anns from backend
       if (annotation.dataId) annRes = await getAll(annotation.dataId);
       // if currently 1 ann -> this is the first ann -> update progress
-      if (project && annRes.length == 1) project.getProgress();
+      if (project && annRes.length == 1) project.getFinished();
     } catch (err) {
       console.log('annotation create err', err);
       return serviceUtils.parseError(err, message);
@@ -464,7 +465,7 @@ export function AnnotationUtils(
       await annotationApi.remove(annId);
       if (all && all.length && all[0].dataId!) {
         const anns = await getAll(all[0].dataId);
-        if (anns.length == 0) project.getProgress();
+        if (anns.length == 0) project.getFinished();
       }
     } catch (err) {
       console.log('annotation remove err', err);
@@ -649,7 +650,7 @@ export const PageInit = (
       task.getAll(projectId);
     }
     localStorage.removeItem('currentTasks');
-    project.getProgress(projectId);
+    project.getFinished(projectId);
   }, []);
 
   useEffect(() => {
@@ -686,7 +687,7 @@ export const PageInit = (
     if (task.currIdx == undefined) return;
 
     const onTaskChange = async () => {
-      if (task.curr?.projectId) project.getProgress(task.curr.projectId);
+      if (task.curr?.projectId) project.getFinished(task.curr.projectId);
       if (task.curr?.taskId) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [allData, currData] = await data.getAll(task.curr.taskId, 0);

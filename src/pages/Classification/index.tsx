@@ -110,14 +110,13 @@ const Page: React.FC = () => {
             <div className="progress">
               <Progress
                 className="progressBar"
-                percent={project.progress}
+                percent={Math.ceil((project.finished / task.all?.length) * 100)}
                 status="active"
                 showInfo={false}
               />{' '}
               <span className="progressDesc">
-                {/* TODO: translate */}
                 Current labeling {task.currIdx == undefined ? 1 : task.currIdx + 1} of{' '}
-                {task.all?.length}. Already labeled {task.finished(project.progress) || 0}.
+                {task.all?.length}. Already labeled {project.finished || 0}.
               </span>
             </div>
           </div>
