@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Select, Input, Form, message } from 'antd';
+import { history } from 'umi';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
 import serviceUtils from '@/services/serviceUtils';
@@ -76,11 +77,25 @@ const ML: React.FC = () => {
     project.curr.otherSettings.models = allModelSettings;
     project.update(project.curr.projectId, { otherSettings: project.curr.otherSettings });
     project.getCurr(projectId);
+    message.info("Ml setting saved. Let's start trainig or inference!");
   }
 
   function trainModel(dataDir: string) {
     const s = project.curr.otherSettings;
     model.train(s.perviousModel, dataDir, s.models[s.perviousModel]);
+  }
+  function runInference() {
+    const s = project.curr.otherSettings;
+    if (!s || !s.mlBackendUrl || !s.perviousModel) {
+      message.error('Please set and save ml settings first.');
+      return;
+    }
+    project.predict(project.curr.projectId, {
+      mlBackendUrl: s.mlBackendUrl,
+      model: s.perviousModel,
+      sameServer: false,
+      createLabel: true,
+    });
   }
 
   return (
@@ -116,7 +131,29 @@ const ML: React.FC = () => {
         >
           {'Progress'}
         </Button>
-        <Button type={'primary'}>{'Run Inference'}</Button>
+        <Button type={'primary'} onClick={runInference}>
+          {'Run Inference'}
+        </Button>
+      </PPBlock>
+
+      <PPBlock>
+        <Button
+          type={'primary'}
+          onClick={() => {
+            console.log('pjid', project.curr.projectId);
+            history.push(`/${project.curr.taskCategory.name}?projectId=${project.curr.projectId}`);
+          }}
+        >
+          {'Label'}
+        </Button>
+        <Button
+          type={'primary'}
+          onClick={() => {
+            history.push(`/project_overview?projectId=${project.curr.projectId}`);
+          }}
+        >
+          {'Project Overview'}
+        </Button>
       </PPBlock>
 
       <PPBlock>

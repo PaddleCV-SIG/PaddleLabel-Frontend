@@ -16,31 +16,31 @@ import { exists, mapValues } from '../runtime';
 /**
  *
  * @export
- * @interface InlineObject4
+ * @interface InlineObject6
  */
-export interface InlineObject4 {
+export interface InlineObject6 {
   /**
    *
-   * @type {number}
-   * @memberof InlineObject4
+   * @type {string}
+   * @memberof InlineObject6
    */
-  tagId?: number;
+  path?: string;
 }
 
-export function InlineObject4FromJSON(json: any): InlineObject4 {
-  return InlineObject4FromJSONTyped(json, false);
+export function InlineObject6FromJSON(json: any): InlineObject6 {
+  return InlineObject6FromJSONTyped(json, false);
 }
 
-export function InlineObject4FromJSONTyped(json: any, ignoreDiscriminator: boolean): InlineObject4 {
+export function InlineObject6FromJSONTyped(json: any, ignoreDiscriminator: boolean): InlineObject6 {
   if (json === undefined || json === null) {
     return json;
   }
   return {
-    tagId: !exists(json, 'tag_id') ? undefined : json['tag_id'],
+    path: !exists(json, 'path') ? undefined : json['path'],
   };
 }
 
-export function InlineObject4ToJSON(value?: InlineObject4 | null): any {
+export function InlineObject6ToJSON(value?: InlineObject6 | null): any {
   if (value === undefined) {
     return undefined;
   }
@@ -48,6 +48,6 @@ export function InlineObject4ToJSON(value?: InlineObject4 | null): any {
     return null;
   }
   return {
-    tag_id: value.tagId,
+    path: value.path,
   };
 }

@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-export const BASE_PATH = 'http://localhost:1234/model'.replace(/\/+$/, '');
+export const BASE_PATH = 'http://localhost:1234'.replace(/\/+$/, '');
 
 const isBlob = (value: any) => typeof Blob !== 'undefined' && value instanceof Blob;
 

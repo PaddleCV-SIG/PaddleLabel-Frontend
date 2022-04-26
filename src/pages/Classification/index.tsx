@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Progress, message, Spin } from 'antd';
-import { useIntl } from 'umi';
+import { useIntl, history } from 'umi';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -27,8 +27,8 @@ const Page: React.FC = () => {
   const move = intl.formatMessage({ id: 'pages.toolBar.move' });
   const save = intl.formatMessage({ id: 'pages.toolBar.save' });
   const autoSave = intl.formatMessage({ id: 'pages.toolBar.autoSave' });
-  const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
-  const exportBtn = intl.formatMessage({ id: 'pages.toolBar.export' });
+  // const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
+  // const exportBtn = intl.formatMessage({ id: 'pages.toolBar.export' });
 
   function postProjectChanged() {
     if (project.curr.labelFormat == 'single_class') label.setOneHot(true);
@@ -55,6 +55,7 @@ const Page: React.FC = () => {
     if (!labels || !annotations) return;
     label.initActive(annotations);
     loading.setCurr(false);
+    console.log('annotations', annotation.all);
   }
 
   return (
@@ -128,18 +129,18 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() => {
-            setDivideModalVisible(true);
+            history.push(`/project_overview?projectId=${project.curr.projectId}`);
           }}
         >
-          {divideData}
+          {'Project Overview'}
         </PPToolBarButton>
         <PPToolBarButton
-          imgSrc="./pics/buttons/export.png"
+          imgSrc="./pics/buttons/data_division.png"
           onClick={() => {
-            setExportModalVisible(true);
+            history.push(`/ml?projectId=${project.curr.projectId}`);
           }}
         >
-          {exportBtn}
+          {'ML Settings'}
         </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
@@ -154,28 +155,6 @@ const Page: React.FC = () => {
           hideEye={true}
         />
       </div>
-      {/* <PPDivideDataModal
-        visible={divideModalVisible}
-        splitDataset={splitDataset}
-        project={project}
-        onCancel={() => {
-          setDivideModalVisible(false);
-        }}
-        onFinish={() => {
-          setDivideModalVisible(false);
-        }}
-      /> */}
-      {/* <PPExportModal
-        visible={exportModalVisible}
-        exportDataset={exportDataset}
-        project={project}
-        onCancel={() => {
-          setExportModalVisible(false);
-        }}
-        onFinish={() => {
-          setExportModalVisible(false);
-        }}
-      /> */}
     </PPLabelPageContainer>
   );
 };

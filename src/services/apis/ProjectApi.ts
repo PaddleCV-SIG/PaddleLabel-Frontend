@@ -26,6 +26,9 @@ import {
   InlineObject2,
   InlineObject2FromJSON,
   InlineObject2ToJSON,
+  InlineObject3,
+  InlineObject3FromJSON,
+  InlineObject3ToJSON,
   InlineResponse200,
   InlineResponse200FromJSON,
   InlineResponse200ToJSON,
@@ -88,6 +91,11 @@ export interface GetTasksRequest {
 export interface ImportDatasetRequest {
   projectId: string;
   inlineObject2?: InlineObject2;
+}
+
+export interface PredictRequest {
+  projectId: string;
+  inlineObject3?: InlineObject3;
 }
 
 export interface RemoveRequest {
@@ -567,6 +575,54 @@ export class ProjectApi extends runtime.BaseAPI {
       { projectId: projectId, inlineObject2: inlineObject2 },
       initOverrides,
     );
+  }
+
+  /**
+   * Run prediction on all data in the dataset
+   */
+  async predictRaw(
+    requestParameters: PredictRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling predict.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/predict`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: InlineObject3ToJSON(requestParameters.inlineObject3),
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Run prediction on all data in the dataset
+   */
+  async predict(
+    projectId: string,
+    inlineObject3?: InlineObject3,
+    initOverrides?: RequestInit,
+  ): Promise<void> {
+    await this.predictRaw({ projectId: projectId, inlineObject3: inlineObject3 }, initOverrides);
   }
 
   /**

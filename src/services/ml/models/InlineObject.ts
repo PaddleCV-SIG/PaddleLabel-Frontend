@@ -27,10 +27,10 @@ export interface InlineObject {
   dataDir: string;
   /**
    *
-   * @type {string}
+   * @type {object}
    * @memberof InlineObject
    */
-  configs: string;
+  configs: object;
 }
 
 export function InlineObjectFromJSON(json: any): InlineObject {

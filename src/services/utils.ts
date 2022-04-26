@@ -220,6 +220,12 @@ export const ProjectUtils = (useState: UseStateType) => {
       return 0;
     }
   }
+  async function predict(projectId: number, settings: object) {
+    projectApi.predict(projectId, settings).catch((err) => {
+      console.log('project predict err', err);
+      serviceUtils.parseError(err, message);
+    });
+  }
   return {
     all,
     getAll,
@@ -230,6 +236,7 @@ export const ProjectUtils = (useState: UseStateType) => {
     update,
     finished,
     getFinished,
+    predict,
   };
 };
 

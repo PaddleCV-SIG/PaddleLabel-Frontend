@@ -20,9 +20,9 @@ import {
   Data,
   DataFromJSON,
   DataToJSON,
-  InlineObject3,
-  InlineObject3FromJSON,
-  InlineObject3ToJSON,
+  InlineObject4,
+  InlineObject4FromJSON,
+  InlineObject4ToJSON,
   Tag,
   TagFromJSON,
   TagToJSON,
@@ -34,7 +34,7 @@ import {
 export interface AddTagRequest {
   taskId: string;
   requestId?: string;
-  inlineObject3?: InlineObject3;
+  inlineObject4?: InlineObject4;
 }
 
 export interface GetRequest {
@@ -100,7 +100,7 @@ export class TaskApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject3ToJSON(requestParameters.inlineObject3),
+        body: InlineObject4ToJSON(requestParameters.inlineObject4),
       },
       initOverrides,
     );
@@ -115,11 +115,11 @@ export class TaskApi extends runtime.BaseAPI {
   async addTag(
     taskId: string,
     requestId?: string,
-    inlineObject3?: InlineObject3,
+    inlineObject4?: InlineObject4,
     initOverrides?: RequestInit,
   ): Promise<Array<Tag>> {
     const response = await this.addTagRaw(
-      { taskId: taskId, requestId: requestId, inlineObject3: inlineObject3 },
+      { taskId: taskId, requestId: requestId, inlineObject4: inlineObject4 },
       initOverrides,
     );
     return await response.value();

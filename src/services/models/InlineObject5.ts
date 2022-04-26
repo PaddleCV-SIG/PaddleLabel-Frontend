@@ -24,7 +24,13 @@ export interface InlineObject5 {
    * @type {string}
    * @memberof InlineObject5
    */
-  path?: string;
+  username: string;
+  /**
+   *
+   * @type {string}
+   * @memberof InlineObject5
+   */
+  password: string;
 }
 
 export function InlineObject5FromJSON(json: any): InlineObject5 {
@@ -36,7 +42,8 @@ export function InlineObject5FromJSONTyped(json: any, ignoreDiscriminator: boole
     return json;
   }
   return {
-    path: !exists(json, 'path') ? undefined : json['path'],
+    username: json['username'],
+    password: json['password'],
   };
 }
 
@@ -48,6 +55,7 @@ export function InlineObject5ToJSON(value?: InlineObject5 | null): any {
     return null;
   }
   return {
-    path: value.path,
+    username: value.username,
+    password: value.password,
   };
 }

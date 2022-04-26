@@ -25,6 +25,18 @@ export interface InlineObject1 {
    * @memberof InlineObject1
    */
   img: string;
+  /**
+   *
+   * @type {string}
+   * @memberof InlineObject1
+   */
+  format: string;
+  /**
+   *
+   * @type {boolean}
+   * @memberof InlineObject1
+   */
+  createLabel?: boolean;
 }
 
 export function InlineObject1FromJSON(json: any): InlineObject1 {
@@ -37,6 +49,8 @@ export function InlineObject1FromJSONTyped(json: any, ignoreDiscriminator: boole
   }
   return {
     img: json['img'],
+    format: json['format'],
+    createLabel: !exists(json, 'create_label') ? undefined : json['create_label'],
   };
 }
 
@@ -49,5 +63,7 @@ export function InlineObject1ToJSON(value?: InlineObject1 | null): any {
   }
   return {
     img: value.img,
+    format: value.format,
+    create_label: value.createLabel,
   };
 }
