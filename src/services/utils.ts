@@ -146,7 +146,7 @@ export function ToolUtils(useState, { defaultTool }: { defaultTool: ToolType }) 
 }
 
 export function LoadingUtils(useState: UseStateType) {
-  const [curr, setCurr] = useState<bool>(false);
+  const [curr, setCurr] = useState<boolean>(false);
   return { curr, setCurr };
 }
 
@@ -206,7 +206,7 @@ export const ProjectUtils = (useState: UseStateType) => {
   // todo: fix
   async function getProgress(projectId: number = undefined): Promise<number> {
     try {
-      const pjId = projectId == undefined ? all[currIdx].projectId : projectId;
+      const pjId = projectId == undefined ? curr.projectId : projectId;
       const stat = await projectApi.getProgress(pjId);
       if (!stat || stat.finished == undefined || stat.total == undefined)
         throw Error('empty progress');
@@ -338,6 +338,8 @@ export const LabelUtils = (
     create,
     remove,
     toggleOneHot,
+    setOneHot,
+    isOneHot,
     get curr() {
       if (all == undefined) return undefined;
       return all[currIdx];
@@ -430,6 +432,10 @@ export function AnnotationUtils(
     }
   };
 
+  function clear() {
+    for (const ann of all) remove(ann);
+  }
+
   const create = async (annotation: Annotation, refresh: boolean = false) => {
     console.log('create label', annotation.label);
 
@@ -504,6 +510,7 @@ export function AnnotationUtils(
 
   return {
     all,
+    clear,
     getAll,
     create,
     remove,
@@ -646,6 +653,13 @@ export const PageInit = (
   }, []);
 
   useEffect(() => {
+    if (!project.curr) return;
+    if (props.effectTrigger?.postProjectChanged) {
+      props.effectTrigger.postProjectChanged();
+    }
+  }, [project.curr]);
+
+  useEffect(() => {
     // when all task is set, set current task
     if (task.all) {
       if (task.all.length == 0) {
@@ -695,8 +709,8 @@ export const PageInit = (
     data,
     project,
     label,
-    splitDataset,
-    exportDataset,
+    // splitDataset,
+    // exportDataset,
   ];
 };
 

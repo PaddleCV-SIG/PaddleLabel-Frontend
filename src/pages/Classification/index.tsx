@@ -1,35 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import { Progress, message, Spin } from 'antd';
+import { useIntl } from 'umi';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
-import { Progress, message, Spin } from 'antd';
 import { PageInit } from '@/services/utils';
-import { useIntl } from 'umi';
-// import PPDivideDataModal from '@/components/ProjectOverview/PPSplitDatasetModal';
-// import PPExportModal from '@/components/PPLabelPage/PPExportModal';
+import type { Label, Annotation } from '@/services/models';
 
 const Page: React.FC = () => {
-  const [
-    tool,
-    loading,
-    scale,
-    annotation,
-    task,
-    data,
-    project,
-    label,
-    // splitDataset,
-    // exportDataset,
-  ] = PageInit(useState, useEffect, {
-    label: { oneHot: false, postSetCurr: selectLabel },
-    tool: { defaultTool: 'mover' },
-    effectTrigger: { postTaskChange: postTaskChange },
-  });
-  // const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
-  // const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
+  const [tool, loading, scale, annotation, task, data, project, label] = PageInit(
+    useState,
+    useEffect,
+    {
+      label: { oneHot: false, postSetCurr: selectLabel },
+      tool: { defaultTool: 'mover' },
+      effectTrigger: { postTaskChange: postTaskChange, postProjectChanged: postProjectChanged },
+    },
+  );
 
   const intl = useIntl();
   const zoomIn = intl.formatMessage({ id: 'pages.toolBar.zoomIn' });
@@ -40,16 +30,22 @@ const Page: React.FC = () => {
   const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
   const exportBtn = intl.formatMessage({ id: 'pages.toolBar.export' });
 
-  function selectLabel(selected) {
-    // after toggle is active, add ann
+  function postProjectChanged() {
+    if (project.curr.labelFormat == 'single_class') label.setOneHot(true);
+  }
+
+  function selectLabel(selected: Label) {
+    // after toggle active, add ann
     if (label.isActive(selected)) {
+      // if one hot, remove all current annotations
+      if (label.isOneHot) annotation.clear();
       annotation.create({
         taskId: task.curr.taskId,
         labelId: selected.labelId,
         dataId: data.curr.dataId,
       });
     } else {
-      const ann = annotation.all.filter((a) => a.labelId == selected.labelId)[0];
+      const ann = annotation.all.filter((a: Annotation) => a.labelId == selected.labelId)[0];
       annotation.remove(ann.annotationId);
     }
   }

@@ -46,8 +46,13 @@ const Component: React.FC<PPStageProps> = (props) => {
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
-  const drawTool = props.currentTool == 'polygon' ? props.drawTool.polygon : props.drawTool.brush;
+  let drawToolTemp = undefined;
+  if (props.currentTool == 'polygon') drawToolTemp = props.drawTool.polygon;
+  else if (props.currentTool == 'brush') drawToolTemp = props.drawTool.brush;
+  const drawTool = drawToolTemp;
 
+  // const drawTool =
+  //   props.currentTool == 'polygon' ? props.drawTool.polygon : props.drawTool.brush;
   // console.log(`imageWidth,imageHeight: `, imageWith, imageHeight);
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);

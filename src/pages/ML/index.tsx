@@ -68,8 +68,10 @@ const ML: React.FC = () => {
     const allModelSettings = project.curr.otherSettings?.models
       ? project.curr.otherSettings.models
       : {};
+    if (!project.curr.otherSettings) project.curr.otherSettings = {};
     allModelSettings[settings.modelName] = { trainBatchSize: settings.trainBatchSize };
 
+    project.curr.otherSettings.mlBackendUrl = form.getFieldValue('mlBackendUrl');
     project.curr.otherSettings.perviousModel = settings.modelName;
     project.curr.otherSettings.models = allModelSettings;
     project.update(project.curr.projectId, { otherSettings: project.curr.otherSettings });
