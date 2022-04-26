@@ -9,6 +9,7 @@ import type { Project } from '@/services/models';
 type PPSplitDatasetProps = {
   project: Project;
   visible?: boolean;
+  onFinish?: () => void;
 };
 
 const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
@@ -65,6 +66,7 @@ const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
                 setVisible(false);
               })
               .finally(() => {
+                if (props.onFinish) props.onFinish();
                 setLoading(false);
               });
           }}

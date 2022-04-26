@@ -18,6 +18,7 @@ const TaskList: React.FC = () => {
   // const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
   const task = TaskUtils(useState);
   const project = ProjectUtils(useState);
+  const [updateTable, setUpdateTable] = useState<number>(0);
   const sets = { '0': 'train', '1': 'validation', '2': 'test' };
   const baseUrl = localStorage.getItem('basePath');
   const projectId = serviceUtils.getQueryVariable('projectId');
@@ -130,11 +131,18 @@ const TaskList: React.FC = () => {
         >
           {'Project Detail'}
         </Button>
-        <PPSplitDatasetModal project={project.curr} visible={task.all?.length != 0} />
+        <PPSplitDatasetModal
+          project={project.curr}
+          visible={task.all?.length != 0}
+          onFinish={() => task.getAll(project.curr.projectId)}
+        />
         <PPExportModal project={project.curr} visible={task.all?.length != 0} />
         <PPImportModal
           project={project.curr}
-          onFinish={() => task.getAll(project.curr.projectId)}
+          onFinish={() => {
+            task.getAll(project.curr.projectId);
+            setUpdateTable(updateTable + 1);
+          }}
           visible={task.all?.length != 0}
         />
       </PPBlock>
@@ -145,10 +153,17 @@ const TaskList: React.FC = () => {
             return (
               <PPImportModal
                 project={project.curr}
-                onFinish={() => task.getAll(project.curr.projectId)}
+                onFinish={() => {
+                  task.getAll(project.curr.projectId);
+                  setUpdateTable(updateTable + 1);
+                }}
               />
             );
-          return <Table columns={columns} dataSource={toDict(task.all)} onChange={onChange} />;
+          return (
+            <span id={updateTable}>
+              <Table columns={columns} dataSource={[...toDict(task.all)]} onChange={onChange} />{' '}
+            </span>
+          );
         })()}
       </PPBlock>
     </PPContainer>

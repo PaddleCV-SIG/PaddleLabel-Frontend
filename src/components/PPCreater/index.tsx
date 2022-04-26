@@ -62,7 +62,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
         .catch(() => {});
     } else {
       projects.update(projectId, { ...values }).then(() => {
-        history.push('/welcome');
+        history.push(`/project_overview?projectId=${projectId}`);
       });
     }
   };
