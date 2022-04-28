@@ -15,8 +15,9 @@ import {
   Configuration,
 } from '@/services/web';
 import type { ToolType, Annotation, Label } from '@/models/';
-import { ModelApi, ManageApi as ModelManageApi } from './ml';
-import type { Model } from './ml/models';
+import { ModelApi } from '@/services/ml';
+import type { Model } from '@/services/ml/models';
+import { unset } from 'lodash';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -278,14 +279,27 @@ export const LabelUtils = (
   }
 
   function onSelect(label: Label) {
-    const activeIdsTemp = setCurr(label);
+    console.log('on select', label, activeIds, activeIds.has(label.labelId));
+    let activeIdsTemp;
+    if (activeIds.has(label.labelId)) {
+      activeIds.delete(label.labelId);
+      setActiveIds(new Set(activeIds));
+      activeIdsTemp = activeIds;
+      if (curr?.labelId == label.labelId) unsetCurr();
+    } else {
+      activeIdsTemp = setCurr(label);
+    }
     if (postSelect) postSelect(label, activeIdsTemp);
   }
 
   function unsetCurr() {
-    console.log('unset curr');
+    if (activeIds.has(curr?.labelId)) {
+      activeIds.delete(curr.labelId);
+      setActiveIds(new Set(activeIds));
+    }
     if (preUnsetCurr) preUnsetCurr();
     setCurrRaw(undefined);
+    return activeIds;
   }
 
   function setCurr(label: Label | undefined) {
