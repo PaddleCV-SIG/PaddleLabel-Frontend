@@ -169,7 +169,7 @@ docker run -ti pp-label-frontend npm test
 openapi-generator-cli generate \
 -i ../pplabel/pplabel/openapi.yml \
 -g typescript-fetch \
--o src/services/ \
+-o src/services/web/ \
 --additional-properties=useSingleRequestParameter=false \
 --remove-operation-id-prefix \
 --skip-validate-spec
