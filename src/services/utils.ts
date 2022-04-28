@@ -4,7 +4,7 @@ import type { DependencyList, Dispatch, EffectCallback, SetStateAction } from 'r
 import { message } from 'antd';
 import { history } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
-import type { Task, Project, Data } from '@/services';
+import type { Task, Project, Data } from '@/services/web';
 import {
   ProjectApi,
   TaskApi,
@@ -13,7 +13,7 @@ import {
   LabelApi,
   ManageApi,
   Configuration,
-} from '@/services';
+} from '@/services/web';
 import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi, ManageApi as ModelManageApi } from './ml';
 import type { Model } from './ml/models';
