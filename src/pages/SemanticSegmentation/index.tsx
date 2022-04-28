@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Progress } from 'antd';
+import { Button } from 'antd';
+import { useIntl, history } from 'umi';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
@@ -7,15 +8,12 @@ import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
-import { useIntl } from 'umi';
-import type { Annotation } from '@/models/Annotation';
-import type { ToolType } from '@/models/ToolType';
-import type { Label } from '@/models/Label';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
-// import PPDivideDataModal from '@/components/ProjectOverview/PPSplitDatasetModal';
-// import PPExportModal from '@/components/ProjectOverview/PPExportModal';
 import PPBrush from '@/components/PPDrawTool/PPBrush';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
+import PPProgress from '@/components/PPLabelPage/PPProgress';
+import { PageInit } from '@/services/utils';
+import type { Annotation, ToolType, Label } from '@/models/';
 
 export const MOST_HISTORY_STEPS = 40;
 
@@ -39,9 +37,6 @@ function getMaxLableId(labels: Label[]) {
 
 const Page: React.FC = () => {
   const [labels, setLabels] = useState<Label[]>([]);
-  // const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
-  // const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
-
   const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
   const [activeLabelIds, setActiveLabelIds] = useState<Set<number>>(new Set());
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
@@ -49,12 +44,17 @@ const Page: React.FC = () => {
   const [frontendId, setFrontendId] = useState<number>(0);
   const [brushSize, setBrushSize] = useState(10);
   const [transparency, setTransparency] = useState(60);
-  const [scale, setScaleRaw] = useState(1);
-  const setScale = (size: number) => {
-    if (!size) setScaleRaw(1);
-    if (size < 0.1 || size > 20) setScaleRaw(1);
-    else setScaleRaw(size);
-  };
+  // const [scale, setScaleRaw] = useState(1);
+  // const setScale = (size: number) => {
+  //   if (!size) setScaleRaw(1);
+  //   if (size < 0.1 || size > 20) setScaleRaw(1);
+  //   else setScaleRaw(size);
+  // };
+
+  const { task, project, scale } = PageInit(useState, useEffect, {
+    label: { oneHot: true },
+    tool: { defaultTool: 'mover' },
+  });
 
   const setCurrentLabel = (label?: Label) => {
     const set = new Set<number>();
@@ -99,7 +99,7 @@ const Page: React.FC = () => {
     dataId: 0,
     currentLabel: labels.find((x) => x.labelId == activeLabelIds.values().next().value),
     brushSize: brushSize,
-    scale: scale,
+    scale: scale.curr,
     currentTool: currentTool,
     annotations: annotations,
     currentAnnotation: currentAnnotation,
@@ -177,7 +177,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
-            setScale(scale + 0.1);
+            scale.change(0.1);
           }}
         >
           {intl.formatMessage({ id: 'pages.toolBar.zoomIn' })}
@@ -185,7 +185,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
           onClick={() => {
-            setScale(scale - 0.1);
+            scale.change(-0.1);
           }}
         >
           {intl.formatMessage({ id: 'pages.toolBar.zoomOut' })}
@@ -233,7 +233,7 @@ const Page: React.FC = () => {
       <div id="dr" className="mainStage">
         <div className="draw">
           <PPStage
-            scale={scale}
+            scale={scale.curr}
             annotations={annotations}
             currentTool={currentTool}
             currentAnnotation={currentAnnotation}
@@ -254,21 +254,7 @@ const Page: React.FC = () => {
           />
         </div>
         <div className="pblock">
-          <div className="progress">
-            <Progress
-              className="progressBar"
-              // percent={project.progress}
-              percent={10}
-              status="active"
-              showInfo={false}
-            />{' '}
-            <span className="progressDesc">
-              {/* TODO: translate */}
-              {/* Current labeling {task.currIdx == undefined ? 1 : task.currIdx + 1} of{' '}
-              {task.all?.length}. Already labeled {task.finished(project.progress) || 0}.  */}
-              Current labeling 1 of 300. Already labeled 20.
-            </span>
-          </div>
+          <PPProgress task={task} project={project} />
         </div>
         <div
           className="prevTask"
@@ -313,22 +299,24 @@ const Page: React.FC = () => {
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
           {intl.formatMessage({ id: 'pages.toolBar.visualRadius' })}
         </PPSetButton>
-        <PPToolBarButton
-          imgSrc="./pics/buttons/data_division.png"
-          onClick={() => {
-            setDivideModalVisible(true);
-          }}
-        >
-          {intl.formatMessage({ id: 'pages.toolBar.divideData' })}
-        </PPToolBarButton>
-        <PPToolBarButton
-          imgSrc="./pics/buttons/export.png"
-          onClick={() => {
-            setExportModalVisible(true);
-          }}
-        >
-          {intl.formatMessage({ id: 'pages.toolBar.export' })}
-        </PPToolBarButton>
+        <PPToolBar disLoc="right">
+          <PPToolBarButton
+            imgSrc="./pics/buttons/data_division.png"
+            onClick={() => {
+              history.push(`/project_overview?projectId=${project.curr.projectId}`);
+            }}
+          >
+            {'Project Overview'}
+          </PPToolBarButton>
+          <PPToolBarButton
+            imgSrc="./pics/buttons/data_division.png"
+            onClick={() => {
+              history.push(`/ml?projectId=${project.curr.projectId}`);
+            }}
+          >
+            {'ML Settings'}
+          </PPToolBarButton>
+        </PPToolBar>
       </PPToolBar>
       <div className="rightSideBar">
         <div className="determinOutline">
@@ -385,28 +373,6 @@ const Page: React.FC = () => {
           }}
         />
       </div>
-      {/* <PPDivideDataModal
-        visible={divideModalVisible}
-        // splitDataset={splitDataset}
-        // project={project}
-        onCancel={() => {
-          setDivideModalVisible(false);
-        }}
-        onFinish={() => {
-          setDivideModalVisible(false);
-        }}
-      /> */}
-      {/* <PPExportModal
-        visible={exportModalVisible}
-        // exportDataset={exportDataset}
-        // project={project}
-        onCancel={() => {
-          setExportModalVisible(false);
-        }}
-        onFinish={() => {
-          setExportModalVisible(false);
-        }}
-      /> */}
     </PPLabelPageContainer>
   );
 };
