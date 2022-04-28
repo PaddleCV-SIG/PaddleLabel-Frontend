@@ -50,7 +50,10 @@ const Page: React.FC = () => {
   }
 
   const setCurrentAnnotation = (anno?: Annotation) => {
-    console.log(`setCurrentAnnotation`, anno);
+    // console.log(`setCurrentAnnotation`, anno, annotation.curr);
+    // if (anno == undefined && annotation.curr) {
+    //   annotation.create(annotation.curr);
+    // }
     annotation.setCurr(anno);
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);

@@ -293,19 +293,16 @@ export const LabelUtils = (
   }
 
   function unsetCurr() {
-    if (activeIds.has(curr?.labelId)) {
-      activeIds.delete(curr.labelId);
-      setActiveIds(new Set(activeIds));
-    }
+    activeIds.delete(curr?.labelId);
+    setActiveIds(new Set(activeIds));
     if (preUnsetCurr) preUnsetCurr();
     setCurrRaw(undefined);
     return activeIds;
   }
 
-  function setCurr(label: Label | undefined) {
-    if (label?.labelId == undefined) {
-      unsetCurr();
-      return activeIds;
+  function setCurr(label: Label) {
+    if (label == undefined) {
+      return unsetCurr();
     }
     setCurrRaw(label);
     if (isOneHot) activeIds.clear();
@@ -459,7 +456,7 @@ export function AnnotationUtils(
     for (const ann of all) remove(ann);
   }
 
-  const create = async (annotation: Annotation, refresh: boolean = false) => {
+  const create = async (annotation: Annotation) => {
     console.log('create label', annotation.label);
 
     try {
@@ -496,13 +493,13 @@ export function AnnotationUtils(
   }
 
   async function setCurr(annotation: Annotation | undefined) {
-    console.log('annotation setcurr', annotation, 'all', all);
+    // console.log('annotation setcurr', annotation, 'all', all);
     if (annotation == undefined) {
       setCurrRaw(undefined);
       return;
     }
     setCurrRaw(annotation);
-    console.log(`label.setCurr:`, annotation.label);
+    // console.log(`label.setCurr:`, annotation.label);
     label.setCurr(annotation.label);
   }
 
