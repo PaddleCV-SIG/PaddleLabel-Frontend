@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-/* eslint-disable @typescript-eslint/no-unused-vars */ // TODO: remove this
-/* eslint-disable @typescript-eslint/no-shadow*/ // TODO: remove this
 import React, { useEffect, useState } from 'react';
+import { Progress, Spin, message } from 'antd';
+import { useIntl, history } from 'umi';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -10,36 +9,27 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import PPRectangle from '@/components/PPLabelPage/PPRectangle';
-import { Button, Progress, Spin, message } from 'antd';
 import { PageInit } from '@/services/utils';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
+import drawRectangle from '@/components/PPDrawTool/PPRectangle';
 import type { Annotation } from '@/models/Annotation';
-import { useIntl } from 'umi';
-// import PPDivideDataModal from '@/components/ProjectOverview/PPSplitDatasetModal';
-// import PPExportModal from '@/components/PPLabelPage/PPExportModal';
 
 const Page: React.FC = () => {
-  const [
-    tool,
-    loading,
-    scale,
-    annotation,
-    task,
-    data,
-    project,
-    label,
-    splitDataset,
-    exportDataset,
-  ] = PageInit(useState, useEffect, {
-    label: { oneHot: true },
-    effectTrigger: { postTaskChange: initHistory },
-  });
+  // todo: change to use annotation
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { tool, loading, scale, annotation, task, data, project, label } = PageInit(
+    useState,
+    useEffect,
+    {
+      label: { oneHot: true },
+      tool: { defaultTool: 'mover' },
+      effectTrigger: { postTaskChange: initHistory },
+    },
+  );
 
   // These only used by frontend, and synchronize with backend when triggered.
   const [currentAnnotation, setCurrentAnnotation] = useState<Annotation>();
   const [annotations, setAnotations] = useState<Annotation[]>([]);
-  const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
-  const [exportModalVisible, setExportModalVisible] = useState<boolean>(false);
 
   const addAnnotation = (anno: Annotation) => {
     if (!anno.frontendId)
@@ -84,13 +74,13 @@ const Page: React.FC = () => {
     setCurrentAnnotation(undefined);
   };
 
-  const syncSingleAnnotation = (anno: Annotation) => {
-    if (!anno) return;
-    console.log('modifyAnnotation', anno, 'anno.label:', anno?.label);
-    anno.taskId = task.curr.taskId;
-    anno.dataId = data.curr.dataId;
-    annotation.modify(anno);
-  };
+  // const syncSingleAnnotation = (anno: Annotation) => {
+  //   if (!anno) return;
+  //   console.log('modifyAnnotation', anno, 'anno.label:', anno?.label);
+  //   anno.taskId = task.curr.taskId;
+  //   anno.dataId = data.curr.dataId;
+  //   annotation.modify(anno);
+  // };
 
   // useEffect(() => {
   //   initHistory(); // reinit history after turn task
@@ -120,9 +110,6 @@ const Page: React.FC = () => {
   const save = intl.formatMessage({ id: 'pages.toolBar.save' });
   const edit = intl.formatMessage({ id: 'pages.toolBar.edit' });
   const clearMark = intl.formatMessage({ id: 'pages.toolBar.clearMark' });
-  const undef = intl.formatMessage({ id: 'pages.toolBar.undef' });
-  const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
-  const exportBtn = intl.formatMessage({ id: 'pages.toolBar.export' });
 
   return (
     <PPLabelPageContainer className={styles.det}>
@@ -168,7 +155,9 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
           onClick={() => {
-            message.info("Annotations are saved automatically. You don't need to click save.");
+            message.info(
+              'Annotations are saved automatically in this type of project. No need to click save.',
+            );
           }}
         >
           {save}
@@ -276,26 +265,18 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() => {
-            setDivideModalVisible(true);
+            history.push(`/project_overview?projectId=${project.curr.projectId}`);
           }}
         >
-          {divideData}
-        </PPToolBarButton>
-        <PPToolBarButton
-          imgSrc="./pics/buttons/export.png"
-          onClick={() => {
-            setExportModalVisible(true);
-          }}
-        >
-          {exportBtn}
+          {'Project Overview'}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() => {
-            setCurrentAnnotation(undefined);
+            history.push(`/ml?projectId=${project.curr.projectId}`);
           }}
         >
-          {undef}
+          {'ML Settings'}
         </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
@@ -323,28 +304,6 @@ const Page: React.FC = () => {
           }}
         />
       </div>
-      {/* <PPDivideDataModal
-        visible={divideModalVisible}
-        splitDataset={splitDataset}
-        project={project}
-        onCancel={() => {
-          setDivideModalVisible(false);
-        }}
-        onFinish={() => {
-          setDivideModalVisible(false);
-        }}
-      /> */}
-      {/* <PPExportModal
-        visible={exportModalVisible}
-        exportDataset={exportDataset}
-        project={project}
-        onCancel={() => {
-          setExportModalVisible(false);
-        }}
-        onFinish={() => {
-          setExportModalVisible(false);
-        }}
-      /> */}
     </PPLabelPageContainer>
   );
 };

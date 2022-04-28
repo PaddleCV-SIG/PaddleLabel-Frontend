@@ -3,9 +3,9 @@ import { Table, Button, Image, message } from 'antd';
 import { history } from 'umi';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
-import PPExportModal from '@/components/ProjectOverview/PPExportModal';
-import PPImportModal from '@/components/ProjectOverview/PPImportModal';
-import PPSplitDatasetModal from '@/components/ProjectOverview/PPSplitDatasetModal';
+import PPExportModal from '@/components/PPProjectOverview/PPExportModal';
+import PPImportModal from '@/components/PPProjectOverview/PPImportModal';
+import PPSplitDatasetModal from '@/components/PPProjectOverview/PPSplitDatasetModal';
 import { toDict, TaskUtils, ProjectUtils } from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
 import type { Task } from '@/services';
@@ -45,7 +45,6 @@ const TaskList: React.FC = () => {
       align: 'center',
       render: (anns: list) => <>{anns.length}</>,
       sorter: (a, b) => a.annotations.length - b.annotations.length,
-      sortDirections: ['descend'],
     },
     {
       title: 'Set',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Progress, message, Spin } from 'antd';
+import { Spin, message } from 'antd';
 import { useIntl, history } from 'umi';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
@@ -7,11 +7,12 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
+import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { PageInit } from '@/services/utils';
 import type { Label, Annotation } from '@/services/models';
 
 const Page: React.FC = () => {
-  const [tool, loading, scale, annotation, task, data, project, label] = PageInit(
+  const { tool, loading, scale, annotation, task, data, project, label } = PageInit(
     useState,
     useEffect,
     {
@@ -27,11 +28,9 @@ const Page: React.FC = () => {
   const move = intl.formatMessage({ id: 'pages.toolBar.move' });
   const save = intl.formatMessage({ id: 'pages.toolBar.save' });
   const autoSave = intl.formatMessage({ id: 'pages.toolBar.autoSave' });
-  // const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
-  // const exportBtn = intl.formatMessage({ id: 'pages.toolBar.export' });
 
   function postProjectChanged() {
-    if (project.curr.labelFormat == 'single_class') label.setOneHot(true);
+    if (project.curr?.labelFormat == 'single_class') label.setOneHot(true);
   }
 
   function selectLabel(selected: Label) {
@@ -50,12 +49,11 @@ const Page: React.FC = () => {
     }
   }
 
-  function postTaskChange(labels, annotations) {
+  function postTaskChange(labels: [Label], annotations: [Annotation]) {
     loading.setCurr(true);
     if (!labels || !annotations) return;
     label.initActive(annotations);
     loading.setCurr(false);
-    console.log('annotations', annotation.all);
   }
 
   return (
@@ -108,18 +106,7 @@ const Page: React.FC = () => {
             />
           </div>
           <div className="pblock">
-            <div className="progress">
-              <Progress
-                className="progressBar"
-                percent={Math.ceil((project.finished / task.all?.length) * 100)}
-                status="active"
-                showInfo={false}
-              />{' '}
-              <span className="progressDesc">
-                Current labeling {task.currIdx == undefined ? 1 : task.currIdx + 1} of{' '}
-                {task.all?.length}. Already labeled {project.finished || 0}.
-              </span>
-            </div>
+            <PPProgress task={task} project={project} />
           </div>
           <div className="prevTask" onClick={task.prevTask} />
           <div className="nextTask" onClick={task.nextTask} />

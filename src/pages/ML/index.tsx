@@ -7,7 +7,7 @@ import serviceUtils from '@/services/serviceUtils';
 import { ProjectUtils } from '@/services/utils';
 import { ModelUtils, getVersion } from '@/services/utils';
 import PPTrainModal from '@/components/ML/PPTrainModal';
-import PPExportModal from '@/components/ProjectOverview/PPExportModal';
+import PPExportModal from '@/components/PPProjectOverview/PPExportModal';
 
 const ML: React.FC = () => {
   const project = ProjectUtils(useState);
@@ -61,22 +61,23 @@ const ML: React.FC = () => {
     project.update(project.curr.projectId, { otherSettings: otherSettings });
   }
 
-  function saveMlsettings(settings) {
+  function saveMlsettings(settings: object) {
+    console.log('saveMlsettings', project.curr, settings);
     if (!project.curr) {
       message.error('Please select model first!');
       return;
     }
-    const allModelSettings = project.curr.otherSettings?.models
+    if (!project.curr.otherSettings) project.curr.otherSettings = {};
+    const allModelSettings = project.curr.otherSettings.models
       ? project.curr.otherSettings.models
       : {};
-    if (!project.curr.otherSettings) project.curr.otherSettings = {};
-    allModelSettings[settings.modelName] = { trainBatchSize: settings.trainBatchSize };
+    allModelSettings[settings.modelName] = settings;
 
     project.curr.otherSettings.mlBackendUrl = form.getFieldValue('mlBackendUrl');
     project.curr.otherSettings.perviousModel = settings.modelName;
     project.curr.otherSettings.models = allModelSettings;
     project.update(project.curr.projectId, { otherSettings: project.curr.otherSettings });
-    project.getCurr(projectId);
+    // project.getCurr(projectId);
     message.info("Ml setting saved. Let's start trainig or inference!");
   }
 
@@ -163,7 +164,7 @@ const ML: React.FC = () => {
           size="large"
           style={{ marginTop: '5.69rem' }}
           onFinish={(values) => {
-            console.log(values);
+            console.log('form finish', values);
             saveMlsettings(values);
           }}
           hidden={project.curr == undefined}

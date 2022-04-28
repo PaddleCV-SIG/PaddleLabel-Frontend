@@ -137,7 +137,13 @@ export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) 
   return { curr, change, setScale };
 };
 
-export function ToolUtils(useState, { defaultTool }: { defaultTool: ToolType }) {
+export function ToolUtils(
+  useState: UseStateType,
+  { defaultTool }: { defaultTool: ToolType },
+): {
+  curr: ToolType;
+  setCurr: any;
+} {
   const [curr, setCurr] = useState<ToolType>(defaultTool);
   return {
     curr,
@@ -145,7 +151,11 @@ export function ToolUtils(useState, { defaultTool }: { defaultTool: ToolType }) 
   };
 }
 
-export function LoadingUtils(useState: UseStateType) {
+type LoadingUtilsType = {
+  curr: boolean;
+  setCurr: Dispatch<SetStateAction<boolean>>;
+};
+export function LoadingUtils(useState: UseStateType): LoadingUtilsType {
   const [curr, setCurr] = useState<boolean>(false);
   return { curr, setCurr };
 }
@@ -611,16 +621,29 @@ export async function splitDataset(
     });
 }
 
-export const PageInit = (
+type PageInitType = {
+  tool: any;
+  loading: LoadingUtilsType;
+  scale: any;
+  annotation: any;
+  task: any;
+  data: any;
+  project: any;
+  label: any;
+};
+export function PageInit(
   useState: UseStateType,
   useEffect: UseEffectType,
   props: {
-    effectTrigger?: any;
+    effectTrigger?: {
+      postTaskChange?: (labels: [Label], annotations: [Annotation]) => void;
+      postProjectChanged?: () => void;
+    };
     label: { oneHot: boolean; postSetCurr?: (label: Label) => void };
     tool: { defaultTool: ToolType };
     annotation?: Annotation; // FIXME: setting annotation this way may be overwritten by annotation.getAll in onTaskChange
   },
-) => {
+): PageInitType {
   const tool = ToolUtils(useState, props.tool ? props.tool : {});
   const loading = LoadingUtils(useState);
   const scale = ScaleUtils(useState);
@@ -690,7 +713,7 @@ export const PageInit = (
   }, [task.all]);
 
   useEffect(() => {
-    // when current task is set, get task's data, data's annotation, toggle label active
+    // when current task is set, get task's data, data's annotation
     if (task.currIdx == undefined) return;
 
     const onTaskChange = async () => {
@@ -708,19 +731,8 @@ export const PageInit = (
     onTaskChange();
   }, [task.currIdx]);
 
-  return [
-    tool,
-    loading,
-    scale,
-    annotation,
-    task,
-    data,
-    project,
-    label,
-    // splitDataset,
-    // exportDataset,
-  ];
-};
+  return { tool, loading, scale, annotation, task, data, project, label };
+}
 
 // ml related
 export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefined) {
@@ -745,15 +757,6 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   async function setMlBackendUrl(url: string) {
     modelApi = new ModelApi(new Configuration({ basePath: url }));
     setBackendUrl(url);
-    // const modelManageApi = new ModelManageApi(new Configuration({ basePath: url }));
-    // const isRunning: string = await modelManageApi.isRunning();
-    // console.log('set url', isRunning.trim(), typeof isRunning.trim(), isRunning.trim() == 'true');
-    // if (isRunning.trim() != 'true') {
-    //   message.error(`No ml backend detected at url ${url}`);
-    //   return;
-    // }
-    // modelApi.configuration.configuration.basePath = url;
-    // setBackendUrl(url);
     getAll();
     console.log('ml backend url set', url);
   }
