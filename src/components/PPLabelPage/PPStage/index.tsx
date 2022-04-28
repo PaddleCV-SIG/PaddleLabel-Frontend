@@ -42,7 +42,7 @@ export type PPStageProps = {
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
-  const [image] = useImage(props.imgSrc || imgSrc);
+  const [image] = useImage(props.imgSrc || '');
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;

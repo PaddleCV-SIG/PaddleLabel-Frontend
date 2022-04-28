@@ -289,17 +289,13 @@ export const LabelUtils = (
   }
 
   function setCurr(label: Label | undefined) {
-    console.log('label set curr', label);
-    if (label == undefined) unsetCurr();
-
-    if (activeIds.has(label.labelId)) {
-      activeIds.delete(label.labelId);
-      // unsetCurr();
-    } else {
-      if (isOneHot) activeIds.clear();
-      activeIds.add(label.labelId);
-      setCurrRaw(label);
+    if (label?.labelId == undefined) {
+      unsetCurr();
+      return activeIds;
     }
+    setCurrRaw(label);
+    if (isOneHot) activeIds.clear();
+    activeIds.add(label.labelId);
     setActiveIds(new Set(activeIds));
     return activeIds;
   }
@@ -427,7 +423,7 @@ export function AnnotationUtils(
   useState: UseStateType,
   { label = undefined, project = undefined }: { label: any; project: any },
 ) {
-  const [all, setAll] = useState<Annotation[]>();
+  const [all, setAll] = useState<Annotation[]>([]);
   const [curr, setCurrRaw] = useState<Annotation | undefined>();
 
   const getAll = async (dataId: number) => {
@@ -492,7 +488,8 @@ export function AnnotationUtils(
       return;
     }
     setCurrRaw(annotation);
-    label.setCurr(annotation.labelId);
+    console.log(`label.setCurr:`, annotation.label);
+    label.setCurr(annotation.label);
   }
 
   async function update(annotation: Annotation) {
@@ -531,6 +528,7 @@ export function AnnotationUtils(
     update,
     modify,
     curr,
+    setAll,
   };
 }
 

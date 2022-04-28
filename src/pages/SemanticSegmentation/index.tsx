@@ -27,8 +27,6 @@ export type HistoryType = {
 };
 
 const Page: React.FC = () => {
-  const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
-  const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [frontendId, setFrontendId] = useState<number>(0);
   const [brushSize, setBrushSize] = useState(10);
   const [transparency, setTransparency] = useState(60);
@@ -36,7 +34,10 @@ const Page: React.FC = () => {
   const { tool, task, data, project, scale, label, annotation } = PageInit(useState, useEffect, {
     label: {
       oneHot: true,
-      postSelect: () => annotation.setCurr(undefined),
+      postSelect: () => {
+        annotation.setCurr(undefined);
+        setFrontendId(0);
+      },
       preUnsetCurr: preCurrLabelUnset,
     },
     tool: { defaultTool: 'mover' },
@@ -44,13 +45,14 @@ const Page: React.FC = () => {
 
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
+    setFrontendId(0);
     tool.setCurr('mover');
   }
 
   const setCurrentAnnotation = (anno?: Annotation) => {
-    setCurrentAnnotationRaw(anno);
-    // if (anno?.label) label.setCurr(anno.label);
-    if (!anno) setFrontendId(0);
+    console.log(`setCurrentAnnotation`, anno);
+    annotation.setCurr(anno);
+    if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
   };
 
@@ -58,45 +60,45 @@ const Page: React.FC = () => {
     initHistory();
   }, []);
 
-  const onAnnotationModify = (annotation: Annotation) => {
-    if (!annotation) return;
-    annotations.pop();
-    annotations.push(annotation);
-    setCurrentAnnotation(annotation);
-    setAnnotations(annotations);
+  const onAnnotationModify = (anno: Annotation) => {
+    if (!anno) return;
+    annotation.all.pop();
+    annotation.all.push(anno);
+    setCurrentAnnotation(anno);
+    annotation.setAll(annotation.all);
   };
 
-  const modifyAnnoByFrontendId = (annotation: Annotation) => {
+  const modifyAnnoByFrontendId = (anno: Annotation) => {
     const newAnnos = [];
-    for (const anno of annotations) {
-      if (anno.frontendId == annotation.frontendId) {
-        newAnnos.push(annotation);
-      } else {
+    for (const item of annotation.all) {
+      if (item.frontendId == anno.frontendId) {
         newAnnos.push(anno);
+      } else {
+        newAnnos.push(item);
       }
     }
-    setCurrentAnnotation(annotation);
-    setAnnotations(newAnnos);
+    setCurrentAnnotation(anno);
+    annotation.setAll(newAnnos);
   };
 
   const drawToolParam = {
-    // dataId: data.curr?.dataId,
-    dataId: 0,
+    dataId: data.curr?.dataId,
+    // dataId: 0,
     currentLabel: label.curr,
     brushSize: brushSize,
     scale: scale.curr,
     currentTool: tool.curr,
-    annotations: annotations,
-    currentAnnotation: currentAnnotation,
-    onAnnotationAdd: (annotation: Annotation) => {
-      const newAnnos = annotations.concat([annotation]);
-      setAnnotations(newAnnos);
-      setCurrentAnnotation(annotation);
+    annotations: annotation.all,
+    currentAnnotation: annotation.curr,
+    onAnnotationAdd: (anno: Annotation) => {
+      const newAnnos = annotation.all.concat([anno]);
+      annotation.setAll(newAnnos);
+      setCurrentAnnotation(anno);
     },
     onAnnotationModify: onAnnotationModify,
     modifyAnnoByFrontendId: modifyAnnoByFrontendId,
     onMouseUp: () => {
-      recordHistory({ annos: annotations, currAnno: currentAnnotation });
+      recordHistory({ annos: annotation.all, currAnno: annotation.curr });
     },
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
   };
@@ -200,7 +202,7 @@ const Page: React.FC = () => {
           onClick={() => {
             const res = backwardHistory();
             if (res) {
-              setAnnotations(res.annos);
+              annotation.setAll(res.annos);
               setCurrentAnnotation(res.currAnno);
             }
           }}
@@ -212,7 +214,7 @@ const Page: React.FC = () => {
           onClick={() => {
             const res = forwardHistory();
             if (res) {
-              setAnnotations(res.annos);
+              annotation.setAll(res.annos);
               setCurrentAnnotation(res.currAnno);
             }
           }}
@@ -227,21 +229,21 @@ const Page: React.FC = () => {
         <div className="draw">
           <PPStage
             scale={scale.curr}
-            annotations={annotations}
+            annotations={annotation.all}
             currentTool={tool.curr}
-            currentAnnotation={currentAnnotation}
+            currentAnnotation={annotation.curr}
             setCurrentAnnotation={setCurrentAnnotation}
             onAnnotationModify={modifyAnnoByFrontendId}
             onAnnotationModifyComplete={() => {
-              recordHistory({ annos: annotations, currAnno: currentAnnotation });
+              recordHistory({ annos: annotation.all, currAnno: annotation.curr });
             }}
             frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
             imgSrc={data.imgSrc}
             transparency={transparency}
-            onAnnotationAdd={(annotation) => {
-              const newAnnos = annotations.concat([annotation]);
-              setAnnotations(newAnnos);
-              if (!currentAnnotation) setCurrentAnnotation(annotation);
+            onAnnotationAdd={(anno) => {
+              const newAnnos = annotation.all.concat([anno]);
+              annotation.setAll(newAnnos);
+              if (!annotation.curr) setCurrentAnnotation(anno);
             }}
             drawTool={drawTool}
           />
@@ -258,7 +260,7 @@ const Page: React.FC = () => {
               return;
             }
             setCurrentAnnotation(undefined);
-            setAnnotations([]);
+            annotation.setAll([]);
           }}
         />
         <div
@@ -268,7 +270,7 @@ const Page: React.FC = () => {
               return;
             }
             setCurrentAnnotation(undefined);
-            setAnnotations([]);
+            annotation.setAll([]);
           }}
         />
       </div>
@@ -334,21 +336,21 @@ const Page: React.FC = () => {
           onLabelDelete={label.remove}
           onLabelAdd={(lab) => {
             label.create({ ...lab, projectId: project.curr.projectId }).then((newLabel) => {
-              label.setCurr(newLabel);
               setCurrentAnnotation(undefined);
+              label.setCurr(newLabel);
             });
           }}
         />
         <PPAnnotationList
-          currAnnotation={currentAnnotation}
-          annotations={annotations}
+          currAnnotation={annotation.curr}
+          annotations={annotation.all}
           onAnnotationSelect={(selectedAnno) => {
             if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
           }}
           onAnnotationAdd={() => {}}
           onAnnotationModify={() => {}}
-          onAnnotationDelete={(annotation: Annotation) => {
-            setAnnotations(annotations.filter((x) => x.frontendId != annotation.frontendId));
+          onAnnotationDelete={(anno: Annotation) => {
+            annotation.setAll(annotation.all.filter((x) => x.frontendId != anno.frontendId));
             setCurrentAnnotation(undefined);
           }}
         />

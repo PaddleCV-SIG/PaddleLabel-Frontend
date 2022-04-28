@@ -174,6 +174,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (props.currentTool != 'polygon') return;
     const mouseX = param.mouseX + param.offsetX;
     const mouseY = param.mouseY + param.offsetY;
+    console.log(`currentAnnotation:`, props.currentAnnotation);
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
       startNewPolygon(mouseX, mouseY);

@@ -168,6 +168,12 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
     const tool = getTool(props.currentTool, param.e.evt.button);
+    console.log(
+      `frontendId: `,
+      props.frontendIdOps.frontendId,
+      'maxId:',
+      getMaxFrontendId(props.annotations),
+    );
     const frontendId =
       props.frontendIdOps.frontendId > 0
         ? props.frontendIdOps.frontendId
