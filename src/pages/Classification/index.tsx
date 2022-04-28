@@ -9,14 +9,14 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { PageInit } from '@/services/utils';
-import type { Label, Annotation } from '@/services/models';
+import type { Label, Annotation } from '@/models';
 
 const Page: React.FC = () => {
   const { tool, loading, scale, annotation, task, data, project, label } = PageInit(
     useState,
     useEffect,
     {
-      label: { oneHot: false, postSetCurr: selectLabel },
+      label: { oneHot: false, postSelect: selectLabel },
       tool: { defaultTool: 'mover' },
       effectTrigger: { postTaskChange: postTaskChange, postProjectChanged: postProjectChanged },
     },
@@ -33,9 +33,10 @@ const Page: React.FC = () => {
     if (project.curr?.labelFormat == 'single_class') label.setOneHot(true);
   }
 
-  function selectLabel(selected: Label) {
+  function selectLabel(selected: Label, activeIds: Set<number>) {
+    console.log('selectLabel', selected);
     // after toggle active, add ann
-    if (label.isActive(selected)) {
+    if (activeIds.has(selected.labelId)) {
       // if one hot, remove all current annotations
       if (label.isOneHot) annotation.clear();
       annotation.create({
@@ -44,8 +45,8 @@ const Page: React.FC = () => {
         dataId: data.curr.dataId,
       });
     } else {
-      const ann = annotation.all.filter((a: Annotation) => a.labelId == selected.labelId)[0];
-      annotation.remove(ann.annotationId);
+      const anns = annotation.all.filter((a: Annotation) => a.labelId == selected.labelId);
+      for (const ann of anns) annotation.remove(ann.annotationId);
     }
   }
 

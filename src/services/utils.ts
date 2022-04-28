@@ -151,11 +151,7 @@ export function ToolUtils(
   };
 }
 
-type LoadingUtilsType = {
-  curr: boolean;
-  setCurr: Dispatch<SetStateAction<boolean>>;
-};
-export function LoadingUtils(useState: UseStateType): LoadingUtilsType {
+export function LoadingUtils(useState: UseStateType) {
   const [curr, setCurr] = useState<boolean>(false);
   return { curr, setCurr };
 }
@@ -250,118 +246,117 @@ export const ProjectUtils = (useState: UseStateType) => {
   };
 };
 
+type labelUtilProps = {
+  oneHot?: boolean;
+  postSelect?: (label?: Label, activeIds?: Set<number>) => void;
+  preUnsetCurr?: () => void;
+};
 /*
 if oneHot = true, only one label can be active, else multiple can be activate at the same time
+either case, only one label will be curr. curr will be set in onSelect
 */
 export const LabelUtils = (
   useState: UseStateType,
-  { oneHot = true, postSetCurr }: { oneHot: boolean; postSetCurr?: (label: Label) => void },
+  { oneHot = true, postSelect, preUnsetCurr }: labelUtilProps,
 ) => {
   const [all, setAll] = useState<Label[]>();
-  const [currIdx, setCurrIdx] = useState<number>();
-  const [activeIds, setActiveIds] = useState(new Set());
+  const [curr, setCurrRaw] = useState<Label | undefined>();
+  const [activeIds, setActiveIds] = useState(new Set<number>());
   const [isOneHot, setOneHot] = useState<boolean>(oneHot);
 
-  async function getAll(projectId: number) {
+  async function getAll(projectId: number): Promise<Label[] | undefined> {
     if (projectId == undefined) return;
     try {
       const labels: Label[] = await projectApi.getLabels(projectId);
-      console.log('label getall:', labels);
       setAll(labels);
       return labels;
     } catch (err) {
       console.log('label getall err ', err);
-      return serviceUtils.parseError(err, message);
+      serviceUtils.parseError(err, message);
+      return;
     }
   }
 
-  function onSelect(label: Label | number) {
-    const idx: number = indexOf(label, all, 'labelId');
-    if (idx == undefined) throw Error('label.onSelect label not found');
-    setCurrIdx(idx);
-    const labelId: number = all[idx].labelId;
-    if (isOneHot) {
-      if (activeIds.has(labelId)) activeIds.clear();
-      else {
-        activeIds.clear();
-        activeIds.add(labelId);
-      }
+  function onSelect(label: Label) {
+    const activeIdsTemp = setCurr(label);
+    if (postSelect) postSelect(label, activeIdsTemp);
+  }
+
+  function unsetCurr() {
+    console.log('unset curr');
+    if (preUnsetCurr) preUnsetCurr();
+    setCurrRaw(undefined);
+  }
+
+  function setCurr(label: Label | undefined) {
+    console.log('label set curr', label);
+    if (label == undefined) unsetCurr();
+
+    if (activeIds.has(label.labelId)) {
+      activeIds.delete(label.labelId);
+      // unsetCurr();
     } else {
-      if (activeIds.has(labelId)) activeIds.delete(labelId);
-      else activeIds.add(labelId);
+      if (isOneHot) activeIds.clear();
+      activeIds.add(label.labelId);
+      setCurrRaw(label);
     }
     setActiveIds(new Set(activeIds));
-    if (postSetCurr) postSetCurr(all[idx]);
-  }
-
-  function setCurr(label: Label | number) {
-    console.log('LabelUtils setCurr', label);
-    if (!oneHot) return;
-    if (!label) return;
-    let labelId = typeof label == 'number' ? label : label.labelId;
-    labelId = indexOf(labelId, all, 'labelId');
-    if (labelId != undefined) {
-      console.log('LabelUtils setCurr index:', labelId);
-      setCurrIdx(labelId);
-      setActiveIds(new Set([label]));
-    }
+    return activeIds;
   }
 
   function initActive(annotations: Annotation[]) {
     activeIds.clear();
     for (const ann of annotations) activeIds.add(ann.labelId);
+    if (isOneHot && activeIds.size > 1)
+      message.error('Label list is one hot, but have multiple active labels!');
   }
 
-  async function create(label: Label) {
+  async function create(label: Label): Promise<Label | undefined> {
     console.log('create label', label);
-
     try {
-      const newLabel: Label = await labelApi.create(label);
+      const newLabel = await labelApi.create(label);
       getAll(label.projectId);
       return newLabel;
     } catch (err) {
       console.log('label create err', err);
-      return serviceUtils.parseError(err, message);
+      serviceUtils.parseError(err, message);
+      return;
     }
   }
 
-  async function remove(label: Label | number) {
-    const labelId = typeof label == 'number' ? label : label.labelId;
+  async function remove(label: Label): Promise<Label[]> {
     try {
-      await labelApi.remove(labelId);
-      // setAll(all.filter((lab) => lab.labelId != label.labelId));
-      if (all && all.length) getAll(all[0].projectId);
+      await labelApi.remove(label.labelId);
+      if (activeIds.has(label.labelId)) {
+        activeIds.delete(label.labelId);
+        setActiveIds(activeIds);
+      }
+      if (curr.labelId == label.labelId) unsetCurr();
+      const labels = getAll(label.projectId);
+      return labels;
     } catch (err) {
       console.log('label remove err', err);
       serviceUtils.parseError(err, message);
+      return [];
     }
   }
-  function isActive(label: Label | number) {
-    const labelId = typeof label == 'number' ? label : label.labelId;
-    return activeIds.has(labelId);
+  function isActive(label: Label) {
+    return activeIds.has(label.labelId);
   }
 
-  const toggleOneHot = (target: boolean) => {
-    if (target != undefined) setOneHot(target);
-    else setOneHot(!isOneHot);
-  };
   return {
     all,
     getAll,
     activeIds,
     initActive,
     onSelect,
+    curr,
     setCurr,
     isActive,
     create,
     remove,
-    toggleOneHot,
-    setOneHot,
     isOneHot,
-    get curr() {
-      if (all == undefined) return undefined;
-      return all[currIdx];
-    },
+    setOneHot,
   };
 };
 
@@ -567,6 +562,7 @@ export const DataUtils = (useState: UseStateType) => {
     getAll,
     turnTo,
     get curr() {
+      // console.log('data.getcurr');
       if (currIdx == undefined || all == undefined) return undefined;
       return all[currIdx];
     },
@@ -621,16 +617,16 @@ export async function splitDataset(
     });
 }
 
-type PageInitType = {
-  tool: any;
-  loading: LoadingUtilsType;
-  scale: any;
-  annotation: any;
-  task: any;
-  data: any;
-  project: any;
-  label: any;
-};
+// type PageInitType = {
+//   tool: any;
+//   loading: LoadingUtilsType;
+//   scale: any;
+//   annotation: any;
+//   task: any;
+//   data: any;
+//   project: any;
+//   label: ;
+// };
 export function PageInit(
   useState: UseStateType,
   useEffect: UseEffectType,
@@ -639,19 +635,17 @@ export function PageInit(
       postTaskChange?: (labels: [Label], annotations: [Annotation]) => void;
       postProjectChanged?: () => void;
     };
-    label: { oneHot: boolean; postSetCurr?: (label: Label) => void };
+    label: labelUtilProps;
     tool: { defaultTool: ToolType };
     annotation?: Annotation; // FIXME: setting annotation this way may be overwritten by annotation.getAll in onTaskChange
   },
-): PageInitType {
+) {
   const tool = ToolUtils(useState, props.tool ? props.tool : {});
   const loading = LoadingUtils(useState);
   const scale = ScaleUtils(useState);
   const task = TaskUtils(useState);
   const data = DataUtils(useState);
   const project = ProjectUtils(useState);
-  //FIXME: What's the type of props.label?
-  //REPLY: should be the same as the second parameter of LabelUtils. Maybe declear a type to use for both places?
   const label = LabelUtils(useState, props.label ? props.label : {});
   const annotation = AnnotationUtils(useState, {
     ...props.annotation,

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useState } from 'react';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { useIntl, history } from 'umi';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -13,7 +14,7 @@ import PPBrush from '@/components/PPDrawTool/PPBrush';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { PageInit } from '@/services/utils';
-import type { Annotation, ToolType, Label } from '@/models/';
+import type { Annotation } from '@/models/';
 
 export const MOST_HISTORY_STEPS = 40;
 
@@ -25,47 +26,30 @@ export type HistoryType = {
   }[];
 };
 
-function getMaxLableId(labels: Label[]) {
-  let max = 0;
-  if (!labels) return max;
-  for (const label of labels) {
-    if (!label.labelId) continue;
-    if (label.labelId > max) max = label.labelId;
-  }
-  return max;
-}
-
 const Page: React.FC = () => {
-  const [labels, setLabels] = useState<Label[]>([]);
-  const [currentTool, setCurrentTool] = useState<ToolType>(undefined);
-  const [activeLabelIds, setActiveLabelIds] = useState<Set<number>>(new Set());
   const [currentAnnotation, setCurrentAnnotationRaw] = useState<Annotation>();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [frontendId, setFrontendId] = useState<number>(0);
   const [brushSize, setBrushSize] = useState(10);
   const [transparency, setTransparency] = useState(60);
-  // const [scale, setScaleRaw] = useState(1);
-  // const setScale = (size: number) => {
-  //   if (!size) setScaleRaw(1);
-  //   if (size < 0.1 || size > 20) setScaleRaw(1);
-  //   else setScaleRaw(size);
-  // };
 
-  const { task, project, scale } = PageInit(useState, useEffect, {
-    label: { oneHot: true },
+  const { tool, task, data, project, scale, label, annotation } = PageInit(useState, useEffect, {
+    label: {
+      oneHot: true,
+      postSelect: () => annotation.setCurr(undefined),
+      preUnsetCurr: preCurrLabelUnset,
+    },
     tool: { defaultTool: 'mover' },
   });
 
-  const setCurrentLabel = (label?: Label) => {
-    const set = new Set<number>();
-    if (label?.labelId) set.add(label.labelId);
-    setActiveLabelIds(set);
-    // console.log(set, label);
-  };
+  function preCurrLabelUnset() {
+    annotation.setCurr(undefined);
+    tool.setCurr('mover');
+  }
 
   const setCurrentAnnotation = (anno?: Annotation) => {
     setCurrentAnnotationRaw(anno);
-    if (anno?.label) setCurrentLabel(anno.label);
+    // if (anno?.label) label.setCurr(anno.label);
     if (!anno) setFrontendId(0);
     else setFrontendId(anno.frontendId);
   };
@@ -96,11 +80,12 @@ const Page: React.FC = () => {
   };
 
   const drawToolParam = {
+    // dataId: data.curr?.dataId,
     dataId: 0,
-    currentLabel: labels.find((x) => x.labelId == activeLabelIds.values().next().value),
+    currentLabel: label.curr,
     brushSize: brushSize,
     scale: scale.curr,
-    currentTool: currentTool,
+    currentTool: tool.curr,
     annotations: annotations,
     currentAnnotation: currentAnnotation,
     onAnnotationAdd: (annotation: Annotation) => {
@@ -124,19 +109,23 @@ const Page: React.FC = () => {
       <PPToolBar>
         <PPToolBarButton
           imgSrc="./pics/buttons/polygon.png"
-          active={currentTool == 'polygon'}
+          active={tool.curr == 'polygon'}
           onClick={() => {
-            setCurrentTool('polygon');
+            if (!label.curr) {
+              message.error('Please select a label first');
+              return;
+            }
+            tool.setCurr('polygon');
             setCurrentAnnotation(undefined);
           }}
         >
           {intl.formatMessage({ id: 'pages.toolBar.polygon' })}
         </PPToolBarButton>
         <PPToolBarButton
-          active={currentTool == 'editor'}
+          active={tool.curr == 'editor'}
           imgSrc="./pics/buttons/edit.png"
           onClick={() => {
-            setCurrentTool('editor');
+            tool.setCurr('editor');
             setCurrentAnnotation(undefined);
           }}
         >
@@ -145,12 +134,16 @@ const Page: React.FC = () => {
         <PPSetButton
           imgSrc="./pics/buttons/brush.png"
           size={brushSize}
-          active={currentTool == 'brush'}
+          active={tool.curr == 'brush'}
           onClick={() => {
-            if (currentTool != 'rubber' && currentTool != 'brush') {
+            if (!label.curr) {
+              message.error('Please select a label first');
+              return;
+            }
+            if (tool.curr != 'rubber' && tool.curr != 'brush') {
               setCurrentAnnotation(undefined);
             }
-            setCurrentTool('brush');
+            tool.setCurr('brush');
           }}
           onChange={(newBrushSize) => {
             setBrushSize(newBrushSize);
@@ -160,12 +153,12 @@ const Page: React.FC = () => {
         </PPSetButton>
         <PPSetButton
           size={brushSize}
-          active={currentTool == 'rubber'}
+          active={tool.curr == 'rubber'}
           onClick={() => {
-            if (currentTool != 'rubber' && currentTool != 'brush') {
+            if (tool.curr != 'rubber' && tool.curr != 'brush') {
               setCurrentAnnotation(undefined);
             }
-            setCurrentTool('rubber');
+            tool.setCurr('rubber');
           }}
           onChange={(newBrushSize) => {
             setBrushSize(newBrushSize);
@@ -194,10 +187,10 @@ const Page: React.FC = () => {
           {intl.formatMessage({ id: 'pages.toolBar.save' })}
         </PPToolBarButton>
         <PPToolBarButton
-          active={currentTool == 'mover'}
+          active={tool.curr == 'mover'}
           imgSrc="./pics/buttons/move.png"
           onClick={() => {
-            setCurrentTool('mover');
+            tool.setCurr('mover');
           }}
         >
           {intl.formatMessage({ id: 'pages.toolBar.move' })}
@@ -235,7 +228,7 @@ const Page: React.FC = () => {
           <PPStage
             scale={scale.curr}
             annotations={annotations}
-            currentTool={currentTool}
+            currentTool={tool.curr}
             currentAnnotation={currentAnnotation}
             setCurrentAnnotation={setCurrentAnnotation}
             onAnnotationModify={modifyAnnoByFrontendId}
@@ -243,7 +236,7 @@ const Page: React.FC = () => {
               recordHistory({ annos: annotations, currAnno: currentAnnotation });
             }}
             frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
-            imgSrc={undefined}
+            imgSrc={data.imgSrc}
             transparency={transparency}
             onAnnotationAdd={(annotation) => {
               const newAnnos = annotations.concat([annotation]);
@@ -252,6 +245,8 @@ const Page: React.FC = () => {
             }}
             drawTool={drawTool}
           />
+          <div className="prevTask" onClick={task.prevTask} />
+          <div className="nextTask" onClick={task.nextTask} />
         </div>
         <div className="pblock">
           <PPProgress task={task} project={project} />
@@ -332,31 +327,16 @@ const Page: React.FC = () => {
           </Button>
         </div>
         <PPLabelList
-          labels={labels}
-          activeIds={activeLabelIds}
-          onLabelSelect={(selected) => {
-            setCurrentLabel(selected);
-            setCurrentAnnotation(undefined);
-          }}
+          labels={label.all}
+          activeIds={label.activeIds}
+          onLabelSelect={label.onSelect}
           onLabelModify={() => {}}
-          onLabelDelete={(deleted) => {
-            const newLabels: Label[] = [];
-            for (const label of labels) {
-              if (label.labelId != deleted.labelId) {
-                newLabels.push(label);
-              }
-            }
-            setLabels(newLabels);
-            if (deleted.labelId && activeLabelIds.has(deleted.labelId)) setCurrentLabel(undefined);
-          }}
+          onLabelDelete={label.remove}
           onLabelAdd={(lab) => {
-            if (!lab.labelId) {
-              lab.labelId = getMaxLableId(labels) + 1;
-            }
-            labels.push(lab);
-            setLabels(labels);
-            setCurrentLabel(lab);
-            setCurrentAnnotation(undefined);
+            label.create({ ...lab, projectId: project.curr.projectId }).then((newLabel) => {
+              label.setCurr(newLabel);
+              setCurrentAnnotation(undefined);
+            });
           }}
         />
         <PPAnnotationList
