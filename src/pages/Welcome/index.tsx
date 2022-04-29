@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Space } from 'antd';
+import { history, useIntl } from 'umi';
 import PPContainer from '@/components/PPContainer';
 import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
@@ -7,11 +8,10 @@ import PPTable from '@/components/PPTable';
 import PPButton from '@/components/PPButton';
 import PPSampleButton from '@/components/PPSampleButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { history, useIntl } from 'umi';
-import { toDict, ProjectUtils, getVersion } from '@/services/utils';
+import { toDict, ProjectUtils, getVersion, snake2camel } from '@/services/utils';
 import { createInfo } from '@/services/utils';
 import type { ColumnsType } from 'antd/es/table';
-import type { Project } from '@/services';
+import type { Project } from '@/services/web/models';
 
 const Projects: React.FC = () => {
   const intl = useIntl();
@@ -40,6 +40,16 @@ const Projects: React.FC = () => {
       title: 'Name',
       dataIndex: 'name',
       key: 'projectId',
+    },
+    {
+      title: 'Project Category',
+      key: 'projectId',
+      render: (project) => {
+        console.log('pj', project);
+        const categoryName = snake2camel(project.taskCategory.name);
+        console.log('categoryName', categoryName);
+        return createInfo[categoryName].name;
+      },
     },
     {
       title: 'Actions',
@@ -84,6 +94,7 @@ const Projects: React.FC = () => {
   // if found no project, return create project button
   // TODO: beautify frontend
   if (!projects.all?.length) return '';
+  console.log('all pjs', toDict(projects.all));
 
   return (
     <Row style={{ marginTop: 20 }}>

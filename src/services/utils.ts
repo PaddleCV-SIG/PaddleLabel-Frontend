@@ -85,16 +85,14 @@ export async function getVersion() {
 // TODO: a more elegent way
 export const toDict = (arr: any[]) => {
   if (arr == undefined) return [];
-  console.log('arr', arr);
   return JSON.parse(JSON.stringify(arr));
 };
 
 export function snake2camel(name: string) {
   if (!name) return name;
-  name
+  return name
     .toLowerCase()
     .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''));
-  return name;
 }
 
 export function camel2snake(name: string) {
