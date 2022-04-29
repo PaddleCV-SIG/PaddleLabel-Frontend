@@ -224,7 +224,13 @@ const Page: React.FC = () => {
         >
           {intl.formatMessage({ id: 'pages.toolBar.reDo' })}
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/clear_mark.png">
+        <PPToolBarButton
+          imgSrc="./pics/buttons/clear_mark.png"
+          onClick={() => {
+            annotation.setAll([]);
+            annotation.setCurr(undefined);
+          }}
+        >
           {intl.formatMessage({ id: 'pages.toolBar.clearMark' })}
         </PPToolBarButton>
       </PPToolBar>
