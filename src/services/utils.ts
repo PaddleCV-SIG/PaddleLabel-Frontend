@@ -641,7 +641,7 @@ export function PageInit(
   useEffect: UseEffectType,
   props: {
     effectTrigger?: {
-      postTaskChange?: (labels: [Label], annotations: [Annotation]) => void;
+      postTaskChange?: (labels?: Label[], annotations?: Annotation[]) => void;
       postProjectChanged?: () => void;
     };
     label: labelUtilProps;

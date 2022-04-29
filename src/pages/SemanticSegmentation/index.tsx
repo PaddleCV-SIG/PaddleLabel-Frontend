@@ -32,6 +32,7 @@ const Page: React.FC = () => {
   const [transparency, setTransparency] = useState(60);
 
   const { tool, task, data, project, scale, label, annotation } = PageInit(useState, useEffect, {
+    effectTrigger: { postTaskChange: () => initHistory() },
     label: {
       oneHot: true,
       postSelect: () => {
@@ -86,7 +87,6 @@ const Page: React.FC = () => {
 
   const drawToolParam = {
     dataId: data.curr?.dataId,
-    // dataId: 0,
     currentLabel: label.curr,
     brushSize: brushSize,
     scale: scale.curr,
