@@ -27,7 +27,7 @@ export const initialStateConfig = {
 // localStorage.setItem('basePath', '/api');
 
 localStorage.setItem('basePath', 'http://localhost:17995/api');
-// localStorage.setItem('basePath', 'https://pplabel.herokuapp.com/api');
+
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
  * */

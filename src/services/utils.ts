@@ -26,7 +26,7 @@ const taskApi = new TaskApi(config);
 const dataApi = new DataApi(config);
 const annotationApi = new AnnotationApi(config);
 const labelApi = new LabelApi(config);
-const manageApi = new ManageApi(config);
+export const manageApi = new ManageApi(config);
 
 export type UseStateType = <S>(initialState?: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
 export type UseEffectType = (effect: EffectCallback, deps?: DependencyList | undefined) => void;

@@ -13,13 +13,18 @@
  */
 
 import * as runtime from '../runtime';
+import { InlineObject7, InlineObject7FromJSON, InlineObject7ToJSON } from '../models';
+
+export interface LoadSampleRequest {
+  inlineObject7?: InlineObject7;
+}
 
 /**
  *
  */
 export class ManageApi extends runtime.BaseAPI {
   /**
-   * Your GET endpoint
+   * Get backend version
    */
   async getVersionRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<string>> {
     const queryParameters: any = {};
@@ -40,10 +45,45 @@ export class ManageApi extends runtime.BaseAPI {
   }
 
   /**
-   * Your GET endpoint
+   * Get backend version
    */
   async getVersion(initOverrides?: RequestInit): Promise<string> {
     const response = await this.getVersionRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Download and import sample project
+   */
+  async loadSampleRaw(
+    requestParameters: LoadSampleRequest,
+    initOverrides?: RequestInit,
+  ): Promise<runtime.ApiResponse<string>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/samples`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: InlineObject7ToJSON(requestParameters.inlineObject7),
+      },
+      initOverrides,
+    );
+
+    return new runtime.TextApiResponse(response) as any;
+  }
+
+  /**
+   * Download and import sample project
+   */
+  async loadSample(inlineObject7?: InlineObject7, initOverrides?: RequestInit): Promise<string> {
+    const response = await this.loadSampleRaw({ inlineObject7: inlineObject7 }, initOverrides);
     return await response.value();
   }
 }
