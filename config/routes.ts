@@ -33,8 +33,8 @@ export default [
     component: './ML',
   },
   {
-    path: '/project_creation',
-    component: './ProjectCreation',
+    path: '/sample_project',
+    component: './SampleProject',
   },
   {
     path: '/project_detail',

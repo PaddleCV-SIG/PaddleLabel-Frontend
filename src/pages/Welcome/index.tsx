@@ -137,7 +137,7 @@ const Welcome: React.FC = () => {
         <Col span={24}>
           <PPSampleButton
             onClick={() => {
-              history.push('/');
+              history.push('/sample_project');
             }}
           >
             {sampleProject}

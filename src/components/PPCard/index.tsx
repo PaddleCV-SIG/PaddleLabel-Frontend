@@ -9,6 +9,7 @@ export type MyButtonStyles = {
   imgSrc: string;
   href?: string;
   wording?: string;
+  onClick?: () => void;
 };
 
 const PPCard: React.FC<MyButtonStyles> = (props) => {
@@ -16,7 +17,7 @@ const PPCard: React.FC<MyButtonStyles> = (props) => {
     <div
       className={styles.card}
       style={{ height: props.height, width: props.width }}
-      onClick={() => history.push(props.href ? props.href : '')}
+      onClick={props.onClick ? props.onClick : () => history.push(props.href ? props.href : '')}
     >
       <img
         className={styles.thumbnail}

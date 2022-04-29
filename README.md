@@ -71,7 +71,7 @@ Recommanded Settings in `.vscode/settings.json`:
 1. Format On Save: Yes
 1. Format On Save Mode: File
 
-### Install `node_modules`:
+### Install `node_modules`
 
 ```bash
 npm install -g yarn

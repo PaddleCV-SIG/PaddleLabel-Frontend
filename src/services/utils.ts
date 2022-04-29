@@ -17,7 +17,6 @@ import {
 import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi } from '@/services/ml';
 import type { Model } from '@/services/ml/models';
-import { unset } from 'lodash';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -159,7 +158,6 @@ export const ProjectUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Project[]>();
   const [curr, setCurr] = useState<Project>();
   const [finished, setFinished] = useState<number>();
-  // const [progress, setProgress] = useState<number>();
 
   async function getAll() {
     try {
