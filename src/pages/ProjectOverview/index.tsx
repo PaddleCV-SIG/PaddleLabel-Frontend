@@ -65,7 +65,7 @@ const TaskList: React.FC = () => {
         <Image
           src={`${baseUrl}${paths[0]}`}
           height={40}
-          loading={'lazy'}
+          // loading={'lazy'}
           onError={(thisImage) => {
             thisImage.target.src = loading;
             setTimeout(() => {

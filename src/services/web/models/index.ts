@@ -12,6 +12,7 @@ export * from './InlineObject6';
 export * from './InlineObject7';
 export * from './InlineResponse200';
 export * from './InlineResponse2001';
+export * from './InlineResponse2002';
 export * from './Label';
 export * from './Project';
 export * from './ProjectOtherSettings';

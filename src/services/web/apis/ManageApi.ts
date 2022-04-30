@@ -13,7 +13,14 @@
  */
 
 import * as runtime from '../runtime';
-import { InlineObject7, InlineObject7FromJSON, InlineObject7ToJSON } from '../models';
+import {
+  InlineObject7,
+  InlineObject7FromJSON,
+  InlineObject7ToJSON,
+  InlineResponse2002,
+  InlineResponse2002FromJSON,
+  InlineResponse2002ToJSON,
+} from '../models';
 
 export interface LoadSampleRequest {
   inlineObject7?: InlineObject7;
@@ -58,7 +65,7 @@ export class ManageApi extends runtime.BaseAPI {
   async loadSampleRaw(
     requestParameters: LoadSampleRequest,
     initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<string>> {
+  ): Promise<runtime.ApiResponse<InlineResponse2002>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -76,13 +83,18 @@ export class ManageApi extends runtime.BaseAPI {
       initOverrides,
     );
 
-    return new runtime.TextApiResponse(response) as any;
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      InlineResponse2002FromJSON(jsonValue),
+    );
   }
 
   /**
    * Download and import sample project
    */
-  async loadSample(inlineObject7?: InlineObject7, initOverrides?: RequestInit): Promise<string> {
+  async loadSample(
+    inlineObject7?: InlineObject7,
+    initOverrides?: RequestInit,
+  ): Promise<InlineResponse2002> {
     const response = await this.loadSampleRaw({ inlineObject7: inlineObject7 }, initOverrides);
     return await response.value();
   }

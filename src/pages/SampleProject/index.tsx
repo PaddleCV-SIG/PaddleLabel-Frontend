@@ -1,5 +1,6 @@
 import React from 'react';
 import { Row, Col } from 'antd';
+import { history } from 'umi';
 import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
 import PPContainer from '@/components/PPContainer';
@@ -23,7 +24,9 @@ const SampleProject: React.FC = () => {
                       width={310}
                       imgSrc={createInfo[key].avatar}
                       onClick={() => {
-                        manageApi.loadSample({ taskCategory: key });
+                        manageApi.loadSample({ taskCategory: key }).then((res) => {
+                          history.push(`/project_overview?projectId=${res.projectId}`);
+                        });
                       }}
                     >
                       {createInfo[key].name}

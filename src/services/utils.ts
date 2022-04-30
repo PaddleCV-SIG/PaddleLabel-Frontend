@@ -438,7 +438,7 @@ export function AnnotationUtils(
     if (dataId == undefined) return [];
     try {
       const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
-      console.log('AnnotationUtils getAll, annRes:', annRes);
+      console.log('All annotations', annRes);
       setAll(annRes);
       return annRes;
     } catch (err) {
