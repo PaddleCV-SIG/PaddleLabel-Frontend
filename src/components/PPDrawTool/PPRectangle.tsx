@@ -1,39 +1,31 @@
-import type { Annotation } from '@/models/Annotation';
-import type { Label } from '@/models/Label';
-import type { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
 import type { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Rect } from 'react-konva';
-import { hexToRgb, PPRenderFuncProps } from './drawUtils';
+import type { EvtProps, PPDrawToolProps, PPRenderFuncProps } from './drawUtils';
+import { getMaxId, hexToRgb } from './drawUtils';
 
-export type PPRectangleType = {
-  xmin: number;
-  ymin: number;
-  xmax?: number;
-  ymax?: number;
-};
-
-function createRectangle(points: number[]): PPRectangleType | undefined {
+function createRectangle(points: number[]): string | undefined {
   if (!points || points.length < 2) return undefined;
-  return {
-    xmin: points[0],
-    ymin: points[1],
-    xmax: points[2] || undefined,
-    ymax: points[3] || undefined,
-  };
+  return points.join(',');
 }
 
 function drawRectangle(props: PPRenderFuncProps): ReactElement[] {
   // console.log(`drawRectangle, annotation:`, annotation);
   if (
     !props.annotation ||
-    !props.annotation.lines ||
+    !props.annotation.result ||
     !props.annotation.label ||
     !props.annotation.label.color
   )
     return [<></>];
-  const points: PPRectangleType = props.annotation.lines;
+  const pointsRaw = props.annotation.result.split(',');
+  const points = {
+    xmin: parseInt(pointsRaw[0]),
+    ymin: parseInt(pointsRaw[1]),
+    xmax: pointsRaw.length >= 3 ? parseInt(pointsRaw[2]) : undefined,
+    ymax: pointsRaw.length >= 4 ? parseInt(pointsRaw[3]) : undefined,
+  };
   const color = props.annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return [<></>];
@@ -111,7 +103,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement[] {
       }
       const newAnno = {
         ...props.annotation,
-        points: points,
+        result: `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`,
       };
       props.onDrag(newAnno);
     };
@@ -146,86 +138,50 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement[] {
   ];
 }
 
-function findMaxId(annos: Annotation<PPRectangleType>[]) {
-  let maxId = 1;
-  if (!annos || annos.length == 0) {
-    return maxId;
-  }
-  for (const anno of annos) {
-    if (anno.frontendId && maxId <= anno.frontendId) maxId = anno.frontendId + 1;
-  }
-  return maxId;
-}
-
-export default function (props: {
-  currentLabel: Label;
-  brushSize?: number;
-  points?: number[];
-  currentTool?: ToolType;
-  annotations: Annotation<PPRectangleType>[];
-  currentAnnotation?: Annotation<PPRectangleType>;
-  onAnnotationAdd: (annotation: Annotation<PPRectangleType>) => void;
-  onAnnotationModify: (annotation: Annotation<PPRectangleType>) => void;
-  onMouseUp: () => void;
-}) {
-  const startNewRectangle = (
-    e: Konva.KonvaEventObject<MouseEvent>,
-    offsetX: number,
-    offsetY: number,
-    scale: number,
-  ) => {
-    const mouseX = (e.evt.offsetX + offsetX) / scale;
-    const mouseY = (e.evt.offsetY + offsetY) / scale;
-
-    const Rectangle = createRectangle([mouseX, mouseY]);
-    if (!Rectangle) return;
+export default function (props: PPDrawToolProps) {
+  const startNewRectangle = (mouseX: number, mouseY: number) => {
+    const polygon = createRectangle([mouseX, mouseY]);
+    if (!polygon) return;
+    console.log(polygon);
     props.onAnnotationAdd({
-      frontendId: findMaxId(props.annotations),
+      dataId: props.dataId,
       type: 'rectangle',
+      frontendId: getMaxId(props.annotations) + 1,
       label: props.currentLabel,
-      lines: Rectangle,
+      result: polygon,
     });
   };
 
-  const addDotToRectangle = (
-    e: Konva.KonvaEventObject<MouseEvent>,
-    offsetX: number,
-    offsetY: number,
-    scale: number,
-  ) => {
-    if (!props.currentAnnotation || !props.currentAnnotation.lines) return;
-    const mouseX = (e.evt.offsetX + offsetX) / scale;
-    const mouseY = (e.evt.offsetY + offsetY) / scale;
-    const Rectangle: PPRectangleType = props.currentAnnotation.lines;
-    if (!Rectangle) return;
-    Rectangle.xmax = mouseX;
-    Rectangle.ymax = mouseY;
+  const addDotToRectangle = (mouseX: number, mouseY: number) => {
+    if (!props.currentAnnotation || !props.currentAnnotation.result || !props.currentLabel?.color)
+      return;
+    const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
     const anno = {
-      type: 'rectangle' as ToolType,
+      dataId: props.dataId,
+      type: 'rectangle',
       frontendId: props.currentAnnotation.frontendId,
       label: props.currentAnnotation.label,
-      points: Rectangle,
+      result: result,
     };
-    props.onAnnotationModify(anno);
+    props.modifyAnnoByFrontendId(anno);
   };
 
-  const OnMouseDown = (
-    e: Konva.KonvaEventObject<MouseEvent>,
-    offsetX: number,
-    offsetY: number,
-    scale: number,
-  ) => {
+  const OnMouseDown = (param: EvtProps) => {
     if (props.currentTool != 'rectangle') return;
+    const mouseX = param.mouseX + param.offsetX;
+    const mouseY = param.mouseY + param.offsetY;
+    console.log(`currentAnnotation:`, props.currentAnnotation);
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
-      startNewRectangle(e, offsetX, offsetY, scale);
+      startNewRectangle(mouseX, mouseY);
     } else {
-      addDotToRectangle(e, offsetX, offsetY, scale);
+      addDotToRectangle(mouseX, mouseY);
     }
   };
 
   const OnMouseUp = () => {
     if (props.currentTool != 'rectangle') return;
+    // console.log(`OnMouseUp`);
     props.onMouseUp();
   };
   return {
