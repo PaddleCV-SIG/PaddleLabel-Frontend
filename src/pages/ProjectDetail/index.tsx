@@ -4,7 +4,7 @@ import { history, useIntl } from 'umi';
 import PPCreater from '@/components/PPCreater';
 import PPContainer from '@/components/PPContainer';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, snake2camel, getVersion } from '@/services/utils';
+import { createInfo, getVersion } from '@/services/utils';
 
 const Project: React.FC = () => {
   getVersion();
@@ -15,15 +15,18 @@ const Project: React.FC = () => {
   });
 
   // 1. get taskCategory and ensure exist + valid
-  const taskCategory = snake2camel(serviceUtils.getQueryVariable('taskCategory'));
+  const taskCategory = serviceUtils.getQueryVariable('taskCategory');
+  console.log(taskCategory);
 
   if (!taskCategory) {
     message.error(noTaskCategory);
     history.push('/');
+    return;
   }
   if (!(taskCategory in createInfo)) {
     message.error(invalidTaskCategory + ' ' + taskCategory);
     history.push('/');
+    return;
   }
   return (
     <PPContainer>

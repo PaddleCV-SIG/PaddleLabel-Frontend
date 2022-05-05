@@ -73,6 +73,7 @@ const Page: React.FC = () => {
   };
 
   const modifyAnnoByFrontendId = (anno: Annotation) => {
+    console.log('modifyAnnoByFrontendId:', anno);
     const newAnnos = [];
     for (const item of annotation.all) {
       if (item.frontendId == anno.frontendId) {
@@ -356,7 +357,9 @@ const Page: React.FC = () => {
           onAnnotationSelect={(selectedAnno) => {
             if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
           }}
-          onAnnotationAdd={() => {}}
+          onAnnotationAdd={() => {
+            setCurrentAnnotation(undefined);
+          }}
           onAnnotationModify={() => {}}
           onAnnotationDelete={(anno: Annotation) => {
             annotation.setAll(annotation.all.filter((x) => x.frontendId != anno.frontendId));

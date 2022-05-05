@@ -11,25 +11,20 @@ function createPolygon(color?: string, points?: number[]): string | undefined {
 }
 
 function drawPolygon(props: PPRenderFuncProps): ReactElement {
-  if (
-    !props.annotation ||
-    !props.annotation.result ||
-    props.annotation.result.length < 2 ||
-    !props.annotation.label?.color
-  )
+  const annotation = props.annotation;
+  if (!annotation || !annotation.result || annotation.result.length < 2 || !annotation.label?.color)
     return <></>;
-  const points: number[] = props.annotation.result.split(',').map(Number);
-  const color = props.annotation.label.color;
+  const points: number[] = annotation.result.split(',').map(Number);
+  const color = annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
 
-  // const selected = props.currentAnnotation?.frontendId == props.annotation.frontendId;
+  // const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
   const transparency = 0.3; // Polygon fixed 0.3
   // let transparency = selected ? props.transparency * 0.01 + 0.02 : props.transparency * 0.01;
   // if (transparency > 1) transparency = 1;
   // if (transparency < 0) transparency = 0;
 
-  // console.log(`drawPolygon, annotation: ${JSON.stringify(annotation)}`);
   // Create dots
   let x: number | undefined = undefined;
   const pointElements: ReactElement[] = [];
@@ -41,10 +36,11 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
     pointElements.push(
       <Circle
         onMouseDown={() => {
-          if (props.currentTool == 'editor') props.onSelect(props.annotation);
+          if (props.currentTool == 'editor') props.onSelect(annotation);
         }}
         draggable={props.currentTool == 'editor'}
         onDragMove={(evt) => {
+          // console.log(`onDragMove, annotation: `, annotation);
           // console.log(`Circle onDrageMove`);
           evt.cancelBubble = true;
           // start Forbid drage cross image border
@@ -75,7 +71,7 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
           // End cross border control
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
-          const newAnno = { ...props.annotation, result: points.join(',') };
+          const newAnno = { ...annotation, result: points.join(',') };
           // console.log(newAnno);
           props.onDrag(newAnno);
         }}
@@ -99,7 +95,7 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
   });
   // Create polygon
   return (
-    <Group key={props.annotation.frontendId}>
+    <Group key={annotation.frontendId}>
       <Line
         onMouseOver={() => {
           if (props.currentTool == 'editor') {
@@ -110,7 +106,7 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
           document.body.style.cursor = 'default';
         }}
         onClick={() => {
-          if (props.currentTool == 'editor') props.onSelect(props.annotation);
+          if (props.currentTool == 'editor') props.onSelect(annotation);
         }}
         stroke={color}
         strokeWidth={2 / props.scale}
