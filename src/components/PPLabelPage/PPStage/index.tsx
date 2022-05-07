@@ -48,7 +48,8 @@ const Component: React.FC<PPStageProps> = (props) => {
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   let drawToolTemp = undefined;
   if (props.currentTool == 'polygon') drawToolTemp = props.drawTool.polygon;
-  else if (props.currentTool == 'brush') drawToolTemp = props.drawTool.brush;
+  else if (props.currentTool == 'brush' || props.currentTool == 'rubber')
+    drawToolTemp = props.drawTool.brush;
   const drawTool = drawToolTemp;
 
   // const drawTool =
