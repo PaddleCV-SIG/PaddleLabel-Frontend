@@ -14,19 +14,11 @@ export const initialStateConfig = {
   loading: <PageLoading />,
 };
 
-// const BACKEND_URL_RAW = localStorage.getItem('basePath');
-// const BACKEND_URL = BACKEND_URL_RAW ? BACKEND_URL_RAW : '/';
-// localStorage.setItem('basePath', BACKEND_URL);
-
-// const { REACT_APP_ENV } = process.env;
-// if (REACT_APP_ENV == 'deploy') localStorage.setItem('basePath', '/api');
-// else if (REACT_APP_ENV == 'page')
-//   localStorage.setItem('basePath', 'https://pplabel.herokuapp.com/api');
-// else localStorage.setItem('basePath', 'http://localhost:17995/api');
-
-// localStorage.setItem('basePath', '/api');
-
-localStorage.setItem('basePath', 'http://localhost:17995/api');
+if (window.location.hostname == 'paddlecv-sig.github.io') {
+  localStorage.setItem('basePath', 'https://pplabel.herokuapp.com/api');
+} else {
+  localStorage.setItem('basePath', `http://${window.location.hostname}:17995/api`);
+}
 
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state

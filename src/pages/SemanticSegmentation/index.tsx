@@ -64,6 +64,16 @@ const Page: React.FC = () => {
     initHistory();
   }, []);
 
+  // Auto save every 20s
+  useEffect(() => {
+    const int = setInterval(() => {
+      console.log('triggered!');
+    }, 20000);
+    return () => {
+      clearInterval(int);
+    };
+  }, []);
+
   const onAnnotationModify = (anno: Annotation) => {
     if (!anno) return;
     annotation.all.pop();
@@ -73,7 +83,7 @@ const Page: React.FC = () => {
   };
 
   const modifyAnnoByFrontendId = (anno: Annotation) => {
-    console.log('modifyAnnoByFrontendId:', anno);
+    // console.log('modifyAnnoByFrontendId:', anno);
     const newAnnos = [];
     for (const item of annotation.all) {
       if (item.frontendId == anno.frontendId) {
