@@ -91,12 +91,17 @@ const ML: React.FC = () => {
       message.error('Please set and save ml settings first.');
       return;
     }
-    project.predict(project.curr.projectId, {
-      mlBackendUrl: s.mlBackendUrl,
-      model: s.perviousModel,
-      sameServer: false,
-      createLabel: true,
-    });
+    message.info('Running inference.');
+    project
+      .predict(project.curr.projectId, {
+        mlBackendUrl: s.mlBackendUrl,
+        model: s.perviousModel,
+        sameServer: false,
+        createLabel: true,
+      })
+      .then(() => {
+        message.info('Prediction Complete');
+      });
   }
 
   return (
