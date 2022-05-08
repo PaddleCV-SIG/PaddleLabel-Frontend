@@ -200,7 +200,12 @@ const Page: React.FC = () => {
         >
           {intl.formatMessage({ id: 'pages.toolBar.zoomOut' })}
         </PPToolBarButton>
-        <PPToolBarButton imgSrc="./pics/buttons/save.png">
+        <PPToolBarButton
+          imgSrc="./pics/buttons/save.png"
+          onClick={() => {
+            annotation.pushToBackend(data.curr?.dataId);
+          }}
+        >
           {intl.formatMessage({ id: 'pages.toolBar.save' })}
         </PPToolBarButton>
         <PPToolBarButton
@@ -284,8 +289,6 @@ const Page: React.FC = () => {
         <div
           className="nextTask"
           onClick={() => {
-            console.log(task.curr);
-            console.log(task.currIdx);
             if (!task.nextTask()) {
               return;
             }

@@ -530,7 +530,8 @@ export function AnnotationUtils(
   async function pushToBackend(dataId?: number) {
     if (dataId == undefined || dataId == null) return;
     try {
-      return await dataApi.setAnnotations(dataId + '', all);
+      await dataApi.setAnnotations(dataId + '', all);
+      return message.success('Save success');
     } catch (err) {
       return serviceUtils.parseError(err, message);
     }
