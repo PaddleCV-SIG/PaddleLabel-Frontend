@@ -46,12 +46,10 @@ export default [
   },
   {
     path: '/segmentation_mode',
-    name: 'segmentation-mode',
     component: './SegmentationMode',
   },
   {
     path: '/semantic_segmentation',
-    name: 'semantic_segmentation',
     component: './SemanticSegmentation',
   },
   {

@@ -24,7 +24,7 @@ export type PPDrawToolProps = {
   currentLabel?: Label;
   brushSize?: number;
   scale: number;
-  dataId: number;
+  dataId?: number;
   currentTool?: ToolType;
   annotations?: Annotation[];
   currentAnnotation?: Annotation;

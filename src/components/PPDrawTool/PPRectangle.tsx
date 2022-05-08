@@ -2,7 +2,7 @@ import type Konva from 'konva';
 import type { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Rect } from 'react-konva';
-import type { EvtProps, PPDrawToolProps, PPRenderFuncProps } from './drawUtils';
+import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import { getMaxId, hexToRgb } from './drawUtils';
 
 function createRectangle(points: number[]): string | undefined {
@@ -10,7 +10,7 @@ function createRectangle(points: number[]): string | undefined {
   return points.join(',');
 }
 
-function drawRectangle(props: PPRenderFuncProps): ReactElement[] {
+function drawRectangle(props: PPRenderFuncProps): ReactElement {
   // console.log(`drawRectangle, annotation:`, annotation);
   if (
     !props.annotation ||
@@ -18,7 +18,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement[] {
     !props.annotation.label ||
     !props.annotation.label.color
   )
-    return [<></>];
+    return <></>;
   const pointsRaw = props.annotation.result.split(',');
   const points = {
     xmin: parseInt(pointsRaw[0]),
@@ -28,7 +28,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement[] {
   };
   const color = props.annotation.label.color;
   const rgb = hexToRgb(color);
-  if (!rgb) return [<></>];
+  if (!rgb) return <></>;
 
   // console.log(`drawRectangle, points:`, points, `color:`, color);
   const selected = props.currentAnnotation?.frontendId == props.annotation.frontendId;
@@ -129,16 +129,16 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement[] {
     );
   }
   // Create dots
-  return [
+  return (
     <Group key={props.annotation.annotationId}>
       {rect}
       {createDot(true)}
       {createDot(false)}
-    </Group>,
-  ];
+    </Group>
+  );
 }
 
-export default function (props: PPDrawToolProps) {
+export default function (props: PPDrawToolProps): PPDrawToolRet {
   const startNewRectangle = (mouseX: number, mouseY: number) => {
     const polygon = createRectangle([mouseX, mouseY]);
     if (!polygon) return;
@@ -188,6 +188,6 @@ export default function (props: PPDrawToolProps) {
     onMouseDown: OnMouseDown,
     onMouseMove: () => {},
     onMouseUp: OnMouseUp,
-    createElementsFunc: drawRectangle,
+    drawAnnotation: drawRectangle,
   };
 }

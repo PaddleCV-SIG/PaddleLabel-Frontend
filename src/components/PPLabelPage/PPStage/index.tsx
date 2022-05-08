@@ -37,7 +37,7 @@ export type PPStageProps = {
   onAnnotationModify: (annotation: Annotation) => void;
   onAnnotationModifyComplete: () => void;
   transparency: number;
-  drawTool: { polygon: PPDrawToolRet; brush: PPDrawToolRet };
+  drawTool: { polygon: PPDrawToolRet; brush?: PPDrawToolRet };
   frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
 };
 
