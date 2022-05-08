@@ -148,6 +148,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       type: 'polygon',
       frontendId: getMaxId(props.annotations) + 1,
       label: props.currentLabel,
+      labelId: props.currentLabel?.labelId,
       result: polygon,
     });
   };
@@ -157,10 +158,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       return;
     const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
     const anno = {
-      dataId: props.dataId,
-      type: 'polygon',
-      frontendId: props.currentAnnotation.frontendId,
-      label: props.currentAnnotation.label,
+      ...props.currentAnnotation,
       result: result,
     };
     props.modifyAnnoByFrontendId(anno);

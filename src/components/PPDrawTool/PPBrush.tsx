@@ -192,6 +192,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const anno: Annotation = {
       dataId: props.dataId,
       label: props.currentLabel,
+      labelId: props.currentLabel.labelId,
       frontendId: frontendId,
       result: line,
       type: 'brush',
