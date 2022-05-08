@@ -284,6 +284,8 @@ const Page: React.FC = () => {
         <div
           className="nextTask"
           onClick={() => {
+            console.log(task.curr);
+            console.log(task.currIdx);
             if (!task.nextTask()) {
               return;
             }

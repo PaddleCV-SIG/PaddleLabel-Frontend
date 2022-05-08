@@ -404,11 +404,11 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any }) =>
   }
 
   const nextTask = () => {
-    props.annotation.pushToBackend(currIdx);
+    props.annotation.pushToBackend(all[currIdx]?.taskId);
     return turnTo(currIdx + 1);
   };
   const prevTask = () => {
-    props.annotation.pushToBackend(currIdx);
+    props.annotation.pushToBackend(all[currIdx]?.taskId);
     return turnTo(currIdx - 1);
   };
 
