@@ -363,7 +363,7 @@ export const LabelUtils = (
   };
 };
 
-export const TaskUtils = (useState: UseStateType) => {
+export const TaskUtils = (useState: UseStateType, props: { annotation: any }) => {
   const [all, setAll] = useState<Task[]>();
   const [currIdx, setCurrIdx] = useState<number>();
 
@@ -404,9 +404,11 @@ export const TaskUtils = (useState: UseStateType) => {
   }
 
   const nextTask = () => {
+    props.annotation.pushToBackend(currIdx);
     return turnTo(currIdx + 1);
   };
   const prevTask = () => {
+    props.annotation.pushToBackend(currIdx);
     return turnTo(currIdx - 1);
   };
 
@@ -525,6 +527,15 @@ export function AnnotationUtils(
     else await update(annotation);
   }
 
+  async function pushToBackend(dataId?: number) {
+    if (dataId == undefined || dataId == null) return;
+    try {
+      return await dataApi.setAnnotations(dataId + '', all);
+    } catch (err) {
+      return serviceUtils.parseError(err, message);
+    }
+  }
+
   return {
     all,
     clear,
@@ -536,6 +547,7 @@ export function AnnotationUtils(
     modify,
     curr,
     setAll,
+    pushToBackend,
   };
 }
 
@@ -562,10 +574,20 @@ export const DataUtils = (useState: UseStateType) => {
     }
   };
 
+  const setAnnotations = async (dataId: number, annotations: Annotation[]) => {
+    try {
+      await dataApi.setAnnotations(dataId + '', annotations);
+    } catch (err) {
+      console.log('data getall err ', err);
+      return serviceUtils.parseError(err, message);
+    }
+  };
+
   return {
     all,
     getAll,
     turnTo,
+    setAnnotations,
     get curr() {
       // console.log('data.getcurr');
       if (currIdx == undefined || all == undefined) return undefined;
@@ -648,7 +670,6 @@ export function PageInit(
   const tool = ToolUtils(useState, props.tool ? props.tool : {});
   const loading = LoadingUtils(useState);
   const scale = ScaleUtils(useState);
-  const task = TaskUtils(useState);
   const data = DataUtils(useState);
   const project = ProjectUtils(useState);
   const label = LabelUtils(useState, props.label ? props.label : {});
@@ -657,6 +678,7 @@ export function PageInit(
     label: label,
     project: project,
   });
+  const task = TaskUtils(useState, { annotation });
 
   useEffect(() => {
     // onload, get project, label, task info

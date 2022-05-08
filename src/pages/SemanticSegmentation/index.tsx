@@ -67,12 +67,13 @@ const Page: React.FC = () => {
   // Auto save every 20s
   useEffect(() => {
     const int = setInterval(() => {
-      console.log('triggered!');
+      console.log('triggered!', data);
+      annotation.pushToBackend(data.curr?.dataId);
     }, 20000);
     return () => {
       clearInterval(int);
     };
-  }, []);
+  }, [annotation, data, data.curr]);
 
   const onAnnotationModify = (anno: Annotation) => {
     if (!anno) return;
@@ -267,8 +268,6 @@ const Page: React.FC = () => {
             }}
             drawTool={drawTool}
           />
-          <div className="prevTask" onClick={task.prevTask} />
-          <div className="nextTask" onClick={task.nextTask} />
         </div>
         <div className="pblock">
           <PPProgress task={task} project={project} />
@@ -280,7 +279,6 @@ const Page: React.FC = () => {
               return;
             }
             setCurrentAnnotation(undefined);
-            annotation.setAll([]);
           }}
         />
         <div
@@ -290,7 +288,6 @@ const Page: React.FC = () => {
               return;
             }
             setCurrentAnnotation(undefined);
-            annotation.setAll([]);
           }}
         />
       </div>
