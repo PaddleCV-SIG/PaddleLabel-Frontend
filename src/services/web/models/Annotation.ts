@@ -127,5 +127,6 @@ export function AnnotationToJSON(value?: Annotation | null): any {
     data_id: value.dataId,
     result: value.result,
     type: value.type,
+    frontend_id: value.frontendId,
   };
 }
