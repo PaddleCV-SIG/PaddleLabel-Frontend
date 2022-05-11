@@ -11,27 +11,23 @@ function createRectangle(points: number[]): string | undefined {
 }
 
 function drawRectangle(props: PPRenderFuncProps): ReactElement {
-  // console.log(`drawRectangle, annotation:`, annotation);
-  if (
-    !props.annotation ||
-    !props.annotation.result ||
-    !props.annotation.label ||
-    !props.annotation.label.color
-  )
+  // console.log(`drawRectangle, annotation:`, props.annotation);
+  const annotation = props.annotation;
+  if (!annotation || !annotation.result || !annotation.label || !annotation.label.color)
     return <></>;
-  const pointsRaw = props.annotation.result.split(',');
+  const pointsRaw = annotation.result.split(',');
   const points = {
     xmin: parseInt(pointsRaw[0]),
     ymin: parseInt(pointsRaw[1]),
     xmax: pointsRaw.length >= 3 ? parseInt(pointsRaw[2]) : undefined,
     ymax: pointsRaw.length >= 4 ? parseInt(pointsRaw[3]) : undefined,
   };
-  const color = props.annotation.label.color;
+  const color = annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
 
   // console.log(`drawRectangle, points:`, points, `color:`, color);
-  const selected = props.currentAnnotation?.frontendId == props.annotation.frontendId;
+  const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
   const transparency = selected ? 0.5 : 0.1;
 
   const rect =
@@ -46,7 +42,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
           document.body.style.cursor = 'default';
         }}
         onClick={() => {
-          if (props.currentTool == 'editor') props.onSelect(props.annotation);
+          if (props.currentTool == 'editor') props.onSelect(annotation);
         }}
         stroke={color}
         strokeWidth={2 / props.scale}
@@ -102,7 +98,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
         points.ymax = newPositionY;
       }
       const newAnno = {
-        ...props.annotation,
+        ...annotation,
         result: `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`,
       };
       props.onDrag(newAnno);
@@ -110,16 +106,21 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
     return (
       <Circle
         onMouseDown={() => {
-          if (props.currentTool == 'editor') props.onSelect(props.annotation);
+          if (props.currentTool == 'editor') {
+            // console.log(`select ${JSON.stringify(annotation)}`);
+            props.onSelect(annotation);
+          }
         }}
         draggable={props.currentTool == 'editor'}
         onDragMove={onDragEvt}
         onDragEnd={onDragEvt}
         onMouseOver={() => {
-          if (props.currentTool == 'editor') document.body.style.cursor = 'pointer';
+          // console.log('onMouseOver', props.currentTool);
+          if (props.currentTool == 'editor' && props.stageRef?.current)
+            props.stageRef.current.container().style.cursor = 'cell';
         }}
         onMouseOut={() => {
-          document.body.style.cursor = 'default';
+          if (props.stageRef?.current) props.stageRef.current.container().style.cursor = 'default';
         }}
         x={isMin ? points.xmin : points.xmax}
         y={isMin ? points.ymin : points.ymax}
@@ -130,7 +131,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
   }
   // Create dots
   return (
-    <Group key={props.annotation.annotationId}>
+    <Group key={annotation.annotationId}>
       {rect}
       {createDot(true)}
       {createDot(false)}
@@ -141,13 +142,14 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
 export default function (props: PPDrawToolProps): PPDrawToolRet {
   const startNewRectangle = (mouseX: number, mouseY: number) => {
     const polygon = createRectangle([mouseX, mouseY]);
-    if (!polygon) return;
+    if (!polygon || !props.dataId) return;
     console.log(polygon);
     props.onAnnotationAdd({
       dataId: props.dataId,
       type: 'rectangle',
       frontendId: getMaxId(props.annotations) + 1,
       label: props.currentLabel,
+      labelId: props.currentLabel?.labelId,
       result: polygon,
     });
   };
@@ -157,10 +159,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       return;
     const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
     const anno = {
-      dataId: props.dataId,
-      type: 'rectangle',
-      frontendId: props.currentAnnotation.frontendId,
-      label: props.currentAnnotation.label,
+      ...props.currentAnnotation,
       result: result,
     };
     props.modifyAnnoByFrontendId(anno);

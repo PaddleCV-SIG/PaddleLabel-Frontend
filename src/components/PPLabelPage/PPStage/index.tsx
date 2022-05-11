@@ -5,7 +5,7 @@ import type Konva from 'konva';
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Layer as LayerType } from 'konva/lib/Layer';
 import React, { useEffect, useRef, useState } from 'react';
-import { Layer, Stage, Image } from 'react-konva';
+import { Layer, Stage, Image, Circle } from 'react-konva';
 import useImage from 'use-image';
 import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/drawUtils';
 
@@ -47,7 +47,8 @@ const Component: React.FC<PPStageProps> = (props) => {
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   let drawToolTemp = undefined;
-  if (props.currentTool == 'polygon') drawToolTemp = props.drawTool.polygon;
+  if (props.currentTool == 'polygon' || props.currentTool == 'rectangle')
+    drawToolTemp = props.drawTool.polygon;
   else if (props.currentTool == 'brush' || props.currentTool == 'rubber')
     drawToolTemp = props.drawTool.brush;
   const drawTool = drawToolTemp;
@@ -89,16 +90,8 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   useEffect(() => {
     if (!stageRef.current) return;
-    // console.log('props.currentTool', props.currentTool, 'cursor:', getPointer(props.currentTool));
     stageRef.current.container().style.cursor = getPointer(props.currentTool);
   }, [props.currentTool]);
-
-  // useEffect(() => {
-  //   const ctx = canvasRef.current?.getContext('2d');
-  //   if (!ctx) return;
-  //   ctx.translate(0.5, 0.5);
-  //   layerRef.current?.batchDraw();
-  // });
 
   const getEvtParam = (e: Konva.KonvaEventObject<MouseEvent>) => {
     return {
@@ -152,10 +145,10 @@ const Component: React.FC<PPStageProps> = (props) => {
       if (!annotation) continue;
       param.annotation = annotation;
       let shape;
-      if (annotation.type == 'polygon') {
+      if (annotation.type == 'polygon' || annotation.type == 'rectangle') {
         shape = props.drawTool.polygon.drawAnnotation(param);
       } else if (annotation.type == 'brush' || annotation.type == 'rubber') {
-        shape = props.drawTool.brush.drawAnnotation(param);
+        shape = props.drawTool.brush?.drawAnnotation(param);
       } else {
         continue;
       }

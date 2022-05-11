@@ -82,8 +82,7 @@ function drawPolygon(props: PPRenderFuncProps): ReactElement {
         }}
         onMouseOut={() => {
           // console.log(`Circle onMouseOut`);
-          if (props.currentTool == 'editor' && props.stageRef?.current)
-            props.stageRef.current.container().style.cursor = 'default';
+          if (props.stageRef?.current) props.stageRef.current.container().style.cursor = 'default';
         }}
         x={x}
         y={point}

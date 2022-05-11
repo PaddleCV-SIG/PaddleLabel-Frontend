@@ -17,16 +17,31 @@ import PPProgress from '@/components/PPLabelPage/PPProgress';
 const Page: React.FC = () => {
   // todo: change to use annotation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [frontendId, setFrontendId] = useState<number>(0);
+
   const { tool, loading, scale, annotation, task, data, project, label } = PageInit(
     useState,
     useEffect,
     {
-      label: { oneHot: true },
+      effectTrigger: { postTaskChange: () => initHistory() },
+      label: {
+        oneHot: true,
+        postSelect: () => {
+          annotation.setCurr(undefined);
+          setFrontendId(0);
+        },
+        preUnsetCurr: preCurrLabelUnset,
+      },
       tool: { defaultTool: 'mover' },
-      effectTrigger: { postTaskChange: initHistory },
     },
   );
-  const [frontendId, setFrontendId] = useState<number>(0);
+
+  function preCurrLabelUnset() {
+    annotation.setCurr(undefined);
+    setFrontendId(0);
+    tool.setCurr('mover');
+  }
+
   const setCurrentAnnotation = (anno?: Annotation) => {
     annotation.setCurr(anno);
     if (!anno?.frontendId) setFrontendId(0);
@@ -34,11 +49,17 @@ const Page: React.FC = () => {
   };
 
   const onAnnotationModify = (anno: Annotation) => {
-    if (!anno) return;
-    annotation.all.pop();
-    annotation.all.push(anno);
+    // console.log('modifyAnnoByFrontendId:', anno);
+    const newAnnos = [];
+    for (const item of annotation.all) {
+      if (item.frontendId == anno.frontendId) {
+        newAnnos.push(anno);
+      } else {
+        newAnnos.push(item);
+      }
+    }
     setCurrentAnnotation(anno);
-    annotation.setAll(annotation.all);
+    annotation.setAll(newAnnos);
   };
 
   useEffect(() => {
@@ -48,7 +69,7 @@ const Page: React.FC = () => {
   // Auto save every 20s
   useEffect(() => {
     const int = setInterval(() => {
-      console.log('triggered!', data);
+      // console.log('triggered!', data);
       annotation.pushToBackend(data.curr?.dataId);
     }, 20000);
     return () => {
@@ -198,7 +219,7 @@ const Page: React.FC = () => {
               }}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
               imgSrc={data.imgSrc}
-              transparency={1}
+              transparency={100}
               onAnnotationAdd={(anno) => {
                 const newAnnos = annotation.all.concat([anno]);
                 annotation.setAll(newAnnos);
