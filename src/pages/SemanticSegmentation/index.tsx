@@ -314,24 +314,22 @@ const Page: React.FC = () => {
         <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
           {intl.formatMessage({ id: 'pages.toolBar.visualRadius' })}
         </PPSetButton>
-        <PPToolBar disLoc="right">
-          <PPToolBarButton
-            imgSrc="./pics/buttons/data_division.png"
-            onClick={() => {
-              history.push(`/project_overview?projectId=${project.curr.projectId}`);
-            }}
-          >
-            {'Project Overview'}
-          </PPToolBarButton>
-          <PPToolBarButton
-            imgSrc="./pics/buttons/data_division.png"
-            onClick={() => {
-              history.push(`/ml?projectId=${project.curr.projectId}`);
-            }}
-          >
-            {'ML Settings'}
-          </PPToolBarButton>
-        </PPToolBar>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/data_division.png"
+          onClick={() => {
+            history.push(`/project_overview?projectId=${project.curr.projectId}`);
+          }}
+        >
+          {'Project Overview'}
+        </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/data_division.png"
+          onClick={() => {
+            history.push(`/ml?projectId=${project.curr.projectId}`);
+          }}
+        >
+          {'ML Settings'}
+        </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
         <div className="determinOutline">
