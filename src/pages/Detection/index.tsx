@@ -157,9 +157,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
           onClick={() => {
-            message.info(
-              'Annotations are saved automatically in this type of project. No need to click save.',
-            );
+            annotation.pushToBackend(data.curr?.dataId);
           }}
         >
           {save}
