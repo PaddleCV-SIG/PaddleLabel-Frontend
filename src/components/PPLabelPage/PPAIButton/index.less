@@ -1,0 +1,71 @@
+@import (reference) '~antd/es/style/themes/index';
+
+.toolBarButtonContainerWrapper {
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* IE10+/Edge */
+  user-select: none; /* Standard */
+  :hover {
+    background-color: #eeeff1;
+  }
+  .toolBarButtonContainer {
+    width: 100%;
+    min-height: 4.063rem;
+
+    .toolBarButton {
+      width: 4.063rem;
+      text-align: center;
+
+      .buttonText {
+        font-size: 0.75rem;
+        text-align: center;
+      }
+    }
+  }
+}
+.toolBarButtonContainerWrapperActive {
+  background-color: #e5e5e5;
+}
+.popover {
+  padding-left: 0;
+  .slider {
+    height: 0;
+    margin: 7px 5px;
+    padding: 3px;
+  }
+  :global {
+    .ant-slider:hover .ant-slider-track {
+      background-color: #959fff;
+    }
+    .ant-slider-track {
+      background-color: #959fff;
+    }
+    .ant-slider-handle,
+    .ant-slider:hover .ant-slider-handle:not(.ant-tooltip-open) {
+      border-color: #959fff;
+    }
+    .ant-popover-arrow {
+      left: -0.5rem;
+    }
+    .ant-input-number {
+      width: 3.125rem;
+      height: 1.5rem;
+    }
+    .ant-input-number-input {
+      height: 1.5rem;
+    }
+    .ant-popover-inner-content {
+      width: 10rem;
+      padding: 0.3rem 0 !important;
+    }
+  }
+}
+.popoverLeft {
+  :global {
+    .ant-popover-arrow {
+      right: 0.1rem;
+      left: unset;
+    }
+  }
+}
