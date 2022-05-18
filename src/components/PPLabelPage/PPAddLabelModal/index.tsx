@@ -71,6 +71,7 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
     <Form.Item label={selectColor} name="color">
       <PPColorBall
         color={newLabelColor}
+        changeable={true}
         onChange={(color) => {
           setNewLabelColor(color.hex);
         }}

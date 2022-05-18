@@ -345,6 +345,7 @@ const Page: React.FC = () => {
           </Button>
         </div>
         <PPLabelList
+          hideColorPicker={false}
           labels={label.all}
           activeIds={label.activeIds}
           onLabelSelect={label.onSelect}
