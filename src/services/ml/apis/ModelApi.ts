@@ -174,7 +174,7 @@ export class ModelApi extends runtime.BaseAPI {
 
   /**
    * Load model
-   * Load a model into memory. Reduce predict latency
+   * Only loaded models can be used.
    */
   async loadRaw(
     requestParameters: LoadRequest,
@@ -197,7 +197,7 @@ export class ModelApi extends runtime.BaseAPI {
           `{${'model_name'}}`,
           encodeURIComponent(String(requestParameters.modelName)),
         ),
-        method: 'GET',
+        method: 'POST',
         headers: headerParameters,
         query: queryParameters,
       },
@@ -209,7 +209,7 @@ export class ModelApi extends runtime.BaseAPI {
 
   /**
    * Load model
-   * Load a model into memory. Reduce predict latency
+   * Only loaded models can be used.
    */
   async load(modelName: string, initOverrides?: RequestInit): Promise<void> {
     await this.loadRaw({ modelName: modelName }, initOverrides);

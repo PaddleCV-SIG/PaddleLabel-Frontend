@@ -3,3 +3,4 @@
 export * from './InlineObject';
 export * from './InlineObject1';
 export * from './Model';
+export * from './ModelNamePredictOther';

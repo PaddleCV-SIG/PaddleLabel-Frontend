@@ -5,5 +5,6 @@ index.ts
 models/InlineObject.ts
 models/InlineObject1.ts
 models/Model.ts
+models/ModelNamePredictOther.ts
 models/index.ts
 runtime.ts

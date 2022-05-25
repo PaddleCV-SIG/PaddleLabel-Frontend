@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import {
+  ModelNamePredictOther,
+  ModelNamePredictOtherFromJSON,
+  ModelNamePredictOtherFromJSONTyped,
+  ModelNamePredictOtherToJSON,
+} from './ModelNamePredictOther';
+
 /**
  *
  * @export
@@ -37,6 +44,12 @@ export interface InlineObject1 {
    * @memberof InlineObject1
    */
   createLabel?: boolean;
+  /**
+   *
+   * @type {ModelNamePredictOther}
+   * @memberof InlineObject1
+   */
+  other?: ModelNamePredictOther;
 }
 
 export function InlineObject1FromJSON(json: any): InlineObject1 {
@@ -51,6 +64,7 @@ export function InlineObject1FromJSONTyped(json: any, ignoreDiscriminator: boole
     img: json['img'],
     format: json['format'],
     createLabel: !exists(json, 'create_label') ? undefined : json['create_label'],
+    other: !exists(json, 'other') ? undefined : ModelNamePredictOtherFromJSON(json['other']),
   };
 }
 
@@ -65,5 +79,6 @@ export function InlineObject1ToJSON(value?: InlineObject1 | null): any {
     img: value.img,
     format: value.format,
     create_label: value.createLabel,
+    other: ModelNamePredictOtherToJSON(value.other),
   };
 }
