@@ -179,7 +179,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   const OnMouseUp = () => {
     if (props.currentTool != 'polygon') return;
     // console.log(`OnMouseUp`);
-    props.onMouseUp();
+    if (props.onMouseUp) props.onMouseUp();
   };
   return {
     onMouseDown: OnMouseDown,

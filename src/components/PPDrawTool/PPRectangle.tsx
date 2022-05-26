@@ -181,12 +181,13 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   const OnMouseUp = () => {
     if (props.currentTool != 'rectangle') return;
     // console.log(`OnMouseUp`);
-    props.onMouseUp();
+    if (props.onMouseUp) props.onMouseUp();
   };
   return {
     onMouseDown: OnMouseDown,
     onMouseMove: () => {},
     onMouseUp: OnMouseUp,
     drawAnnotation: drawRectangle,
+    onFinishEdit: props.onFinishEdit,
   };
 }

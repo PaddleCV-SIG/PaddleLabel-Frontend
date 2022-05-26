@@ -52,7 +52,7 @@ export default {
   'component.PPDivideDataModal.train': 'Train',
   'component.PPDivideDataModal.validation': 'Validation',
   'component.PPDivideDataModal.test': 'Test',
-  'component.PPDivideDataModal.success': 'Data Division Success',
+  'component.PPDivideDataModal.success': 'Dataset Splited',
   'component.PPExportModal.imagenet': 'Imagenet Format',
   'component.PPExportModal.export': 'Export',
   'component.PPExportModal.title': 'Export',

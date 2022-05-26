@@ -363,7 +363,7 @@ export const LabelUtils = (
   };
 };
 
-export const TaskUtils = (useState: UseStateType, props: { annotation: any }) => {
+export const TaskUtils = (useState: UseStateType, props: { annotation: any; push: boolean }) => {
   const [all, setAll] = useState<Task[]>();
   const [currIdx, setCurrIdx] = useState<number>();
 
@@ -377,6 +377,9 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any }) =>
       message.error('This is the final image. No next image.');
       return false;
     }
+    if (props.push && props.annotation.all.length != 0)
+      props.annotation.pushToBackend(all[currIdx]?.taskId);
+
     setCurrIdx(turnToIdx);
     return true;
   };
@@ -404,11 +407,9 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any }) =>
   }
 
   const nextTask = () => {
-    props.annotation.pushToBackend(all[currIdx]?.taskId);
     return turnTo(currIdx + 1);
   };
   const prevTask = () => {
-    props.annotation.pushToBackend(all[currIdx]?.taskId);
     return turnTo(currIdx - 1);
   };
 
@@ -506,15 +507,17 @@ export function AnnotationUtils(
 
   async function update(annotation: Annotation) {
     if (!annotation.annotationId) return [];
-    annotation.taskId = undefined;
-    if (annotation.label) annotation.labelId = annotation.label?.labelId;
-    annotation.label = undefined;
+    const ann = { ...annotation };
+    ann.taskId = undefined;
+    // if (ann.label) ann.labelId = ann.label?.labelId;
+    ann.label = undefined;
+    ann.labelId = undefined;
     annotationApi
-      .update(annotation.annotationId, annotation)
+      .update(ann.annotationId, ann)
       .then((res) => {
         console.log('annotation update res', res);
-        setCurr(annotation);
-        return getAll(annotation.dataId);
+        setCurr(ann);
+        return getAll(ann.dataId);
       })
       .catch((err) => {
         console.log('annotation update err ', err);
@@ -669,6 +672,7 @@ export function PageInit(
     label: labelUtilProps;
     tool: { defaultTool: ToolType };
     annotation?: Annotation; // FIXME: setting annotation this way may be overwritten by annotation.getAll in onTaskChange
+    task: { push: boolean };
   },
 ) {
   const tool = ToolUtils(useState, props.tool ? props.tool : {});
@@ -682,7 +686,7 @@ export function PageInit(
     label: label,
     project: project,
   });
-  const task = TaskUtils(useState, { annotation });
+  const task = TaskUtils(useState, { annotation, ...props.task });
 
   useEffect(() => {
     // onload, get project, label, task info
@@ -692,7 +696,7 @@ export function PageInit(
       return;
     }
     const projectId = parseInt(projectIdStr);
-    project.getCurr(projectIdStr).catch((err) => {
+    project.getCurr(projectId).catch((err) => {
       serviceUtils.parseError(err, message);
       // history.push('/');
       return;
@@ -740,6 +744,7 @@ export function PageInit(
   useEffect(() => {
     // when current task is set, get task's data, data's annotation
     if (task.currIdx == undefined) return;
+    console.log('set current task effect');
 
     const onTaskChange = async () => {
       if (task.curr?.projectId) project.getFinished(task.curr.projectId);

@@ -47,7 +47,11 @@ const Component: React.FC<PPStageProps> = (props) => {
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   let drawToolTemp = undefined;
-  if (props.currentTool == 'polygon' || props.currentTool == 'rectangle')
+  if (
+    props.currentTool == 'polygon' ||
+    props.currentTool == 'rectangle' ||
+    props.currentTool == 'editor'
+  )
     drawToolTemp = props.drawTool.polygon;
   else if (props.currentTool == 'brush' || props.currentTool == 'rubber')
     drawToolTemp = props.drawTool.brush;
@@ -113,8 +117,19 @@ const Component: React.FC<PPStageProps> = (props) => {
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
     drawTool?.onMouseMove(getEvtParam(e));
   };
+  console.log('drawtool', drawTool);
+  const onFinishEdit = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    drawTool?.onFinishEdit(getEvtParam(e));
+    console.log('on finish edit');
+  };
+  const onDragEnd = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    // if (drawTool?.onDragEnd) drawTool?.onDragEnd(getEvtParam(e));
+    // onFinishEdit(e);
+  };
   const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!drawTool) return;
     drawTool?.onMouseUp(getEvtParam(e));
+    onFinishEdit(e);
   };
   const onContextMenu = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // console.log('imgLayer onContextMenu');
@@ -203,7 +218,10 @@ const Component: React.FC<PPStageProps> = (props) => {
           if (props.currentTool != 'mover') return;
         }}
         onDragEnd={(evt) => {
-          if (props.currentTool != 'mover') return;
+          if (props.currentTool != 'mover') {
+            onDragEnd(evt);
+            return;
+          }
           // console.log(`dragEndPosX,Y: (${evt.target.x()},${evt.target.y()})`);
           setDragEndPos({
             x: evt.target.x(),

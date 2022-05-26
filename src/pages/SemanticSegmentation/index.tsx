@@ -45,6 +45,7 @@ const Page: React.FC = () => {
       preUnsetCurr: preCurrLabelUnset,
     },
     tool: { defaultTool: 'mover' },
+    task: { push: true },
   });
 
   function preCurrLabelUnset() {

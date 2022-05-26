@@ -78,7 +78,7 @@ export default {
   'pages.welcome.instanceSegmentation': 'Instance Segmentation',
   'pages.welcome.semanticSegmentation': 'Semantic Segmentation',
   'pages.welcome.keypointDetection': 'Keypoint Detection',
-  'pages.welcome.trainingKnowledge': 'Training Knowledge',
+  'pages.welcome.trainingKnowledge': "What's Next",
   'pages.welcome.paddleClas': 'How to train with PaddleClas',
   'pages.welcome.paddleDet': 'How to train with PaddleDet',
   'pages.welcome.paddleSeg': 'How to train with PaddleSeg',

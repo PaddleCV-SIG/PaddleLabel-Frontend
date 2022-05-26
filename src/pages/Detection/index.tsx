@@ -60,6 +60,7 @@ const Page: React.FC = () => {
     }
     setCurrentAnnotation(anno);
     annotation.setAll(newAnnos);
+    // console.log('save invoked', anno.annotationId);
   };
 
   useEffect(() => {
@@ -70,12 +71,26 @@ const Page: React.FC = () => {
   useEffect(() => {
     const int = setInterval(() => {
       // console.log('triggered!', data);
-      annotation.pushToBackend(data.curr?.dataId);
+      // annotation.pushToBackend(data.curr?.dataId);
     }, 20000);
     return () => {
       clearInterval(int);
     };
   }, [annotation, data, data.curr]);
+
+  function onFinishEdit() {
+    recordHistory({ annos: annotation.all, currAnno: annotation.curr });
+    console.log('finish before', annotation.curr);
+
+    if (annotation.curr.annotationId == undefined) {
+      // annotation.curr.dataId = data.curr?.dataId;
+      // console.log('finish', data.curr, annotation.curr);
+      // annotation.create(annotation.curr);
+    } else {
+      annotation.update(annotation.curr);
+    }
+    console.log('finish after', annotation.curr);
+  }
 
   const drawToolParam = {
     dataId: data.curr?.dataId,
@@ -91,9 +106,8 @@ const Page: React.FC = () => {
     },
     onAnnotationModify: onAnnotationModify,
     modifyAnnoByFrontendId: onAnnotationModify,
-    onMouseUp: () => {
-      recordHistory({ annos: annotation.all, currAnno: annotation.curr });
-    },
+    // onMouseUp: onFinishEdit,
+    onFinishEdit: onFinishEdit,
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
   };
 
@@ -213,7 +227,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={onAnnotationModify}
               onAnnotationModifyComplete={() => {
-                recordHistory({ annos: annotation.all, currAnno: annotation.curr });
+                // recordHistory({ annos: annotation.all, currAnno: annotation.curr });
               }}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
               imgSrc={data.imgSrc}
