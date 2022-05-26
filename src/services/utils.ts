@@ -460,15 +460,15 @@ export function AnnotationUtils(
 
   const create = async (annotation: Annotation) => {
     console.log('create label', annotation.label);
-
     try {
-      if (annotation.label) annotation.labelId = annotation.label.labelId;
-      annotation.label = undefined;
-      const newAnn = await annotationApi.create(annotation);
+      const ann = { ...annotation };
+      if (ann.label) ann.labelId = ann.label.labelId;
+      ann.label = undefined;
+      const newAnn = await annotationApi.create(ann);
       setCurr(newAnn);
       let annRes: Annotation[] = [];
       // sync anns from backend
-      if (annotation.dataId) annRes = await getAll(annotation.dataId);
+      if (ann.dataId) annRes = await getAll(ann.dataId);
       // if currently 1 ann -> this is the first ann -> update progress
       if (project && annRes.length == 1) project.getFinished();
     } catch (err) {

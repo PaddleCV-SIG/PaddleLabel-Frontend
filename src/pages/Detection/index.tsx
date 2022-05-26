@@ -84,8 +84,8 @@ const Page: React.FC = () => {
 
     if (annotation.curr.annotationId == undefined) {
       // annotation.curr.dataId = data.curr?.dataId;
-      // console.log('finish', data.curr, annotation.curr);
-      // annotation.create(annotation.curr);
+      console.log('finish', data.curr, annotation.curr);
+      annotation.create(annotation.curr);
     } else {
       annotation.update(annotation.curr);
     }
