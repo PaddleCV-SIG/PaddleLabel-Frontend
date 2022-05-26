@@ -44,10 +44,12 @@ const Page: React.FC = () => {
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
     setFrontendId(0);
+    console.log('preCurrLabelUnset');
     tool.setCurr('mover');
   }
 
   const setCurrentAnnotation = (anno?: Annotation) => {
+    console.log('setCurrentAnnotation');
     annotation.setCurr(anno);
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
@@ -72,20 +74,10 @@ const Page: React.FC = () => {
     initHistory();
   }, []);
 
-  // Auto save every 20s
-  // useEffect(() => {
-  //   const int = setInterval(() => {
-  //     console.log('triggered!', data);
-  //     annotation.pushToBackend(data.curr?.dataId);
-  //   }, 20000);
-  //   return () => {
-  //     clearInterval(int);
-  //   };
-  // }, [annotation, data, data.curr]);
-
   function onFinishEdit() {
     recordHistory({ annos: annotation.all, currAnno: annotation.curr });
     console.log('finish before', annotation.curr);
+    if (!annotation.curr) return;
 
     if (annotation?.curr?.annotationId == undefined) {
       console.log('finish', data.curr, annotation.curr);
@@ -214,7 +206,10 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/clear_mark.png"
-          onClick={() => console.log('clear')}
+          onClick={() => {
+            annotation.clear();
+            recordHistory({ annos: [] });
+          }}
         >
           {clearMark}
         </PPToolBarButton>
@@ -303,6 +298,7 @@ const Page: React.FC = () => {
           annotations={annotation.all}
           onAnnotationSelect={(selectedAnno) => {
             if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
+            console.log(selectedAnno);
           }}
           onAnnotationAdd={() => {
             setCurrentAnnotation(undefined);
@@ -311,6 +307,7 @@ const Page: React.FC = () => {
           onAnnotationDelete={(anno: Annotation) => {
             annotation.setAll(annotation.all.filter((x) => x.frontendId != anno.frontendId));
             setCurrentAnnotation(undefined);
+            annotation.remove(anno);
           }}
         />
       </div>

@@ -297,6 +297,7 @@ export const LabelUtils = (
   }
 
   function setCurr(label: Label) {
+    console.log('label setcurr', label);
     if (label == undefined) {
       return unsetCurr();
     }
@@ -455,11 +456,13 @@ export function AnnotationUtils(
   };
 
   function clear() {
-    for (const ann of all) remove(ann);
+    if (all.length == 0) return;
+    pushToBackend(all[0].dataId, []);
+    setAllRaw([]);
   }
 
   const create = async (annotation: Annotation) => {
-    console.log('create label', annotation.label);
+    // console.log('create label', annotation.label);
     try {
       const ann = { ...annotation };
       if (ann.label) ann.labelId = ann.label.labelId;
@@ -495,13 +498,11 @@ export function AnnotationUtils(
   }
 
   async function setCurr(annotation: Annotation | undefined) {
-    // console.log('annotation setcurr', annotation, 'all', all);
     if (annotation == undefined) {
       setCurrRaw(undefined);
       return;
     }
     setCurrRaw(annotation);
-    // console.log(`label.setCurr:`, annotation.label);
     label.setCurr(annotation.label);
   }
 
@@ -509,14 +510,14 @@ export function AnnotationUtils(
     if (!annotation.annotationId) return [];
     const ann = { ...annotation };
     ann.taskId = undefined;
-    // if (ann.label) ann.labelId = ann.label?.labelId;
     ann.label = undefined;
     ann.labelId = undefined;
+
     annotationApi
       .update(ann.annotationId, ann)
       .then((res) => {
         console.log('annotation update res', res);
-        setCurr(ann);
+        // setCurr(res);
         return getAll(ann.dataId);
       })
       .catch((err) => {
@@ -533,10 +534,11 @@ export function AnnotationUtils(
     else await update(annotation);
   }
 
-  async function pushToBackend(dataId?: number) {
+  async function pushToBackend(dataId?: number, anns: Annotation[] = undefined) {
     if (dataId == undefined || dataId == null) return;
+    const newAll = anns ? anns : all;
     try {
-      await dataApi.setAnnotations(dataId + '', all);
+      await dataApi.setAnnotations(dataId + '', newAll);
       return message.success('Save success');
     } catch (err) {
       return serviceUtils.parseError(err, message);
