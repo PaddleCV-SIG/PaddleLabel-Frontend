@@ -11,7 +11,7 @@ export type PPLabelListProps = {
   currAnnotation: Annotation;
   onAnnotationModify: (annotation: Annotation) => void;
   onAnnotationDelete: (annotation: Annotation) => void;
-  onAnnotationAdd: (annotation: Annotation) => void;
+  onAnnotationAdd: (annotation: Annotation) => void | undefined;
   onAnnotationSelect: (annotation: Annotation | undefined) => void;
 };
 
@@ -48,21 +48,25 @@ const Component: React.FC<PPLabelListProps> = (props) => {
             />
           );
         }}
-        footer={
-          <div>
-            <Button
-              style={{ height: 40, fontSize: '0.75rem' }}
-              type="primary"
-              onClick={() => {
-                // props.onAnnotationSelect(undefined);
-                props.onAnnotationAdd();
-              }}
-              block
-            >
-              {addAnnotation}
-            </Button>
-          </div>
-        }
+        footer={() => {
+          if (props.onAnnotationAdd)
+            return (
+              <div>
+                <Button
+                  style={{ height: 40, fontSize: '0.75rem' }}
+                  type="primary"
+                  onClick={() => {
+                    // props.onAnnotationSelect(undefined);
+                    props.onAnnotationAdd();
+                  }}
+                  block
+                >
+                  {addAnnotation}
+                </Button>
+              </div>
+            );
+          else return <div></div>;
+        }}
       />
     </>
   );

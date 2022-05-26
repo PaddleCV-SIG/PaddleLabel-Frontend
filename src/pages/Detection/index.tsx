@@ -78,7 +78,7 @@ const Page: React.FC = () => {
     recordHistory({ annos: annotation.all, currAnno: annotation.curr });
     console.log('finish before', annotation.curr);
     if (!annotation.curr) return;
-
+    if (!annotation.curr.result || annotation.curr.result.split(',').length != 4) return;
     if (annotation?.curr?.annotationId == undefined) {
       console.log('finish', data.curr, annotation.curr);
       annotation.create(annotation?.curr);
@@ -86,6 +86,9 @@ const Page: React.FC = () => {
       annotation.update(annotation?.curr);
     }
     console.log('finish after', annotation.curr);
+    message.success('Save Success!');
+    console.log('tool', tool.curr);
+    if (tool.curr == 'rectangle') setCurrentAnnotation(undefined);
   }
 
   const drawToolParam = {
@@ -187,6 +190,7 @@ const Page: React.FC = () => {
             if (res) {
               annotation.setAll(res.annos);
               setCurrentAnnotation(res.currAnno);
+              annotation.pushToBackend(data.curr?.dataId, res.annos);
             }
           }}
         >
@@ -301,6 +305,7 @@ const Page: React.FC = () => {
             console.log(selectedAnno);
           }}
           onAnnotationAdd={() => {
+            console.log('onAnnotationAdd');
             setCurrentAnnotation(undefined);
           }}
           onAnnotationModify={() => {}}
