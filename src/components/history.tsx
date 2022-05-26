@@ -1,3 +1,5 @@
+import { message } from 'antd';
+
 const MOST_HISTORY_STEPS = 40;
 
 type HistoryType = {
@@ -29,14 +31,13 @@ export function recordHistory(newItem: any) {
 
 export function forwardHistory() {
   const historyStr = localStorage.getItem('history');
-  if (!historyStr) {
-    return;
-  }
+  if (!historyStr) return;
+
   const history: HistoryType = JSON.parse(historyStr);
-  if (!history) {
-    return;
-  }
+  if (!history) return;
+
   if (history.index >= history.items.length - 1) {
+    message.error('No next history!');
     return;
   }
   history.index++;
@@ -48,8 +49,11 @@ export function backwardHistory() {
   const historyStr = localStorage.getItem('history');
   if (!historyStr) return;
   const history: HistoryType = JSON.parse(historyStr);
-  if (!history || !history.index) return;
-  if (history.index <= 0) return; // already the latest
+  console.log('history', history);
+  if (!history || !history.index || history.index <= 1) {
+    message.error('No previous history!');
+    return;
+  }
   history.index--;
   localStorage.setItem('history', JSON.stringify(history));
   return history.items[history.index];

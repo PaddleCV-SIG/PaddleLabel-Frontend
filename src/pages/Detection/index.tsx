@@ -23,7 +23,12 @@ const Page: React.FC = () => {
     useState,
     useEffect,
     {
-      effectTrigger: { postTaskChange: () => initHistory() },
+      effectTrigger: {
+        postTaskChange: (allLabels, allAnns) => {
+          initHistory();
+          recordHistory({ annos: allAnns });
+        },
+      },
       label: {
         oneHot: true,
         postSelect: () => {
