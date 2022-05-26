@@ -52,8 +52,6 @@ export type PPDrawToolRet = {
   onMouseMove: EvtType;
   onMouseUp: EvtType;
   drawAnnotation: (props: PPRenderFuncProps) => ReactElement;
-  onDragEnd: EvtType;
-  onFinishEdit: EvtType;
 };
 
 export function getMaxId(annotations?: Annotation[]): any {

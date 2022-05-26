@@ -117,19 +117,8 @@ const Component: React.FC<PPStageProps> = (props) => {
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
     drawTool?.onMouseMove(getEvtParam(e));
   };
-  console.log('drawtool', drawTool);
-  const onFinishEdit = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    drawTool?.onFinishEdit(getEvtParam(e));
-    console.log('on finish edit');
-  };
-  const onDragEnd = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    // if (drawTool?.onDragEnd) drawTool?.onDragEnd(getEvtParam(e));
-    // onFinishEdit(e);
-  };
   const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    if (!drawTool) return;
     drawTool?.onMouseUp(getEvtParam(e));
-    onFinishEdit(e);
   };
   const onContextMenu = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // console.log('imgLayer onContextMenu');
@@ -143,7 +132,7 @@ const Component: React.FC<PPStageProps> = (props) => {
     // console.log('PPStage rendering annotations:', props.annotations);
     const param: PPRenderFuncProps = {
       onDrag: props.onAnnotationModify,
-      onDragEnd: props.onAnnotationModifyComplete,
+      // onDragEnd: props.onAnnotationModifyComplete,
       scale: props.scale,
       currentTool: props.currentTool,
       onSelect: props.setCurrentAnnotation,
@@ -219,7 +208,7 @@ const Component: React.FC<PPStageProps> = (props) => {
         }}
         onDragEnd={(evt) => {
           if (props.currentTool != 'mover') {
-            onDragEnd(evt);
+            // onDragEnd(evt);
             return;
           }
           // console.log(`dragEndPosX,Y: (${evt.target.x()},${evt.target.y()})`);

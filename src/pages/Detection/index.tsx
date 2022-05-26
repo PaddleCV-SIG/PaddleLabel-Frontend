@@ -68,26 +68,25 @@ const Page: React.FC = () => {
   }, []);
 
   // Auto save every 20s
-  useEffect(() => {
-    const int = setInterval(() => {
-      // console.log('triggered!', data);
-      // annotation.pushToBackend(data.curr?.dataId);
-    }, 20000);
-    return () => {
-      clearInterval(int);
-    };
-  }, [annotation, data, data.curr]);
+  // useEffect(() => {
+  //   const int = setInterval(() => {
+  //     console.log('triggered!', data);
+  //     annotation.pushToBackend(data.curr?.dataId);
+  //   }, 20000);
+  //   return () => {
+  //     clearInterval(int);
+  //   };
+  // }, [annotation, data, data.curr]);
 
   function onFinishEdit() {
     recordHistory({ annos: annotation.all, currAnno: annotation.curr });
     console.log('finish before', annotation.curr);
 
-    if (annotation.curr.annotationId == undefined) {
-      // annotation.curr.dataId = data.curr?.dataId;
+    if (annotation?.curr?.annotationId == undefined) {
       console.log('finish', data.curr, annotation.curr);
-      annotation.create(annotation.curr);
+      annotation.create(annotation?.curr);
     } else {
-      annotation.update(annotation.curr);
+      annotation.update(annotation?.curr);
     }
     console.log('finish after', annotation.curr);
   }
@@ -106,8 +105,7 @@ const Page: React.FC = () => {
     },
     onAnnotationModify: onAnnotationModify,
     modifyAnnoByFrontendId: onAnnotationModify,
-    // onMouseUp: onFinishEdit,
-    onFinishEdit: onFinishEdit,
+    onMouseUp: onFinishEdit,
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
   };
 
