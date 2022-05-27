@@ -274,14 +274,14 @@ const Page: React.FC = () => {
         >
           {'Project Overview'}
         </PPToolBarButton>
-        <PPToolBarButton
+        {/* <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() => {
             history.push(`/ml?projectId=${project.curr.projectId}`);
           }}
         >
           {'ML Settings'}
-        </PPToolBarButton>
+        </PPToolBarButton> */}
       </PPToolBar>
       <div className="rightSideBar">
         <PPLabelList
