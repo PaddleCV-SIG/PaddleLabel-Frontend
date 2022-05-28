@@ -32,7 +32,7 @@ export interface Annotation {
    * @type {number}
    * @memberof Annotation
    */
-  readonly frontendId?: number;
+  frontendId?: number;
   /**
    *
    * @type {number}
@@ -120,6 +120,7 @@ export function AnnotationToJSON(value?: Annotation | null): any {
     return null;
   }
   return {
+    frontend_id: value.frontendId,
     task_id: value.taskId,
     label_id: value.labelId,
     label: LabelToJSON(value.label),
@@ -127,6 +128,5 @@ export function AnnotationToJSON(value?: Annotation | null): any {
     data_id: value.dataId,
     result: value.result,
     type: value.type,
-    frontend_id: value.frontendId,
   };
 }

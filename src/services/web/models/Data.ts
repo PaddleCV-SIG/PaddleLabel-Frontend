@@ -35,10 +35,10 @@ export interface Data {
   taskId?: number;
   /**
    *
-   * @type {number}
+   * @type {string}
    * @memberof Data
    */
-  sliceCount?: number;
+  size?: string;
   /**
    *
    * @type {Task}
@@ -76,7 +76,7 @@ export function DataFromJSONTyped(json: any, ignoreDiscriminator: boolean): Data
   return {
     dataId: !exists(json, 'data_id') ? undefined : json['data_id'],
     taskId: !exists(json, 'task_id') ? undefined : json['task_id'],
-    sliceCount: !exists(json, 'slice_count') ? undefined : json['slice_count'],
+    size: !exists(json, 'size') ? undefined : json['size'],
     task: !exists(json, 'task') ? undefined : TaskFromJSON(json['task']),
     created: !exists(json, 'created') ? undefined : json['created'],
     modified: !exists(json, 'modified') ? undefined : json['modified'],
@@ -93,7 +93,7 @@ export function DataToJSON(value?: Data | null): any {
   }
   return {
     task_id: value.taskId,
-    slice_count: value.sliceCount,
+    size: value.size,
     task: TaskToJSON(value.task),
     sault: value.sault,
   };

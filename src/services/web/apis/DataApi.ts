@@ -374,7 +374,7 @@ export class DataApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: requestParameters.annotation?.map(AnnotationToJSON),
+        body: requestParameters.annotation.map(AnnotationToJSON),
       },
       initOverrides,
     );
@@ -390,7 +390,6 @@ export class DataApi extends runtime.BaseAPI {
     annotation?: Array<Annotation>,
     initOverrides?: RequestInit,
   ): Promise<void> {
-    console.log(annotation);
     await this.setAnnotationsRaw({ dataId: dataId, annotation: annotation }, initOverrides);
   }
 
