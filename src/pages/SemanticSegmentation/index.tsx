@@ -15,7 +15,6 @@ import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { PageInit } from '@/services/utils';
 import type { Annotation } from '@/models/';
-import PPAIModal from '@/components/PPLabelPage/PPAIModal';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 
 export const MOST_HISTORY_STEPS = 40;
@@ -32,7 +31,6 @@ const Page: React.FC = () => {
   const [frontendId, setFrontendId] = useState<number>(0);
   const [brushSize, setBrushSize] = useState(10);
   const [transparency, setTransparency] = useState(60);
-  const [showPPAIModal, setShowPPAIModal] = useState(false);
 
   const { tool, task, data, project, scale, label, annotation } = PageInit(useState, useEffect, {
     effectTrigger: { postTaskChange: () => initHistory() },
@@ -381,7 +379,6 @@ const Page: React.FC = () => {
           }}
         />
       </div>
-      <PPAIModal visible={showPPAIModal} onCancel={() => setShowPPAIModal(false)} />
     </PPLabelPageContainer>
   );
 };
