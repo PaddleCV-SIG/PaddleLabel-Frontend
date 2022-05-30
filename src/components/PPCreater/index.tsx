@@ -268,7 +268,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 style={{ height: '2.5rem', width: '48%' }}
                 block
                 onClick={() => {
-                  history.push(`/project_overview?projectId=${projectId}`);
+                  history.goBack();
                 }}
               >
                 {cancel}
