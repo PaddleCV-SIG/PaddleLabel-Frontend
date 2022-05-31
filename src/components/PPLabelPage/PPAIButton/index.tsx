@@ -66,21 +66,23 @@ const Component: React.FC<PPAIModalProps> = (props) => {
   //   project.update(project.curr.projectId, { otherSettings: otherSettings });
   // }
 
-  function saveMlsettings(settings: object) {
+  function saveMlsettings(settings: any) {
     console.log('saveMlsettings', project.curr, settings);
     if (!project.curr) {
-      message.error('Please select model first!');
+      message.error('Please select project first!');
       return;
     }
     if (!project.curr.otherSettings) project.curr.otherSettings = {};
-    const allModelSettings = project.curr.otherSettings.models
-      ? project.curr.otherSettings.models
-      : {};
-    allModelSettings[settings.modelName] = settings;
+    // const allModelSettings = project.curr.otherSettings.models
+    //   ? project.curr.otherSettings.models
+    //   : {};
+    // allModelSettings[settings.modelName] = settings;
 
     project.curr.otherSettings.mlBackendUrl = form.getFieldValue('mlBackendUrl');
+    project.curr.otherSettings.mlModelAbsPath = form.getFieldValue('mlModelAbsPath');
+    project.curr.otherSettings.mlWeightAbsPath = form.getFieldValue('mlWeightAbsPath');
     project.curr.otherSettings.perviousModel = settings.modelName;
-    project.curr.otherSettings.models = allModelSettings;
+    // project.curr.otherSettings.models = allModelSettings;
     project.update(project.curr.projectId, { otherSettings: project.curr.otherSettings });
     // project.getCurr(projectId);
     message.info("Ml setting saved. Let's start trainig or inference!");
@@ -110,12 +112,13 @@ const Component: React.FC<PPAIModalProps> = (props) => {
             wrapperCol={{
               span: 18,
             }}
+            initialValue="http://127.0.0.1:1234/model"
             style={{ fontSize: '1.5rem' }}
           >
             <Input placeholder="http://127.0.0.1:1234/model" />
           </Form.Item>
           <Form.Item
-            name={'ml_model_abs_path'}
+            name={'mlModelAbsPath'}
             label={'Model Path'}
             labelCol={{
               span: 6,
@@ -128,7 +131,7 @@ const Component: React.FC<PPAIModalProps> = (props) => {
             <Input placeholder="Absolute path" />
           </Form.Item>
           <Form.Item
-            name={'ml_weight_abs_path'}
+            name={'mlWeightAbsPath'}
             label={'Weight Path'}
             labelCol={{
               span: 6,
