@@ -37,6 +37,8 @@ const Component: React.FC<PPAIModalProps> = (props) => {
       }
       const pj = await project.getCurr(projectId);
       if (pj?.otherSettings?.mlBackendUrl) model.setMlBackendUrl(pj?.otherSettings?.mlBackendUrl);
+      // TODO: Call ML LOAD
+      // model.load(project.curr.otherSettings.mlBackendUrl, project.curr.otherSettings.mlModelAbsPath, project.curr.otherSettings.mlWeightAbsPath);
     }
     init();
   }, []);
@@ -86,6 +88,8 @@ const Component: React.FC<PPAIModalProps> = (props) => {
     project.update(project.curr.projectId, { otherSettings: project.curr.otherSettings });
     // project.getCurr(projectId);
     message.info("Ml setting saved. Let's start trainig or inference!");
+    // TODO: Call ML LOAD
+    // model.load(project.curr.otherSettings.mlBackendUrl, project.curr.otherSettings.mlModelAbsPath, project.curr.otherSettings.mlWeightAbsPath);
   }
 
   return (

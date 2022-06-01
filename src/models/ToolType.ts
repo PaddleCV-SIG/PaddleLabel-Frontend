@@ -5,4 +5,5 @@ export type ToolType =
   | 'rubber'
   | 'mover'
   | 'editor'
+  | 'interactor'
   | undefined;
