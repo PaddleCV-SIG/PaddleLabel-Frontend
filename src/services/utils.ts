@@ -140,7 +140,7 @@ export function ToolUtils(
   { defaultTool }: { defaultTool: ToolType },
 ): {
   curr: ToolType;
-  setCurr: any;
+  setCurr: (tool: ToolType) => void;
 } {
   const [curr, setCurr] = useState<ToolType>(defaultTool);
   return {
@@ -793,34 +793,38 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     console.log('ml backend url set', url);
   }
 
-  function train(modelName: string, dataDir: string, configs: object) {
-    if (!checkAPI()) return;
-    modelApi.train(modelName, { dataDir: dataDir, configs: configs }).catch((err) => {
-      serviceUtils.parseError(err, message);
-    });
+  async function train(modelName: string, dataDir: string, configs: object) {
+    try {
+      checkAPI();
+      return await modelApi.train(modelName, { dataDir: dataDir, configs: configs });
+    } catch (err) {
+      return serviceUtils.parseError(err, message);
+    }
   }
 
-  function predict(modelName: string, data: InlineObject1) {
-    if (!checkAPI()) return;
-    modelApi.predict(modelName, data).catch((err) => {
-      serviceUtils.parseError(err, message);
-    });
+  async function predict(data: InlineObject1) {
+    try {
+      checkAPI();
+      return await modelApi.predict('eiseg', data);
+    } catch (err) {
+      return serviceUtils.parseError(err, message);
+    }
   }
 
-  function load(modelName: string) {
-    if (!checkAPI()) return;
-    modelApi.load(modelName).catch((err) => {
-      serviceUtils.parseError(err, message);
-    });
+  async function load(modelName: string) {
+    try {
+      checkAPI();
+      return await modelApi.load(modelName);
+    } catch (err) {
+      return serviceUtils.parseError(err, message);
+    }
   }
 
   function checkAPI() {
     console.log('model api url', modelApi.configuration.configuration.basePath);
     if (!modelApi.configuration.configuration.basePath) {
-      message.error('Set ML backend url first!');
-      return false;
+      throw new Error('Set ML backend url first!');
     }
-    return true;
   }
 
   return {
@@ -831,5 +835,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     setCurr,
     modelApi,
     train,
+    predict,
+    load,
   };
 }

@@ -8,6 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Layer, Stage, Image, Circle } from 'react-konva';
 import useImage from 'use-image';
 import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/drawUtils';
+import { Threshold } from 'konva/lib/filters/Threshold';
 
 // Mock Data
 // const imgSrc = './pics/32_23.jpg';
@@ -37,12 +38,13 @@ export type PPStageProps = {
   onAnnotationModify: (annotation: Annotation) => void;
   onAnnotationModifyComplete: () => void;
   transparency: number;
-  drawTool: { polygon: PPDrawToolRet; brush?: PPDrawToolRet };
+  threshold: number;
+  drawTool: { polygon: PPDrawToolRet; brush?: PPDrawToolRet; interactor?: PPDrawToolRet };
   frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
-  const [image] = useImage(props.imgSrc || '');
+  const [image] = useImage(props.imgSrc || '', 'anonymous');
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
@@ -55,6 +57,7 @@ const Component: React.FC<PPStageProps> = (props) => {
     drawToolTemp = props.drawTool.polygon;
   else if (props.currentTool == 'brush' || props.currentTool == 'rubber')
     drawToolTemp = props.drawTool.brush;
+  else if (props.currentTool == 'interactor') drawToolTemp = props.drawTool.interactor;
   const drawTool = drawToolTemp;
 
   // const drawTool =
@@ -105,7 +108,7 @@ const Component: React.FC<PPStageProps> = (props) => {
       offsetX: -imageWidth / 2,
       offsetY: -imageHeight / 2,
       canvasRef: canvasRef,
-      layerRef: layerRef,
+      stageRef: stageRef,
     };
   };
 
@@ -139,6 +142,7 @@ const Component: React.FC<PPStageProps> = (props) => {
       stageRef: stageRef,
       currentAnnotation: props.currentAnnotation,
       transparency: transparency,
+      threshold: props.threshold,
       canvasRef: canvasRef,
     };
     // Draw normal elements
@@ -153,6 +157,8 @@ const Component: React.FC<PPStageProps> = (props) => {
         shape = props.drawTool.polygon.drawAnnotation(param);
       } else if (annotation.type == 'brush' || annotation.type == 'rubber') {
         shape = props.drawTool.brush?.drawAnnotation(param);
+      } else if (annotation.type == 'interactor') {
+        shape = props.drawTool.interactor?.drawAnnotation(param);
       } else {
         continue;
       }

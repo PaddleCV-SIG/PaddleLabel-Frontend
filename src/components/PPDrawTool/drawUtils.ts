@@ -3,7 +3,6 @@ import type { Annotation } from '@/models/Annotation';
 import type { ToolType } from '@/models/ToolType';
 import type { Label } from '@/models/Label';
 import type { Stage as StageType } from 'konva/lib/Stage';
-import type { Layer as LayerType } from 'konva/lib/Layer';
 import type Konva from 'konva';
 import type { ReactElement } from 'react';
 
@@ -17,6 +16,7 @@ export type PPRenderFuncProps = {
   stageRef: React.RefObject<StageType>;
   currentAnnotation?: Annotation;
   transparency: number;
+  threshold?: number;
   canvasRef: React.RefObject<HTMLCanvasElement>;
 };
 
@@ -42,7 +42,7 @@ export type EvtProps = {
   offsetX: number;
   offsetY: number;
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  layerRef: React.RefObject<LayerType>;
+  stageRef: React.RefObject<StageType>;
 };
 
 export type EvtType = (props: EvtProps) => void;

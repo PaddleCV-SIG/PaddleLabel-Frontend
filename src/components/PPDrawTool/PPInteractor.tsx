@@ -1,25 +1,8 @@
 import { useState } from 'react';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
+import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Annotation } from '@/models/Annotation';
-
-type CanvasLineType = {
-  frontendId: number;
-  color: string;
-  negativePoints: number[];
-  positivePoints: number[];
-};
-
-function createLine(param: CanvasLineType): string {
-  if (
-    !param ||
-    !param.color ||
-    !(param.negativePoints && param.positivePoints) ||
-    param.frontendId == undefined
-  )
-    return '';
-  // Call API
-  return '';
-}
+import { ModelUtils } from '@/services/utils';
 
 /**
  * Color lines on canvas as label.color
@@ -30,8 +13,10 @@ function drawAnnotation(param: PPRenderFuncProps) {
   if (!result) return <></>;
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
+  const width = canvasRef.current?.width || 0;
+  const threshold = param.threshold ? param.threshold : 0.5;
   // console.log(`PPBrush.drawAnnotation, result:`, result);
-  let points: number[] = [];
+  const points: number[] = [];
   let startIndex = 0;
   for (let i = 0; i < result.length; i++) {
     // Number end
@@ -42,20 +27,8 @@ function drawAnnotation(param: PPRenderFuncProps) {
       //   `i:`,
       //   i,
       // );
-      points.push(parseFloat(result.slice(startIndex, i)));
-      startIndex = i + 1;
-    }
-    // Array end
-    else if (result.at(i) == '|') {
-      // console.log(
-      //   `PPBrush.drawAnnotation, Array end:`,
-      //   parseFloat(result.slice(startIndex, i)),
-      //   `i:`,
-      //   i,
-      // );
-      points.push(parseFloat(result.slice(startIndex, i)));
-      renderPoints(points, ctx, annotation);
-      points = [];
+      const point = parseFloat(result.slice(startIndex, i));
+      if (point >= threshold) points.push(Math.floor(i / width), i % width);
       startIndex = i + 1;
     }
     // result end
@@ -66,7 +39,8 @@ function drawAnnotation(param: PPRenderFuncProps) {
       //   `i:`,
       //   i,
       // );
-      points.push(parseFloat(result.slice(startIndex, result.length)));
+      const point = parseFloat(result.slice(startIndex, i));
+      if (point >= threshold) points.push(Math.floor(i / width), i % width);
       renderPoints(points, ctx, annotation);
     }
   }
@@ -104,14 +78,14 @@ function getMaxFrontendId(annotations?: Annotation[]) {
 }
 
 export default function (props: PPDrawToolProps): PPDrawToolRet {
-  const [positivePoints, setPositivePoints] = useState<number[]>([]);
-  const [negativePoints, setNegativePoints] = useState<number[]>([]);
+  const [mousePoints, setMousePoints] = useState<any[][]>([]);
+  const model = ModelUtils(useState);
 
   /**
    * Record +- points, send API for latest mark, render on Canvas.
    */
   const OnMouseDown = (param: EvtProps) => {
-    if (props.currentTool != 'interactor' || !props.currentLabel?.color || !props.brushSize) return;
+    if (props.currentTool != 'interactor' || !props.currentLabel?.color) return;
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
     console.log(
@@ -125,33 +99,38 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         ? props.frontendIdOps.frontendId
         : getMaxFrontendId(props.annotations) + 1;
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
-    let negPoints = negativePoints;
-    let posPoints = positivePoints;
+    let newMousePoints = mousePoints;
     if (param.e.evt.button == 2) {
-      negPoints = negPoints.concat([mouseX, mouseY]);
-      setNegativePoints(negPoints);
+      newMousePoints = newMousePoints.concat([mouseX, mouseY, false]);
     } else {
-      posPoints = posPoints.concat([mouseX, mouseY]);
-      setPositivePoints(posPoints);
+      newMousePoints = newMousePoints.concat([mouseX, mouseY, true]);
     }
-    // Pixel format
-    const line = createLine({
-      color: props.currentLabel?.color,
-      frontendId: frontendId,
-      negativePoints: negPoints,
-      positivePoints: posPoints,
-    });
-    // console.log(line);
-    if (!line) return;
-    const anno: Annotation = {
-      dataId: props.dataId,
-      label: props.currentLabel,
-      labelId: props.currentLabel.labelId,
-      frontendId: frontendId,
-      result: line,
-      type: 'brush',
-    };
-    props.onAnnotationAdd(anno);
+    setMousePoints(newMousePoints);
+    console.log(newMousePoints, props.currentLabel.color);
+    // Predict from ML Backend
+    if (!newMousePoints.length || !param.stageRef.current || frontendId == undefined) {
+      return;
+    }
+    const stage: StageType = param.stageRef.current;
+    const imgBase64 = stage.findOne('.baseImage').toDataURL().slice(22);
+    model
+      .predict({
+        format: 'b64',
+        img: imgBase64,
+        other: { clicks: newMousePoints },
+      })
+      .then((line) => {
+        console.log(line);
+        const anno: Annotation = {
+          dataId: props.dataId,
+          label: props.currentLabel,
+          labelId: props.currentLabel.labelId,
+          frontendId: frontendId,
+          result: line,
+          type: 'brush',
+        };
+        props.onAnnotationAdd(anno);
+      });
   };
 
   const OnMouseMove = () => {};
@@ -160,7 +139,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (props.currentTool != 'interactor') return;
     // console.log(`OnMouseUp`);
     props.onMouseUp();
-    // generateAbsoluteColor(param.canvasRef, param.layerRef);
   };
   return {
     onMouseDown: OnMouseDown,

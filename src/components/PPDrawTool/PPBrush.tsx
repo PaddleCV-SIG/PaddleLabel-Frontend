@@ -221,7 +221,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     // console.log(`OnMouseUp`);
     setCurrentTool(undefined);
     props.onMouseUp();
-    // generateAbsoluteColor(param.canvasRef, param.layerRef);
   };
   return {
     onMouseDown: OnMouseDown,

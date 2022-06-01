@@ -12,6 +12,7 @@ type Props = {
   size?: number;
   minSize?: number;
   maxSize?: number;
+  step?: number;
   onClick?: React.MouseEventHandler<HTMLElement>;
   onChange?: (size: number) => void;
   imgSrc?: string;
@@ -24,6 +25,7 @@ const Component: React.FC<Props> = (props) => {
   function setSize(destSize: number | undefined) {
     setSizeRaw(formatSize(destSize));
   }
+  const step = props.step ? props.step : 10;
   const minSize = props.minSize == undefined ? defaultMinSize : props.minSize;
   const maxSize = props.maxSize == undefined ? defaultMaxSize : props.maxSize;
   function formatSize(originSize?: number) {
@@ -63,7 +65,7 @@ const Component: React.FC<Props> = (props) => {
               onChange={(newSize) => {
                 props.onChange?.call(0, newSize);
               }}
-              step={10}
+              step={step}
             />
           </Col>
         </Row>

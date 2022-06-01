@@ -16,6 +16,7 @@ import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { PageInit } from '@/services/utils';
 import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
+import PPInteractor from '@/components/PPDrawTool/PPInteractor';
 
 export const MOST_HISTORY_STEPS = 40;
 
@@ -30,6 +31,7 @@ export type HistoryType = {
 const Page: React.FC = () => {
   const [frontendId, setFrontendId] = useState<number>(0);
   const [brushSize, setBrushSize] = useState(10);
+  const [threshold, setThreshold] = useState(0.5);
   const [transparency, setTransparency] = useState(60);
 
   const { tool, task, data, project, scale, label, annotation } = PageInit(useState, useEffect, {
@@ -116,9 +118,11 @@ const Page: React.FC = () => {
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
   };
   const intl = useIntl();
-  const brush = PPBrush(drawToolParam);
-  const polygon = PPPolygon(drawToolParam);
-  const drawTool = { polygon: polygon, brush: brush };
+  const drawTool = {
+    polygon: PPPolygon(drawToolParam),
+    brush: PPBrush(drawToolParam),
+    interactor: PPInteractor(drawToolParam),
+  };
   return (
     <PPLabelPageContainer className="segment">
       <PPToolBar>
@@ -264,6 +268,7 @@ const Page: React.FC = () => {
             frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
             imgSrc={data.imgSrc}
             transparency={transparency}
+            threshold={threshold}
             onAnnotationAdd={(anno) => {
               const newAnnos = annotation.all.concat([anno]);
               annotation.setAll(newAnnos);
@@ -297,11 +302,24 @@ const Page: React.FC = () => {
       <PPToolBar disLoc="right">
         <PPAIButton
           imgSrc="./pics/buttons/intelligent_interaction.png"
-          onClick={() => setShowPPAIModal(true)}
+          active={tool.curr == 'interactor'}
+          onClick={() => {
+            tool.setCurr('interactor');
+          }}
         >
           {intl.formatMessage({ id: 'pages.toolBar.interactor' })}
         </PPAIButton>
-        <PPSetButton imgSrc="./pics/buttons/threshold.png" disLoc="left">
+        <PPSetButton
+          imgSrc="./pics/buttons/threshold.png"
+          disLoc="left"
+          size={threshold}
+          maxSize={1}
+          minSize={0.1}
+          step={0.1}
+          onChange={(newSize) => {
+            setThreshold(newSize);
+          }}
+        >
           {intl.formatMessage({ id: 'pages.toolBar.segmentThreshold' })}
         </PPSetButton>
         <PPSetButton
