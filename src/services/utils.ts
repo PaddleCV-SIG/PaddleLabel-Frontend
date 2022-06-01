@@ -16,7 +16,7 @@ import {
 } from '@/services/web';
 import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi } from '@/services/ml';
-import type { Model } from '@/services/ml/models';
+import type { InlineObject1, Model } from '@/services/ml/models';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -794,15 +794,35 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   }
 
   function train(modelName: string, dataDir: string, configs: object) {
-    console.log('model api url', modelApi.configuration.configuration.basePath);
-    if (!modelApi.configuration.configuration.basePath) {
-      message.error('Set ML backend url first!');
-      return;
-    }
+    if (!checkAPI()) return;
     modelApi.train(modelName, { dataDir: dataDir, configs: configs }).catch((err) => {
       serviceUtils.parseError(err, message);
     });
   }
+
+  function predict(modelName: string, data: InlineObject1) {
+    if (!checkAPI()) return;
+    modelApi.predict(modelName, data).catch((err) => {
+      serviceUtils.parseError(err, message);
+    });
+  }
+
+  function load(modelName: string) {
+    if (!checkAPI()) return;
+    modelApi.load(modelName).catch((err) => {
+      serviceUtils.parseError(err, message);
+    });
+  }
+
+  function checkAPI() {
+    console.log('model api url', modelApi.configuration.configuration.basePath);
+    if (!modelApi.configuration.configuration.basePath) {
+      message.error('Set ML backend url first!');
+      return false;
+    }
+    return true;
+  }
+
   return {
     setMlBackendUrl,
     curr,
