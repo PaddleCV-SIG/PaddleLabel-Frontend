@@ -18,6 +18,7 @@ function drawAnnotation(param: PPRenderFuncProps) {
   // console.log(`PPBrush.drawAnnotation, result:`, result);
   const points: number[] = [];
   let startIndex = 0;
+  let numCount = 0;
   for (let i = 0; i < result.length; i++) {
     // Number end
     if (result.at(i) == ',') {
@@ -27,8 +28,9 @@ function drawAnnotation(param: PPRenderFuncProps) {
       //   `i:`,
       //   i,
       // );
+      numCount++;
       const point = parseFloat(result.slice(startIndex, i));
-      if (point >= threshold) points.push(Math.floor(i / width), i % width);
+      if (point >= threshold) points.push(Math.floor(numCount / width), numCount % width);
       startIndex = i + 1;
     }
     // result end
@@ -39,8 +41,9 @@ function drawAnnotation(param: PPRenderFuncProps) {
       //   `i:`,
       //   i,
       // );
+      numCount++;
       const point = parseFloat(result.slice(startIndex, i));
-      if (point >= threshold) points.push(Math.floor(i / width), i % width);
+      if (point >= threshold) points.push(Math.floor(numCount / width), numCount % width);
       renderPoints(points, ctx, annotation);
     }
   }
