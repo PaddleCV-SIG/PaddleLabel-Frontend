@@ -30,18 +30,6 @@ export interface ProjectOtherSettings {
    * @type {string}
    * @memberof ProjectOtherSettings
    */
-  mlModelAbsPath?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ProjectOtherSettings
-   */
-  mlWeightAbsPath?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof ProjectOtherSettings
-   */
   perviousModel?: string;
   /**
    *
