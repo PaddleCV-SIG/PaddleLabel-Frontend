@@ -14,14 +14,14 @@ function drawAnnotation(param: PPRenderFuncProps) {
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
   const threshold = param.threshold ? param.threshold * 0.01 : 0.5;
-  console.log(`PPBrush.drawAnnotation, result:`, result, `threshold:`, threshold);
+  // console.log(`PPBrush.drawAnnotation, result:`, result, `threshold:`, threshold);
   const points: number[] = [];
   let rowNum = 0;
   for (const row of result) {
     let colNum = 0;
     for (const point of row) {
       if (point >= threshold) {
-        points.push(rowNum, colNum);
+        points.push(colNum, rowNum);
         // console.log(`point:`, point, `x y:`, rowNum, colNum);
       }
       colNum++;
@@ -86,7 +86,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
     mousePoints.push(new Array(mouseX, mouseY, param.e.evt.button != 2));
     setMousePoints(mousePoints);
-    console.log(mousePoints, props.currentLabel.color);
     // Predict from ML Backend
     if (!mousePoints.length || !param.stageRef.current || frontendId == undefined) {
       return;

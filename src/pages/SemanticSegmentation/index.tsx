@@ -115,7 +115,7 @@ const Page: React.FC = () => {
     modifyAnnoByFrontendId: modifyAnnoByFrontendId,
     onMouseUp: () => {
       // Do not record interactor's history
-      if (annotation.curr?.type == 'interactor') return;
+      if (tool.curr == 'interactor') return;
       recordHistory({ annos: annotation.all, currAnno: annotation.curr });
     },
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
@@ -268,7 +268,7 @@ const Page: React.FC = () => {
             onAnnotationModify={modifyAnnoByFrontendId}
             onAnnotationModifyComplete={() => {
               // Do not record interactor's history
-              if (annotation.curr?.type == 'interactor') return;
+              if (tool.curr == 'interactor') return;
               recordHistory({ annos: annotation.all, currAnno: annotation.curr });
             }}
             frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
