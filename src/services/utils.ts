@@ -811,10 +811,12 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     }
   }
 
-  async function load(modelName: string) {
+  async function load(modelPath: string, paramPath: string) {
     try {
       checkAPI();
-      return await modelApi.load(modelName);
+      return await modelApi.load('EISeg', {
+        initParams: { model_path: modelPath, param_path: paramPath },
+      });
     } catch (err) {
       return serviceUtils.parseError(err, message);
     }

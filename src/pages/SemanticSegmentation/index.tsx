@@ -13,7 +13,7 @@ import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/c
 import PPBrush from '@/components/PPDrawTool/PPBrush';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
-import { PageInit } from '@/services/utils';
+import { ModelUtils, PageInit } from '@/services/utils';
 import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 import PPInteractor from '@/components/PPDrawTool/PPInteractor';
@@ -31,9 +31,10 @@ export type HistoryType = {
 const Page: React.FC = () => {
   const [frontendId, setFrontendId] = useState<number>(0);
   const [brushSize, setBrushSize] = useState(10);
-  const [threshold, setThreshold] = useState(0.5);
+  const [threshold, setThreshold] = useState(50);
   const [transparency, setTransparency] = useState(60);
 
+  const model = ModelUtils(useState);
   const { tool, task, data, project, scale, label, annotation } = PageInit(useState, useEffect, {
     effectTrigger: { postTaskChange: () => initHistory() },
     label: {
@@ -113,9 +114,12 @@ const Page: React.FC = () => {
     onAnnotationModify: onAnnotationModify,
     modifyAnnoByFrontendId: modifyAnnoByFrontendId,
     onMouseUp: () => {
+      // Do not record interactor's history
+      if (annotation.curr?.type == 'interactor') return;
       recordHistory({ annos: annotation.all, currAnno: annotation.curr });
     },
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
+    model: model,
   };
   const intl = useIntl();
   const drawTool = {
@@ -263,6 +267,8 @@ const Page: React.FC = () => {
             setCurrentAnnotation={setCurrentAnnotation}
             onAnnotationModify={modifyAnnoByFrontendId}
             onAnnotationModifyComplete={() => {
+              // Do not record interactor's history
+              if (annotation.curr?.type == 'interactor') return;
               recordHistory({ annos: annotation.all, currAnno: annotation.curr });
             }}
             frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
@@ -306,6 +312,8 @@ const Page: React.FC = () => {
           onClick={() => {
             tool.setCurr('interactor');
           }}
+          model={model}
+          project={project}
         >
           {intl.formatMessage({ id: 'pages.toolBar.interactor' })}
         </PPAIButton>
@@ -313,9 +321,9 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/threshold.png"
           disLoc="left"
           size={threshold}
-          maxSize={1}
-          minSize={0.1}
-          step={0.1}
+          maxSize={100}
+          minSize={10}
+          step={10}
           onChange={(newSize) => {
             setThreshold(newSize);
           }}

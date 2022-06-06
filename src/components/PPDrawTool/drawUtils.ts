@@ -33,6 +33,7 @@ export type PPDrawToolProps = {
   modifyAnnoByFrontendId: (annotation: Annotation) => void;
   onMouseUp: () => void;
   frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
+  model: any;
 };
 
 export type EvtProps = {

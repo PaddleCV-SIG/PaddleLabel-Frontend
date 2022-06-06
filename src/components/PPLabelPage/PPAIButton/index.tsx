@@ -1,7 +1,5 @@
-import serviceUtils from '@/services/serviceUtils';
-import { ProjectUtils, ModelUtils, getVersion } from '@/services/utils';
 import { Button, Form, Input, message, Popover } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PPToolBarButton from '../PPToolBarButton';
 import styles from './index.less';
 
@@ -12,61 +10,32 @@ export type PPAIModalProps = {
   active?: boolean;
   onClick?: React.MouseEventHandler<HTMLElement>;
   onChange?: (size: number) => void;
+  model: any;
+  project: any;
 };
+
+const DEFAULT_ML_URL = 'http://127.0.0.1:1234/model';
 
 const Component: React.FC<PPAIModalProps> = (props) => {
   // const intl = useIntl();
-  const project = ProjectUtils(useState);
-  const projectId = serviceUtils.getQueryVariable('projectId');
-  const model = ModelUtils(useState);
   const [form] = Form.useForm();
-
-  useEffect(() => {
-    async function init() {
-      // ensure backend up
-      if (!(await getVersion())) return;
-
-      project.getAll();
-
-      // ensure projectid
-      if (!projectId) {
-        message.error(
-          'Machine Learning settings are specific to every project. Please choose a project first.',
-        );
-        return;
-      }
-      const pj = await project.getCurr(projectId);
-      if (pj?.otherSettings?.mlBackendUrl) model.setMlBackendUrl(pj?.otherSettings?.mlBackendUrl);
-      // TODO: Call ML LOAD
-      // model.load(project.curr.otherSettings.mlBackendUrl, project.curr.otherSettings.mlModelAbsPath, project.curr.otherSettings.mlWeightAbsPath);
-    }
-    init();
-  }, []);
+  const model = props.model;
+  const project = props.project;
 
   useEffect(() => {
     if (!project.curr) return;
     const settings = project.curr.otherSettings ? project.curr.otherSettings : {};
-    const mod =
-      settings.models && settings.perviousModel ? settings.models[settings.perviousModel] : {};
     const initialValues = {
       mlBackendUrl: settings.mlBackendUrl,
-      modelName: settings.perviousModel,
-      trainBatchSize: mod.trainBatchSize,
+      mlModelAbsPath: settings.models?.EISeg?.mlModelAbsPath,
+      mlWeightAbsPath: settings.models?.EISeg?.mlWeightAbsPath,
     };
     form.setFieldsValue(initialValues);
     if (settings?.mlBackendUrl) model.setMlBackendUrl(settings.mlBackendUrl);
+    else model.setMlBackendUrl(DEFAULT_ML_URL);
+    if (settings.mlModelAbsPath && settings.mlWeightAbsPath)
+      model.load(settings.mlModelAbsPath, settings.mlWeightAbsPath);
   }, [project.curr]);
-
-  // function setMlBackendUrl() {
-  //   if (!project.curr) {
-  //     message.error('Please choose a project first!');
-  //     return;
-  //   }
-  //   const mlBackendUrl = form.getFieldValue('mlBackendUrl');
-  //   model.setMlBackendUrl(mlBackendUrl);
-  //   const otherSettings = { ...project.curr.otherSettings, mlBackendUrl: mlBackendUrl };
-  //   project.update(project.curr.projectId, { otherSettings: otherSettings });
-  // }
 
   function saveMlsettings(settings: any) {
     console.log('saveMlsettings', project.curr, settings);
@@ -75,21 +44,23 @@ const Component: React.FC<PPAIModalProps> = (props) => {
       return;
     }
     if (!project.curr.otherSettings) project.curr.otherSettings = {};
-    // const allModelSettings = project.curr.otherSettings.models
-    //   ? project.curr.otherSettings.models
-    //   : {};
-    // allModelSettings[settings.modelName] = settings;
 
     project.curr.otherSettings.mlBackendUrl = form.getFieldValue('mlBackendUrl');
-    project.curr.otherSettings.mlModelAbsPath = form.getFieldValue('mlModelAbsPath');
-    project.curr.otherSettings.mlWeightAbsPath = form.getFieldValue('mlWeightAbsPath');
+    project.curr.otherSettings.models = {};
+    project.curr.otherSettings.models.EISeg = {};
+    project.curr.otherSettings.models.EISeg.mlModelAbsPath = form.getFieldValue('mlModelAbsPath');
+    project.curr.otherSettings.models.EISeg.mlWeightAbsPath = form.getFieldValue('mlWeightAbsPath');
     project.curr.otherSettings.perviousModel = settings.modelName;
     // project.curr.otherSettings.models = allModelSettings;
     project.update(project.curr.projectId, { otherSettings: project.curr.otherSettings });
     // project.getCurr(projectId);
+    // Call ML LOAD
+    model.setMlBackendUrl(project.curr.otherSettings.mlBackendUrl);
+    model.load(
+      project.curr.otherSettings.models.EISeg.mlModelAbsPath,
+      project.curr.otherSettings.models.EISeg.mlWeightAbsPath,
+    );
     message.info("Ml setting saved. Let's start trainig or inference!");
-    // TODO: Call ML LOAD
-    // model.load(project.curr.otherSettings.mlBackendUrl, project.curr.otherSettings.mlModelAbsPath, project.curr.otherSettings.mlWeightAbsPath);
   }
 
   return (
@@ -116,10 +87,10 @@ const Component: React.FC<PPAIModalProps> = (props) => {
             wrapperCol={{
               span: 18,
             }}
-            initialValue="http://127.0.0.1:1234/model"
+            initialValue={DEFAULT_ML_URL}
             style={{ fontSize: '1.5rem' }}
           >
-            <Input placeholder="http://127.0.0.1:1234/model" />
+            <Input placeholder={DEFAULT_ML_URL} />
           </Form.Item>
           <Form.Item
             name={'mlModelAbsPath'}

@@ -2,51 +2,33 @@ import { useState } from 'react';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Annotation } from '@/models/Annotation';
-import { ModelUtils } from '@/services/utils';
 
 /**
  * Color lines on canvas as label.color
  */
 function drawAnnotation(param: PPRenderFuncProps) {
   const { canvasRef, annotation } = param;
-  const result = annotation.result;
-  if (!result) return <></>;
+  const resultStr = annotation.result;
+  if (!resultStr) return <></>;
+  const result: number[][] = JSON.parse(resultStr);
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
-  const width = canvasRef.current?.width || 0;
-  const threshold = param.threshold ? param.threshold : 0.5;
-  // console.log(`PPBrush.drawAnnotation, result:`, result);
+  const threshold = param.threshold ? param.threshold * 0.01 : 0.5;
+  console.log(`PPBrush.drawAnnotation, result:`, result, `threshold:`, threshold);
   const points: number[] = [];
-  let startIndex = 0;
-  let numCount = 0;
-  for (let i = 0; i < result.length; i++) {
-    // Number end
-    if (result.at(i) == ',') {
-      // console.log(
-      //   `PPBrush.drawAnnotation, Number end:`,
-      //   parseFloat(result.slice(startIndex, i)),
-      //   `i:`,
-      //   i,
-      // );
-      numCount++;
-      const point = parseFloat(result.slice(startIndex, i));
-      if (point >= threshold) points.push(Math.floor(numCount / width), numCount % width);
-      startIndex = i + 1;
+  let rowNum = 0;
+  for (const row of result) {
+    let colNum = 0;
+    for (const point of row) {
+      if (point >= threshold) {
+        points.push(rowNum, colNum);
+        // console.log(`point:`, point, `x y:`, rowNum, colNum);
+      }
+      colNum++;
     }
-    // result end
-    else if (i == result.length - 1) {
-      // console.log(
-      //   `PPBrush.drawAnnotation, result end:`,
-      //   parseFloat(result.slice(startIndex, result.length)),
-      //   `i:`,
-      //   i,
-      // );
-      numCount++;
-      const point = parseFloat(result.slice(startIndex, i));
-      if (point >= threshold) points.push(Math.floor(numCount / width), numCount % width);
-      renderPoints(points, ctx, annotation);
-    }
+    rowNum++;
   }
+  renderPoints(points, ctx, annotation);
   return <></>;
 }
 
@@ -82,15 +64,15 @@ function getMaxFrontendId(annotations?: Annotation[]) {
 
 export default function (props: PPDrawToolProps): PPDrawToolRet {
   const [mousePoints, setMousePoints] = useState<any[][]>([]);
-  const model = ModelUtils(useState);
+  const model = props.model;
 
   /**
    * Record +- points, send API for latest mark, render on Canvas.
    */
   const OnMouseDown = async (param: EvtProps) => {
     if (props.currentTool != 'interactor' || !props.currentLabel?.color) return;
-    const mouseX = param.mouseX;
-    const mouseY = param.mouseY;
+    const mouseX = Math.round(param.mouseX);
+    const mouseY = Math.round(param.mouseY);
     console.log(
       `frontendId: `,
       props.frontendIdOps.frontendId,
@@ -102,16 +84,11 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         ? props.frontendIdOps.frontendId
         : getMaxFrontendId(props.annotations) + 1;
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
-    let newMousePoints = mousePoints;
-    if (param.e.evt.button == 2) {
-      newMousePoints = newMousePoints.concat([mouseX, mouseY, false]);
-    } else {
-      newMousePoints = newMousePoints.concat([mouseX, mouseY, true]);
-    }
-    setMousePoints(newMousePoints);
-    console.log(newMousePoints, props.currentLabel.color);
+    mousePoints.push(new Array(mouseX, mouseY, param.e.evt.button != 2));
+    setMousePoints(mousePoints);
+    console.log(mousePoints, props.currentLabel.color);
     // Predict from ML Backend
-    if (!newMousePoints.length || !param.stageRef.current || frontendId == undefined) {
+    if (!mousePoints.length || !param.stageRef.current || frontendId == undefined) {
       return;
     }
     const stage: StageType = param.stageRef.current;
@@ -119,16 +96,15 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const line = await model.predict({
       format: 'b64',
       img: imgBase64,
-      other: { clicks: newMousePoints },
+      other: { clicks: mousePoints },
     });
-    console.log(line);
     const anno: Annotation = {
       dataId: props.dataId,
       label: props.currentLabel,
       labelId: props.currentLabel.labelId,
       frontendId: frontendId,
-      result: line,
-      type: 'brush',
+      result: JSON.stringify(line.result),
+      type: 'interactor',
     };
     props.onAnnotationAdd(anno);
   };
