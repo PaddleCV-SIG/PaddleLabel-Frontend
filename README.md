@@ -166,6 +166,10 @@ docker run -ti pp-label-frontend npm test
 ## Generate API
 
 ```shell
+yarn global add @openapitools/openapi-generator-cli
+```
+
+```shell
 openapi-generator-cli generate \
 -i ../PP-Label/pplabel/openapi.yml \
 -g typescript-fetch \

@@ -14,15 +14,15 @@
 
 import * as runtime from '../runtime';
 import {
-  InlineObject,
-  InlineObjectFromJSON,
-  InlineObjectToJSON,
-  InlineObject1,
-  InlineObject1FromJSON,
-  InlineObject1ToJSON,
   Model,
   ModelFromJSON,
   ModelToJSON,
+  PredictRequest,
+  PredictRequestFromJSON,
+  PredictRequestToJSON,
+  TrainRequest,
+  TrainRequestFromJSON,
+  TrainRequestToJSON,
 } from '../models';
 
 export interface EvalRequest {
@@ -35,16 +35,17 @@ export interface GetProgressRequest {
 
 export interface LoadRequest {
   modelName: string;
+  predictRequest?: LoadRequest;
 }
 
-export interface PredictRequest {
+export interface PredictOperationRequest {
   modelName: string;
-  inlineObject1?: InlineObject1;
+  predictRequest?: PredictRequest;
 }
 
-export interface TrainRequest {
+export interface TrainOperationRequest {
   modelName: string;
-  inlineObject?: InlineObject;
+  trainRequest?: TrainRequest;
 }
 
 export interface UnloadRequest {
@@ -61,7 +62,7 @@ export class ModelApi extends runtime.BaseAPI {
    */
   async evalRaw(
     requestParameters: EvalRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.modelName === null || requestParameters.modelName === undefined) {
       throw new runtime.RequiredError(
@@ -94,7 +95,10 @@ export class ModelApi extends runtime.BaseAPI {
    * Evaluate model performance
    * Evaluate model performance
    */
-  async eval(modelName: string, initOverrides?: RequestInit): Promise<void> {
+  async eval(
+    modelName: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.evalRaw({ modelName: modelName }, initOverrides);
   }
 
@@ -102,7 +106,9 @@ export class ModelApi extends runtime.BaseAPI {
    * Get all models
    * Get all models
    */
-  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Model>>> {
+  async getAllRaw(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<Array<Model>>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -124,7 +130,7 @@ export class ModelApi extends runtime.BaseAPI {
    * Get all models
    * Get all models
    */
-  async getAll(initOverrides?: RequestInit): Promise<Array<Model>> {
+  async getAll(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<Array<Model>> {
     const response = await this.getAllRaw(initOverrides);
     return await response.value();
   }
@@ -135,7 +141,7 @@ export class ModelApi extends runtime.BaseAPI {
    */
   async getProgressRaw(
     requestParameters: GetProgressRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.modelName === null || requestParameters.modelName === undefined) {
       throw new runtime.RequiredError(
@@ -168,7 +174,10 @@ export class ModelApi extends runtime.BaseAPI {
    * Get training progress
    * Get training progress
    */
-  async getProgress(modelName: string, initOverrides?: RequestInit): Promise<void> {
+  async getProgress(
+    modelName: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.getProgressRaw({ modelName: modelName }, initOverrides);
   }
 
@@ -178,7 +187,7 @@ export class ModelApi extends runtime.BaseAPI {
    */
   async loadRaw(
     requestParameters: LoadRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.modelName === null || requestParameters.modelName === undefined) {
       throw new runtime.RequiredError(
@@ -211,7 +220,10 @@ export class ModelApi extends runtime.BaseAPI {
    * Load model
    * Only loaded models can be used.
    */
-  async load(modelName: string, initOverrides?: RequestInit): Promise<void> {
+  async load(
+    modelName: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.loadRaw({ modelName: modelName }, initOverrides);
   }
 
@@ -220,9 +232,10 @@ export class ModelApi extends runtime.BaseAPI {
    * Predict
    */
   async predictRaw(
-    requestParameters: PredictRequest,
-    initOverrides?: RequestInit,
+    requestParameters: PredictOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
+    console.log('predictRaw', requestParameters);
     if (requestParameters.modelName === null || requestParameters.modelName === undefined) {
       throw new runtime.RequiredError(
         'modelName',
@@ -245,7 +258,7 @@ export class ModelApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject1ToJSON(requestParameters.inlineObject1),
+        body: PredictRequestToJSON(requestParameters.predictRequest),
       },
       initOverrides,
     );
@@ -259,10 +272,10 @@ export class ModelApi extends runtime.BaseAPI {
    */
   async predict(
     modelName: string,
-    inlineObject1?: InlineObject1,
-    initOverrides?: RequestInit,
+    predictRequest?: PredictRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<void> {
-    await this.predictRaw({ modelName: modelName, inlineObject1: inlineObject1 }, initOverrides);
+    await this.predictRaw({ modelName: modelName, predictRequest: predictRequest }, initOverrides);
   }
 
   /**
@@ -270,8 +283,8 @@ export class ModelApi extends runtime.BaseAPI {
    * Train a model
    */
   async trainRaw(
-    requestParameters: TrainRequest,
-    initOverrides?: RequestInit,
+    requestParameters: TrainOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.modelName === null || requestParameters.modelName === undefined) {
       throw new runtime.RequiredError(
@@ -295,7 +308,7 @@ export class ModelApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObjectToJSON(requestParameters.inlineObject),
+        body: TrainRequestToJSON(requestParameters.trainRequest),
       },
       initOverrides,
     );
@@ -309,10 +322,10 @@ export class ModelApi extends runtime.BaseAPI {
    */
   async train(
     modelName: string,
-    inlineObject?: InlineObject,
-    initOverrides?: RequestInit,
+    trainRequest?: TrainRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<void> {
-    await this.trainRaw({ modelName: modelName, inlineObject: inlineObject }, initOverrides);
+    await this.trainRaw({ modelName: modelName, trainRequest: trainRequest }, initOverrides);
   }
 
   /**
@@ -321,7 +334,7 @@ export class ModelApi extends runtime.BaseAPI {
    */
   async unloadRaw(
     requestParameters: UnloadRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.modelName === null || requestParameters.modelName === undefined) {
       throw new runtime.RequiredError(
@@ -354,7 +367,10 @@ export class ModelApi extends runtime.BaseAPI {
    * Unload model
    * Unload a model to free up memory
    */
-  async unload(modelName: string, initOverrides?: RequestInit): Promise<void> {
+  async unload(
+    modelName: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.unloadRaw({ modelName: modelName }, initOverrides);
   }
 }

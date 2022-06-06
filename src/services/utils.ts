@@ -805,7 +805,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   async function predict(data: InlineObject1) {
     try {
       checkAPI();
-      return await modelApi.predict('eiseg', data);
+      return await modelApi.predict('EISeg', data);
     } catch (err) {
       return serviceUtils.parseError(err, message);
     }

@@ -2,9 +2,9 @@ apis/ManageApi.ts
 apis/ModelApi.ts
 apis/index.ts
 index.ts
-models/InlineObject.ts
-models/InlineObject1.ts
 models/Model.ts
-models/ModelNamePredictOther.ts
+models/PredictRequest.ts
+models/PredictRequestOther.ts
+models/TrainRequest.ts
 models/index.ts
 runtime.ts

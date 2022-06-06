@@ -87,7 +87,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   /**
    * Record +- points, send API for latest mark, render on Canvas.
    */
-  const OnMouseDown = (param: EvtProps) => {
+  const OnMouseDown = async (param: EvtProps) => {
     if (props.currentTool != 'interactor' || !props.currentLabel?.color) return;
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
@@ -116,24 +116,21 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     }
     const stage: StageType = param.stageRef.current;
     const imgBase64 = stage.findOne('.baseImage').toDataURL().slice(22);
-    model
-      .predict({
-        format: 'b64',
-        img: imgBase64,
-        other: { clicks: newMousePoints },
-      })
-      .then((line) => {
-        console.log(line);
-        const anno: Annotation = {
-          dataId: props.dataId,
-          label: props.currentLabel,
-          labelId: props.currentLabel.labelId,
-          frontendId: frontendId,
-          result: line,
-          type: 'brush',
-        };
-        props.onAnnotationAdd(anno);
-      });
+    const line = await model.predict({
+      format: 'b64',
+      img: imgBase64,
+      other: { clicks: newMousePoints },
+    });
+    console.log(line);
+    const anno: Annotation = {
+      dataId: props.dataId,
+      label: props.currentLabel,
+      labelId: props.currentLabel.labelId,
+      frontendId: frontendId,
+      result: line,
+      type: 'brush',
+    };
+    props.onAnnotationAdd(anno);
   };
 
   const OnMouseMove = () => {};
