@@ -25,8 +25,6 @@ export interface ProjectOtherSettings {
    * @memberof ProjectOtherSettings
    */
   mlBackendUrl?: string;
-  mlModelAbsPath?: string;
-  mlWeightAbsPath?: string;
   /**
    *
    * @type {string}
