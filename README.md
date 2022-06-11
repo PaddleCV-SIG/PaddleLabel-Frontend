@@ -74,7 +74,7 @@ Recommanded Settings in `.vscode/settings.json`:
 ### Install `node_modules`
 
 ```bash
-npm install -g yarn
+npm install --location=global yarn
 yarn
 ```
 
