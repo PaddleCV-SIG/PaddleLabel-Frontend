@@ -14,9 +14,9 @@
 
 import * as runtime from '../runtime';
 import {
-  InlineObject5,
-  InlineObject5FromJSON,
-  InlineObject5ToJSON,
+  PplabelApiControllerUserLoginRequest,
+  PplabelApiControllerUserLoginRequestFromJSON,
+  PplabelApiControllerUserLoginRequestToJSON,
   User,
   UserFromJSON,
   UserToJSON,
@@ -26,8 +26,8 @@ export interface GetRequest {
   uuid: string;
 }
 
-export interface PplabelApiControllerUserLoginRequest {
-  inlineObject5?: InlineObject5;
+export interface PplabelApiControllerUserLoginOperationRequest {
+  pplabelApiControllerUserLoginRequest?: PplabelApiControllerUserLoginRequest;
 }
 
 export interface RemoveRequest {
@@ -44,9 +44,12 @@ export interface UpdateRequest {
  */
 export class UserApi extends runtime.BaseAPI {
   /**
+   *
    * Add a new user
    */
-  async createRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<User>> {
+  async createRaw(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<User>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -65,19 +68,21 @@ export class UserApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Add a new user
    */
-  async create(initOverrides?: RequestInit): Promise<User> {
+  async create(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<User> {
     const response = await this.createRaw(initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Get info of a specific user
    */
   async getRaw(
     requestParameters: GetRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<User>> {
     if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
       throw new runtime.RequiredError(
@@ -107,9 +112,13 @@ export class UserApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Get info of a specific user
    */
-  async get(uuid: string, initOverrides?: RequestInit): Promise<User> {
+  async get(
+    uuid: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<User> {
     const response = await this.getRaw({ uuid: uuid }, initOverrides);
     return await response.value();
   }
@@ -117,7 +126,9 @@ export class UserApi extends runtime.BaseAPI {
   /**
    * Get all users
    */
-  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<User>>> {
+  async getAllRaw(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<Array<User>>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -138,7 +149,7 @@ export class UserApi extends runtime.BaseAPI {
   /**
    * Get all users
    */
-  async getAll(initOverrides?: RequestInit): Promise<Array<User>> {
+  async getAll(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<Array<User>> {
     const response = await this.getAllRaw(initOverrides);
     return await response.value();
   }
@@ -147,8 +158,8 @@ export class UserApi extends runtime.BaseAPI {
    * Login and get JWT
    */
   async pplabelApiControllerUserLoginRaw(
-    requestParameters: PplabelApiControllerUserLoginRequest,
-    initOverrides?: RequestInit,
+    requestParameters: PplabelApiControllerUserLoginOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     const queryParameters: any = {};
 
@@ -162,7 +173,9 @@ export class UserApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject5ToJSON(requestParameters.inlineObject5),
+        body: PplabelApiControllerUserLoginRequestToJSON(
+          requestParameters.pplabelApiControllerUserLoginRequest,
+        ),
       },
       initOverrides,
     );
@@ -174,10 +187,13 @@ export class UserApi extends runtime.BaseAPI {
    * Login and get JWT
    */
   async pplabelApiControllerUserLogin(
-    inlineObject5?: InlineObject5,
-    initOverrides?: RequestInit,
+    pplabelApiControllerUserLoginRequest?: PplabelApiControllerUserLoginRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<void> {
-    await this.pplabelApiControllerUserLoginRaw({ inlineObject5: inlineObject5 }, initOverrides);
+    await this.pplabelApiControllerUserLoginRaw(
+      { pplabelApiControllerUserLoginRequest: pplabelApiControllerUserLoginRequest },
+      initOverrides,
+    );
   }
 
   /**
@@ -186,7 +202,7 @@ export class UserApi extends runtime.BaseAPI {
    */
   async removeRaw(
     requestParameters: RemoveRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
       throw new runtime.RequiredError(
@@ -219,7 +235,10 @@ export class UserApi extends runtime.BaseAPI {
    * Delete a user
    * Delete a user
    */
-  async remove(uuid: string, initOverrides?: RequestInit): Promise<void> {
+  async remove(
+    uuid: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.removeRaw({ uuid: uuid }, initOverrides);
   }
 
@@ -229,7 +248,7 @@ export class UserApi extends runtime.BaseAPI {
    */
   async updateRaw(
     requestParameters: UpdateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<User>> {
     if (requestParameters.uuid === null || requestParameters.uuid === undefined) {
       throw new runtime.RequiredError(
@@ -272,7 +291,11 @@ export class UserApi extends runtime.BaseAPI {
    * Edit user info.
    * Edit user info
    */
-  async update(uuid: string, user: User, initOverrides?: RequestInit): Promise<User> {
+  async update(
+    uuid: string,
+    user: User,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<User> {
     const response = await this.updateRaw({ uuid: uuid, user: user }, initOverrides);
     return await response.value();
   }

@@ -13,10 +13,21 @@
  */
 
 import * as runtime from '../runtime';
-import { InlineObject6, InlineObject6FromJSON, InlineObject6ToJSON } from '../models';
+import {
+  GetFoldersRequest,
+  GetFoldersRequestFromJSON,
+  GetFoldersRequestToJSON,
+  Polygon2pointsRequest,
+  Polygon2pointsRequestFromJSON,
+  Polygon2pointsRequestToJSON,
+} from '../models';
 
-export interface GetFoldersRequest {
-  inlineObject6?: InlineObject6;
+export interface GetFoldersOperationRequest {
+  getFoldersRequest?: GetFoldersRequest;
+}
+
+export interface Polygon2pointsOperationRequest {
+  polygon2pointsRequest?: Polygon2pointsRequest;
 }
 
 /**
@@ -24,10 +35,11 @@ export interface GetFoldersRequest {
  */
 export class RpcApi extends runtime.BaseAPI {
   /**
+   *
    */
   async getFoldersRaw(
-    requestParameters: GetFoldersRequest,
-    initOverrides?: RequestInit,
+    requestParameters: GetFoldersOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     const queryParameters: any = {};
 
@@ -41,7 +53,7 @@ export class RpcApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject6ToJSON(requestParameters.inlineObject6),
+        body: GetFoldersRequestToJSON(requestParameters.getFoldersRequest),
       },
       initOverrides,
     );
@@ -50,8 +62,53 @@ export class RpcApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    */
-  async getFolders(inlineObject6?: InlineObject6, initOverrides?: RequestInit): Promise<void> {
-    await this.getFoldersRaw({ inlineObject6: inlineObject6 }, initOverrides);
+  async getFolders(
+    getFoldersRequest?: GetFoldersRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
+    await this.getFoldersRaw({ getFoldersRequest: getFoldersRequest }, initOverrides);
+  }
+
+  /**
+   *
+   */
+  async polygon2pointsRaw(
+    requestParameters: Polygon2pointsOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<string>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/rpc/seg/polygon2points`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: Polygon2pointsRequestToJSON(requestParameters.polygon2pointsRequest),
+      },
+      initOverrides,
+    );
+
+    return new runtime.TextApiResponse(response) as any;
+  }
+
+  /**
+   *
+   */
+  async polygon2points(
+    polygon2pointsRequest?: Polygon2pointsRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<string> {
+    const response = await this.polygon2pointsRaw(
+      { polygon2pointsRequest: polygon2pointsRequest },
+      initOverrides,
+    );
+    return await response.value();
   }
 }

@@ -17,30 +17,30 @@ import {
   Annotation,
   AnnotationFromJSON,
   AnnotationToJSON,
-  InlineObject,
-  InlineObjectFromJSON,
-  InlineObjectToJSON,
-  InlineObject1,
-  InlineObject1FromJSON,
-  InlineObject1ToJSON,
-  InlineObject2,
-  InlineObject2FromJSON,
-  InlineObject2ToJSON,
-  InlineObject3,
-  InlineObject3FromJSON,
-  InlineObject3ToJSON,
-  InlineResponse200,
-  InlineResponse200FromJSON,
-  InlineResponse200ToJSON,
-  InlineResponse2001,
-  InlineResponse2001FromJSON,
-  InlineResponse2001ToJSON,
+  ExportDatasetRequest,
+  ExportDatasetRequestFromJSON,
+  ExportDatasetRequestToJSON,
+  GetProgress200Response,
+  GetProgress200ResponseFromJSON,
+  GetProgress200ResponseToJSON,
+  ImportDatasetRequest,
+  ImportDatasetRequestFromJSON,
+  ImportDatasetRequestToJSON,
   Label,
   LabelFromJSON,
   LabelToJSON,
+  PredictRequest,
+  PredictRequestFromJSON,
+  PredictRequestToJSON,
   Project,
   ProjectFromJSON,
   ProjectToJSON,
+  SplitDataset200Response,
+  SplitDataset200ResponseFromJSON,
+  SplitDataset200ResponseToJSON,
+  SplitDatasetRequest,
+  SplitDatasetRequestFromJSON,
+  SplitDatasetRequestToJSON,
   Tag,
   TagFromJSON,
   TagToJSON,
@@ -54,9 +54,9 @@ export interface CreateRequest {
   requestId?: string;
 }
 
-export interface ExportDatasetRequest {
+export interface ExportDatasetOperationRequest {
   projectId: string;
-  inlineObject1?: InlineObject1;
+  exportDatasetRequest?: ExportDatasetRequest;
 }
 
 export interface GetRequest {
@@ -88,14 +88,14 @@ export interface GetTasksRequest {
   projectId: string;
 }
 
-export interface ImportDatasetRequest {
+export interface ImportDatasetOperationRequest {
   projectId: string;
-  inlineObject2?: InlineObject2;
+  importDatasetRequest?: ImportDatasetRequest;
 }
 
-export interface PredictRequest {
+export interface PredictOperationRequest {
   projectId: string;
-  inlineObject3?: InlineObject3;
+  predictRequest?: PredictRequest;
 }
 
 export interface RemoveRequest {
@@ -112,9 +112,9 @@ export interface SetLabelsRequest {
   label?: Array<Label>;
 }
 
-export interface SplitDatasetRequest {
+export interface SplitDatasetOperationRequest {
   projectId: string;
-  inlineObject?: InlineObject;
+  splitDatasetRequest?: SplitDatasetRequest;
 }
 
 export interface UpdateRequest {
@@ -128,11 +128,12 @@ export interface UpdateRequest {
  */
 export class ProjectApi extends runtime.BaseAPI {
   /**
+   *
    * Create a new project
    */
   async createRaw(
     requestParameters: CreateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Project>> {
     if (requestParameters.project === null || requestParameters.project === undefined) {
       throw new runtime.RequiredError(
@@ -166,12 +167,13 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Create a new project
    */
   async create(
     project: Project,
     requestId?: string,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<Project> {
     const response = await this.createRaw(
       { project: project, requestId: requestId },
@@ -181,11 +183,12 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Export dataset to specified directory
    */
   async exportDatasetRaw(
-    requestParameters: ExportDatasetRequest,
-    initOverrides?: RequestInit,
+    requestParameters: ExportDatasetOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -209,7 +212,7 @@ export class ProjectApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject1ToJSON(requestParameters.inlineObject1),
+        body: ExportDatasetRequestToJSON(requestParameters.exportDatasetRequest),
       },
       initOverrides,
     );
@@ -218,25 +221,27 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Export dataset to specified directory
    */
   async exportDataset(
     projectId: string,
-    inlineObject1?: InlineObject1,
-    initOverrides?: RequestInit,
+    exportDatasetRequest?: ExportDatasetRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<void> {
     await this.exportDatasetRaw(
-      { projectId: projectId, inlineObject1: inlineObject1 },
+      { projectId: projectId, exportDatasetRequest: exportDatasetRequest },
       initOverrides,
     );
   }
 
   /**
+   *
    * Get info of a specific project
    */
   async getRaw(
     requestParameters: GetRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Project>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -270,9 +275,14 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Get info of a specific project
    */
-  async get(projectId: string, requestId?: string, initOverrides?: RequestInit): Promise<Project> {
+  async get(
+    projectId: string,
+    requestId?: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Project> {
     const response = await this.getRaw(
       { projectId: projectId, requestId: requestId },
       initOverrides,
@@ -281,11 +291,12 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Read all projects, sort by last modify date
    */
   async getAllRaw(
     requestParameters: GetAllRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Project>>> {
     const queryParameters: any = {};
 
@@ -309,19 +320,24 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Read all projects, sort by last modify date
    */
-  async getAll(requestId?: string, initOverrides?: RequestInit): Promise<Array<Project>> {
+  async getAll(
+    requestId?: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Project>> {
     const response = await this.getAllRaw({ requestId: requestId }, initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Get all annotations under a project
    */
   async getAnnotationsRaw(
     requestParameters: GetAnnotationsRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Annotation>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -351,19 +367,24 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Get all annotations under a project
    */
-  async getAnnotations(projectId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
+  async getAnnotations(
+    projectId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Annotation>> {
     const response = await this.getAnnotationsRaw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Get all labels under a project
    */
   async getLabelsRaw(
     requestParameters: GetLabelsRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Label>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -393,20 +414,25 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Get all labels under a project
    */
-  async getLabels(projectId: string, initOverrides?: RequestInit): Promise<Array<Label>> {
+  async getLabels(
+    projectId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Label>> {
     const response = await this.getLabelsRaw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Get project progress
    */
   async getProgressRaw(
     requestParameters: GetProgressRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<InlineResponse200>> {
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<GetProgress200Response>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
         'projectId',
@@ -432,24 +458,29 @@ export class ProjectApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      InlineResponse200FromJSON(jsonValue),
+      GetProgress200ResponseFromJSON(jsonValue),
     );
   }
 
   /**
+   *
    * Get project progress
    */
-  async getProgress(projectId: string, initOverrides?: RequestInit): Promise<InlineResponse200> {
+  async getProgress(
+    projectId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<GetProgress200Response> {
     const response = await this.getProgressRaw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Get all tags under a project
    */
   async getTagsRaw(
     requestParameters: GetTagsRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Tag>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -479,19 +510,24 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Get all tags under a project
    */
-  async getTags(projectId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
+  async getTags(
+    projectId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Tag>> {
     const response = await this.getTagsRaw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Get all tasks under a project
    */
   async getTasksRaw(
     requestParameters: GetTasksRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Task>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -521,18 +557,23 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Get all tasks under a project
    */
-  async getTasks(projectId: string, initOverrides?: RequestInit): Promise<Array<Task>> {
+  async getTasks(
+    projectId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Task>> {
     const response = await this.getTasksRaw({ projectId: projectId }, initOverrides);
     return await response.value();
   }
 
   /**
+   *
    */
   async importDatasetRaw(
-    requestParameters: ImportDatasetRequest,
-    initOverrides?: RequestInit,
+    requestParameters: ImportDatasetOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -556,7 +597,7 @@ export class ProjectApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject2ToJSON(requestParameters.inlineObject2),
+        body: ImportDatasetRequestToJSON(requestParameters.importDatasetRequest),
       },
       initOverrides,
     );
@@ -565,24 +606,26 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    */
   async importDataset(
     projectId: string,
-    inlineObject2?: InlineObject2,
-    initOverrides?: RequestInit,
+    importDatasetRequest?: ImportDatasetRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<void> {
     await this.importDatasetRaw(
-      { projectId: projectId, inlineObject2: inlineObject2 },
+      { projectId: projectId, importDatasetRequest: importDatasetRequest },
       initOverrides,
     );
   }
 
   /**
+   *
    * Run prediction on all data in the dataset
    */
   async predictRaw(
-    requestParameters: PredictRequest,
-    initOverrides?: RequestInit,
+    requestParameters: PredictOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -606,7 +649,7 @@ export class ProjectApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject3ToJSON(requestParameters.inlineObject3),
+        body: PredictRequestToJSON(requestParameters.predictRequest),
       },
       initOverrides,
     );
@@ -615,14 +658,15 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Run prediction on all data in the dataset
    */
   async predict(
     projectId: string,
-    inlineObject3?: InlineObject3,
-    initOverrides?: RequestInit,
+    predictRequest?: PredictRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<void> {
-    await this.predictRaw({ projectId: projectId, inlineObject3: inlineObject3 }, initOverrides);
+    await this.predictRaw({ projectId: projectId, predictRequest: predictRequest }, initOverrides);
   }
 
   /**
@@ -631,7 +675,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async removeRaw(
     requestParameters: RemoveRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -668,16 +712,21 @@ export class ProjectApi extends runtime.BaseAPI {
    * Delete a project record and ALL TASKS RECORDS under the project. Won\'t delete file on file system
    * Delete a project record and ALL TASKS RECORDS under the project.
    */
-  async remove(projectId: string, requestId?: string, initOverrides?: RequestInit): Promise<void> {
+  async remove(
+    projectId: string,
+    requestId?: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.removeRaw({ projectId: projectId, requestId: requestId }, initOverrides);
   }
 
   /**
+   *
    * Delete all labels under a project
    */
   async removeLabelsRaw(
     requestParameters: RemoveLabelsRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -707,18 +756,23 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Delete all labels under a project
    */
-  async removeLabels(projectId: string, initOverrides?: RequestInit): Promise<void> {
+  async removeLabels(
+    projectId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.removeLabelsRaw({ projectId: projectId }, initOverrides);
   }
 
   /**
+   *
    * Set all labels under a project, will delete previous labels
    */
   async setLabelsRaw(
     requestParameters: SetLabelsRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Label>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -751,24 +805,26 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Set all labels under a project, will delete previous labels
    */
   async setLabels(
     projectId: string,
     label?: Array<Label>,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<Array<Label>> {
     const response = await this.setLabelsRaw({ projectId: projectId, label: label }, initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Split this project\'s data into train, validation and test dataset.
    */
   async splitDatasetRaw(
-    requestParameters: SplitDatasetRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<InlineResponse2001>> {
+    requestParameters: SplitDatasetOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<SplitDataset200Response>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
         'projectId',
@@ -791,26 +847,27 @@ export class ProjectApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObjectToJSON(requestParameters.inlineObject),
+        body: SplitDatasetRequestToJSON(requestParameters.splitDatasetRequest),
       },
       initOverrides,
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      InlineResponse2001FromJSON(jsonValue),
+      SplitDataset200ResponseFromJSON(jsonValue),
     );
   }
 
   /**
+   *
    * Split this project\'s data into train, validation and test dataset.
    */
   async splitDataset(
     projectId: string,
-    inlineObject?: InlineObject,
-    initOverrides?: RequestInit,
-  ): Promise<InlineResponse2001> {
+    splitDatasetRequest?: SplitDatasetRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<SplitDataset200Response> {
     const response = await this.splitDatasetRaw(
-      { projectId: projectId, inlineObject: inlineObject },
+      { projectId: projectId, splitDatasetRequest: splitDatasetRequest },
       initOverrides,
     );
     return await response.value();
@@ -822,7 +879,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async updateRaw(
     requestParameters: UpdateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Project>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -873,7 +930,7 @@ export class ProjectApi extends runtime.BaseAPI {
     projectId: string,
     project: Project,
     requestId?: string,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<Project> {
     const response = await this.updateRaw(
       { projectId: projectId, project: project, requestId: requestId },

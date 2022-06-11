@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
-export * from './InlineObject';
-export * from './InlineObject1';
-export * from './InlineObject2';
+export * from './LoadRequest';
 export * from './Model';
-export * from './ModelNamePredictOther';
+export * from './PredictRequest';
+export * from './PredictRequestOther';
+export * from './TrainRequest';

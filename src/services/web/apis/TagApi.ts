@@ -38,11 +38,12 @@ export interface UpdateRequest {
  */
 export class TagApi extends runtime.BaseAPI {
   /**
+   *
    * Create a new tag
    */
   async createRaw(
     requestParameters: CreateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Tag>> {
     if (requestParameters.tag === null || requestParameters.tag === undefined) {
       throw new runtime.RequiredError(
@@ -76,9 +77,14 @@ export class TagApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Create a new tag
    */
-  async create(tag: Tag, requestId?: string, initOverrides?: RequestInit): Promise<Tag> {
+  async create(
+    tag: Tag,
+    requestId?: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Tag> {
     const response = await this.createRaw({ tag: tag, requestId: requestId }, initOverrides);
     return await response.value();
   }
@@ -88,7 +94,7 @@ export class TagApi extends runtime.BaseAPI {
    */
   async getRaw(
     requestParameters: GetRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Tag>> {
     if (requestParameters.tagId === null || requestParameters.tagId === undefined) {
       throw new runtime.RequiredError(
@@ -120,7 +126,10 @@ export class TagApi extends runtime.BaseAPI {
   /**
    * Get info of a specific tag
    */
-  async get(tagId: string, initOverrides?: RequestInit): Promise<Tag> {
+  async get(
+    tagId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Tag> {
     const response = await this.getRaw({ tagId: tagId }, initOverrides);
     return await response.value();
   }
@@ -128,7 +137,9 @@ export class TagApi extends runtime.BaseAPI {
   /**
    * Get all tags, sort by last modify date
    */
-  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Tag>>> {
+  async getAllRaw(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<Array<Tag>>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -149,7 +160,7 @@ export class TagApi extends runtime.BaseAPI {
   /**
    * Get all tags, sort by last modify date
    */
-  async getAll(initOverrides?: RequestInit): Promise<Array<Tag>> {
+  async getAll(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<Array<Tag>> {
     const response = await this.getAllRaw(initOverrides);
     return await response.value();
   }
@@ -160,7 +171,7 @@ export class TagApi extends runtime.BaseAPI {
    */
   async removeRaw(
     requestParameters: RemoveRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.tagId === null || requestParameters.tagId === undefined) {
       throw new runtime.RequiredError(
@@ -193,7 +204,10 @@ export class TagApi extends runtime.BaseAPI {
    * Delete a tag and ALL TAGGING RECORDS under this tag.
    * Delete a tag and ALL TAGGING RECORDS under this tag.
    */
-  async remove(tagId: string, initOverrides?: RequestInit): Promise<void> {
+  async remove(
+    tagId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.removeRaw({ tagId: tagId }, initOverrides);
   }
 
@@ -203,7 +217,7 @@ export class TagApi extends runtime.BaseAPI {
    */
   async updateRaw(
     requestParameters: UpdateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Tag>> {
     if (requestParameters.tagId === null || requestParameters.tagId === undefined) {
       throw new runtime.RequiredError(
@@ -246,7 +260,11 @@ export class TagApi extends runtime.BaseAPI {
    * Edit tag properties. Empty strings will be set. Properties not in request body won\'t be changed
    * Edit tag properties
    */
-  async update(tagId: string, tag: Tag, initOverrides?: RequestInit): Promise<Tag> {
+  async update(
+    tagId: string,
+    tag: Tag,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Tag> {
     const response = await this.updateRaw({ tagId: tagId, tag: tag }, initOverrides);
     return await response.value();
   }

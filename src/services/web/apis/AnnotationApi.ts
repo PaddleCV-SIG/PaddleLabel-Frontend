@@ -42,7 +42,7 @@ export class AnnotationApi extends runtime.BaseAPI {
    */
   async createRaw(
     requestParameters: CreateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Annotation>> {
     if (requestParameters.annotation === null || requestParameters.annotation === undefined) {
       throw new runtime.RequiredError(
@@ -81,7 +81,7 @@ export class AnnotationApi extends runtime.BaseAPI {
   async create(
     annotation: Annotation,
     requestId?: string,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<Annotation> {
     const response = await this.createRaw(
       { annotation: annotation, requestId: requestId },
@@ -95,7 +95,7 @@ export class AnnotationApi extends runtime.BaseAPI {
    */
   async getRaw(
     requestParameters: GetRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Annotation>> {
     if (requestParameters.annotationId === null || requestParameters.annotationId === undefined) {
       throw new runtime.RequiredError(
@@ -127,7 +127,10 @@ export class AnnotationApi extends runtime.BaseAPI {
   /**
    * Get info of a specific annotation
    */
-  async get(annotationId: number, initOverrides?: RequestInit): Promise<Annotation> {
+  async get(
+    annotationId: number,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Annotation> {
     const response = await this.getRaw({ annotationId: annotationId }, initOverrides);
     return await response.value();
   }
@@ -135,7 +138,9 @@ export class AnnotationApi extends runtime.BaseAPI {
   /**
    * Get all annotations, sort by last modified
    */
-  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Annotation>>> {
+  async getAllRaw(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<Array<Annotation>>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -156,7 +161,9 @@ export class AnnotationApi extends runtime.BaseAPI {
   /**
    * Get all annotations, sort by last modified
    */
-  async getAll(initOverrides?: RequestInit): Promise<Array<Annotation>> {
+  async getAll(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Annotation>> {
     const response = await this.getAllRaw(initOverrides);
     return await response.value();
   }
@@ -167,7 +174,7 @@ export class AnnotationApi extends runtime.BaseAPI {
    */
   async removeRaw(
     requestParameters: RemoveRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.annotationId === null || requestParameters.annotationId === undefined) {
       throw new runtime.RequiredError(
@@ -200,7 +207,10 @@ export class AnnotationApi extends runtime.BaseAPI {
    * Delete an annotation
    * Delete an annotation
    */
-  async remove(annotationId: number, initOverrides?: RequestInit): Promise<void> {
+  async remove(
+    annotationId: number,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.removeRaw({ annotationId: annotationId }, initOverrides);
   }
 
@@ -210,7 +220,7 @@ export class AnnotationApi extends runtime.BaseAPI {
    */
   async updateRaw(
     requestParameters: UpdateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Annotation>> {
     if (requestParameters.annotationId === null || requestParameters.annotationId === undefined) {
       throw new runtime.RequiredError(
@@ -256,7 +266,7 @@ export class AnnotationApi extends runtime.BaseAPI {
   async update(
     annotationId: number,
     annotation: Annotation,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<Annotation> {
     const response = await this.updateRaw(
       { annotationId: annotationId, annotation: annotation },

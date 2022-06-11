@@ -14,16 +14,16 @@
 
 import * as runtime from '../runtime';
 import {
-  InlineObject7,
-  InlineObject7FromJSON,
-  InlineObject7ToJSON,
-  InlineResponse2002,
-  InlineResponse2002FromJSON,
-  InlineResponse2002ToJSON,
+  LoadSample200Response,
+  LoadSample200ResponseFromJSON,
+  LoadSample200ResponseToJSON,
+  LoadSampleRequest,
+  LoadSampleRequestFromJSON,
+  LoadSampleRequestToJSON,
 } from '../models';
 
-export interface LoadSampleRequest {
-  inlineObject7?: InlineObject7;
+export interface LoadSampleOperationRequest {
+  loadSampleRequest?: LoadSampleRequest;
 }
 
 /**
@@ -33,7 +33,9 @@ export class ManageApi extends runtime.BaseAPI {
   /**
    * Get backend version
    */
-  async getVersionRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<string>> {
+  async getVersionRaw(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<string>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -54,7 +56,7 @@ export class ManageApi extends runtime.BaseAPI {
   /**
    * Get backend version
    */
-  async getVersion(initOverrides?: RequestInit): Promise<string> {
+  async getVersion(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<string> {
     const response = await this.getVersionRaw(initOverrides);
     return await response.value();
   }
@@ -63,9 +65,9 @@ export class ManageApi extends runtime.BaseAPI {
    * Download and import sample project
    */
   async loadSampleRaw(
-    requestParameters: LoadSampleRequest,
-    initOverrides?: RequestInit,
-  ): Promise<runtime.ApiResponse<InlineResponse2002>> {
+    requestParameters: LoadSampleOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<LoadSample200Response>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -78,13 +80,13 @@ export class ManageApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject7ToJSON(requestParameters.inlineObject7),
+        body: LoadSampleRequestToJSON(requestParameters.loadSampleRequest),
       },
       initOverrides,
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      InlineResponse2002FromJSON(jsonValue),
+      LoadSample200ResponseFromJSON(jsonValue),
     );
   }
 
@@ -92,10 +94,13 @@ export class ManageApi extends runtime.BaseAPI {
    * Download and import sample project
    */
   async loadSample(
-    inlineObject7?: InlineObject7,
-    initOverrides?: RequestInit,
-  ): Promise<InlineResponse2002> {
-    const response = await this.loadSampleRaw({ inlineObject7: inlineObject7 }, initOverrides);
+    loadSampleRequest?: LoadSampleRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<LoadSample200Response> {
+    const response = await this.loadSampleRaw(
+      { loadSampleRequest: loadSampleRequest },
+      initOverrides,
+    );
     return await response.value();
   }
 }

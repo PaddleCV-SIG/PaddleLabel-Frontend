@@ -42,7 +42,7 @@ export class LabelApi extends runtime.BaseAPI {
    */
   async createRaw(
     requestParameters: CreateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Label>> {
     if (requestParameters.label === null || requestParameters.label === undefined) {
       throw new runtime.RequiredError(
@@ -78,7 +78,11 @@ export class LabelApi extends runtime.BaseAPI {
   /**
    * Create a new label
    */
-  async create(label: Label, requestId?: string, initOverrides?: RequestInit): Promise<Label> {
+  async create(
+    label: Label,
+    requestId?: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Label> {
     const response = await this.createRaw({ label: label, requestId: requestId }, initOverrides);
     return await response.value();
   }
@@ -88,7 +92,7 @@ export class LabelApi extends runtime.BaseAPI {
    */
   async getRaw(
     requestParameters: GetRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Label>> {
     if (requestParameters.labelId === null || requestParameters.labelId === undefined) {
       throw new runtime.RequiredError(
@@ -120,7 +124,10 @@ export class LabelApi extends runtime.BaseAPI {
   /**
    * Get info about a specific label
    */
-  async get(labelId: string, initOverrides?: RequestInit): Promise<Label> {
+  async get(
+    labelId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Label> {
     const response = await this.getRaw({ labelId: labelId }, initOverrides);
     return await response.value();
   }
@@ -128,7 +135,9 @@ export class LabelApi extends runtime.BaseAPI {
   /**
    * Get all labels, sort by last modify
    */
-  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Label>>> {
+  async getAllRaw(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<Array<Label>>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -149,7 +158,7 @@ export class LabelApi extends runtime.BaseAPI {
   /**
    * Get all labels, sort by last modify
    */
-  async getAll(initOverrides?: RequestInit): Promise<Array<Label>> {
+  async getAll(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<Array<Label>> {
     const response = await this.getAllRaw(initOverrides);
     return await response.value();
   }
@@ -160,7 +169,7 @@ export class LabelApi extends runtime.BaseAPI {
    */
   async removeRaw(
     requestParameters: RemoveRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.labelId === null || requestParameters.labelId === undefined) {
       throw new runtime.RequiredError(
@@ -193,7 +202,10 @@ export class LabelApi extends runtime.BaseAPI {
    * Delete a label. Labels in use (have annotation pointing at them) are not allowed to be deleted.
    * Delete a label
    */
-  async remove(labelId: string, initOverrides?: RequestInit): Promise<void> {
+  async remove(
+    labelId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.removeRaw({ labelId: labelId }, initOverrides);
   }
 
@@ -203,7 +215,7 @@ export class LabelApi extends runtime.BaseAPI {
    */
   async updateRaw(
     requestParameters: UpdateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Label>> {
     if (requestParameters.labelId === null || requestParameters.labelId === undefined) {
       throw new runtime.RequiredError(
@@ -246,7 +258,11 @@ export class LabelApi extends runtime.BaseAPI {
    * Edit label info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
    * Edit label info
    */
-  async update(labelId: string, label: Label, initOverrides?: RequestInit): Promise<Label> {
+  async update(
+    labelId: string,
+    label: Label,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Label> {
     const response = await this.updateRaw({ labelId: labelId, label: label }, initOverrides);
     return await response.value();
   }

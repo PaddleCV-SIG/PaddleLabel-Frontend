@@ -14,15 +14,15 @@
 
 import * as runtime from '../runtime';
 import {
+  AddTagRequest,
+  AddTagRequestFromJSON,
+  AddTagRequestToJSON,
   Annotation,
   AnnotationFromJSON,
   AnnotationToJSON,
   Data,
   DataFromJSON,
   DataToJSON,
-  InlineObject4,
-  InlineObject4FromJSON,
-  InlineObject4ToJSON,
   Tag,
   TagFromJSON,
   TagToJSON,
@@ -31,10 +31,10 @@ import {
   TaskToJSON,
 } from '../models';
 
-export interface AddTagRequest {
+export interface AddTagOperationRequest {
   taskId: string;
   requestId?: string;
-  inlineObject4?: InlineObject4;
+  addTagRequest?: AddTagRequest;
 }
 
 export interface GetRequest {
@@ -71,8 +71,8 @@ export class TaskApi extends runtime.BaseAPI {
    * Add a new tag to the task
    */
   async addTagRaw(
-    requestParameters: AddTagRequest,
-    initOverrides?: RequestInit,
+    requestParameters: AddTagOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Tag>>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
@@ -100,7 +100,7 @@ export class TaskApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: InlineObject4ToJSON(requestParameters.inlineObject4),
+        body: AddTagRequestToJSON(requestParameters.addTagRequest),
       },
       initOverrides,
     );
@@ -115,11 +115,11 @@ export class TaskApi extends runtime.BaseAPI {
   async addTag(
     taskId: string,
     requestId?: string,
-    inlineObject4?: InlineObject4,
-    initOverrides?: RequestInit,
+    addTagRequest?: AddTagRequest,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<Array<Tag>> {
     const response = await this.addTagRaw(
-      { taskId: taskId, requestId: requestId, inlineObject4: inlineObject4 },
+      { taskId: taskId, requestId: requestId, addTagRequest: addTagRequest },
       initOverrides,
     );
     return await response.value();
@@ -128,7 +128,9 @@ export class TaskApi extends runtime.BaseAPI {
   /**
    * Create a new task
    */
-  async createRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Task>> {
+  async createRaw(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<Task>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -149,7 +151,7 @@ export class TaskApi extends runtime.BaseAPI {
   /**
    * Create a new task
    */
-  async create(initOverrides?: RequestInit): Promise<Task> {
+  async create(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<Task> {
     const response = await this.createRaw(initOverrides);
     return await response.value();
   }
@@ -159,7 +161,7 @@ export class TaskApi extends runtime.BaseAPI {
    */
   async getRaw(
     requestParameters: GetRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Task>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
@@ -191,7 +193,10 @@ export class TaskApi extends runtime.BaseAPI {
   /**
    * Get info of a specific task
    */
-  async get(taskId: string, initOverrides?: RequestInit): Promise<Task> {
+  async get(
+    taskId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Task> {
     const response = await this.getRaw({ taskId: taskId }, initOverrides);
     return await response.value();
   }
@@ -199,7 +204,9 @@ export class TaskApi extends runtime.BaseAPI {
   /**
    * Your GET endpoint
    */
-  async getAllRaw(initOverrides?: RequestInit): Promise<runtime.ApiResponse<Array<Task>>> {
+  async getAllRaw(
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<runtime.ApiResponse<Array<Task>>> {
     const queryParameters: any = {};
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -220,17 +227,18 @@ export class TaskApi extends runtime.BaseAPI {
   /**
    * Your GET endpoint
    */
-  async getAll(initOverrides?: RequestInit): Promise<Array<Task>> {
+  async getAll(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<Array<Task>> {
     const response = await this.getAllRaw(initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Get all annotations of a task
    */
   async getAnnotationsRaw(
     requestParameters: GetAnnotationsRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Annotation>>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
@@ -260,19 +268,24 @@ export class TaskApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Get all annotations of a task
    */
-  async getAnnotations(taskId: string, initOverrides?: RequestInit): Promise<Array<Annotation>> {
+  async getAnnotations(
+    taskId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Annotation>> {
     const response = await this.getAnnotationsRaw({ taskId: taskId }, initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Get all datas of a task
    */
   async getDatasRaw(
     requestParameters: GetDatasRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Data>>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
@@ -302,19 +315,24 @@ export class TaskApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Get all datas of a task
    */
-  async getDatas(taskId: string, initOverrides?: RequestInit): Promise<Array<Data>> {
+  async getDatas(
+    taskId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Data>> {
     const response = await this.getDatasRaw({ taskId: taskId }, initOverrides);
     return await response.value();
   }
 
   /**
+   *
    * Get all tags of the task
    */
   async getTagsRaw(
     requestParameters: GetTagsRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Tag>>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
@@ -344,9 +362,13 @@ export class TaskApi extends runtime.BaseAPI {
   }
 
   /**
+   *
    * Get all tags of the task
    */
-  async getTags(taskId: string, initOverrides?: RequestInit): Promise<Array<Tag>> {
+  async getTags(
+    taskId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Tag>> {
     const response = await this.getTagsRaw({ taskId: taskId }, initOverrides);
     return await response.value();
   }
@@ -357,7 +379,7 @@ export class TaskApi extends runtime.BaseAPI {
    */
   async removeRaw(
     requestParameters: RemoveRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
@@ -390,7 +412,10 @@ export class TaskApi extends runtime.BaseAPI {
    * Delete a task and ALL DATA and ANNOTATIONS under the project. Won\'t delete file on file system
    * Delete a task and ALL DATA and ANNOTATIONS under the task.
    */
-  async remove(taskId: string, initOverrides?: RequestInit): Promise<void> {
+  async remove(
+    taskId: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<void> {
     await this.removeRaw({ taskId: taskId }, initOverrides);
   }
 
@@ -400,7 +425,7 @@ export class TaskApi extends runtime.BaseAPI {
    */
   async updateRaw(
     requestParameters: UpdateRequest,
-    initOverrides?: RequestInit,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Task>> {
     if (requestParameters.taskId === null || requestParameters.taskId === undefined) {
       throw new runtime.RequiredError(
@@ -443,7 +468,11 @@ export class TaskApi extends runtime.BaseAPI {
    * Edit task info. Provide key value pair to change one value only. Provide all changed values to change multiple. Empty string will be set. Leave values don\'t intend to change out of request body.
    * Edit task info
    */
-  async update(taskId: string, task: Task, initOverrides?: RequestInit): Promise<Task> {
+  async update(
+    taskId: string,
+    task: Task,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Task> {
     const response = await this.updateRaw({ taskId: taskId, task: task }, initOverrides);
     return await response.value();
   }
