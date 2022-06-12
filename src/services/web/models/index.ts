@@ -10,6 +10,7 @@ export * from './ImportDatasetRequest';
 export * from './Label';
 export * from './LoadSample200Response';
 export * from './LoadSampleRequest';
+export * from './Points2polygonRequest';
 export * from './Polygon2pointsRequest';
 export * from './PplabelApiControllerUserLoginRequest';
 export * from './PredictRequest';

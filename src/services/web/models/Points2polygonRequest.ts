@@ -16,34 +16,34 @@ import { exists, mapValues } from '../runtime';
 /**
  *
  * @export
- * @interface Polygon2pointsRequest
+ * @interface Points2polygonRequest
  */
-export interface Polygon2pointsRequest {
+export interface Points2polygonRequest {
   /**
    *
    * @type {string}
-   * @memberof Polygon2pointsRequest
+   * @memberof Points2polygonRequest
    */
-  polygon?: string;
+  points?: string;
 }
 
-export function Polygon2pointsRequestFromJSON(json: any): Polygon2pointsRequest {
-  return Polygon2pointsRequestFromJSONTyped(json, false);
+export function Points2polygonRequestFromJSON(json: any): Points2polygonRequest {
+  return Points2polygonRequestFromJSONTyped(json, false);
 }
 
-export function Polygon2pointsRequestFromJSONTyped(
+export function Points2polygonRequestFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean,
-): Polygon2pointsRequest {
+): Points2polygonRequest {
   if (json === undefined || json === null) {
     return json;
   }
   return {
-    polygon: !exists(json, 'polygon') ? undefined : json['polygon'],
+    points: !exists(json, 'points') ? undefined : json['points'],
   };
 }
 
-export function Polygon2pointsRequestToJSON(value?: Polygon2pointsRequest | null): any {
+export function Points2polygonRequestToJSON(value?: Points2polygonRequest | null): any {
   if (value === undefined) {
     return undefined;
   }
@@ -51,6 +51,6 @@ export function Polygon2pointsRequestToJSON(value?: Polygon2pointsRequest | null
     return null;
   }
   return {
-    polygon: value.polygon,
+    points: value.points,
   };
 }

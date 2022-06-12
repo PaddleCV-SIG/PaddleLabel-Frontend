@@ -1,5 +1,6 @@
 apis/AnnotationApi.ts
 apis/DataApi.ts
+apis/DefaultApi.ts
 apis/LabelApi.ts
 apis/ManageApi.ts
 apis/ProjectApi.ts
@@ -19,6 +20,7 @@ models/ImportDatasetRequest.ts
 models/Label.ts
 models/LoadSample200Response.ts
 models/LoadSampleRequest.ts
+models/Points2polygonRequest.ts
 models/Polygon2pointsRequest.ts
 models/PplabelApiControllerUserLoginRequest.ts
 models/PredictRequest.ts
