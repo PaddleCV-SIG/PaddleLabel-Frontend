@@ -45,7 +45,7 @@ export type PPStageProps = {
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
-  console.log('stage redraw', props.refresh);
+  console.log('stage redraw');
   const [image] = useImage(props.imgSrc || '', 'anonymous');
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;

@@ -17,6 +17,7 @@ export type PPLabelListProps = {
   onLabelDelete: (label: Label) => void;
   onLabelAdd: (label: Label) => void;
   onLabelSelect: (label: Label) => void;
+  refresh?: number;
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
