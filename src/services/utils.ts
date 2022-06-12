@@ -385,9 +385,13 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any; push
     return true;
   };
 
-  const getAll = async (projectId: number, turnToIdx?: number) => {
+  const getAll = async (
+    projectId: number,
+    turnToIdx?: number,
+    orderBy: string = 'modified asc',
+  ) => {
     try {
-      const allRes = await projectApi.getTasks(projectId);
+      const allRes = await projectApi.getTasks(projectId, orderBy);
       setAll(allRes);
       if (turnToIdx != undefined) {
         console.log('getall turnto');
@@ -704,13 +708,11 @@ export function PageInit(
       return;
     });
     label.getAll(projectId);
-    const allTasks = JSON.parse(localStorage.getItem('currentTasks'));
-    if (allTasks) {
-      task.setAll(allTasks);
-    } else {
-      task.getAll(projectId);
-    }
-    localStorage.removeItem('currentTasks');
+
+    const orderBy = localStorage.getItem('orderBy');
+    if (orderBy) task.getAll(projectId, undefined, orderBy);
+    else task.getAll(projectId);
+    localStorage.removeItem('orderBy');
     project.getFinished(projectId);
   }, []);
 

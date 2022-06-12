@@ -22,9 +22,10 @@ const TaskList: React.FC = () => {
   const sets = { '0': 'train', '1': 'validation', '2': 'test' };
   const baseUrl = localStorage.getItem('basePath');
   const projectId = serviceUtils.getQueryVariable('projectId');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log('extra', typeof extra.currentDataSource);
-    localStorage.setItem('currentTasks', JSON.stringify(extra.currentDataSource));
+    localStorage.setItem('orderBy', sorter.field + ' ' + sorter.order);
+    // localStorage.setItem('currentTasks', JSON.stringify(extra.currentDataSource));
   };
   const columns: ColumnsType<Task> = [
     {
@@ -35,7 +36,6 @@ const TaskList: React.FC = () => {
       align: 'center',
       render: (text: string) => <>{text}</>,
       sorter: (a, b) => a.taskId - b.taskId,
-      sortDirections: ['descend'],
     },
     {
       title: 'Annotation Count',

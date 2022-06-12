@@ -41,6 +41,10 @@ export interface GetRequest {
   taskId: string;
 }
 
+export interface GetAllRequest {
+  orderBy?: string;
+}
+
 export interface GetAnnotationsRequest {
   taskId: string;
 }
@@ -205,9 +209,14 @@ export class TaskApi extends runtime.BaseAPI {
    * Your GET endpoint
    */
   async getAllRaw(
+    requestParameters: GetAllRequest,
     initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<runtime.ApiResponse<Array<Task>>> {
     const queryParameters: any = {};
+
+    if (requestParameters.orderBy !== undefined) {
+      queryParameters['order_by'] = requestParameters.orderBy;
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -227,8 +236,11 @@ export class TaskApi extends runtime.BaseAPI {
   /**
    * Your GET endpoint
    */
-  async getAll(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<Array<Task>> {
-    const response = await this.getAllRaw(initOverrides);
+  async getAll(
+    orderBy?: string,
+    initOverrides?: RequestInit | runtime.InitOverideFunction,
+  ): Promise<Array<Task>> {
+    const response = await this.getAllRaw({ orderBy: orderBy }, initOverrides);
     return await response.value();
   }
 

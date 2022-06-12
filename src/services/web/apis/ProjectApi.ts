@@ -66,6 +66,7 @@ export interface GetRequest {
 
 export interface GetAllRequest {
   requestId?: string;
+  orderBy?: string;
 }
 
 export interface GetAnnotationsRequest {
@@ -86,6 +87,7 @@ export interface GetTagsRequest {
 
 export interface GetTasksRequest {
   projectId: string;
+  orderBy?: string;
 }
 
 export interface ImportDatasetOperationRequest {
@@ -300,6 +302,10 @@ export class ProjectApi extends runtime.BaseAPI {
   ): Promise<runtime.ApiResponse<Array<Project>>> {
     const queryParameters: any = {};
 
+    if (requestParameters.orderBy !== undefined) {
+      queryParameters['order_by'] = requestParameters.orderBy;
+    }
+
     const headerParameters: runtime.HTTPHeaders = {};
 
     if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
@@ -325,9 +331,13 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getAll(
     requestId?: string,
+    orderBy?: string,
     initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<Array<Project>> {
-    const response = await this.getAllRaw({ requestId: requestId }, initOverrides);
+    const response = await this.getAllRaw(
+      { requestId: requestId, orderBy: orderBy },
+      initOverrides,
+    );
     return await response.value();
   }
 
@@ -538,6 +548,10 @@ export class ProjectApi extends runtime.BaseAPI {
 
     const queryParameters: any = {};
 
+    if (requestParameters.orderBy !== undefined) {
+      queryParameters['order_by'] = requestParameters.orderBy;
+    }
+
     const headerParameters: runtime.HTTPHeaders = {};
 
     const response = await this.request(
@@ -562,9 +576,13 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getTasks(
     projectId: string,
+    orderBy?: string,
     initOverrides?: RequestInit | runtime.InitOverideFunction,
   ): Promise<Array<Task>> {
-    const response = await this.getTasksRaw({ projectId: projectId }, initOverrides);
+    const response = await this.getTasksRaw(
+      { projectId: projectId, orderBy: orderBy },
+      initOverrides,
+    );
     return await response.value();
   }
 
