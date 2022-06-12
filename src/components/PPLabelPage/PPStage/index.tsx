@@ -41,9 +41,11 @@ export type PPStageProps = {
   threshold: number;
   drawTool: { polygon: PPDrawToolRet; brush?: PPDrawToolRet; interactor?: PPDrawToolRet };
   frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
+  refresh?: number;
 };
 
 const Component: React.FC<PPStageProps> = (props) => {
+  console.log('stage redraw', props.refresh);
   const [image] = useImage(props.imgSrc || '', 'anonymous');
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;

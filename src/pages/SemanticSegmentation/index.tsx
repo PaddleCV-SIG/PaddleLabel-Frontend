@@ -35,19 +35,23 @@ const Page: React.FC = () => {
   const [transparency, setTransparency] = useState(60);
 
   const model = ModelUtils(useState);
-  const { tool, task, data, project, scale, label, annotation } = PageInit(useState, useEffect, {
-    effectTrigger: { postTaskChange: () => initHistory() },
-    label: {
-      oneHot: true,
-      postSelect: () => {
-        annotation.setCurr(undefined);
-        setFrontendId(0);
+  const { tool, task, data, project, scale, label, annotation, refreshVar } = PageInit(
+    useState,
+    useEffect,
+    {
+      effectTrigger: { postTaskChange: () => initHistory() },
+      label: {
+        oneHot: true,
+        postSelect: () => {
+          annotation.setCurr(undefined);
+          setFrontendId(0);
+        },
+        preUnsetCurr: preCurrLabelUnset,
       },
-      preUnsetCurr: preCurrLabelUnset,
+      tool: { defaultTool: 'mover' },
+      task: { push: true },
     },
-    tool: { defaultTool: 'mover' },
-    task: { push: true },
-  });
+  );
 
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
@@ -281,6 +285,7 @@ const Page: React.FC = () => {
               if (!annotation.curr) setCurrentAnnotation(anno);
             }}
             drawTool={drawTool}
+            refresh={refreshVar}
           />
         </div>
         <div className="pblock">

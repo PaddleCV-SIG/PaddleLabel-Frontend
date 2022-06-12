@@ -49,7 +49,7 @@ const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
           initialValues={{ remember: false }}
           onFinish={() => {
             if (trainData + validationData + testData != 100) {
-              message.error('Train, Validation and Test total percent should equal 100!');
+              message.error('Train, Validation and Test percent should sum up to 100!');
               return;
             }
             console.log(
