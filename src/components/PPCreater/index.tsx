@@ -129,10 +129,10 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                     onClick={() =>
                       message.info({
                         content:
-                          'The root directory of the dataset, where all images and labels are. Click for more detail.',
+                          'The root directory of the dataset, where all images and labels are. Click here for more detail.',
                         onClick: () =>
                           window.open(
-                            `https://github.com/PaddleCV-SIG/PP-Label/wiki/Dataset-Structure#${props.taskCategory}`,
+                            `https://github.com/PaddleCV-SIG/PP-Label/blob/develop/doc/dataset_file_structure.md#${props.taskCategory}`,
                           ),
                       })
                     }
@@ -192,7 +192,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                           'Choose the format to import/export dataset. Click here to see details.',
                         onClick: () => {
                           window.open(
-                            `https://github.com/PaddleCV-SIG/PP-Label/wiki/Dataset-Structure#${props.taskCategory}`,
+                            `https://github.com/PaddleCV-SIG/PP-Label/blob/develop/doc/dataset_file_structure.md#${props.taskCategory}`,
                           );
                         },
                       })
