@@ -264,6 +264,7 @@ const Page: React.FC = () => {
             annotations={annotation.all}
             currentTool={tool.curr}
             currentAnnotation={annotation.curr}
+            currentLabel={label.curr}
             setCurrentAnnotation={setCurrentAnnotation}
             onAnnotationModify={modifyAnnoByFrontendId}
             onAnnotationModifyComplete={() => {

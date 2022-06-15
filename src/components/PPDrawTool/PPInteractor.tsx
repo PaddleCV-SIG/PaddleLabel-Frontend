@@ -2,19 +2,18 @@ import { useState } from 'react';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Annotation } from '@/models/Annotation';
+import { useModel } from 'umi';
 
 /**
  * Color lines on canvas as label.color
  */
 function drawAnnotation(param: PPRenderFuncProps) {
-  const { canvasRef, annotation } = param;
-  const resultStr = annotation.result;
-  if (!resultStr) return <></>;
-  const result: number[][] = JSON.parse(resultStr);
+  const { canvasRef } = param;
+  if (!param.interactorData || !param.label?.color) return <></>;
+  const result: number[][] = param.interactorData;
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
   const threshold = param.threshold ? param.threshold * 0.01 : 0.5;
-  // console.log(`PPBrush.drawAnnotation, result:`, result, `threshold:`, threshold);
   const points: number[] = [];
   let rowNum = 0;
   for (const row of result) {
@@ -28,18 +27,18 @@ function drawAnnotation(param: PPRenderFuncProps) {
     }
     rowNum++;
   }
-  renderPoints(points, ctx, annotation);
+  renderPoints(points, ctx, param.label.color);
   return <></>;
 }
 
-function renderPoints(points: number[], ctx: CanvasRenderingContext2D, annotation: Annotation) {
+function renderPoints(points: number[], ctx: CanvasRenderingContext2D, color: string | undefined) {
   // console.log(`renderPoints: `, points, annotation, annotation.label?.color, ctx);
   // Draw shape
   if (points.length < 4) {
     console.log('found incorrect points:', points);
     return;
   }
-  renderPixel(ctx, points.slice(2), annotation.label?.color);
+  renderPixel(ctx, points.slice(2), color);
 }
 function renderPixel(ctx: CanvasRenderingContext2D, points: number[], color: string | undefined) {
   // console.log(`renderPixel: `, points, color, ctx);
@@ -64,6 +63,7 @@ function getMaxFrontendId(annotations?: Annotation[]) {
 
 export default function (props: PPDrawToolProps): PPDrawToolRet {
   const [mousePoints, setMousePoints] = useState<any[][]>([]);
+  const setInteractorData = useModel('InteractorData', (x) => x.setInteractorData);
   const model = props.model;
 
   /**
@@ -97,15 +97,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       img: imgBase64,
       other: { clicks: mousePoints },
     });
-    const anno: Annotation = {
-      dataId: props.dataId,
-      label: props.currentLabel,
-      labelId: props.currentLabel.labelId,
-      frontendId: frontendId,
-      result: JSON.stringify(line.result),
-      type: 'interactor',
-    };
-    props.onAnnotationAdd(anno);
+    setInteractorData(line.result);
   };
 
   const OnMouseMove = () => {};

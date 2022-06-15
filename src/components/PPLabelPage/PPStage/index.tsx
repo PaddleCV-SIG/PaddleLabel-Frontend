@@ -9,6 +9,8 @@ import { Layer, Stage, Image, Circle } from 'react-konva';
 import useImage from 'use-image';
 import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/drawUtils';
 import { Threshold } from 'konva/lib/filters/Threshold';
+import { useModel } from 'umi';
+import { Label } from '@/models';
 
 // Mock Data
 // const imgSrc = './pics/32_23.jpg';
@@ -33,6 +35,7 @@ export type PPStageProps = {
   annotations?: Annotation[];
   currentTool: ToolType;
   currentAnnotation?: Annotation;
+  currentLabel?: Label;
   setCurrentAnnotation: (anntation: Annotation) => void;
   onAnnotationAdd: (anntation: Annotation) => void;
   onAnnotationModify: (annotation: Annotation) => void;
@@ -48,6 +51,8 @@ const Component: React.FC<PPStageProps> = (props) => {
   const imageWidth = image?.width || 0;
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
+  const interactorData = useModel('InteractorData', (x) => x.interactorData);
+  console.log('interactorData', interactorData);
   let drawToolTemp = undefined;
   if (
     props.currentTool == 'polygon' ||
@@ -131,20 +136,22 @@ const Component: React.FC<PPStageProps> = (props) => {
   };
 
   const shapes = [];
+  const param: PPRenderFuncProps = {
+    onDrag: props.onAnnotationModify,
+    // onDragEnd: props.onAnnotationModifyComplete,
+    scale: props.scale,
+    currentTool: props.currentTool,
+    onSelect: props.setCurrentAnnotation,
+    stageRef: stageRef,
+    currentAnnotation: props.currentAnnotation,
+    transparency: transparency,
+    threshold: props.threshold,
+    canvasRef: canvasRef,
+    interactorData: interactorData,
+    label: props.currentLabel,
+  };
   if (props.annotations) {
     console.log('PPStage rendering annotations:', props.annotations);
-    const param: PPRenderFuncProps = {
-      onDrag: props.onAnnotationModify,
-      // onDragEnd: props.onAnnotationModifyComplete,
-      scale: props.scale,
-      currentTool: props.currentTool,
-      onSelect: props.setCurrentAnnotation,
-      stageRef: stageRef,
-      currentAnnotation: props.currentAnnotation,
-      transparency: transparency,
-      threshold: props.threshold,
-      canvasRef: canvasRef,
-    };
     // Draw normal elements
     // Clear canvas
     const ctx = canvasRef.current?.getContext('2d');
@@ -157,16 +164,15 @@ const Component: React.FC<PPStageProps> = (props) => {
         shape = props.drawTool.polygon.drawAnnotation(param);
       } else if (annotation.type == 'brush' || annotation.type == 'rubber') {
         shape = props.drawTool.brush?.drawAnnotation(param);
-      } else if (annotation.type == 'interactor') {
-        shape = props.drawTool.interactor?.drawAnnotation(param);
       } else {
         continue;
       }
       shapes.push(shape);
     }
-    // Re-draw layer
-    layerRef.current?.batchDraw();
   }
+  props.drawTool.interactor?.drawAnnotation(param);
+  // Re-draw layer
+  layerRef.current?.batchDraw();
 
   const draggable = props.currentTool == 'mover';
 
