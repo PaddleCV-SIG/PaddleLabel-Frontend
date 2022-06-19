@@ -450,6 +450,7 @@ export function AnnotationUtils(
     try {
       const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
       console.log('All annotations', annRes);
+      setAll([]);
       setAll(annRes);
       return annRes;
     } catch (err) {
@@ -693,6 +694,14 @@ export function PageInit(
     project: project,
   });
   const task = TaskUtils(useState, { annotation, ...props.task });
+  const [refreshVar, setRefreshVar] = useState<number>(0);
+
+  function refresh() {
+    for (const t of [100])
+      setTimeout(function () {
+        setRefreshVar(Math.random());
+      }, t);
+  }
 
   useEffect(() => {
     // onload, get project, label, task info
@@ -707,6 +716,7 @@ export function PageInit(
       // history.push('/');
       return;
     });
+    loading.setCurr(true);
     label.getAll(projectId);
 
     const orderBy = localStorage.getItem('orderBy');
@@ -727,6 +737,7 @@ export function PageInit(
     // when all task is set, set current task
     if (task.all) {
       if (task.all.length == 0) {
+        message.error('No task under this project, please import data first!');
         history.push(`/project_overview?projectId=${project.curr?.projectId}`);
         return;
       }
@@ -748,7 +759,6 @@ export function PageInit(
   useEffect(() => {
     // when current task is set, get task's data, data's annotation
     if (task.currIdx == undefined) return;
-    console.log('set current task effect');
 
     const onTaskChange = async () => {
       if (task.curr?.projectId) project.getFinished(task.curr.projectId);
@@ -759,13 +769,20 @@ export function PageInit(
         if (label.all) for (const lab of label.all) lab.active = false;
         if (props.effectTrigger?.postTaskChange)
           props.effectTrigger?.postTaskChange(label.all, allAnns);
+        annotation.setAll(allAnns);
       }
       loading.setCurr(false);
+      refresh();
     };
+    loading.setCurr(true);
     onTaskChange();
   }, [task.currIdx]);
 
-  return { tool, loading, scale, annotation, task, data, project, label };
+  useEffect(() => {
+    refresh();
+  }, [annotation.all, label.all]);
+
+  return { tool, loading, scale, annotation, task, data, project, label, refreshVar };
 }
 
 // ml related

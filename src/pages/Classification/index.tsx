@@ -12,7 +12,7 @@ import { PageInit } from '@/services/utils';
 import type { Label, Annotation } from '@/models';
 
 const Page: React.FC = () => {
-  const { tool, loading, scale, annotation, task, data, project, label } = PageInit(
+  const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,
     useEffect,
     {
@@ -141,6 +141,7 @@ const Page: React.FC = () => {
           onLabelModify={() => {}}
           hideColorPicker={true}
           hideEye={true}
+          refresh={refreshVar}
         />
       </div>
     </PPLabelPageContainer>
