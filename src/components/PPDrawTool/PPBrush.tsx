@@ -120,7 +120,7 @@ function renderBrush(
   ctx.stroke();
 }
 function renderPixel(ctx: CanvasRenderingContext2D, points: number[], color: string | undefined) {
-  // console.log(`renderPixel: `, points, color, ctx);
+  console.log(`renderPixel: `, points, color, ctx);
   ctx.globalCompositeOperation = color ? 'source-over' : 'destination-out';
   if (color) ctx.fillStyle = color;
   for (let i = 0; i <= points.length / 2 - 1; i++) {

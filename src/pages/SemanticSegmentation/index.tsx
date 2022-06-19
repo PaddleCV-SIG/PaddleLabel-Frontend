@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useState } from 'react';
 import { Button, message } from 'antd';
-import { useIntl, history } from 'umi';
+import { useIntl, history, useModel } from 'umi';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
@@ -16,7 +16,7 @@ import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { ModelUtils, PageInit } from '@/services/utils';
 import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
-import PPInteractor from '@/components/PPDrawTool/PPInteractor';
+import PPInteractor, { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
 
 export const MOST_HISTORY_STEPS = 40;
 
@@ -33,6 +33,7 @@ const Page: React.FC = () => {
   const [brushSize, setBrushSize] = useState(10);
   const [threshold, setThreshold] = useState(50);
   const [transparency, setTransparency] = useState(60);
+  const { interactorData, setInteractorData } = useModel('InteractorData');
 
   const model = ModelUtils(useState);
   const { tool, task, data, project, scale, label, annotation } = PageInit(useState, useEffect, {
@@ -370,6 +371,22 @@ const Page: React.FC = () => {
             type="primary"
             block
             onClick={() => {
+              if (tool.curr == 'interactor') {
+                console.log(tool.curr);
+                const anno = interactorToAnnotation(
+                  interactorData,
+                  threshold,
+                  annotation.all,
+                  data.curr?.dataId,
+                  label.curr,
+                );
+                if (anno) {
+                  const newAnnos = annotation.all.concat([anno]);
+                  annotation.setAll(newAnnos);
+                  setCurrentAnnotation(anno);
+                }
+              }
+              setInteractorData([]);
               setCurrentAnnotation(undefined);
             }}
           >
