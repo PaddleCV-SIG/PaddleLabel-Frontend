@@ -172,7 +172,7 @@ const Component: React.FC<PPStageProps> = (props) => {
       shapes.push(shape);
     }
   }
-  props.drawTool.interactor?.drawAnnotation(param);
+  props.drawTool?.interactor?.drawAnnotation(param);
   // Re-draw layer
   layerRef.current?.batchDraw();
 
