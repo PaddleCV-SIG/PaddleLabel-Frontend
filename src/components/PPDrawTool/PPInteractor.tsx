@@ -353,7 +353,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     });
     if (!line) return;
     // setInteractorData(line.result);
-    setInteractorData(line);
+    setInteractorData(line.result);
   };
 
   const OnMouseMove = () => {};
