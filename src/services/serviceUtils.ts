@@ -9,11 +9,12 @@ const serviceUtils = () => {
     const defaultErrStr = defaultErrMsg
       ? defaultErrMsg
       : 'Something unexpected happened, please try again later.';
-    if (!err || !err.body) {
+
+    if (!err) {
       msgComponent.error(defaultErrStr);
       return;
     }
-    const res = JSON.parse(await err.text());
+    const res = await err.response.json();
     if (!res || !res.detail) {
       msgComponent.error(defaultErrStr);
       return;

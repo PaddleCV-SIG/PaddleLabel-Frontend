@@ -56,16 +56,21 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     if (!projectId) {
       projects
         .create({ ...values, taskCategoryId: createInfo[props.taskCategory]['id'] })
-        .then((project) => {
-          history.push(`/${camel2snake(props.taskCategory)}?projectId=${project.projectId}`);
+        .catch((err) => {
+          console.log('err+_+_+_+', err);
+          serviceUtils.parseError(err, message);
         })
-        .catch(() => {});
+        .then((project) => {
+          if (project)
+            history.push(`/${camel2snake(props.taskCategory)}?projectId=${project.projectId}`);
+        });
     } else {
       projects.update(projectId, { ...values }).then(() => {
         history.push(`/project_overview?projectId=${projectId}`);
       });
     }
   };
+
   // const taskCategory = props.taskCategory;
   const title = props.taskCategory ? createInfo[props.taskCategory].name : null;
   const [form] = Form.useForm();

@@ -190,8 +190,8 @@ export const ProjectUtils = (useState: UseStateType) => {
       const newProject: Project = await projectApi.create(project);
       return newProject;
     } catch (err) {
-      console.log('project create err', err);
-      return serviceUtils.parseError(err, message);
+      // console.log('project create err', err);
+      serviceUtils.parseError(err, message);
     }
   }
 
