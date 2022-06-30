@@ -53,6 +53,10 @@ export default [
     component: './SemanticSegmentation',
   },
   {
+    path: '/instance_segmentation',
+    component: './SemanticSegmentation',
+  },
+  {
     path: '/detection',
     component: './Detection',
   },
