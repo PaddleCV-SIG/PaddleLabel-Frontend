@@ -6,7 +6,7 @@ import PPBlock from '@/components/PPBlock';
 import PPExportModal from '@/components/PPProjectOverview/PPExportModal';
 import PPImportModal from '@/components/PPProjectOverview/PPImportModal';
 import PPSplitDatasetModal from '@/components/PPProjectOverview/PPSplitDatasetModal';
-import { toDict, TaskUtils, ProjectUtils } from '@/services/utils';
+import { toDict, TaskUtils, ProjectUtils, snake2camel, camel2snake } from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
 import type { Task } from '@/services';
 import type { ColumnsType } from 'antd/es/table';
@@ -85,7 +85,9 @@ const TaskList: React.FC = () => {
           type="primary"
           onClick={() => {
             localStorage.setItem('currTaskId', taskId);
-            history.push(`/${project.curr.taskCategory.name}?projectId=${project.curr.projectId}`);
+            history.push(
+              `/${camel2snake(project.curr.taskCategory.name)}?projectId=${project.curr.projectId}`,
+            );
           }}
         >
           {'Label'}
@@ -113,7 +115,9 @@ const TaskList: React.FC = () => {
         <Button
           type="primary"
           onClick={() => {
-            history.push(`/${project.curr.taskCategory.name}?projectId=${project.curr.projectId}`);
+            history.push(
+              `/${camel2snake(project.curr.taskCategory.name)}?projectId=${project.curr.projectId}`,
+            );
           }}
           hidden={task.all?.length == 0}
         >
@@ -124,7 +128,9 @@ const TaskList: React.FC = () => {
           onClick={() => {
             console.log('project', project.curr);
             history.push(
-              `/project_detail?taskCategory=${project.curr.taskCategory.name}&projectId=${project.curr.projectId}`,
+              `/project_detail?taskCategory=${snake2camel(
+                project.curr.taskCategory.name,
+              )}&projectId=${project.curr.projectId}`,
             );
           }}
         >

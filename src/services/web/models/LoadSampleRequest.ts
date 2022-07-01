@@ -21,10 +21,10 @@ import { exists, mapValues } from '../runtime';
 export interface LoadSampleRequest {
   /**
    *
-   * @type {string}
+   * @type {number}
    * @memberof LoadSampleRequest
    */
-  taskCategory?: string;
+  taskCategoryId?: number;
 }
 
 export function LoadSampleRequestFromJSON(json: any): LoadSampleRequest {
@@ -39,7 +39,7 @@ export function LoadSampleRequestFromJSONTyped(
     return json;
   }
   return {
-    taskCategory: !exists(json, 'task_category') ? undefined : json['task_category'],
+    taskCategoryId: !exists(json, 'task_category_id') ? undefined : json['task_category_id'],
   };
 }
 
@@ -51,6 +51,6 @@ export function LoadSampleRequestToJSON(value?: LoadSampleRequest | null): any {
     return null;
   }
   return {
-    task_category: value.taskCategory,
+    task_category_id: value.taskCategoryId,
   };
 }

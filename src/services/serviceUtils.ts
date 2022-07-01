@@ -9,8 +9,7 @@ const serviceUtils = () => {
     const defaultErrStr = defaultErrMsg
       ? defaultErrMsg
       : 'Something unexpected happened, please try again later.';
-
-    if (!err) {
+    if (!err || !err.response) {
       msgComponent.error(defaultErrStr);
       return;
     }

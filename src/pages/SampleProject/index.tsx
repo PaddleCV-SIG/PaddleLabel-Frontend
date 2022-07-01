@@ -5,8 +5,7 @@ import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
 import PPContainer from '@/components/PPContainer';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { createInfo } from '@/services/utils';
-import { manageApi } from '@/services/utils';
+import { createInfo, manageApi } from '@/services/utils';
 
 const SampleProject: React.FC = () => {
   return (
@@ -16,20 +15,23 @@ const SampleProject: React.FC = () => {
         <Col span={24}>
           <PPBlock style={{ height: 500 }}>
             <Row>
-              {Object.keys(createInfo).map((key) => {
+              {Object.entries(createInfo).map((entry) => {
+                const key = entry[0];
+                const val = entry[1];
+                console.log(key, val);
                 return (
                   <PPOverlapCol span={4} key={key}>
                     <PPCard
                       height={360}
                       width={310}
-                      imgSrc={createInfo[key].avatar}
+                      imgSrc={val.avatar}
                       onClick={() => {
-                        manageApi.loadSample({ taskCategory: key }).then((res) => {
+                        manageApi.loadSample({ taskCategoryId: val.id }).then((res) => {
                           history.push(`/project_overview?projectId=${res.projectId}`);
                         });
                       }}
                     >
-                      {createInfo[key].name}
+                      {val.name}
                     </PPCard>
                   </PPOverlapCol>
                 );

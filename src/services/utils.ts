@@ -800,7 +800,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
       return models;
     } catch (err) {
       console.log('model getAll err', err);
-      serviceUtils.parseError(err, message);
+      serviceUtils.parseError(err, message, 'ML backend unavaliable!');
       return;
     }
   }
