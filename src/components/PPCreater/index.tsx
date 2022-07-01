@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Form, Input, Button, Radio, Row, message } from 'antd';
+import { Col, Form, Input, Button, Radio, Row, Spin, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
 import { history, useIntl } from 'umi';
@@ -42,6 +42,7 @@ export type PPCreaterProps = {
 const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const projects = ProjectUtils(useState);
   const projectId = serviceUtils.getQueryVariable('projectId');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const intl = useIntl();
   const projectName = intl.formatMessage({ id: 'component.PPCreater.projectName' });
@@ -53,11 +54,13 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
 
   const saveProject = (values: any) => {
+    setLoading(true);
     if (!projectId) {
       projects
         .create({ ...values, taskCategoryId: createInfo[props.taskCategory]['id'] })
         .catch((err) => {
           serviceUtils.parseError(err, message);
+          setLoading(false);
         })
         .then((project) => {
           if (project)
@@ -91,201 +94,207 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
 
   return (
     <div className={styles.shadow} style={props.style}>
-      {/* TODO: increase left width and decrease right */}
-      <div id="left" className={styles.block_l}>
-        <_PPBlock title={title} style={{ height: 760, padding: '1.25rem 0' }}>
-          <Form
-            form={form}
-            layout="horizontal"
-            size="large"
-            style={{ marginTop: '5.69rem' }}
-            onFinish={(values) => {
-              console.log(values);
-              saveProject(values);
-            }}
-          >
-            <Form.Item
-              name="name"
-              label={projectName}
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input project name!',
-                },
-              ]}
-              style={{ fontSize: '1.5rem' }}
-            >
-              <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
-            </Form.Item>
-            <Form.Item
-              name="dataDir"
-              label={
-                <div>
-                  {datasePath}{' '}
-                  <QuestionCircleOutlined
-                    style={{ fontSize: '12px' }}
-                    onClick={() =>
-                      message.info({
-                        content:
-                          'The root directory of the dataset, where all images and labels are. Click here for more detail.',
-                        onClick: () =>
-                          window.open(
-                            `https://github.com/PaddleCV-SIG/PP-Label/blob/develop/doc/dataset_file_structure.md#${props.taskCategory}`,
-                          ),
-                      })
-                    }
-                  />
-                </div>
-              }
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input dataset path!',
-                },
-              ]}
-              style={{ fontSize: '1.5rem' }}
-            >
-              <Input
-                size="large"
-                placeholder="Dataset Path"
-                style={{ height: '3.13rem' }}
-                disabled={projectId == undefined ? false : true}
-              />
-            </Form.Item>
-            <Form.Item
-              name="description"
-              label={description}
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: false,
-                },
-              ]}
-              style={{ fontSize: '1.5rem' }}
-            >
-              <Input size="large" placeholder="Project description" style={{ height: '3.13rem' }} />
-            </Form.Item>
-            <Form.Item
-              name="labelFormat"
-              label={
-                <div>
-                  {' '}
-                  Label Format
-                  <QuestionCircleOutlined
-                    style={{ fontSize: '12px' }}
-                    onClick={() =>
-                      message.info({
-                        content:
-                          'Choose the format to import/export dataset. Click here to see details.',
-                        onClick: () => {
-                          window.open(
-                            `https://github.com/PaddleCV-SIG/PP-Label/blob/develop/doc/dataset_file_structure.md#${props.taskCategory}`,
-                          );
-                        },
-                      })
-                    }
-                  />
-                </div>
-              }
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: createInfo[props.taskCategory].labelFormats != undefined,
-                  message: 'Please choose a label import/export format',
-                },
-              ]}
-              style={{
-                fontSize: '1.5rem',
-                display:
-                  createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
+      <Spin tip="Import in progress" spinning={loading}>
+        {/* TODO: increase left width and decrease right */}
+        <div id="left" className={styles.block_l}>
+          <_PPBlock title={title} style={{ height: 760, padding: '1.25rem 0' }}>
+            <Form
+              form={form}
+              layout="horizontal"
+              size="large"
+              style={{ marginTop: '5.69rem' }}
+              onFinish={(values) => {
+                console.log(values);
+                saveProject(values);
               }}
             >
-              <Radio.Group size="large" style={{ height: '3.13rem' }}>
-                {Object.entries(createInfo[props.taskCategory].labelFormats).map(([k, v]) => (
-                  <Radio key={k} value={k}>
-                    {v}
-                  </Radio>
-                ))}
-              </Radio.Group>
-            </Form.Item>
-            <Form.Item
-              name="maxPoints"
-              label={maxPoints}
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: props.taskCategory == 'keypointDetection',
-                  message: 'Please input max points!',
-                },
-              ]}
-              style={{
-                fontSize: '1.5rem',
-                display: props.taskCategory == 'keypointDetection' ? undefined : 'none',
-              }}
-            >
-              <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
-            </Form.Item>
-            <Form.Item
-              wrapperCol={{
-                span: 16,
-                offset: 6,
-              }}
-            >
-              <Button
-                htmlType="submit"
-                type="primary"
-                style={{ height: '2.5rem', width: '48%' }}
-                block
+              <Form.Item
+                name="name"
+                label={projectName}
+                labelCol={{
+                  span: 6,
+                }}
+                wrapperCol={{
+                  span: 16,
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input project name!',
+                  },
+                ]}
+                style={{ fontSize: '1.5rem' }}
               >
-                {projectId ? update : create}
-              </Button>
-              &nbsp;&nbsp;
-              <Button
-                htmlType="button"
-                style={{ height: '2.5rem', width: '48%' }}
-                block
-                onClick={() => {
-                  history.goBack();
+                <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
+              </Form.Item>
+              <Form.Item
+                name="dataDir"
+                label={
+                  <div>
+                    {datasePath}{' '}
+                    <QuestionCircleOutlined
+                      style={{ fontSize: '12px' }}
+                      onClick={() =>
+                        message.info({
+                          content:
+                            'The root directory of the dataset, where all images and labels are. Click here for more detail.',
+                          onClick: () =>
+                            window.open(
+                              `https://github.com/PaddleCV-SIG/PP-Label/blob/develop/doc/dataset_file_structure.md#${props.taskCategory}`,
+                            ),
+                        })
+                      }
+                    />
+                  </div>
+                }
+                labelCol={{
+                  span: 6,
+                }}
+                wrapperCol={{
+                  span: 16,
+                }}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input dataset path!',
+                  },
+                ]}
+                style={{ fontSize: '1.5rem' }}
+              >
+                <Input
+                  size="large"
+                  placeholder="Dataset Path"
+                  style={{ height: '3.13rem' }}
+                  disabled={projectId == undefined ? false : true}
+                />
+              </Form.Item>
+              <Form.Item
+                name="description"
+                label={description}
+                labelCol={{
+                  span: 6,
+                }}
+                wrapperCol={{
+                  span: 16,
+                }}
+                rules={[
+                  {
+                    required: false,
+                  },
+                ]}
+                style={{ fontSize: '1.5rem' }}
+              >
+                <Input
+                  size="large"
+                  placeholder="Project description"
+                  style={{ height: '3.13rem' }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="labelFormat"
+                label={
+                  <div>
+                    {' '}
+                    Label Format
+                    <QuestionCircleOutlined
+                      style={{ fontSize: '12px' }}
+                      onClick={() =>
+                        message.info({
+                          content:
+                            'Choose the format to import/export dataset. Click here to see details.',
+                          onClick: () => {
+                            window.open(
+                              `https://github.com/PaddleCV-SIG/PP-Label/blob/develop/doc/dataset_file_structure.md#${props.taskCategory}`,
+                            );
+                          },
+                        })
+                      }
+                    />
+                  </div>
+                }
+                labelCol={{
+                  span: 6,
+                }}
+                wrapperCol={{
+                  span: 16,
+                }}
+                rules={[
+                  {
+                    required: createInfo[props.taskCategory].labelFormats != undefined,
+                    message: 'Please choose a label import/export format',
+                  },
+                ]}
+                style={{
+                  fontSize: '1.5rem',
+                  display:
+                    createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
                 }}
               >
-                {cancel}
-              </Button>
-            </Form.Item>
-          </Form>
-        </_PPBlock>
-      </div>
-      <div id="right" className={styles.block_r}>
-        <_PPBlock style={{ height: '43.63rem', padding: '0.5rem 0' }}>
-          <img src={props.imgSrc} style={{ width: '40rem' }} />
-        </_PPBlock>
-      </div>
+                <Radio.Group size="large" style={{ height: '3.13rem' }}>
+                  {Object.entries(createInfo[props.taskCategory].labelFormats).map(([k, v]) => (
+                    <Radio key={k} value={k}>
+                      {v}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </Form.Item>
+              <Form.Item
+                name="maxPoints"
+                label={maxPoints}
+                labelCol={{
+                  span: 6,
+                }}
+                wrapperCol={{
+                  span: 16,
+                }}
+                rules={[
+                  {
+                    required: props.taskCategory == 'keypointDetection',
+                    message: 'Please input max points!',
+                  },
+                ]}
+                style={{
+                  fontSize: '1.5rem',
+                  display: props.taskCategory == 'keypointDetection' ? undefined : 'none',
+                }}
+              >
+                <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
+              </Form.Item>
+              <Form.Item
+                wrapperCol={{
+                  span: 16,
+                  offset: 6,
+                }}
+              >
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  style={{ height: '2.5rem', width: '48%' }}
+                  block
+                >
+                  {projectId ? update : create}
+                </Button>
+                &nbsp;&nbsp;
+                <Button
+                  htmlType="button"
+                  style={{ height: '2.5rem', width: '48%' }}
+                  block
+                  onClick={() => {
+                    history.goBack();
+                  }}
+                >
+                  {cancel}
+                </Button>
+              </Form.Item>
+            </Form>
+          </_PPBlock>
+        </div>
+        <div id="right" className={styles.block_r}>
+          <_PPBlock style={{ height: '43.63rem', padding: '0.5rem 0' }}>
+            <img src={props.imgSrc} style={{ width: '40rem' }} />
+          </_PPBlock>
+        </div>
+      </Spin>
     </div>
   );
 };

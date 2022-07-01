@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Button, Space } from 'antd';
+import { Row, Col, Button, Space, Spin } from 'antd';
 import { history, useIntl } from 'umi';
 import PPContainer from '@/components/PPContainer';
 import PPCard from '@/components/PPCard';
@@ -13,7 +13,7 @@ import { createInfo } from '@/services/utils';
 import type { ColumnsType } from 'antd/es/table';
 import type { Project } from '@/services/web/models';
 
-const Projects: React.FC = () => {
+const Projects: React.FC = (props) => {
   const intl = useIntl();
   const label = intl.formatMessage({ id: 'pages.welcome.label' });
   const remove = intl.formatMessage({ id: 'pages.welcome.remove' });
@@ -82,7 +82,10 @@ const Projects: React.FC = () => {
             width="4.375rem"
             height="1.875rem"
             color={'rgba(207,63,0,1)'}
-            onClick={() => projects.remove(project)}
+            onClick={() => {
+              props.setDeleting(true);
+              projects.remove(project).then(() => props.setDeleting(false));
+            }}
           >
             {remove}
           </PPButton>
@@ -109,6 +112,7 @@ const Projects: React.FC = () => {
 
 const Welcome: React.FC = () => {
   const intl = useIntl();
+  const [deleting, setDeleting] = useState<boolean>(false);
   const createProject = intl.formatMessage({ id: 'pages.welcome.createProject' });
   const sampleProject = intl.formatMessage({ id: 'pages.welcome.sampleProject' });
   const trainingKnowledge = intl.formatMessage({ id: 'pages.welcome.trainingKnowledge' });
@@ -169,7 +173,9 @@ const Welcome: React.FC = () => {
           </PPBlock>
         </Col>
       </Row>
-      {Projects()}
+      <Spin tip="Deleting" spinning={deleting}>
+        {Projects({ setDeleting: setDeleting })}
+      </Spin>
     </PPContainer>
   );
 };
