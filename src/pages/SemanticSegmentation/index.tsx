@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useState } from 'react';
-import { Button, message } from 'antd';
+import { Button, message, Spin } from 'antd';
 import { useIntl, history, useModel } from 'umi';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -36,7 +36,7 @@ const Page: React.FC = () => {
   const { interactorData, setInteractorData } = useModel('InteractorData');
 
   const model = ModelUtils(useState);
-  const { tool, task, data, project, scale, label, annotation, refreshVar } = PageInit(
+  const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,
     useEffect,
     {
@@ -264,33 +264,35 @@ const Page: React.FC = () => {
         </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
-        <div className="draw">
-          <PPStage
-            scale={scale.curr}
-            annotations={annotation.all}
-            currentTool={tool.curr}
-            currentAnnotation={annotation.curr}
-            currentLabel={label.curr}
-            setCurrentAnnotation={setCurrentAnnotation}
-            onAnnotationModify={modifyAnnoByFrontendId}
-            onAnnotationModifyComplete={() => {
-              // Do not record interactor's history
-              if (tool.curr == 'interactor') return;
-              recordHistory({ annos: annotation.all, currAnno: annotation.curr });
-            }}
-            frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
-            imgSrc={data.imgSrc}
-            transparency={transparency}
-            threshold={threshold}
-            onAnnotationAdd={(anno) => {
-              const newAnnos = annotation.all.concat([anno]);
-              annotation.setAll(newAnnos);
-              if (!annotation.curr) setCurrentAnnotation(anno);
-            }}
-            drawTool={drawTool}
-            refresh={refreshVar}
-          />
-        </div>
+        <Spin tip="loading" spinning={!!loading.curr}>
+          <div className="draw">
+            <PPStage
+              scale={scale.curr}
+              annotations={annotation.all}
+              currentTool={tool.curr}
+              currentAnnotation={annotation.curr}
+              currentLabel={label.curr}
+              setCurrentAnnotation={setCurrentAnnotation}
+              onAnnotationModify={modifyAnnoByFrontendId}
+              onAnnotationModifyComplete={() => {
+                // Do not record interactor's history
+                if (tool.curr == 'interactor') return;
+                recordHistory({ annos: annotation.all, currAnno: annotation.curr });
+              }}
+              frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
+              imgSrc={data.imgSrc}
+              transparency={transparency}
+              threshold={threshold}
+              onAnnotationAdd={(anno) => {
+                const newAnnos = annotation.all.concat([anno]);
+                annotation.setAll(newAnnos);
+                if (!annotation.curr) setCurrentAnnotation(anno);
+              }}
+              drawTool={drawTool}
+              refresh={refreshVar}
+            />
+          </div>
+        </Spin>
         <div className="pblock">
           <PPProgress task={task} project={project} />
         </div>
