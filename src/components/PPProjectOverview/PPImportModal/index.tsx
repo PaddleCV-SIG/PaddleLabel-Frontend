@@ -30,6 +30,7 @@ const PPImportModal: React.FC<PPImportProps> = (props) => {
         title={'Import Additional Data'}
         visible={visible}
         footer={null}
+        onCancel={() => setVisible(false)}
       >
         <Form
           form={form}
