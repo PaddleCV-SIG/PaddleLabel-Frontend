@@ -237,9 +237,9 @@ const Page: React.FC = () => {
               onAnnotationAdd={(anno) => {
                 const newAnnos = annotation.all.concat([anno]);
                 annotation.setAll(newAnnos);
-                if (!annotation.curr) setCurrentAnnotation(anno);
               }}
               drawTool={drawTool}
+              threshold={0}
             />
           </div>
           <div className="pblock">

@@ -469,8 +469,7 @@ export function AnnotationUtils(
       const ann = { ...annotation };
       if (ann.label) ann.labelId = ann.label.labelId;
       ann.label = undefined;
-      const newAnn = await annotationApi.create(ann);
-      setCurr(newAnn);
+      await annotationApi.create(ann);
       let annRes: Annotation[] = [];
       // sync anns from backend
       if (ann.dataId) annRes = await getAll(ann.dataId);
@@ -500,6 +499,8 @@ export function AnnotationUtils(
   }
 
   async function setCurr(annotation: Annotation | undefined) {
+    console.log('annotation.setCurr:', annotation);
+    console.trace();
     if (annotation == undefined) {
       setCurrRaw(undefined);
       return;
