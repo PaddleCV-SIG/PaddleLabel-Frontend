@@ -390,6 +390,7 @@ const Page: React.FC = () => {
                   const newAnnos = annotation.all.concat([anno]);
                   annotation.setAll(newAnnos);
                   setCurrentAnnotation(anno);
+                  annotation.pushToBackend(data.curr?.dataId, newAnnos);
                 }
               }
               setInteractorData([]);
