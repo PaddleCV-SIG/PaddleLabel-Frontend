@@ -368,7 +368,7 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any; push
   const [all, setAll] = useState<Task[]>();
   const [currIdx, setCurrIdx] = useState<number>();
 
-  const turnTo = (turnToIdx: number) => {
+  const turnTo = async (turnToIdx: number) => {
     if (!all) return false;
     if (turnToIdx < 0) {
       message.error('This is the first image. No previous image.');
@@ -378,9 +378,6 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any; push
       message.error('This is the final image. No next image.');
       return false;
     }
-    if (props.push && props.annotation.all.length != 0)
-      props.annotation.pushToBackend(all[currIdx]?.taskId);
-
     setCurrIdx(turnToIdx);
     return true;
   };
@@ -539,9 +536,10 @@ export function AnnotationUtils(
     else await update(annotation);
   }
 
-  async function pushToBackend(dataId?: number, anns: Annotation[] = undefined) {
+  async function pushToBackend(dataId?: number, anns?: Annotation[]) {
     if (dataId == undefined || dataId == null) return;
     const newAll = anns ? anns : all;
+    console.log('pushToBackend, dataId:', dataId, 'newAll:', newAll);
     try {
       await dataApi.setAnnotations(dataId + '', newAll);
       return message.success('Save success');

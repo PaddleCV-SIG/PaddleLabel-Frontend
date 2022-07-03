@@ -119,9 +119,10 @@ const Page: React.FC = () => {
     onAnnotationModify: onAnnotationModify,
     modifyAnnoByFrontendId: modifyAnnoByFrontendId,
     onMouseUp: () => {
-      // Do not record interactor's history
+      // Do not record interactor's history, do not pushToBackend either
       if (tool.curr == 'interactor') return;
       recordHistory({ annos: annotation.all, currAnno: annotation.curr });
+      annotation.pushToBackend(data.curr?.dataId, annotation.all);
     },
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
     model: model,
@@ -422,9 +423,11 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
           }}
           onAnnotationModify={() => {}}
-          onAnnotationDelete={(anno: Annotation) => {
-            annotation.setAll(annotation.all.filter((x) => x.frontendId != anno.frontendId));
+          onAnnotationDelete={async (anno: Annotation) => {
+            const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
+            annotation.setAll(newAll);
             setCurrentAnnotation(undefined);
+            await annotation.pushToBackend(data.curr?.dataId, newAll);
           }}
         />
       </div>
