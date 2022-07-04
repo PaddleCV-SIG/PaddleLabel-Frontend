@@ -1,4 +1,4 @@
-import { List } from 'antd';
+import { List, Spin } from 'antd';
 import { Button } from 'antd';
 import React from 'react';
 import styles from './index.less';
@@ -13,6 +13,7 @@ export type PPLabelListProps = {
   onAnnotationDelete: (annotation: Annotation) => void;
   onAnnotationAdd: (annotation: Annotation) => void | undefined;
   onAnnotationSelect: (annotation: Annotation | undefined) => void;
+  disabled?: boolean;
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
@@ -30,7 +31,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
     added.add(anno.frontendId);
   }
   return (
-    <>
+    <Spin spinning={props.disabled} indicator={<></>}>
       <List
         className={styles.labelList}
         size="large"
@@ -40,9 +41,9 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         renderItem={(item) => {
           return (
             <PPAnnotationListItem
-              onClick={props.onAnnotationSelect}
+              onClick={props.disabled ? () => {} : props.onAnnotationSelect}
               annotation={item}
-              active={item.frontendId == props.currAnnotation?.frontendId}
+              active={props.disabled ? false : item.frontendId == props.currAnnotation?.frontendId}
               onAnnotationDelete={props.onAnnotationDelete}
               onAnnotationModify={props.onAnnotationModify}
             />
@@ -67,7 +68,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
           else return <div></div>;
         }}
       />
-    </>
+    </Spin>
   );
 };
 export default Component;

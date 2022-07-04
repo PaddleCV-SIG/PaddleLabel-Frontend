@@ -237,11 +237,24 @@ const SAMPLE_RESULT = {
 function drawAnnotation(param: PPRenderFuncProps) {
   const { canvasRef } = param;
   if (!param.interactorData || !param.label?.color) return <></>;
-  const result: number[][] = param.interactorData;
+  const result: number[][] = param.interactorData.predictData;
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
+  console.log(`PPInteractor.drawAnnotation`, param.interactorData);
   renderPoints(filterPoints(result, param.threshold), ctx, param.label.color);
+  renderMousePoints(param.interactorData.mousePoints, ctx);
   return <></>;
+}
+
+function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D) {
+  if (!mousePoints) return;
+  ctx.beginPath();
+  for (const [x, y, positive] of mousePoints) {
+    if (positive) ctx.fillStyle = '#FF0000';
+    else ctx.fillStyle = '#008000';
+    ctx.arc(y, x, 50, 0, 2 * Math.PI);
+    ctx.fill();
+  }
 }
 
 function filterPoints(result: number[][], thresholdRaw?: number) {
@@ -353,7 +366,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     });
     if (!line) return;
     // setInteractorData(line.result);
-    setInteractorData(line.result);
+    setInteractorData({ mousePoints: mousePoints, predictData: line.result });
   };
 
   const OnMouseMove = () => {};

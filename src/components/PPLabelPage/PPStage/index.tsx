@@ -54,7 +54,6 @@ const Component: React.FC<PPStageProps> = (props) => {
   const imageHeight = image?.height || 0;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   const interactorData = useModel('InteractorData', (x) => x.interactorData);
-  console.log('interactorData', interactorData);
   let drawToolTemp = undefined;
   if (
     props.currentTool == 'polygon' ||

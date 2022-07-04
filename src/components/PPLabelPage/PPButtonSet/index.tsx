@@ -18,6 +18,7 @@ type Props = {
   imgSrc?: string;
   disLoc?: TooltipPlacement;
   active?: boolean;
+  disabled?: boolean;
 };
 
 const Component: React.FC<Props> = (props) => {
@@ -71,9 +72,15 @@ const Component: React.FC<Props> = (props) => {
         </Row>
       }
       trigger={'hover'}
+      visible={props.disabled ? false : undefined}
     >
       {' '}
-      <PPToolBarButton imgSrc={props.imgSrc || ''} onClick={props.onClick} active={props.active}>
+      <PPToolBarButton
+        imgSrc={props.imgSrc || ''}
+        onClick={(!props.disabled && props.onClick) || undefined}
+        active={props.active}
+        disabled={props.disabled}
+      >
         {props.children}
       </PPToolBarButton>
     </Popover>

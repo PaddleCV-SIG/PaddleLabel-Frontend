@@ -139,6 +139,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/polygon.png"
           active={tool.curr == 'polygon'}
+          disabled={tool.curr == 'interactor'}
           onClick={() => {
             if (!label.curr) {
               message.error('Please select a label first');
@@ -152,6 +153,7 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton
           active={tool.curr == 'editor'}
+          disabled={tool.curr == 'interactor'}
           imgSrc="./pics/buttons/edit.png"
           onClick={() => {
             tool.setCurr('editor');
@@ -164,6 +166,7 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/brush.png"
           size={brushSize}
           active={tool.curr == 'brush'}
+          disabled={tool.curr == 'interactor'}
           onClick={() => {
             if (!label.curr) {
               message.error('Please select a label first');
@@ -183,6 +186,7 @@ const Page: React.FC = () => {
         <PPSetButton
           size={brushSize}
           active={tool.curr == 'rubber'}
+          disabled={tool.curr == 'interactor'}
           onClick={() => {
             if (tool.curr != 'rubber' && tool.curr != 'brush') {
               setCurrentAnnotation(undefined);
@@ -217,6 +221,7 @@ const Page: React.FC = () => {
           onClick={() => {
             annotation.pushToBackend(data.curr?.dataId);
           }}
+          disabled={tool.curr == 'interactor'}
         >
           {intl.formatMessage({ id: 'pages.toolBar.save' })}
         </PPToolBarButton>
@@ -238,6 +243,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(res.currAnno);
             }
           }}
+          disabled={tool.curr == 'interactor'}
         >
           {intl.formatMessage({ id: 'pages.toolBar.unDo' })}
         </PPToolBarButton>
@@ -250,6 +256,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(res.currAnno);
             }
           }}
+          disabled={tool.curr == 'interactor'}
         >
           {intl.formatMessage({ id: 'pages.toolBar.reDo' })}
         </PPToolBarButton>
@@ -259,6 +266,7 @@ const Page: React.FC = () => {
             annotation.setAll([]);
             annotation.setCurr(undefined);
           }}
+          disabled={tool.curr == 'interactor'}
         >
           {intl.formatMessage({ id: 'pages.toolBar.clearMark' })}
         </PPToolBarButton>
@@ -432,6 +440,7 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
             await annotation.pushToBackend(data.curr?.dataId, newAll);
           }}
+          disabled={tool.curr == 'interactor'}
         />
       </div>
     </PPLabelPageContainer>

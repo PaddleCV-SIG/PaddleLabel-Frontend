@@ -5,6 +5,7 @@ import type { Label } from '@/models/Label';
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type Konva from 'konva';
 import type { ReactElement } from 'react';
+import { InteractorData } from '@/models/InteractorData';
 
 export type PPRenderFuncProps = {
   annotation: Annotation;
@@ -18,7 +19,7 @@ export type PPRenderFuncProps = {
   transparency: number;
   threshold?: number;
   canvasRef: React.RefObject<HTMLCanvasElement>;
-  interactorData?: number[][];
+  interactorData?: InteractorData;
   label?: Label;
 };
 
