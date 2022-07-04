@@ -305,21 +305,25 @@ const Page: React.FC = () => {
           <PPProgress task={task} project={project} />
         </div>
         <div
+          style={{ display: tool.curr == 'interactor' ? 'none' : 'block' }}
           className="prevTask"
           onClick={() => {
             if (!task.prevTask()) {
               return;
             }
             setCurrentAnnotation(undefined);
+            setInteractorData(undefined);
           }}
         />
         <div
+          style={{ display: tool.curr == 'interactor' ? 'none' : 'block' }}
           className="nextTask"
           onClick={() => {
             if (!task.nextTask()) {
               return;
             }
             setCurrentAnnotation(undefined);
+            setInteractorData(undefined);
           }}
         />
       </div>
@@ -328,7 +332,8 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/intelligent_interaction.png"
           active={tool.curr == 'interactor'}
           onClick={() => {
-            tool.setCurr('interactor');
+            if (tool.curr != 'interactor') tool.setCurr('interactor');
+            else tool.setCurr(undefined);
           }}
           model={model}
           project={project}
@@ -390,9 +395,9 @@ const Page: React.FC = () => {
               if (tool.curr == 'interactor') {
                 console.log(tool.curr);
                 const anno = interactorToAnnotation(
-                  interactorData,
                   threshold,
                   annotation.all,
+                  interactorData?.predictData,
                   data.curr?.dataId,
                   label.curr,
                 );
@@ -403,7 +408,7 @@ const Page: React.FC = () => {
                   annotation.pushToBackend(data.curr?.dataId, newAnnos);
                 }
               }
-              setInteractorData([]);
+              setInteractorData(undefined);
               setCurrentAnnotation(undefined);
             }}
           >

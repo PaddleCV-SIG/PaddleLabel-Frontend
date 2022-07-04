@@ -276,9 +276,9 @@ function filterPoints(result: number[][], thresholdRaw?: number) {
 }
 
 export function interactorToAnnotation(
-  interactorData: number[][],
   threshold: number,
   annotations: Annotation[],
+  interactorData?: number[][],
   dataId?: number,
   label?: Label,
 ): Annotation | null {
