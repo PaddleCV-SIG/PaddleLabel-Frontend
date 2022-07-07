@@ -329,8 +329,7 @@ function getMaxFrontendId(annotations?: Annotation[]) {
 }
 
 export default function (props: PPDrawToolProps): PPDrawToolRet {
-  const [mousePoints, setMousePoints] = useState<any[][]>([]);
-  const setInteractorData = useModel('InteractorData', (x) => x.setInteractorData);
+  const { interactorData, setInteractorData } = useModel('InteractorData');
   const model = props.model;
 
   /**
@@ -351,10 +350,9 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         ? props.frontendIdOps.frontendId
         : getMaxFrontendId(props.annotations) + 1;
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
-    mousePoints.push(new Array(mouseX, mouseY, param.e.evt.button != 2));
-    setMousePoints(mousePoints);
+    interactorData.mousePoints.push(new Array(mouseX, mouseY, param.e.evt.button != 2));
     // Predict from ML Backend
-    if (!mousePoints.length || !param.stageRef.current || frontendId == undefined) {
+    if (!interactorData.mousePoints.length || !param.stageRef.current || frontendId == undefined) {
       return;
     }
     const stage: StageType = param.stageRef.current;
@@ -362,11 +360,11 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const line = await model.predict({
       format: 'b64',
       img: imgBase64,
-      other: { clicks: mousePoints },
+      other: { clicks: interactorData.mousePoints },
     });
     if (!line) return;
     // setInteractorData(line.result);
-    setInteractorData({ mousePoints: mousePoints, predictData: line.result });
+    setInteractorData({ mousePoints: interactorData.mousePoints, predictData: line.result });
   };
 
   const OnMouseMove = () => {};

@@ -6,6 +6,9 @@ export type InteractorData = {
 };
 
 export default () => {
-  const [interactorData, setInteractorData] = useState<InteractorData>();
+  const [interactorData, setInteractorData] = useState<InteractorData>({
+    predictData: [],
+    mousePoints: [],
+  });
   return { interactorData, setInteractorData };
 };

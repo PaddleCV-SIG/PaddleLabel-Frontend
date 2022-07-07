@@ -312,7 +312,7 @@ const Page: React.FC = () => {
               return;
             }
             setCurrentAnnotation(undefined);
-            setInteractorData(undefined);
+            setInteractorData({ predictData: [], mousePoints: [] });
           }}
         />
         <div
@@ -323,7 +323,7 @@ const Page: React.FC = () => {
               return;
             }
             setCurrentAnnotation(undefined);
-            setInteractorData(undefined);
+            setInteractorData({ predictData: [], mousePoints: [] });
           }}
         />
       </div>
@@ -408,7 +408,7 @@ const Page: React.FC = () => {
                   annotation.pushToBackend(data.curr?.dataId, newAnnos);
                 }
               }
-              setInteractorData(undefined);
+              setInteractorData({ predictData: [], mousePoints: [] });
               setCurrentAnnotation(undefined);
             }}
           >
