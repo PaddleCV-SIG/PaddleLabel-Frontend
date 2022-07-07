@@ -248,12 +248,25 @@ function drawAnnotation(param: PPRenderFuncProps) {
 
 function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D) {
   if (!mousePoints) return;
-  ctx.beginPath();
   for (const [x, y, positive] of mousePoints) {
+    ctx.beginPath();
     if (positive) ctx.fillStyle = '#FF0000';
     else ctx.fillStyle = '#008000';
-    ctx.arc(y, x, 50, 0, 2 * Math.PI);
+    // Filled triangle
+    ctx.beginPath();
+    ctx.moveTo(x, y - 10);
+    ctx.lineTo(x - 10, y + 10);
+    ctx.lineTo(x + 10, y + 10);
     ctx.fill();
+
+    // Stroked triangle
+    ctx.strokeStyle = '#FFF';
+    ctx.beginPath();
+    ctx.moveTo(x, y - 10);
+    ctx.lineTo(x - 10, y + 10);
+    ctx.lineTo(x + 10, y + 10);
+    ctx.closePath();
+    ctx.stroke();
   }
 }
 
