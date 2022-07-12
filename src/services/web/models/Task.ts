@@ -13,13 +13,10 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import {
-  Annotation,
-  AnnotationFromJSON,
-  AnnotationFromJSONTyped,
-  AnnotationToJSON,
-} from './Annotation';
-import { Project, ProjectFromJSON, ProjectFromJSONTyped, ProjectToJSON } from './Project';
+import type { Annotation } from './Annotation';
+import { AnnotationFromJSON, AnnotationFromJSONTyped, AnnotationToJSON } from './Annotation';
+import type { Project } from './Project';
+import { ProjectFromJSON, ProjectFromJSONTyped, ProjectToJSON } from './Project';
 
 /**
  * An annotation task
@@ -75,6 +72,16 @@ export interface Task {
    * @memberof Task
    */
   readonly created?: string;
+}
+
+/**
+ * Check if a given object implements the Task interface.
+ */
+export function instanceOfTask(value: object): boolean {
+  let isInstance = true;
+  isInstance = isInstance && 'projectId' in value;
+
+  return isInstance;
 }
 
 export function TaskFromJSON(json: any): Task {

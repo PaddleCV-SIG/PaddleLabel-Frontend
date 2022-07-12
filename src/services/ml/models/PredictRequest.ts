@@ -13,8 +13,8 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { PredictRequestOther } from './PredictRequestOther';
 import {
-  PredictRequestOther,
   PredictRequestOtherFromJSON,
   PredictRequestOtherFromJSONTyped,
   PredictRequestOtherToJSON,
@@ -50,6 +50,17 @@ export interface PredictRequest {
    * @memberof PredictRequest
    */
   other?: PredictRequestOther;
+}
+
+/**
+ * Check if a given object implements the PredictRequest interface.
+ */
+export function instanceOfPredictRequest(value: object): boolean {
+  let isInstance = true;
+  isInstance = isInstance && 'img' in value;
+  isInstance = isInstance && 'format' in value;
+
+  return isInstance;
 }
 
 export function PredictRequestFromJSON(json: any): PredictRequest {

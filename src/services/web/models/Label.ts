@@ -69,6 +69,16 @@ export interface Label {
   superCategoryId?: number;
 }
 
+/**
+ * Check if a given object implements the Label interface.
+ */
+export function instanceOfLabel(value: object): boolean {
+  let isInstance = true;
+  isInstance = isInstance && 'name' in value;
+
+  return isInstance;
+}
+
 export function LabelFromJSON(json: any): Label {
   return LabelFromJSONTyped(json, false);
 }

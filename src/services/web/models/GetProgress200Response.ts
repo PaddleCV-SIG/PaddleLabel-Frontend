@@ -33,6 +33,15 @@ export interface GetProgress200Response {
   total?: number;
 }
 
+/**
+ * Check if a given object implements the GetProgress200Response interface.
+ */
+export function instanceOfGetProgress200Response(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function GetProgress200ResponseFromJSON(json: any): GetProgress200Response {
   return GetProgress200ResponseFromJSONTyped(json, false);
 }

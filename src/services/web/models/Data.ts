@@ -13,7 +13,8 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import { Task, TaskFromJSON, TaskFromJSONTyped, TaskToJSON } from './Task';
+import type { Task } from './Task';
+import { TaskFromJSON, TaskFromJSONTyped, TaskToJSON } from './Task';
 
 /**
  *
@@ -63,6 +64,15 @@ export interface Data {
    * @memberof Data
    */
   sault?: string;
+}
+
+/**
+ * Check if a given object implements the Data interface.
+ */
+export function instanceOfData(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
 }
 
 export function DataFromJSON(json: any): Data {

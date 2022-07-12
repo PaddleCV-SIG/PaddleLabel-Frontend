@@ -27,6 +27,15 @@ export interface ExportDatasetRequest {
   exportDir?: string;
 }
 
+/**
+ * Check if a given object implements the ExportDatasetRequest interface.
+ */
+export function instanceOfExportDatasetRequest(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function ExportDatasetRequestFromJSON(json: any): ExportDatasetRequest {
   return ExportDatasetRequestFromJSONTyped(json, false);
 }

@@ -27,6 +27,15 @@ export interface Polygon2pointsRequest {
   polygon?: string;
 }
 
+/**
+ * Check if a given object implements the Polygon2pointsRequest interface.
+ */
+export function instanceOfPolygon2pointsRequest(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function Polygon2pointsRequestFromJSON(json: any): Polygon2pointsRequest {
   return Polygon2pointsRequestFromJSONTyped(json, false);
 }

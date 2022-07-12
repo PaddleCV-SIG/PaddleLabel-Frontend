@@ -27,6 +27,15 @@ export interface LoadSampleRequest {
   taskCategoryId?: number;
 }
 
+/**
+ * Check if a given object implements the LoadSampleRequest interface.
+ */
+export function instanceOfLoadSampleRequest(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function LoadSampleRequestFromJSON(json: any): LoadSampleRequest {
   return LoadSampleRequestFromJSONTyped(json, false);
 }

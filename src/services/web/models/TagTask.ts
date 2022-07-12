@@ -45,6 +45,15 @@ export interface TagTask {
   taskId?: number;
 }
 
+/**
+ * Check if a given object implements the TagTask interface.
+ */
+export function instanceOfTagTask(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function TagTaskFromJSON(json: any): TagTask {
   return TagTaskFromJSONTyped(json, false);
 }

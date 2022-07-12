@@ -39,6 +39,15 @@ export interface SplitDatasetRequest {
   test?: number;
 }
 
+/**
+ * Check if a given object implements the SplitDatasetRequest interface.
+ */
+export function instanceOfSplitDatasetRequest(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function SplitDatasetRequestFromJSON(json: any): SplitDatasetRequest {
   return SplitDatasetRequestFromJSONTyped(json, false);
 }

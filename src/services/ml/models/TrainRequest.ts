@@ -33,6 +33,17 @@ export interface TrainRequest {
   configs: object;
 }
 
+/**
+ * Check if a given object implements the TrainRequest interface.
+ */
+export function instanceOfTrainRequest(value: object): boolean {
+  let isInstance = true;
+  isInstance = isInstance && 'dataDir' in value;
+  isInstance = isInstance && 'configs' in value;
+
+  return isInstance;
+}
+
 export function TrainRequestFromJSON(json: any): TrainRequest {
   return TrainRequestFromJSONTyped(json, false);
 }

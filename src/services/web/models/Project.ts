@@ -13,9 +13,10 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import { Label, LabelFromJSON, LabelFromJSONTyped, LabelToJSON } from './Label';
+import type { Label } from './Label';
+import { LabelFromJSON, LabelFromJSONTyped, LabelToJSON } from './Label';
+import type { ProjectOtherSettings } from './ProjectOtherSettings';
 import {
-  ProjectOtherSettings,
   ProjectOtherSettingsFromJSON,
   ProjectOtherSettingsFromJSONTyped,
   ProjectOtherSettingsToJSON,
@@ -99,6 +100,15 @@ export interface Project {
    * @memberof Project
    */
   otherSettings?: ProjectOtherSettings;
+}
+
+/**
+ * Check if a given object implements the Project interface.
+ */
+export function instanceOfProject(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
 }
 
 export function ProjectFromJSON(json: any): Project {

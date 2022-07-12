@@ -27,6 +27,15 @@ export interface LoadSample200Response {
   projectId?: number;
 }
 
+/**
+ * Check if a given object implements the LoadSample200Response interface.
+ */
+export function instanceOfLoadSample200Response(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function LoadSample200ResponseFromJSON(json: any): LoadSample200Response {
   return LoadSample200ResponseFromJSONTyped(json, false);
 }

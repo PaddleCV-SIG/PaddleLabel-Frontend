@@ -39,6 +39,15 @@ export interface ProjectOtherSettings {
   models?: object;
 }
 
+/**
+ * Check if a given object implements the ProjectOtherSettings interface.
+ */
+export function instanceOfProjectOtherSettings(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function ProjectOtherSettingsFromJSON(json: any): ProjectOtherSettings {
   return ProjectOtherSettingsFromJSONTyped(json, false);
 }

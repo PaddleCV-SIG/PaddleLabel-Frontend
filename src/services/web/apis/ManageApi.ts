@@ -13,11 +13,10 @@
  */
 
 import * as runtime from '../runtime';
+import type { LoadSample200Response, LoadSampleRequest } from '../models';
 import {
-  LoadSample200Response,
   LoadSample200ResponseFromJSON,
   LoadSample200ResponseToJSON,
-  LoadSampleRequest,
   LoadSampleRequestFromJSON,
   LoadSampleRequestToJSON,
 } from '../models';
@@ -34,7 +33,7 @@ export class ManageApi extends runtime.BaseAPI {
    * Get backend version
    */
   async getVersionRaw(
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<string>> {
     const queryParameters: any = {};
 
@@ -56,7 +55,7 @@ export class ManageApi extends runtime.BaseAPI {
   /**
    * Get backend version
    */
-  async getVersion(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<string> {
+  async getVersion(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
     const response = await this.getVersionRaw(initOverrides);
     return await response.value();
   }
@@ -66,7 +65,7 @@ export class ManageApi extends runtime.BaseAPI {
    */
   async loadSampleRaw(
     requestParameters: LoadSampleOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<LoadSample200Response>> {
     const queryParameters: any = {};
 
@@ -95,7 +94,7 @@ export class ManageApi extends runtime.BaseAPI {
    */
   async loadSample(
     loadSampleRequest?: LoadSampleRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<LoadSample200Response> {
     const response = await this.loadSampleRaw(
       { loadSampleRequest: loadSampleRequest },

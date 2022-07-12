@@ -45,6 +45,15 @@ export interface Model {
   framework?: string;
 }
 
+/**
+ * Check if a given object implements the Model interface.
+ */
+export function instanceOfModel(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function ModelFromJSON(json: any): Model {
   return ModelFromJSONTyped(json, false);
 }

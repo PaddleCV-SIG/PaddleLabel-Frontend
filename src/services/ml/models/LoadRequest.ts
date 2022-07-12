@@ -27,6 +27,15 @@ export interface LoadRequest {
   initParams?: object;
 }
 
+/**
+ * Check if a given object implements the LoadRequest interface.
+ */
+export function instanceOfLoadRequest(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function LoadRequestFromJSON(json: any): LoadRequest {
   return LoadRequestFromJSONTyped(json, false);
 }

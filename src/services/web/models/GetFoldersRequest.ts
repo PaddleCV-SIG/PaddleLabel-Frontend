@@ -27,6 +27,15 @@ export interface GetFoldersRequest {
   path?: string;
 }
 
+/**
+ * Check if a given object implements the GetFoldersRequest interface.
+ */
+export function instanceOfGetFoldersRequest(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function GetFoldersRequestFromJSON(json: any): GetFoldersRequest {
   return GetFoldersRequestFromJSONTyped(json, false);
 }

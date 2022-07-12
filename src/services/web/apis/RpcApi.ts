@@ -13,11 +13,10 @@
  */
 
 import * as runtime from '../runtime';
+import type { GetFoldersRequest, Polygon2pointsRequest } from '../models';
 import {
-  GetFoldersRequest,
   GetFoldersRequestFromJSON,
   GetFoldersRequestToJSON,
-  Polygon2pointsRequest,
   Polygon2pointsRequestFromJSON,
   Polygon2pointsRequestToJSON,
 } from '../models';
@@ -39,7 +38,7 @@ export class RpcApi extends runtime.BaseAPI {
    */
   async getFoldersRaw(
     requestParameters: GetFoldersOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     const queryParameters: any = {};
 
@@ -66,7 +65,7 @@ export class RpcApi extends runtime.BaseAPI {
    */
   async getFolders(
     getFoldersRequest?: GetFoldersRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.getFoldersRaw({ getFoldersRequest: getFoldersRequest }, initOverrides);
   }
@@ -76,7 +75,7 @@ export class RpcApi extends runtime.BaseAPI {
    */
   async polygon2pointsRaw(
     requestParameters: Polygon2pointsOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<string>> {
     const queryParameters: any = {};
 
@@ -103,7 +102,7 @@ export class RpcApi extends runtime.BaseAPI {
    */
   async polygon2points(
     polygon2pointsRequest?: Polygon2pointsRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<string> {
     const response = await this.polygon2pointsRaw(
       { polygon2pointsRequest: polygon2pointsRequest },

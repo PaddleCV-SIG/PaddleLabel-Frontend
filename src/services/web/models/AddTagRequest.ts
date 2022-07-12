@@ -27,6 +27,15 @@ export interface AddTagRequest {
   tagId?: number;
 }
 
+/**
+ * Check if a given object implements the AddTagRequest interface.
+ */
+export function instanceOfAddTagRequest(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function AddTagRequestFromJSON(json: any): AddTagRequest {
   return AddTagRequestFromJSONTyped(json, false);
 }

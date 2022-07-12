@@ -13,14 +13,8 @@
  */
 
 import * as runtime from '../runtime';
-import {
-  Annotation,
-  AnnotationFromJSON,
-  AnnotationToJSON,
-  Data,
-  DataFromJSON,
-  DataToJSON,
-} from '../models';
+import type { Annotation, Data } from '../models';
+import { AnnotationFromJSON, AnnotationToJSON, DataFromJSON, DataToJSON } from '../models';
 
 export interface CreateRequest {
   data: Data;
@@ -66,7 +60,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async createRaw(
     requestParameters: CreateRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Data>> {
     if (requestParameters.data === null || requestParameters.data === undefined) {
       throw new runtime.RequiredError(
@@ -100,7 +94,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async create(
     data: Data,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Data> {
     const response = await this.createRaw({ data: data }, initOverrides);
     return await response.value();
@@ -111,7 +105,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async deleteAnnotationsRaw(
     requestParameters: DeleteAnnotationsRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
@@ -145,7 +139,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async deleteAnnotations(
     dataId: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.deleteAnnotationsRaw({ dataId: dataId }, initOverrides);
   }
@@ -155,7 +149,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async getRaw(
     requestParameters: GetRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Data>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
@@ -189,7 +183,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async get(
     dataId: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Data> {
     const response = await this.getRaw({ dataId: dataId }, initOverrides);
     return await response.value();
@@ -199,7 +193,7 @@ export class DataApi extends runtime.BaseAPI {
    * Get all data, sort by last modified
    */
   async getAllRaw(
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Data>> {
     const queryParameters: any = {};
 
@@ -221,7 +215,7 @@ export class DataApi extends runtime.BaseAPI {
   /**
    * Get all data, sort by last modified
    */
-  async getAll(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<Data> {
+  async getAll(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Data> {
     const response = await this.getAllRaw(initOverrides);
     return await response.value();
   }
@@ -231,7 +225,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async getAnnotationsRaw(
     requestParameters: GetAnnotationsRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Array<Annotation>>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
@@ -265,7 +259,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async getAnnotations(
     dataId: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Annotation>> {
     const response = await this.getAnnotationsRaw({ dataId: dataId }, initOverrides);
     return await response.value();
@@ -276,7 +270,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async getImageRaw(
     requestParameters: GetImageRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
@@ -315,7 +309,7 @@ export class DataApi extends runtime.BaseAPI {
   async getImage(
     dataId: string,
     sault?: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.getImageRaw({ dataId: dataId, sault: sault }, initOverrides);
   }
@@ -326,7 +320,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async removeRaw(
     requestParameters: RemoveRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
@@ -361,7 +355,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async remove(
     dataId: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.removeRaw({ dataId: dataId }, initOverrides);
   }
@@ -371,7 +365,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async setAnnotationsRaw(
     requestParameters: SetAnnotationsRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
@@ -409,7 +403,7 @@ export class DataApi extends runtime.BaseAPI {
   async setAnnotations(
     dataId: string,
     annotation?: Array<Annotation>,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.setAnnotationsRaw({ dataId: dataId, annotation: annotation }, initOverrides);
   }
@@ -420,7 +414,7 @@ export class DataApi extends runtime.BaseAPI {
    */
   async updateRaw(
     requestParameters: UpdateRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Data>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
@@ -466,7 +460,7 @@ export class DataApi extends runtime.BaseAPI {
   async update(
     dataId: string,
     data: Data,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Data> {
     const response = await this.updateRaw({ dataId: dataId, data: data }, initOverrides);
     return await response.value();

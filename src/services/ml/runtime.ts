@@ -116,7 +116,7 @@ export class BaseAPI {
 
   protected async request(
     context: RequestOpts,
-    initOverrides?: RequestInit | InitOverideFunction,
+    initOverrides?: RequestInit | InitOverrideFunction,
   ): Promise<Response> {
     const { url, init } = await this.createFetchParams(context, initOverrides);
     const response = await this.fetchApi(url, init);
@@ -128,7 +128,7 @@ export class BaseAPI {
 
   private async createFetchParams(
     context: RequestOpts,
-    initOverrides?: RequestInit | InitOverideFunction,
+    initOverrides?: RequestInit | InitOverrideFunction,
   ) {
     let url = this.configuration.basePath + context.path;
     if (context.query !== undefined && Object.keys(context.query).length !== 0) {
@@ -183,7 +183,29 @@ export class BaseAPI {
           })) || fetchParams;
       }
     }
-    let response = await (this.configuration.fetchApi || fetch)(fetchParams.url, fetchParams.init);
+    let response = undefined;
+    try {
+      response = await (this.configuration.fetchApi || fetch)(fetchParams.url, fetchParams.init);
+    } catch (e) {
+      for (const middleware of this.middleware) {
+        if (middleware.onError) {
+          response =
+            (await middleware.onError({
+              fetch: this.fetchApi,
+              url: fetchParams.url,
+              init: fetchParams.init,
+              error: e,
+              response: response ? response.clone() : undefined,
+            })) || response;
+        }
+      }
+      if (response !== undefined) {
+        throw new FetchError(
+          e,
+          'The request failed and the interceptors did not return an alternative response',
+        );
+      }
+    }
     for (const middleware of this.middleware) {
       if (middleware.post) {
         response =
@@ -221,6 +243,13 @@ function isFormData(value: any): value is FormData {
 export class ResponseError extends Error {
   name: 'ResponseError' = 'ResponseError';
   constructor(public response: Response, msg?: string) {
+    super(msg);
+  }
+}
+
+export class FetchError extends Error {
+  name: 'FetchError' = 'FetchError';
+  constructor(public cause: unknown, msg?: string) {
     super(msg);
   }
 }
@@ -263,7 +292,7 @@ export type HTTPRequestInit = {
 };
 export type ModelPropertyNaming = 'camelCase' | 'snake_case' | 'PascalCase' | 'original';
 
-export type InitOverideFunction = (requestContext: {
+export type InitOverrideFunction = (requestContext: {
   init: HTTPRequestInit;
   context: RequestOpts;
 }) => Promise<RequestInit>;
@@ -299,6 +328,7 @@ function querystringSingleKey(
     | string
     | number
     | null
+    | undefined
     | boolean
     | Array<string | number | null | boolean>
     | Set<string | number | null | boolean>
@@ -355,9 +385,18 @@ export interface ResponseContext {
   response: Response;
 }
 
+export interface ErrorContext {
+  fetch: FetchAPI;
+  url: string;
+  init: RequestInit;
+  error: unknown;
+  response?: Response;
+}
+
 export interface Middleware {
   pre?(context: RequestContext): Promise<FetchParams | void>;
   post?(context: ResponseContext): Promise<Response | void>;
+  onError?(context: ErrorContext): Promise<Response | void>;
 }
 
 export interface ApiResponse<T> {

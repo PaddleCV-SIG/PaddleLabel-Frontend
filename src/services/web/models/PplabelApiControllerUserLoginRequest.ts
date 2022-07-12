@@ -33,6 +33,17 @@ export interface PplabelApiControllerUserLoginRequest {
   password: string;
 }
 
+/**
+ * Check if a given object implements the PplabelApiControllerUserLoginRequest interface.
+ */
+export function instanceOfPplabelApiControllerUserLoginRequest(value: object): boolean {
+  let isInstance = true;
+  isInstance = isInstance && 'username' in value;
+  isInstance = isInstance && 'password' in value;
+
+  return isInstance;
+}
+
 export function PplabelApiControllerUserLoginRequestFromJSON(
   json: any,
 ): PplabelApiControllerUserLoginRequest {

@@ -13,38 +13,40 @@
  */
 
 import * as runtime from '../runtime';
-import {
+import type {
   Annotation,
+  ExportDatasetRequest,
+  GetProgress200Response,
+  ImportDatasetRequest,
+  Label,
+  PredictRequest,
+  Project,
+  SplitDataset200Response,
+  SplitDatasetRequest,
+  Tag,
+  Task,
+} from '../models';
+import {
   AnnotationFromJSON,
   AnnotationToJSON,
-  ExportDatasetRequest,
   ExportDatasetRequestFromJSON,
   ExportDatasetRequestToJSON,
-  GetProgress200Response,
   GetProgress200ResponseFromJSON,
   GetProgress200ResponseToJSON,
-  ImportDatasetRequest,
   ImportDatasetRequestFromJSON,
   ImportDatasetRequestToJSON,
-  Label,
   LabelFromJSON,
   LabelToJSON,
-  PredictRequest,
   PredictRequestFromJSON,
   PredictRequestToJSON,
-  Project,
   ProjectFromJSON,
   ProjectToJSON,
-  SplitDataset200Response,
   SplitDataset200ResponseFromJSON,
   SplitDataset200ResponseToJSON,
-  SplitDatasetRequest,
   SplitDatasetRequestFromJSON,
   SplitDatasetRequestToJSON,
-  Tag,
   TagFromJSON,
   TagToJSON,
-  Task,
   TaskFromJSON,
   TaskToJSON,
 } from '../models';
@@ -135,7 +137,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async createRaw(
     requestParameters: CreateRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Project>> {
     if (requestParameters.project === null || requestParameters.project === undefined) {
       throw new runtime.RequiredError(
@@ -175,7 +177,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async create(
     project: Project,
     requestId?: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Project> {
     const response = await this.createRaw(
       { project: project, requestId: requestId },
@@ -190,7 +192,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async exportDatasetRaw(
     requestParameters: ExportDatasetOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -229,7 +231,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async exportDataset(
     projectId: string,
     exportDatasetRequest?: ExportDatasetRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.exportDatasetRaw(
       { projectId: projectId, exportDatasetRequest: exportDatasetRequest },
@@ -243,7 +245,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getRaw(
     requestParameters: GetRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Project>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -283,7 +285,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async get(
     projectId: string,
     requestId?: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Project> {
     const response = await this.getRaw(
       { projectId: projectId, requestId: requestId },
@@ -298,7 +300,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getAllRaw(
     requestParameters: GetAllRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Array<Project>>> {
     const queryParameters: any = {};
 
@@ -332,7 +334,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async getAll(
     requestId?: string,
     orderBy?: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Project>> {
     const response = await this.getAllRaw(
       { requestId: requestId, orderBy: orderBy },
@@ -347,7 +349,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getAnnotationsRaw(
     requestParameters: GetAnnotationsRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Array<Annotation>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -382,7 +384,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getAnnotations(
     projectId: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Annotation>> {
     const response = await this.getAnnotationsRaw({ projectId: projectId }, initOverrides);
     return await response.value();
@@ -394,7 +396,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getLabelsRaw(
     requestParameters: GetLabelsRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Array<Label>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -429,7 +431,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getLabels(
     projectId: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Label>> {
     const response = await this.getLabelsRaw({ projectId: projectId }, initOverrides);
     return await response.value();
@@ -441,7 +443,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getProgressRaw(
     requestParameters: GetProgressRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<GetProgress200Response>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -478,7 +480,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getProgress(
     projectId: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetProgress200Response> {
     const response = await this.getProgressRaw({ projectId: projectId }, initOverrides);
     return await response.value();
@@ -490,7 +492,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getTagsRaw(
     requestParameters: GetTagsRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Array<Tag>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -525,7 +527,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getTags(
     projectId: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Tag>> {
     const response = await this.getTagsRaw({ projectId: projectId }, initOverrides);
     return await response.value();
@@ -537,7 +539,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async getTasksRaw(
     requestParameters: GetTasksRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Array<Task>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -577,7 +579,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async getTasks(
     projectId: string,
     orderBy?: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Task>> {
     const response = await this.getTasksRaw(
       { projectId: projectId, orderBy: orderBy },
@@ -591,7 +593,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async importDatasetRaw(
     requestParameters: ImportDatasetOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -629,7 +631,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async importDataset(
     projectId: string,
     importDatasetRequest?: ImportDatasetRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.importDatasetRaw(
       { projectId: projectId, importDatasetRequest: importDatasetRequest },
@@ -643,7 +645,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async predictRaw(
     requestParameters: PredictOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -682,7 +684,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async predict(
     projectId: string,
     predictRequest?: PredictRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.predictRaw({ projectId: projectId, predictRequest: predictRequest }, initOverrides);
   }
@@ -693,7 +695,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async removeRaw(
     requestParameters: RemoveRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -733,7 +735,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async remove(
     projectId: string,
     requestId?: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.removeRaw({ projectId: projectId, requestId: requestId }, initOverrides);
   }
@@ -744,7 +746,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async removeLabelsRaw(
     requestParameters: RemoveLabelsRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -779,7 +781,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async removeLabels(
     projectId: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.removeLabelsRaw({ projectId: projectId }, initOverrides);
   }
@@ -790,7 +792,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async setLabelsRaw(
     requestParameters: SetLabelsRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Array<Label>>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -829,7 +831,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async setLabels(
     projectId: string,
     label?: Array<Label>,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Label>> {
     const response = await this.setLabelsRaw({ projectId: projectId, label: label }, initOverrides);
     return await response.value();
@@ -841,7 +843,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async splitDatasetRaw(
     requestParameters: SplitDatasetOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<SplitDataset200Response>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -882,7 +884,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async splitDataset(
     projectId: string,
     splitDatasetRequest?: SplitDatasetRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<SplitDataset200Response> {
     const response = await this.splitDatasetRaw(
       { projectId: projectId, splitDatasetRequest: splitDatasetRequest },
@@ -897,7 +899,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async updateRaw(
     requestParameters: UpdateRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Project>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
@@ -948,7 +950,7 @@ export class ProjectApi extends runtime.BaseAPI {
     projectId: string,
     project: Project,
     requestId?: string,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Project> {
     const response = await this.updateRaw(
       { projectId: projectId, project: project, requestId: requestId },

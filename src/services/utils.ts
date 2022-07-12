@@ -436,10 +436,11 @@ export function AnnotationUtils(
   { label = undefined, project = undefined }: { label: any; project: any },
 ) {
   const [all, setAllRaw] = useState<Annotation[]>([]);
+  const [curr, setCurrRaw] = useState<Annotation | undefined>();
+
   function setAll(annos: Annotation[]) {
     setAllRaw(annos);
   }
-  const [curr, setCurrRaw] = useState<Annotation | undefined>();
 
   const getAll = async (dataId: number) => {
     console.log('AnnotationUtils getAll, dataId:', dataId);

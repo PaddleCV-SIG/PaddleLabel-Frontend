@@ -27,6 +27,15 @@ export interface PredictRequestOther {
   clicks?: Array<any>;
 }
 
+/**
+ * Check if a given object implements the PredictRequestOther interface.
+ */
+export function instanceOfPredictRequestOther(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function PredictRequestOtherFromJSON(json: any): PredictRequestOther {
   return PredictRequestOtherFromJSONTyped(json, false);
 }

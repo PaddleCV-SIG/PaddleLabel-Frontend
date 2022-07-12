@@ -13,7 +13,8 @@
  */
 
 import { exists, mapValues } from '../runtime';
-import { Label, LabelFromJSON, LabelFromJSONTyped, LabelToJSON } from './Label';
+import type { Label } from './Label';
+import { LabelFromJSON, LabelFromJSONTyped, LabelToJSON } from './Label';
 
 /**
  *
@@ -26,7 +27,7 @@ export interface Annotation {
    * @type {number}
    * @memberof Annotation
    */
-  readonly annotationId?: number;
+  annotationId?: number;
   /**
    *
    * @type {number}
@@ -89,6 +90,16 @@ export interface Annotation {
   readonly modified?: string;
 }
 
+/**
+ * Check if a given object implements the Annotation interface.
+ */
+export function instanceOfAnnotation(value: object): boolean {
+  let isInstance = true;
+  isInstance = isInstance && 'dataId' in value;
+
+  return isInstance;
+}
+
 export function AnnotationFromJSON(json: any): Annotation {
   return AnnotationFromJSONTyped(json, false);
 }
@@ -120,6 +131,7 @@ export function AnnotationToJSON(value?: Annotation | null): any {
     return null;
   }
   return {
+    annotation_id: value.annotationId,
     frontend_id: value.frontendId,
     task_id: value.taskId,
     label_id: value.labelId,

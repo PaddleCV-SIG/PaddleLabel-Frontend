@@ -39,6 +39,15 @@ export interface SplitDataset200Response {
   test?: number;
 }
 
+/**
+ * Check if a given object implements the SplitDataset200Response interface.
+ */
+export function instanceOfSplitDataset200Response(value: object): boolean {
+  let isInstance = true;
+
+  return isInstance;
+}
+
 export function SplitDataset200ResponseFromJSON(json: any): SplitDataset200Response {
   return SplitDataset200ResponseFromJSONTyped(json, false);
 }

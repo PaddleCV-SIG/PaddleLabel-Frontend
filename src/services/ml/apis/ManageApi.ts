@@ -23,7 +23,7 @@ export class ManageApi extends runtime.BaseAPI {
    * Detect ml backend running
    */
   async isRunningRaw(
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<string>> {
     const queryParameters: any = {};
 
@@ -46,7 +46,7 @@ export class ManageApi extends runtime.BaseAPI {
    * Detect ml backend running
    * Detect ml backend running
    */
-  async isRunning(initOverrides?: RequestInit | runtime.InitOverideFunction): Promise<string> {
+  async isRunning(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
     const response = await this.isRunningRaw(initOverrides);
     return await response.value();
   }

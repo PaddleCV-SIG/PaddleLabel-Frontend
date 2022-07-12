@@ -46,6 +46,17 @@ export interface PredictRequest {
   createLabel?: boolean;
 }
 
+/**
+ * Check if a given object implements the PredictRequest interface.
+ */
+export function instanceOfPredictRequest(value: object): boolean {
+  let isInstance = true;
+  isInstance = isInstance && 'mlBackendUrl' in value;
+  isInstance = isInstance && 'model' in value;
+
+  return isInstance;
+}
+
 export function PredictRequestFromJSON(json: any): PredictRequest {
   return PredictRequestFromJSONTyped(json, false);
 }

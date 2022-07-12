@@ -13,11 +13,8 @@
  */
 
 import * as runtime from '../runtime';
-import {
-  Points2polygonRequest,
-  Points2polygonRequestFromJSON,
-  Points2polygonRequestToJSON,
-} from '../models';
+import type { Points2polygonRequest } from '../models';
+import { Points2polygonRequestFromJSON, Points2polygonRequestToJSON } from '../models';
 
 export interface Points2polygonOperationRequest {
   points2polygonRequest?: Points2polygonRequest;
@@ -32,7 +29,7 @@ export class DefaultApi extends runtime.BaseAPI {
    */
   async points2polygonRaw(
     requestParameters: Points2polygonOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<Array<string>>> {
     const queryParameters: any = {};
 
@@ -59,7 +56,7 @@ export class DefaultApi extends runtime.BaseAPI {
    */
   async points2polygon(
     points2polygonRequest?: Points2polygonRequest,
-    initOverrides?: RequestInit | runtime.InitOverideFunction,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<string>> {
     const response = await this.points2polygonRaw(
       { points2polygonRequest: points2polygonRequest },
