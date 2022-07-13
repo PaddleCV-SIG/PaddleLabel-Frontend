@@ -308,32 +308,32 @@ const Page: React.FC = () => {
               refresh={refreshVar}
             />
           </div>
+          <div
+            style={{ display: interactorData.active ? 'none' : 'block' }}
+            className="prevTask"
+            onClick={() => {
+              if (!task.prevTask()) {
+                return;
+              }
+              setCurrentAnnotation(undefined);
+              setInteractorData({ active: false, predictData: [], mousePoints: [] });
+            }}
+          />
+          <div
+            style={{ display: interactorData.active ? 'none' : 'block' }}
+            className="nextTask"
+            onClick={() => {
+              if (!task.nextTask()) {
+                return;
+              }
+              setCurrentAnnotation(undefined);
+              setInteractorData({ active: false, predictData: [], mousePoints: [] });
+            }}
+          />
         </Spin>
         <div className="pblock">
           <PPProgress task={task} project={project} />
         </div>
-        <div
-          style={{ display: interactorData.active ? 'none' : 'block' }}
-          className="prevTask"
-          onClick={() => {
-            if (!task.prevTask()) {
-              return;
-            }
-            setCurrentAnnotation(undefined);
-            setInteractorData({ active: false, predictData: [], mousePoints: [] });
-          }}
-        />
-        <div
-          style={{ display: interactorData.active ? 'none' : 'block' }}
-          className="nextTask"
-          onClick={() => {
-            if (!task.nextTask()) {
-              return;
-            }
-            setCurrentAnnotation(undefined);
-            setInteractorData({ active: false, predictData: [], mousePoints: [] });
-          }}
-        />
       </div>
       <PPToolBar disLoc="right">
         <PPAIButton
