@@ -354,6 +354,7 @@ const Page: React.FC = () => {
           {intl.formatMessage({ id: 'pages.toolBar.interactor' })}
         </PPAIButton>
         <PPSetButton
+          disabled={!interactorData.active}
           imgSrc="./pics/buttons/threshold.png"
           disLoc="left"
           size={threshold}
@@ -367,6 +368,13 @@ const Page: React.FC = () => {
           {intl.formatMessage({ id: 'pages.toolBar.segmentThreshold' })}
         </PPSetButton>
         <PPSetButton
+          disabled={!interactorData.active}
+          imgSrc="./pics/buttons/radius.png"
+          disLoc="left"
+        >
+          {intl.formatMessage({ id: 'pages.toolBar.visualRadius' })}
+        </PPSetButton>
+        <PPSetButton
           imgSrc="./pics/buttons/alpha.png"
           disLoc="left"
           size={transparency}
@@ -377,9 +385,6 @@ const Page: React.FC = () => {
           }}
         >
           {intl.formatMessage({ id: 'pages.toolBar.transparency' })}
-        </PPSetButton>
-        <PPSetButton imgSrc="./pics/buttons/radius.png" disLoc="left">
-          {intl.formatMessage({ id: 'pages.toolBar.visualRadius' })}
         </PPSetButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
