@@ -43,7 +43,7 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
   ) : (
     <PPColorBall
       color={label.color}
-      changeable={true}
+      changeable={false}
       onChange={(targetColor) => {
         label.color = targetColor.hex;
         props.onLabelModify(label);

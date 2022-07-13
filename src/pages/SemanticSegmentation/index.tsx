@@ -120,7 +120,7 @@ const Page: React.FC = () => {
     modifyAnnoByFrontendId: modifyAnnoByFrontendId,
     onMouseUp: () => {
       // Do not record interactor's history, do not pushToBackend either
-      if (tool.curr == 'interactor') return;
+      if (interactorData.active) return;
       recordHistory({ annos: annotation.all, currAnno: annotation.curr });
       annotation.pushToBackend(data.curr?.dataId, annotation.all);
     },
@@ -139,7 +139,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/polygon.png"
           active={tool.curr == 'polygon'}
-          disabled={tool.curr == 'interactor'}
+          disabled={interactorData.active}
           onClick={() => {
             if (!label.curr) {
               message.error('Please select a label first');
@@ -153,7 +153,7 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton
           active={tool.curr == 'editor'}
-          disabled={tool.curr == 'interactor'}
+          disabled={interactorData.active}
           imgSrc="./pics/buttons/edit.png"
           onClick={() => {
             tool.setCurr('editor');
@@ -166,7 +166,7 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/brush.png"
           size={brushSize}
           active={tool.curr == 'brush'}
-          disabled={tool.curr == 'interactor'}
+          disabled={interactorData.active}
           onClick={() => {
             if (!label.curr) {
               message.error('Please select a label first');
@@ -186,7 +186,7 @@ const Page: React.FC = () => {
         <PPSetButton
           size={brushSize}
           active={tool.curr == 'rubber'}
-          disabled={tool.curr == 'interactor'}
+          disabled={interactorData.active}
           onClick={() => {
             if (tool.curr != 'rubber' && tool.curr != 'brush') {
               setCurrentAnnotation(undefined);
@@ -221,7 +221,7 @@ const Page: React.FC = () => {
           onClick={() => {
             annotation.pushToBackend(data.curr?.dataId);
           }}
-          disabled={tool.curr == 'interactor'}
+          disabled={interactorData.active}
         >
           {intl.formatMessage({ id: 'pages.toolBar.save' })}
         </PPToolBarButton>
@@ -229,7 +229,15 @@ const Page: React.FC = () => {
           active={tool.curr == 'mover'}
           imgSrc="./pics/buttons/move.png"
           onClick={() => {
-            tool.setCurr('mover');
+            if (tool.curr == 'mover') {
+              if (interactorData.active) {
+                tool.setCurr('interactor');
+              } else {
+                tool.setCurr(undefined);
+              }
+            } else {
+              tool.setCurr('mover');
+            }
           }}
         >
           {intl.formatMessage({ id: 'pages.toolBar.move' })}
@@ -243,7 +251,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(res.currAnno);
             }
           }}
-          disabled={tool.curr == 'interactor'}
+          disabled={interactorData.active}
         >
           {intl.formatMessage({ id: 'pages.toolBar.unDo' })}
         </PPToolBarButton>
@@ -256,7 +264,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(res.currAnno);
             }
           }}
-          disabled={tool.curr == 'interactor'}
+          disabled={interactorData.active}
         >
           {intl.formatMessage({ id: 'pages.toolBar.reDo' })}
         </PPToolBarButton>
@@ -266,7 +274,7 @@ const Page: React.FC = () => {
             annotation.setAll([]);
             annotation.setCurr(undefined);
           }}
-          disabled={tool.curr == 'interactor'}
+          disabled={interactorData.active}
         >
           {intl.formatMessage({ id: 'pages.toolBar.clearMark' })}
         </PPToolBarButton>
@@ -284,7 +292,7 @@ const Page: React.FC = () => {
               onAnnotationModify={modifyAnnoByFrontendId}
               onAnnotationModifyComplete={() => {
                 // Do not record interactor's history
-                if (tool.curr == 'interactor') return;
+                if (interactorData.active) return;
                 recordHistory({ annos: annotation.all, currAnno: annotation.curr });
               }}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
@@ -305,35 +313,40 @@ const Page: React.FC = () => {
           <PPProgress task={task} project={project} />
         </div>
         <div
-          style={{ display: tool.curr == 'interactor' ? 'none' : 'block' }}
+          style={{ display: interactorData.active ? 'none' : 'block' }}
           className="prevTask"
           onClick={() => {
             if (!task.prevTask()) {
               return;
             }
             setCurrentAnnotation(undefined);
-            setInteractorData({ predictData: [], mousePoints: [] });
+            setInteractorData({ active: false, predictData: [], mousePoints: [] });
           }}
         />
         <div
-          style={{ display: tool.curr == 'interactor' ? 'none' : 'block' }}
+          style={{ display: interactorData.active ? 'none' : 'block' }}
           className="nextTask"
           onClick={() => {
             if (!task.nextTask()) {
               return;
             }
             setCurrentAnnotation(undefined);
-            setInteractorData({ predictData: [], mousePoints: [] });
+            setInteractorData({ active: false, predictData: [], mousePoints: [] });
           }}
         />
       </div>
       <PPToolBar disLoc="right">
         <PPAIButton
           imgSrc="./pics/buttons/intelligent_interaction.png"
-          active={tool.curr == 'interactor'}
+          active={interactorData.active}
           onClick={() => {
-            if (tool.curr != 'interactor') tool.setCurr('interactor');
-            else tool.setCurr(undefined);
+            if (interactorData.active) {
+              tool.setCurr(undefined);
+              setInteractorData({ active: false, predictData: [], mousePoints: [] });
+            } else {
+              tool.setCurr('interactor');
+              setInteractorData({ active: true, predictData: [], mousePoints: [] });
+            }
           }}
           model={model}
           project={project}
@@ -392,7 +405,7 @@ const Page: React.FC = () => {
             type="primary"
             block
             onClick={() => {
-              if (tool.curr == 'interactor') {
+              if (interactorData.active) {
                 console.log(tool.curr);
                 const anno = interactorToAnnotation(
                   threshold,
@@ -408,7 +421,7 @@ const Page: React.FC = () => {
                   annotation.pushToBackend(data.curr?.dataId, newAnnos);
                 }
               }
-              setInteractorData({ predictData: [], mousePoints: [] });
+              setInteractorData({ active: true, predictData: [], mousePoints: [] });
               setCurrentAnnotation(undefined);
             }}
           >
@@ -445,7 +458,7 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
             await annotation.pushToBackend(data.curr?.dataId, newAll);
           }}
-          disabled={tool.curr == 'interactor'}
+          disabled={interactorData.active}
         />
       </div>
     </PPLabelPageContainer>

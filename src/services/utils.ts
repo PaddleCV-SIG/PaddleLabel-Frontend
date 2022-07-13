@@ -808,7 +808,6 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   async function setMlBackendUrl(url: string) {
     modelApi = new ModelApi(new Configuration({ basePath: url }));
     setBackendUrl(url);
-    getAll();
     console.log('ml backend url set', url);
   }
 

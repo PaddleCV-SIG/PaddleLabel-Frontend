@@ -5,6 +5,7 @@ import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Annotation } from '@/models/Annotation';
 import { useModel } from 'umi';
 import { Label } from '@/models';
+import { message } from 'antd';
 
 const SAMPLE_RESULT = {
   result: [
@@ -254,18 +255,14 @@ function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D) 
     else ctx.fillStyle = '#008000';
     // Filled triangle
     ctx.beginPath();
-    ctx.moveTo(x, y - 10);
-    ctx.lineTo(x - 10, y + 10);
-    ctx.lineTo(x + 10, y + 10);
+    ctx.arc(x, y, 10, 0, 2 * Math.PI);
+    ctx.lineWidth = 2;
     ctx.fill();
 
     // Stroked triangle
     ctx.strokeStyle = '#FFF';
     ctx.beginPath();
-    ctx.moveTo(x, y - 10);
-    ctx.lineTo(x - 10, y + 10);
-    ctx.lineTo(x + 10, y + 10);
-    ctx.closePath();
+    ctx.arc(x, y, 10, 0, 2 * Math.PI);
     ctx.stroke();
   }
 }
@@ -349,7 +346,11 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
    * Record +- points, send API for latest mark, render on Canvas.
    */
   const OnMouseDown = async (param: EvtProps) => {
-    if (props.currentTool != 'interactor' || !props.currentLabel?.color) return;
+    if (props.currentTool != 'interactor') return;
+    if (!props.currentLabel?.color) {
+      message.error('please select label first');
+      return;
+    }
     const mouseX = Math.round(param.mouseX);
     const mouseY = Math.round(param.mouseY);
     console.log(
@@ -377,7 +378,11 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     });
     if (!line) return;
     // setInteractorData(line.result);
-    setInteractorData({ mousePoints: interactorData.mousePoints, predictData: line.result });
+    setInteractorData({
+      active: true,
+      mousePoints: interactorData.mousePoints,
+      predictData: line.result,
+    });
   };
 
   const OnMouseMove = () => {};

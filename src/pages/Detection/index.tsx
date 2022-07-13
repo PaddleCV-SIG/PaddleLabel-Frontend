@@ -298,6 +298,7 @@ const Page: React.FC = () => {
           }}
         />
         <PPAnnotationList
+          disabled={false}
           currAnnotation={annotation.curr}
           annotations={annotation.all}
           onAnnotationSelect={(selectedAnno) => {

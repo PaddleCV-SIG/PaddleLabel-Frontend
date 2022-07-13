@@ -14,7 +14,7 @@ export type PPAIModalProps = {
   project: any;
 };
 
-const DEFAULT_ML_URL = 'http://127.0.0.1:1234/model';
+const DEFAULT_ML_URL = 'http://127.0.0.1:1234';
 
 const Component: React.FC<PPAIModalProps> = (props) => {
   // const intl = useIntl();
