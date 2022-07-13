@@ -21,6 +21,7 @@ export type PPRenderFuncProps = {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   interactorData?: InteractorData;
   label?: Label;
+  radius?: number;
 };
 
 export type PPDrawToolProps = {

@@ -243,11 +243,11 @@ function drawAnnotation(param: PPRenderFuncProps) {
   if (!ctx) return <></>;
   console.log(`PPInteractor.drawAnnotation`, param.interactorData);
   renderPoints(filterPoints(result, param.threshold), ctx, param.label.color);
-  renderMousePoints(param.interactorData.mousePoints, ctx);
+  renderMousePoints(param.interactorData.mousePoints, ctx, param.radius || 10);
   return <></>;
 }
 
-function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D) {
+function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D, radius: number) {
   if (!mousePoints) return;
   for (const [x, y, positive] of mousePoints) {
     ctx.beginPath();
@@ -255,14 +255,14 @@ function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D) 
     else ctx.fillStyle = '#008000';
     // Filled triangle
     ctx.beginPath();
-    ctx.arc(x, y, 10, 0, 2 * Math.PI);
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.lineWidth = 2;
     ctx.fill();
 
     // Stroked triangle
     ctx.strokeStyle = '#FFF';
     ctx.beginPath();
-    ctx.arc(x, y, 10, 0, 2 * Math.PI);
+    ctx.arc(x, y, radius, 0, 2 * Math.PI);
     ctx.stroke();
   }
 }

@@ -142,7 +142,11 @@ export function ToolUtils(
   curr: ToolType;
   setCurr: (tool: ToolType) => void;
 } {
-  const [curr, setCurr] = useState<ToolType>(defaultTool);
+  const [curr, setCurrRaw] = useState<ToolType>(defaultTool);
+  const setCurr = (tool: ToolType) => {
+    setCurrRaw(tool);
+    console.trace();
+  };
   return {
     curr,
     setCurr,
@@ -501,7 +505,6 @@ export function AnnotationUtils(
 
   async function setCurr(annotation: Annotation | undefined) {
     console.log('annotation.setCurr:', annotation);
-    console.trace();
     if (annotation == undefined) {
       setCurrRaw(undefined);
       return;

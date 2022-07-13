@@ -33,6 +33,7 @@ const Page: React.FC = () => {
   const [brushSize, setBrushSize] = useState(10);
   const [threshold, setThreshold] = useState(50);
   const [transparency, setTransparency] = useState(60);
+  const { radius, setRadius } = useModel('VisualRadius');
   const { interactorData, setInteractorData } = useModel('InteractorData');
 
   const model = ModelUtils(useState);
@@ -57,7 +58,6 @@ const Page: React.FC = () => {
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
     setFrontendId(0);
-    tool.setCurr('mover');
   }
 
   const setCurrentAnnotation = (anno?: Annotation) => {
@@ -371,6 +371,13 @@ const Page: React.FC = () => {
           disabled={!interactorData.active}
           imgSrc="./pics/buttons/radius.png"
           disLoc="left"
+          size={radius}
+          maxSize={50}
+          minSize={5}
+          step={5}
+          onChange={(newSize) => {
+            setRadius(newSize);
+          }}
         >
           {intl.formatMessage({ id: 'pages.toolBar.visualRadius' })}
         </PPSetButton>
