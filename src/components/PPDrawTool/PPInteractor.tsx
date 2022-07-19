@@ -363,7 +363,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     }
     const mouseX = Math.round(param.mouseX);
     const mouseY = Math.round(param.mouseY);
-    console.log(`onMouseDown`, param);
     const frontendId =
       props.frontendIdOps.frontendId > 0
         ? props.frontendIdOps.frontendId
@@ -374,18 +373,13 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (!interactorData.mousePoints.length || !param.stageRef.current || frontendId == undefined) {
       return;
     }
-    // const stage: StageType = param.stageRef.current;
-    // const imgBase64 = stage.findOne('.baseImage').toDataURL().slice(22);
     const imgBase64 = getBase64Image(param.img);
-    console.log(imgBase64);
     const line = await model.predict({
       format: 'b64',
       img: imgBase64,
       other: { clicks: interactorData.mousePoints },
     });
-    console.log(line.result);
     if (!line) return;
-    // setInteractorData(line.result);
     setInteractorData({
       active: true,
       mousePoints: interactorData.mousePoints,
