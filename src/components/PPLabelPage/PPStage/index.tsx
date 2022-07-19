@@ -116,6 +116,7 @@ const Component: React.FC<PPStageProps> = (props) => {
       offsetY: -imageHeight / 2,
       canvasRef: canvasRef,
       stageRef: stageRef,
+      img: image,
     };
   };
 
@@ -181,18 +182,6 @@ const Component: React.FC<PPStageProps> = (props) => {
 
   return (
     <>
-      <canvas
-        style={{ display: 'none' }}
-        id="virtualCanvas"
-        width={image?.width}
-        height={image?.height}
-      />
-      <canvas
-        style={{ display: 'none' }}
-        id="singleLineCanvas"
-        width={image?.width}
-        height={image?.height}
-      />
       <canvas
         style={{ display: 'none' }}
         id="canvasId"

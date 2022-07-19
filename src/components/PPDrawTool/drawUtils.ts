@@ -48,6 +48,7 @@ export type EvtProps = {
   offsetY: number;
   canvasRef: React.RefObject<HTMLCanvasElement>;
   stageRef: React.RefObject<StageType>;
+  img?: HTMLImageElement;
 };
 
 export type EvtType = (props: EvtProps) => void;

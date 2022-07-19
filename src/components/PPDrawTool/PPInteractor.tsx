@@ -231,6 +231,16 @@ const SAMPLE_RESULT = {
     ],
   ],
 };
+function getBase64Image(img?: HTMLImageElement) {
+  if (!img) return '';
+  const canvas = document.createElement('canvas');
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext('2d');
+  ctx?.drawImage(img, 0, 0);
+  const dataURL = canvas.toDataURL('image/png');
+  return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
+}
 
 /**
  * Color lines on canvas as label.color
@@ -353,12 +363,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     }
     const mouseX = Math.round(param.mouseX);
     const mouseY = Math.round(param.mouseY);
-    console.log(
-      `frontendId: `,
-      props.frontendIdOps.frontendId,
-      'maxId:',
-      getMaxFrontendId(props.annotations),
-    );
+    console.log(`onMouseDown`, param);
     const frontendId =
       props.frontendIdOps.frontendId > 0
         ? props.frontendIdOps.frontendId
@@ -370,12 +375,15 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       return;
     }
     const stage: StageType = param.stageRef.current;
-    const imgBase64 = stage.findOne('.baseImage').toDataURL().slice(22);
+    // const imgBase64 = stage.findOne('.baseImage').toDataURL().slice(22);
+    const imgBase64 = getBase64Image(param.img);
+    console.log(imgBase64);
     const line = await model.predict({
       format: 'b64',
       img: imgBase64,
       other: { clicks: interactorData.mousePoints },
     });
+    console.log(line.result);
     if (!line) return;
     // setInteractorData(line.result);
     setInteractorData({
