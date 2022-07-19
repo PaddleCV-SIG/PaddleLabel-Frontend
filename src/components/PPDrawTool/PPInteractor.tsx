@@ -374,7 +374,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (!interactorData.mousePoints.length || !param.stageRef.current || frontendId == undefined) {
       return;
     }
-    const stage: StageType = param.stageRef.current;
+    // const stage: StageType = param.stageRef.current;
     // const imgBase64 = stage.findOne('.baseImage').toDataURL().slice(22);
     const imgBase64 = getBase64Image(param.img);
     console.log(imgBase64);
