@@ -62,22 +62,22 @@ export default [
   },
   {
     path: '/keypoint_detection',
-    name: 'keypoint_detection',
+    // name: 'keypoint_detection',
     component: './KeypointDetection',
   },
   {
     path: '/medical',
-    name: 'medical',
+    // name: 'medical',
     component: './Medical',
   },
   {
     path: '/remote_sensing',
-    name: 'remote-sensing',
+    // name: 'remote-sensing',
     component: './RemoteSensing',
   },
   {
     path: '/change_detection',
-    name: 'change-detection',
+    // name: 'change-detection',
     component: './ChangeDetection',
   },
   {
