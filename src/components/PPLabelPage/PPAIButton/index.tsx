@@ -46,6 +46,7 @@ const Component: React.FC<PPAIModalProps> = (props) => {
       </Popover>
       <PPInteractorModal
         visible={modalVisible}
+        setVisible={setModalVisible}
         model={model}
         project={project}
         onCancel={() => {

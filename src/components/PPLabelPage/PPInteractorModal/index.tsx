@@ -8,6 +8,7 @@ export type PPInteractorModalProps = {
   onCancel?: () => void;
   model: any;
   project: any;
+  setVisible: (visible: boolean) => void;
 };
 
 const DEFAULT_ML_URL = 'http://127.0.0.1:1234';
@@ -38,7 +39,6 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     console.log('saveMlsettings', project.curr, settings);
     if (!project.curr) {
       message.error('Please select project first!');
-      return;
     }
     if (!project.curr.otherSettings) project.curr.otherSettings = {};
 
@@ -79,6 +79,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
         onFinish={(values) => {
           console.log('form finish', values);
           saveMlsettings(values);
+          props.setVisible(false);
         }}
         autoComplete="off"
       >

@@ -66,6 +66,27 @@ const Page: React.FC = () => {
     else setFrontendId(anno.frontendId);
   };
 
+  const saveInteractorData = () => {
+    if (interactorData.active) {
+      console.log(tool.curr);
+      const anno = interactorToAnnotation(
+        threshold,
+        annotation.all,
+        interactorData?.predictData,
+        data.curr?.dataId,
+        label.curr,
+      );
+      if (anno) {
+        const newAnnos = annotation.all.concat([anno]);
+        annotation.setAll(newAnnos);
+        setCurrentAnnotation(anno);
+        annotation.pushToBackend(data.curr?.dataId, newAnnos);
+      }
+      setInteractorData({ active: true, predictData: [], mousePoints: [] });
+      setCurrentAnnotation(undefined);
+    }
+  };
+
   useEffect(() => {
     initHistory();
   }, []);
@@ -309,25 +330,27 @@ const Page: React.FC = () => {
             />
           </div>
           <div
-            style={{ display: interactorData.active ? 'none' : 'block' }}
             className="prevTask"
             onClick={() => {
+              if (interactorData.active) saveInteractorData();
               if (!task.prevTask()) {
                 return;
               }
               setCurrentAnnotation(undefined);
-              setInteractorData({ active: false, predictData: [], mousePoints: [] });
+              if (!interactorData.active)
+                setInteractorData({ active: false, predictData: [], mousePoints: [] });
             }}
           />
           <div
-            style={{ display: interactorData.active ? 'none' : 'block' }}
             className="nextTask"
             onClick={() => {
+              if (interactorData.active) saveInteractorData();
               if (!task.nextTask()) {
                 return;
               }
               setCurrentAnnotation(undefined);
-              setInteractorData({ active: false, predictData: [], mousePoints: [] });
+              if (!interactorData.active)
+                setInteractorData({ active: false, predictData: [], mousePoints: [] });
             }}
           />
         </Spin>
@@ -417,24 +440,7 @@ const Page: React.FC = () => {
             type="primary"
             block
             onClick={() => {
-              if (interactorData.active) {
-                console.log(tool.curr);
-                const anno = interactorToAnnotation(
-                  threshold,
-                  annotation.all,
-                  interactorData?.predictData,
-                  data.curr?.dataId,
-                  label.curr,
-                );
-                if (anno) {
-                  const newAnnos = annotation.all.concat([anno]);
-                  annotation.setAll(newAnnos);
-                  setCurrentAnnotation(anno);
-                  annotation.pushToBackend(data.curr?.dataId, newAnnos);
-                }
-              }
-              setInteractorData({ active: true, predictData: [], mousePoints: [] });
-              setCurrentAnnotation(undefined);
+              saveInteractorData();
             }}
           >
             {intl.formatMessage({ id: 'pages.toolBar.determineOutline' })}
