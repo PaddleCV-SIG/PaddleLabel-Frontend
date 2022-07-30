@@ -4,7 +4,6 @@ export default {
   'global.semanticSegmentation': '语义分割',
   'global.instanceSegmentation': '实例分割',
   'global.keypointDetection': '关键点检测',
-  'global.project': '项目',
   'global.labelFormat.singleClass': '单分类',
   'global.labelFormat.multiClass': '多分类',
   'global.labelFormat.coco': 'COCO格式',
@@ -17,7 +16,4 @@ export default {
   'global.period': '。',
   'global.absolutePath': '绝对路径',
   'global.anyString': '中英文，数字，特殊符号',
-  // "global.splitDataset":"划分数据集",
-  // "global.exportDataset":"导出数据集",
-  // "global.importAdditionalData":"导入额外数据",
 };

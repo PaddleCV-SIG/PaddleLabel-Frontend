@@ -73,7 +73,6 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
 
   useEffect(() => {
     projects.getCurr(projectId).then((project) => {
-      console.log('project', project);
       const values = {
         name: project?.name,
         description: project?.description,
@@ -92,7 +91,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
         {/* TODO: increase left width and decrease right */}
         <div id="left" className={styles.block_l}>
           <_PPBlock
-            title={intl(props.taskCategory, 'global') + intl('project', 'global')}
+            title={intl(props.taskCategory, 'global') + intl('project')}
             style={{ height: 760, padding: '1.25rem 0' }}
           >
             <Form

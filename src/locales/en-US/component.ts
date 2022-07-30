@@ -9,6 +9,9 @@ export default {
   'component.PPCreater.update': 'Update',
   'component.PPCreater.create': 'Create',
   'component.PPCreater.cancel': 'Cancel',
+  'component.PPCreater.labelFormat': 'Label Format',
+  'component.PPCreater.project': ' Project',
+
   'component.PPAddLabelModal.selectColor': 'Select Color',
   'component.PPAddLabelModal.addLabel': 'Add Label',
   'component.PPAddLabelModal.labelName': 'Label Name',
@@ -59,4 +62,20 @@ export default {
   'component.PPExportModal.path': 'Path',
   'component.PPExportModal.pathNotNull': 'Must input path',
   'component.PPExportModal.exportSuccess': 'Export Success',
+
+  'component.PPSplitDataset.title': 'Split Dataset',
+  'component.PPSplitDataset.train': 'Training',
+  'component.PPSplitDataset.validation': 'Validation',
+  'component.PPSplitDataset.test': 'Test',
+  'component.PPSplitDataset.success': 'Dataset is randomly splitted',
+  'component.PPImportModal.import': 'Import',
+
+  'component.PPImportModal.title': 'Import Additional Data',
+  'component.PPImportModal.path': 'Data Path',
+
+  'component.PPInteractorModal.title': 'Interactor Settings',
+  'component.PPInteractorModal.mlBackendUrl': 'ML Backend URL',
+  'component.PPInteractorModal.modelPath': 'Model File Path',
+  'component.PPInteractorModal.weightPath': 'Weight File Path',
+  'component.PPInteractorModal.pathPh': 'Leave blank for default or fill in absolute path',
 };

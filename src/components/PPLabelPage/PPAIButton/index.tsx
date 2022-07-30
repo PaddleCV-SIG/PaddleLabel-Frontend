@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import PPInteractorModal from '../PPInteractorModal';
 import PPToolBarButton from '../PPToolBarButton';
 import styles from './index.less';
+import { IntlInit } from '@/services/utils';
 
 export type PPAIModalProps = {
   visible?: boolean;
@@ -16,7 +17,7 @@ export type PPAIModalProps = {
 };
 
 const Component: React.FC<PPAIModalProps> = (props) => {
-  // const intl = useIntl();
+  const intl = IntlInit('component.PPInteractorModal');
   const model = props.model;
   const project = props.project;
 
@@ -34,7 +35,7 @@ const Component: React.FC<PPAIModalProps> = (props) => {
             style={{ height: '2.5rem' }}
             block
           >
-            {'Interactor Settings'}
+            {intl('title')}
           </Button>
         }
         trigger={'hover'}

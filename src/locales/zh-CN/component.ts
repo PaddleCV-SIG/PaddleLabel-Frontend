@@ -11,6 +11,7 @@ export default {
   'component.PPCreater.create': '创建',
   'component.PPCreater.cancel': '取消',
   'component.PPCreater.creationFail': '项目创建失败',
+  'component.PPCreater.project': '项目',
 
   'component.PPAddLabelModal.selectColor': '选择色彩',
   'component.PPAddLabelModal.addLabel': '创建标签',
@@ -68,6 +69,10 @@ export default {
   'component.PPImportModal.path': '额外数据路径',
   'component.PPImportModal.import': '导入',
   'component.PPImportModal.nullPath': '额外数据路径不能为空',
-  // "component.PPImportModal.":"",
-  // "component.PPImportModal.":"",
+
+  'component.PPInteractorModal.title': '智能标注设置',
+  'component.PPInteractorModal.mlBackendUrl': '机器学习后端网址',
+  'component.PPInteractorModal.modelPath': '模型文件路径',
+  'component.PPInteractorModal.weightPath': '权重文件路径',
+  'component.PPInteractorModal.pathPh': '不填写使用默认路径，或填写绝对路径',
 };

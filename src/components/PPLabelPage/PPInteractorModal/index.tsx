@@ -1,7 +1,7 @@
 import { Form, Input, message, Modal, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useEffect } from 'react';
-import { useIntl } from 'umi';
+import { IntlInit } from '@/services/utils';
 
 export type PPInteractorModalProps = {
   visible?: boolean;
@@ -15,7 +15,8 @@ const DEFAULT_ML_URL = 'http://127.0.0.1:1234';
 
 const Component: React.FC<PPInteractorModalProps> = (props) => {
   const [form] = Form.useForm();
-  const intl = useIntl();
+  // const intl = useIntl();
+  const intl = IntlInit('component.PPInteractorModal');
 
   const model = props.model;
   const project = props.project;
@@ -60,12 +61,12 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     message.info("Ml setting saved. Let's start trainig or inference!");
   }
 
-  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
-  const ok = intl.formatMessage({ id: 'component.PPSegMode.ok' });
+  // const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
+  // const ok = intl.formatMessage({ id: 'component.PPSegMode.ok' });
 
   return (
     <Modal
-      title={intl.formatMessage({ id: 'component.PPInteractorModal.title' })}
+      title={intl('title')}
       visible={props.visible}
       onCancel={props.onCancel}
       footer={null}
@@ -85,7 +86,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
       >
         <Form.Item
           name={'mlBackendUrl'}
-          label={'ML Backend URL'}
+          label={intl('mlBackendUrl')}
           labelCol={{
             span: 6,
           }}
@@ -99,7 +100,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
         </Form.Item>
         <Form.Item
           name={'mlModelAbsPath'}
-          label={'Model Path'}
+          label={intl('modelPath')}
           labelCol={{
             span: 6,
           }}
@@ -108,11 +109,11 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           }}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input placeholder="Absolute path" />
+          <Input placeholder={intl('pathPh')} />
         </Form.Item>
         <Form.Item
           name={'mlWeightAbsPath'}
-          label={'Weight Path'}
+          label={intl('weightPath')}
           labelCol={{
             span: 6,
           }}
@@ -121,7 +122,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           }}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input placeholder="Absolute path" />
+          <Input placeholder={intl('pathPh')} />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
@@ -131,10 +132,10 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
                 props.onCancel?.call(0);
               }}
             >
-              {cancel}
+              {intl('cancel', 'global')}
             </Button>
             <Button type="primary" htmlType="submit">
-              {ok}
+              {intl('ok', 'global')}
             </Button>
           </Space>
         </Form.Item>
