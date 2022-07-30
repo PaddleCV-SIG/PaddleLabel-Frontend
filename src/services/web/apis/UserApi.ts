@@ -13,10 +13,10 @@
  */
 
 import * as runtime from '../runtime';
-import type { PplabelApiControllerUserLoginRequest, User } from '../models';
+import type { PaddlelabelApiControllerUserLoginRequest, User } from '../models';
 import {
-  PplabelApiControllerUserLoginRequestFromJSON,
-  PplabelApiControllerUserLoginRequestToJSON,
+  PaddlelabelApiControllerUserLoginRequestFromJSON,
+  PaddlelabelApiControllerUserLoginRequestToJSON,
   UserFromJSON,
   UserToJSON,
 } from '../models';
@@ -25,8 +25,8 @@ export interface GetRequest {
   uuid: string;
 }
 
-export interface PplabelApiControllerUserLoginOperationRequest {
-  pplabelApiControllerUserLoginRequest?: PplabelApiControllerUserLoginRequest;
+export interface PaddlelabelApiControllerUserLoginOperationRequest {
+  paddlelabelApiControllerUserLoginRequest?: PaddlelabelApiControllerUserLoginRequest;
 }
 
 export interface RemoveRequest {
@@ -156,8 +156,8 @@ export class UserApi extends runtime.BaseAPI {
   /**
    * Login and get JWT
    */
-  async pplabelApiControllerUserLoginRaw(
-    requestParameters: PplabelApiControllerUserLoginOperationRequest,
+  async paddlelabelApiControllerUserLoginRaw(
+    requestParameters: PaddlelabelApiControllerUserLoginOperationRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     const queryParameters: any = {};
@@ -172,8 +172,8 @@ export class UserApi extends runtime.BaseAPI {
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: PplabelApiControllerUserLoginRequestToJSON(
-          requestParameters.pplabelApiControllerUserLoginRequest,
+        body: PaddlelabelApiControllerUserLoginRequestToJSON(
+          requestParameters.paddlelabelApiControllerUserLoginRequest,
         ),
       },
       initOverrides,
@@ -185,12 +185,12 @@ export class UserApi extends runtime.BaseAPI {
   /**
    * Login and get JWT
    */
-  async pplabelApiControllerUserLogin(
-    pplabelApiControllerUserLoginRequest?: PplabelApiControllerUserLoginRequest,
+  async paddlelabelApiControllerUserLogin(
+    paddlelabelApiControllerUserLoginRequest?: PaddlelabelApiControllerUserLoginRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
-    await this.pplabelApiControllerUserLoginRaw(
-      { pplabelApiControllerUserLoginRequest: pplabelApiControllerUserLoginRequest },
+    await this.paddlelabelApiControllerUserLoginRaw(
+      { paddlelabelApiControllerUserLoginRequest: paddlelabelApiControllerUserLoginRequest },
       initOverrides,
     );
   }

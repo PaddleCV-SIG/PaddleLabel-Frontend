@@ -20,9 +20,9 @@ models/ImportDatasetRequest.ts
 models/Label.ts
 models/LoadSample200Response.ts
 models/LoadSampleRequest.ts
+models/PaddlelabelApiControllerUserLoginRequest.ts
 models/Points2polygonRequest.ts
 models/Polygon2pointsRequest.ts
-models/PplabelApiControllerUserLoginRequest.ts
 models/PredictRequest.ts
 models/Project.ts
 models/ProjectOtherSettings.ts
