@@ -200,13 +200,8 @@ export const ProjectUtils = (useState: UseStateType) => {
   }
 
   async function create(project: Project) {
-    try {
-      const newProject: Project = await projectApi.create(project);
-      return newProject;
-    } catch (err) {
-      // console.log('project create err', err);
-      serviceUtils.parseError(err, message);
-    }
+    const newProject: Project = await projectApi.create(project);
+    return newProject;
   }
 
   async function update(projectId: number, project: Project) {

@@ -52,6 +52,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       projects
         .create({ ...values, taskCategoryId: createInfo[props.taskCategory]['id'] })
         .catch((err) => {
+          message.error(intl('creationFail'));
           serviceUtils.parseError(err, message);
           setLoading(false);
         })
