@@ -1,32 +1,32 @@
 import React from 'react';
 import { message } from 'antd';
-import { history, useIntl } from 'umi';
+import { history } from 'umi';
 import PPCreater from '@/components/PPCreater';
 import PPContainer from '@/components/PPContainer';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, getVersion } from '@/services/utils';
+import { createInfo, getVersion, IntlInit } from '@/services/utils';
 
 const Project: React.FC = () => {
   getVersion();
-  const intl = useIntl();
-  const noTaskCategory = intl.formatMessage({ id: 'pages.ProjectDetail.noTaskCategory' });
-  const invalidTaskCategory = intl.formatMessage({
-    id: 'pages.ProjectDetail.invalidTaskCategory',
-  });
+  const intl = IntlInit('pages.projectDetail');
+  // const noTaskCategory = intl.formatMessage({ id: 'pages.ProjectDetail.noTaskCategory' });
+  // const invalidTaskCategory = intl.formatMessage({
+  //   id: 'pages.ProjectDetail.invalidTaskCategory',
+  // });
 
   // 1. get taskCategory and ensure exist + valid
   const taskCategory = serviceUtils.getQueryVariable('taskCategory');
   console.log(taskCategory);
 
   if (!taskCategory) {
-    message.error(noTaskCategory);
+    message.error(intl('noTaskCategory'));
     history.push('/');
-    return;
+    return null;
   }
   if (!(taskCategory in createInfo)) {
-    message.error(invalidTaskCategory + ' ' + taskCategory);
+    message.error(intl('invalidTaskCategory') + ' ' + taskCategory);
     history.push('/');
-    return;
+    return null;
   }
   return (
     <PPContainer>

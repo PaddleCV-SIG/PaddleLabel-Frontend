@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Spin, message } from 'antd';
-import { useIntl, history } from 'umi';
+import { history } from 'umi';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -8,7 +8,7 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
-import { PageInit } from '@/services/utils';
+import { IntlInit, PageInit } from '@/services/utils';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import type { Annotation } from '@/models/Annotation';
 import PPRectangle from '@/components/PPDrawTool/PPRectangle';
@@ -18,6 +18,7 @@ const Page: React.FC = () => {
   // todo: change to use annotation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [frontendId, setFrontendId] = useState<number>(0);
+  const tbIntl = IntlInit('pages.toolBar');
 
   const { tool, loading, scale, annotation, task, data, project, label } = PageInit(
     useState,
@@ -85,9 +86,9 @@ const Page: React.FC = () => {
     } else {
       annotation.update(annotation?.curr);
     }
-    console.log('finish after', annotation.curr);
-    message.success('Save Success!');
-    console.log('tool', tool.curr);
+    // console.log('finish after', annotation.curr);
+    message.success(tbIntl('saveSuccess'));
+    // console.log('tool', tool.curr);
     if (tool.curr == 'rectangle') setCurrentAnnotation(undefined);
   }
 
@@ -113,17 +114,6 @@ const Page: React.FC = () => {
 
   const drawTool = { polygon: rectagle, brush: undefined };
 
-  const intl = useIntl();
-  const rectangleBtn = intl.formatMessage({ id: 'pages.toolBar.rectangle' });
-  const zoomIn = intl.formatMessage({ id: 'pages.toolBar.zoomIn' });
-  const zoomOut = intl.formatMessage({ id: 'pages.toolBar.zoomOut' });
-  const move = intl.formatMessage({ id: 'pages.toolBar.move' });
-  const unDo = intl.formatMessage({ id: 'pages.toolBar.unDo' });
-  const reDo = intl.formatMessage({ id: 'pages.toolBar.reDo' });
-  const save = intl.formatMessage({ id: 'pages.toolBar.save' });
-  const edit = intl.formatMessage({ id: 'pages.toolBar.edit' });
-  const clearMark = intl.formatMessage({ id: 'pages.toolBar.clearMark' });
-
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -132,14 +122,14 @@ const Page: React.FC = () => {
           active={tool.curr == 'rectangle'}
           onClick={() => {
             if (!label.curr) {
-              message.error('Please choose a label category first!');
+              message.error(tbIntl('chooseCategoryFirst'));
               return;
             }
             tool.setCurr('rectangle');
             setCurrentAnnotation(undefined);
           }}
         >
-          {rectangleBtn}
+          {tbIntl('rectangle')}
         </PPToolBarButton>
         <PPToolBarButton
           active={tool.curr == 'editor'}
@@ -148,7 +138,7 @@ const Page: React.FC = () => {
             tool.setCurr('editor');
           }}
         >
-          {edit}
+          {tbIntl('edit')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
@@ -156,7 +146,7 @@ const Page: React.FC = () => {
             scale.change(0.1);
           }}
         >
-          {zoomIn}
+          {tbIntl('zoomIn')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
@@ -164,7 +154,7 @@ const Page: React.FC = () => {
             scale.change(-0.1);
           }}
         >
-          {zoomOut}
+          {tbIntl('zoomOut')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
@@ -172,7 +162,7 @@ const Page: React.FC = () => {
             annotation.pushToBackend(data.curr?.dataId);
           }}
         >
-          {save}
+          {tbIntl('save')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
@@ -181,7 +171,7 @@ const Page: React.FC = () => {
             tool.setCurr('mover');
           }}
         >
-          {move}
+          {tbIntl('move')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
@@ -194,7 +184,7 @@ const Page: React.FC = () => {
             }
           }}
         >
-          {unDo}
+          {tbIntl('unDo')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
@@ -206,7 +196,7 @@ const Page: React.FC = () => {
             }
           }}
         >
-          {reDo}
+          {tbIntl('reDo')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/clear_mark.png"
@@ -215,7 +205,7 @@ const Page: React.FC = () => {
             recordHistory({ annos: [] });
           }}
         >
-          {clearMark}
+          {tbIntl('clearMark')}
         </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
@@ -272,7 +262,7 @@ const Page: React.FC = () => {
             history.push(`/project_overview?projectId=${project.curr.projectId}`);
           }}
         >
-          {'Project Overview'}
+          {tbIntl('projectOverview')}
         </PPToolBarButton>
         {/* <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"

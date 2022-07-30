@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from 'react';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Annotation } from '@/models/Annotation';
 import { useModel } from 'umi';
 import { Label } from '@/models';
 import { message } from 'antd';
+import { IntlInit } from '@/services/utils';
 
 const SAMPLE_RESULT = {
   result: [
@@ -351,6 +351,7 @@ function getMaxFrontendId(annotations?: Annotation[]) {
 export default function (props: PPDrawToolProps): PPDrawToolRet {
   const { interactorData, setInteractorData } = useModel('InteractorData');
   const model = props.model;
+  const tbIntl = IntlInit('pages.toolBar');
 
   /**
    * Record +- points, send API for latest mark, render on Canvas.
@@ -358,7 +359,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   const OnMouseDown = async (param: EvtProps) => {
     if (props.currentTool != 'interactor') return;
     if (!props.currentLabel?.color) {
-      message.error('please select label first');
+      message.error(tbIntl('chooseCategoryFirst'));
       return;
     }
     const mouseX = Math.round(param.mouseX);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Progress } from 'antd';
+import { IntlInit } from '@/services/utils';
 
 export type PPProgressProps = {
   project: any;
@@ -7,6 +8,7 @@ export type PPProgressProps = {
 };
 
 const component: React.FC<PPProgressProps> = (props) => {
+  const intl = IntlInit('pages.toolBar.progress');
   return (
     <div className="progress">
       <Progress
@@ -16,8 +18,8 @@ const component: React.FC<PPProgressProps> = (props) => {
         showInfo={false}
       />{' '}
       <span className="progressDesc">
-        Current labeling {props.task.currIdx == undefined ? 1 : props.task.currIdx + 1} of{' '}
-        {props.task.all?.length}. Already labeled {props.project.finished || 0}.
+        {`${intl('')}: ${props.project.finished || 0}/${props.task.all?.length}
+        ${intl('currentId')}: ${props.task.currIdx == undefined ? 1 : props.task.currIdx + 1} `}
       </span>
     </div>
   );

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Col, Form, Input, Button, Radio, Row, Spin, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
-import { history, useIntl } from 'umi';
+import { history } from 'umi';
 import styles from './index.less';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, camel2snake } from '@/services/utils';
+import { createInfo, camel2snake, IntlInit, snake2camel } from '@/services/utils';
 import { ProjectUtils } from '@/services/utils';
 
 export type _PPCardProps = {
@@ -44,14 +44,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const projectId = serviceUtils.getQueryVariable('projectId');
   const [loading, setLoading] = useState<boolean>(false);
 
-  const intl = useIntl();
-  const projectName = intl.formatMessage({ id: 'component.PPCreater.projectName' });
-  const datasePath = intl.formatMessage({ id: 'component.PPCreater.datasePath' });
-  const description = intl.formatMessage({ id: 'component.PPCreater.description' });
-  const maxPoints = intl.formatMessage({ id: 'component.PPCreater.maxPoints' });
-  const update = intl.formatMessage({ id: 'component.PPCreater.update' });
-  const create = intl.formatMessage({ id: 'component.PPCreater.create' });
-  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
+  const intl = IntlInit('component.PPCreater');
 
   const saveProject = (values: any) => {
     setLoading(true);
@@ -74,7 +67,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   };
 
   // const taskCategory = props.taskCategory;
-  const title = props.taskCategory ? createInfo[props.taskCategory].name : null;
+
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -97,7 +90,10 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       <Spin tip="Import in progress" spinning={loading}>
         {/* TODO: increase left width and decrease right */}
         <div id="left" className={styles.block_l}>
-          <_PPBlock title={title} style={{ height: 760, padding: '1.25rem 0' }}>
+          <_PPBlock
+            title={intl(props.taskCategory, 'global') + intl('project', 'global')}
+            style={{ height: 760, padding: '1.25rem 0' }}
+          >
             <Form
               form={form}
               layout="horizontal"
@@ -110,7 +106,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
             >
               <Form.Item
                 name="name"
-                label={projectName}
+                label={intl('projectName')}
                 labelCol={{
                   span: 6,
                 }}
@@ -125,13 +121,17 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 ]}
                 style={{ fontSize: '1.5rem' }}
               >
-                <Input size="large" placeholder="Words or numbers" style={{ height: '3.13rem' }} />
+                <Input
+                  size="large"
+                  placeholder={intl('anyString', 'global')}
+                  style={{ height: '3.13rem' }}
+                />
               </Form.Item>
               <Form.Item
                 name="dataDir"
                 label={
                   <div>
-                    {datasePath}{' '}
+                    {intl('datasePath')}{' '}
                     <QuestionCircleOutlined
                       style={{ fontSize: '12px' }}
                       onClick={() =>
@@ -163,14 +163,14 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
               >
                 <Input
                   size="large"
-                  placeholder="Dataset Path"
+                  placeholder={intl('absolutePath', 'global')}
                   style={{ height: '3.13rem' }}
                   disabled={projectId == undefined ? false : true}
                 />
               </Form.Item>
               <Form.Item
                 name="description"
-                label={description}
+                label={intl('description')}
                 labelCol={{
                   span: 6,
                 }}
@@ -186,7 +186,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
               >
                 <Input
                   size="large"
-                  placeholder="Project description"
+                  placeholder={intl('anyString', 'global')}
                   style={{ height: '3.13rem' }}
                 />
               </Form.Item>
@@ -194,8 +194,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 name="labelFormat"
                 label={
                   <div>
-                    {' '}
-                    Label Format
+                    {intl('labelFormat')}
                     <QuestionCircleOutlined
                       style={{ fontSize: '12px' }}
                       onClick={() =>
@@ -231,16 +230,16 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 }}
               >
                 <Radio.Group size="large" style={{ height: '3.13rem' }}>
-                  {Object.entries(createInfo[props.taskCategory].labelFormats).map(([k, v]) => (
+                  {Object.keys(createInfo[props.taskCategory].labelFormats).map((k) => (
                     <Radio key={k} value={k}>
-                      {v}
+                      {intl(snake2camel(k), 'global.labelFormat')}
                     </Radio>
                   ))}
                 </Radio.Group>
               </Form.Item>
               <Form.Item
                 name="maxPoints"
-                label={maxPoints}
+                label={intl('maxPoints')}
                 labelCol={{
                   span: 6,
                 }}
@@ -272,7 +271,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                   style={{ height: '2.5rem', width: '48%' }}
                   block
                 >
-                  {projectId ? update : create}
+                  {projectId ? intl('update') : intl('create')}
                 </Button>
                 &nbsp;&nbsp;
                 <Button
@@ -283,7 +282,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                     history.goBack();
                   }}
                 >
-                  {cancel}
+                  {intl('cancel')}
                 </Button>
               </Form.Item>
             </Form>

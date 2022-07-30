@@ -6,7 +6,14 @@ import PPBlock from '@/components/PPBlock';
 import PPExportModal from '@/components/PPProjectOverview/PPExportModal';
 import PPImportModal from '@/components/PPProjectOverview/PPImportModal';
 import PPSplitDatasetModal from '@/components/PPProjectOverview/PPSplitDatasetModal';
-import { toDict, TaskUtils, ProjectUtils, snake2camel, camel2snake } from '@/services/utils';
+import {
+  toDict,
+  TaskUtils,
+  ProjectUtils,
+  snake2camel,
+  camel2snake,
+  IntlInit,
+} from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
 import type { Task } from '@/services';
 import type { ColumnsType } from 'antd/es/table';
@@ -16,6 +23,7 @@ const loading =
 
 const TaskList: React.FC = () => {
   // const [divideModalVisible, setDivideModalVisible] = useState<boolean>(false);
+  const intl = IntlInit('pages.projectOverview');
   const task = TaskUtils(useState);
   const project = ProjectUtils(useState);
   const [updateTable, setUpdateTable] = useState<number>(0);
@@ -38,7 +46,7 @@ const TaskList: React.FC = () => {
       sorter: (a, b) => a.taskId - b.taskId,
     },
     {
-      title: 'Annotation Count',
+      title: intl('annotationCount'),
       dataIndex: 'annotations',
       key: 'taskId',
       width: '25%',
@@ -47,7 +55,7 @@ const TaskList: React.FC = () => {
       sorter: (a, b) => a.annotations.length - b.annotations.length,
     },
     {
-      title: 'Set',
+      title: intl('split'),
       dataIndex: 'set',
       key: 'taskId',
       width: '25%',
@@ -56,7 +64,7 @@ const TaskList: React.FC = () => {
       sorter: (a, b) => a.set - b.set,
     },
     {
-      title: 'Image',
+      title: intl('image'),
       dataIndex: 'dataPaths',
       key: 'taskId',
       width: '25%',
@@ -90,7 +98,7 @@ const TaskList: React.FC = () => {
             );
           }}
         >
-          {'Label'}
+          {intl('label')}
         </Button>
       ),
     },
@@ -121,7 +129,7 @@ const TaskList: React.FC = () => {
           }}
           hidden={task.all?.length == 0}
         >
-          {'Label'}
+          {intl('label')}
         </Button>
         <Button
           type="primary"
@@ -134,7 +142,7 @@ const TaskList: React.FC = () => {
             );
           }}
         >
-          {'Project Detail'}
+          {intl('projectSettings')}
         </Button>
         <PPSplitDatasetModal
           project={project.curr}
@@ -151,8 +159,8 @@ const TaskList: React.FC = () => {
           visible={task.all?.length != 0}
         />
       </PPBlock>
-      <PPBlock title={'Tasks'}>
-        <p>{`Task Count: ${task.all?.length} \n`}</p>
+      <PPBlock title={intl('tasks')}>
+        <p>{`${intl('taskCount')}: ${task.all?.length} \n`}</p>
         {(() => {
           if (task.all?.length == 0)
             return (

@@ -1,10 +1,9 @@
 import { Form, Input, message, Modal, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useState } from 'react';
-import { useIntl } from 'umi';
 import styles from './index.less';
-import { exportDataset } from '@/services/utils';
-import type { Project } from '@/services/models';
+import { exportDataset, IntlInit } from '@/services/utils';
+import type { Project } from '@/services/web/models/';
 
 type PPExportProps = {
   project: Project;
@@ -12,22 +11,20 @@ type PPExportProps = {
 };
 
 const PPExportModal: React.FC<PPExportProps> = (props) => {
-  const intl = useIntl();
+  const intl = IntlInit('component.PPExportModal');
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-
-  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
 
   const [form] = Form.useForm();
 
   return (
     <span hidden={props.visible == false}>
       <Button type="primary" onClick={() => setVisible(true)}>
-        {'Export Dataset'}
+        {intl('title')}
       </Button>
       <Modal
         className={styles.modal}
-        title={intl.formatMessage({ id: 'component.PPExportModal.title' })}
+        title={intl('title')}
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
@@ -41,15 +38,13 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
           onFinish={(values) => {
             const path = values.path;
             if (!path) {
-              message.error(intl.formatMessage({ id: 'component.PPExportModal.pathNotNull' }));
+              message.error(intl('nullPath'));
               return;
             }
             setLoading(true);
             exportDataset(props.project.projectId, path)
               .then(() => {
-                message.success(
-                  intl.formatMessage({ id: 'component.PPExportModal.exportSuccess' }),
-                );
+                message.success(intl('exportSuccess'));
                 setVisible(false);
               })
               .finally(() => {
@@ -58,7 +53,7 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
           }}
           autoComplete="off"
         >
-          <Form.Item label={intl.formatMessage({ id: 'component.PPExportModal.path' })} name="path">
+          <Form.Item label={intl('path')} name="path">
             <Input />
           </Form.Item>
 
@@ -70,10 +65,10 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
                   form.resetFields();
                 }}
               >
-                {cancel}
+                {intl('cancel', 'global')}
               </Button>
               <Button type="primary" htmlType="submit" loading={loading}>
-                {intl.formatMessage({ id: 'component.PPExportModal.export' })}
+                {intl('export')}
               </Button>
             </Space>
           </Form.Item>

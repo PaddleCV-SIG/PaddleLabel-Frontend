@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Spin, message } from 'antd';
-import { useIntl, history } from 'umi';
+import { history } from 'umi';
 import styles from './index.less';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
@@ -8,7 +8,7 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
-import { PageInit } from '@/services/utils';
+import { PageInit, IntlInit } from '@/services/utils';
 import type { Label, Annotation } from '@/models';
 
 const Page: React.FC = () => {
@@ -22,12 +22,7 @@ const Page: React.FC = () => {
     },
   );
 
-  const intl = useIntl();
-  const zoomIn = intl.formatMessage({ id: 'pages.toolBar.zoomIn' });
-  const zoomOut = intl.formatMessage({ id: 'pages.toolBar.zoomOut' });
-  const move = intl.formatMessage({ id: 'pages.toolBar.move' });
-  const save = intl.formatMessage({ id: 'pages.toolBar.save' });
-  const autoSave = intl.formatMessage({ id: 'pages.toolBar.autoSave' });
+  const tbIntl = IntlInit('pages.toolBar');
 
   function postProjectChanged() {
     if (project.curr?.labelFormat == 'single_class') label.setOneHot(true);
@@ -66,7 +61,7 @@ const Page: React.FC = () => {
             scale.change(0.1);
           }}
         >
-          {zoomIn}
+          {tbIntl('zoomIn')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
@@ -74,15 +69,15 @@ const Page: React.FC = () => {
             scale.change(-0.1);
           }}
         >
-          {zoomOut}
+          {tbIntl('zoomOut')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
           onClick={() => {
-            message.success(autoSave);
+            message.success(tbIntl('autoSave'));
           }}
         >
-          {save}
+          {tbIntl('save')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/move.png"
@@ -91,7 +86,7 @@ const Page: React.FC = () => {
             tool.setCurr('mover');
           }}
         >
-          {move}
+          {tbIntl('move')}
         </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
@@ -120,7 +115,7 @@ const Page: React.FC = () => {
             history.push(`/project_overview?projectId=${project.curr.projectId}`);
           }}
         >
-          {'Project Overview'}
+          {tbIntl('projectOverview')}
         </PPToolBarButton>
         {/* <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"

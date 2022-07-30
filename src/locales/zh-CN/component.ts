@@ -1,7 +1,8 @@
 export default {
   'component.PPCreater.projectName': '项目名称',
-  'component.PPCreater.datasePath': '数据地址',
-  'component.PPCreater.description': '数据集描述',
+  'component.PPCreater.datasePath': '数据集路径',
+  'component.PPCreater.description': '项目描述',
+  'component.PPCreater.labelFormat': '标注格式',
   'component.PPCreater.maxPoints': '最大点数',
   'component.PPCreater.annotationMode': '标注模式',
   'component.PPCreater.pixelMode': '像素级标注',
@@ -9,6 +10,7 @@ export default {
   'component.PPCreater.update': '更新',
   'component.PPCreater.create': '创建',
   'component.PPCreater.cancel': '取消',
+
   'component.PPAddLabelModal.selectColor': '选择色彩',
   'component.PPAddLabelModal.addLabel': '创建标签',
   'component.PPAddLabelModal.labelName': '标签名',
@@ -48,4 +50,23 @@ export default {
   'component.PPSegMode.remoteSensing': '遥感数据分割',
   'component.PPSegMode.changeDetection': '遥感变化检测',
   'component.PPSegMode.ok': '确定',
+
+  'component.PPSplitDataset.title': '划分数据集',
+  'component.PPSplitDataset.train': '训练集比例',
+  'component.PPSplitDataset.validation': '验证集比例',
+  'component.PPSplitDataset.test': '测试集比例',
+  'component.PPSplitDataset.success': '数据集划分成功',
+
+  'component.PPExportModal.title': '导出数据集',
+  'component.PPExportModal.path': '导出路径',
+  'component.PPExportModal.exportSuccess': '数据集导出成功',
+  'component.PPExportModal.export': '导出',
+  'component.PPExportModal.nullPath': '导出路径不能为空',
+
+  'component.PPImportModal.title': '导入额外数据',
+  'component.PPImportModal.path': '额外数据路径',
+  'component.PPImportModal.import': '导入',
+  'component.PPImportModal.nullPath': '额外数据路径不能为空',
+  // "component.PPImportModal.":"",
+  // "component.PPImportModal.":"",
 };

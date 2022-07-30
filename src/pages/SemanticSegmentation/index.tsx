@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
 import React, { useEffect, useState } from 'react';
 import { Button, message, Spin } from 'antd';
-import { useIntl, history, useModel } from 'umi';
+import { history, useModel } from 'umi';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
@@ -13,7 +13,7 @@ import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/c
 import PPBrush from '@/components/PPDrawTool/PPBrush';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
-import { ModelUtils, PageInit } from '@/services/utils';
+import { IntlInit, ModelUtils, PageInit } from '@/services/utils';
 import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 import PPInteractor, { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
@@ -29,6 +29,7 @@ export type HistoryType = {
 };
 
 const Page: React.FC = () => {
+  const tbIntl = IntlInit('pages.toolBar');
   const [frontendId, setFrontendId] = useState<number>(0);
   const [brushSize, setBrushSize] = useState(10);
   const [threshold, setThreshold] = useState(50);
@@ -127,7 +128,7 @@ const Page: React.FC = () => {
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
     model: model,
   };
-  const intl = useIntl();
+
   const drawTool = {
     polygon: PPPolygon(drawToolParam),
     brush: PPBrush(drawToolParam),
@@ -142,14 +143,14 @@ const Page: React.FC = () => {
           disabled={interactorData.active}
           onClick={() => {
             if (!label.curr) {
-              message.error('Please select a label first');
+              message.error(tbIntl('chooseCategoryFirst'));
               return;
             }
             tool.setCurr('polygon');
             setCurrentAnnotation(undefined);
           }}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.polygon' })}
+          {tbIntl('polygon')}
         </PPToolBarButton>
         <PPToolBarButton
           active={tool.curr == 'editor'}
@@ -160,7 +161,7 @@ const Page: React.FC = () => {
             setCurrentAnnotation(undefined);
           }}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.edit' })}
+          {tbIntl('edit')}
         </PPToolBarButton>
         <PPSetButton
           imgSrc="./pics/buttons/brush.png"
@@ -169,7 +170,7 @@ const Page: React.FC = () => {
           disabled={interactorData.active}
           onClick={() => {
             if (!label.curr) {
-              message.error('Please select a label first');
+              message.error(tbIntl('chooseCategoryFirst'));
               return;
             }
             if (tool.curr != 'rubber' && tool.curr != 'brush') {
@@ -181,7 +182,7 @@ const Page: React.FC = () => {
             setBrushSize(newBrushSize);
           }}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.brush' })}
+          {tbIntl('brush')}
         </PPSetButton>
         <PPSetButton
           size={brushSize}
@@ -198,7 +199,7 @@ const Page: React.FC = () => {
           }}
           imgSrc="./pics/buttons/rubber.png"
         >
-          {intl.formatMessage({ id: 'pages.toolBar.rubber' })}
+          {tbIntl('rubber')}
         </PPSetButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
@@ -206,7 +207,7 @@ const Page: React.FC = () => {
             scale.change(0.1);
           }}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.zoomIn' })}
+          {tbIntl('zoomIn')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
@@ -214,7 +215,7 @@ const Page: React.FC = () => {
             scale.change(-0.1);
           }}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.zoomOut' })}
+          {tbIntl('zoomOut')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
@@ -223,7 +224,7 @@ const Page: React.FC = () => {
           }}
           disabled={interactorData.active}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.save' })}
+          {tbIntl('save')}
         </PPToolBarButton>
         <PPToolBarButton
           active={tool.curr == 'mover'}
@@ -240,7 +241,7 @@ const Page: React.FC = () => {
             }
           }}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.move' })}
+          {tbIntl('move')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
@@ -253,7 +254,7 @@ const Page: React.FC = () => {
           }}
           disabled={interactorData.active}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.unDo' })}
+          {tbIntl('unDo')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
@@ -266,7 +267,7 @@ const Page: React.FC = () => {
           }}
           disabled={interactorData.active}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.reDo' })}
+          {tbIntl('reDo')}
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/clear_mark.png"
@@ -276,7 +277,7 @@ const Page: React.FC = () => {
           }}
           disabled={interactorData.active}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.clearMark' })}
+          {tbIntl('clearMark')}
         </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
@@ -351,7 +352,7 @@ const Page: React.FC = () => {
           model={model}
           project={project}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.interactor' })}
+          {tbIntl('interactor')}
         </PPAIButton>
         <PPSetButton
           disabled={!interactorData.active}
@@ -365,7 +366,7 @@ const Page: React.FC = () => {
             setThreshold(newSize);
           }}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.segmentThreshold' })}
+          {tbIntl('segmentThreshold')}
         </PPSetButton>
         <PPSetButton
           disabled={!interactorData.active}
@@ -379,7 +380,7 @@ const Page: React.FC = () => {
             setRadius(newSize);
           }}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.visualRadius' })}
+          {tbIntl('visualRadius')}
         </PPSetButton>
         <PPSetButton
           imgSrc="./pics/buttons/alpha.png"
@@ -391,7 +392,7 @@ const Page: React.FC = () => {
             setTransparency(newSize);
           }}
         >
-          {intl.formatMessage({ id: 'pages.toolBar.transparency' })}
+          {tbIntl('transparency')}
         </PPSetButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
@@ -399,7 +400,7 @@ const Page: React.FC = () => {
             history.push(`/project_overview?projectId=${project.curr.projectId}`);
           }}
         >
-          {'Project Overview'}
+          {tbIntl('projectOverview')}
         </PPToolBarButton>
         {/* <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
@@ -437,7 +438,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
             }}
           >
-            {intl.formatMessage({ id: 'pages.toolBar.determineOutline' })}
+            {tbIntl('determineOutline')}
           </Button>
         </div>
         <PPLabelList

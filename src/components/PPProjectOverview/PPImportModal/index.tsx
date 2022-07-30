@@ -1,9 +1,8 @@
 import { Form, Input, message, Modal, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useState } from 'react';
-import { useIntl } from 'umi';
 import styles from './index.less';
-import { importDataset } from '@/services/utils';
+import { importDataset, IntlInit } from '@/services/utils';
 import type { Project } from '@/services/models';
 
 type PPImportProps = {
@@ -13,21 +12,21 @@ type PPImportProps = {
 };
 
 const PPImportModal: React.FC<PPImportProps> = (props) => {
-  const intl = useIntl();
+  const intl = IntlInit('component.PPImportModal');
+
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
 
   const [form] = Form.useForm();
 
   return (
     <span hidden={props.visible == false}>
       <Button type="primary" onClick={() => setVisible(true)}>
-        {'Import Additional Data'}
+        {intl('title')}
       </Button>
       <Modal
         className={styles.modal}
-        title={'Import Additional Data'}
+        title={intl('title')}
         visible={visible}
         footer={null}
         onCancel={() => setVisible(false)}
@@ -41,7 +40,7 @@ const PPImportModal: React.FC<PPImportProps> = (props) => {
           onFinish={(values) => {
             const path = values.path;
             if (!path) {
-              message.error(intl.formatMessage({ id: 'component.PPExportModal.pathNotNull' }));
+              message.error(intl('nullPath'));
               return;
             }
             setLoading(true);
@@ -56,7 +55,7 @@ const PPImportModal: React.FC<PPImportProps> = (props) => {
           }}
           autoComplete="off"
         >
-          <Form.Item label={'Dataset Path'} name="path">
+          <Form.Item label={intl('path')} name="path">
             <Input />
           </Form.Item>
 
@@ -68,10 +67,10 @@ const PPImportModal: React.FC<PPImportProps> = (props) => {
                   form.resetFields();
                 }}
               >
-                {cancel}
+                {intl('cancel', 'global')}
               </Button>
               <Button type="primary" htmlType="submit" loading={loading}>
-                {'Import'}
+                {intl('import')}
               </Button>
             </Space>
           </Form.Item>

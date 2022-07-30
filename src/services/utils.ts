@@ -2,7 +2,7 @@
 
 import type { DependencyList, Dispatch, EffectCallback, SetStateAction } from 'react';
 import { message } from 'antd';
-import { history } from 'umi';
+import { history, useIntl } from 'umi';
 import serviceUtils from '@/services/serviceUtils';
 import type { Task, Project, Data } from '@/services/web';
 import {
@@ -33,7 +33,7 @@ export type UseEffectType = (effect: EffectCallback, deps?: DependencyList | und
 
 export const createInfo = {
   classification: {
-    name: 'Image Classification',
+    name: 'Classification',
     avatar: './pics/classification.jpg',
     id: 1,
     labelFormats: { single_class: 'Single Class', multi_class: 'Multi Class' },
@@ -113,18 +113,28 @@ export const indexOf = (item: any, arr: any[], key: string) => {
   return undefined;
 };
 
-export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 20]) => {
+export function IntlInit(page: string) {
+  const useintl = useIntl();
+  return (id: string, pageName: string = page) => {
+    if (id == '') return useintl.formatMessage({ id: pageName });
+    return useintl.formatMessage({ id: pageName + '.' + id });
+  };
+}
+
+// scale image
+export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 10]) => {
   const [curr, setCurr] = useState<number>(1);
+  const intl = IntlInit('pages.toolBar.scale');
 
   function setScale(scale: number) {
     let s: number = scale;
     if (s < range[0]) {
       s = range[0];
-      message.error('Smallest scale is ' + range[0]);
+      message.error(intl('smallestScale') + ': ' + range[0]);
     }
     if (s > range[1]) {
       s = range[1];
-      message.error('Largest scale is ' + range[1]);
+      message.error(intl('largestScale') + ': ' + range[1]);
     }
     setCurr(s);
   }
@@ -371,15 +381,16 @@ export const LabelUtils = (
 export const TaskUtils = (useState: UseStateType, props: { annotation: any; push: boolean }) => {
   const [all, setAll] = useState<Task[]>();
   const [currIdx, setCurrIdx] = useState<number>();
+  const intl = IntlInit('pages.toolBar.task');
 
   const turnTo = async (turnToIdx: number) => {
     if (!all) return false;
     if (turnToIdx < 0) {
-      message.error('This is the first image. No previous image.');
+      message.error(intl('noPrev'));
       return false;
     }
     if (turnToIdx == all.length) {
-      message.error('This is the final image. No next image.');
+      message.error(intl('noNext'));
       return false;
     }
     setCurrIdx(turnToIdx);
@@ -395,7 +406,6 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any; push
       const allRes = await projectApi.getTasks(projectId, orderBy);
       setAll(allRes);
       if (turnToIdx != undefined) {
-        console.log('getall turnto');
         turnTo(turnToIdx);
         return [allRes, allRes[turnToIdx]];
       }
@@ -441,6 +451,7 @@ export function AnnotationUtils(
 ) {
   const [all, setAllRaw] = useState<Annotation[]>([]);
   const [curr, setCurrRaw] = useState<Annotation | undefined>();
+  const tbIntl = IntlInit('pages.toolBar');
 
   function setAll(annos: Annotation[]) {
     setAllRaw(annos);
@@ -547,7 +558,7 @@ export function AnnotationUtils(
     console.log('pushToBackend, dataId:', dataId, 'newAll:', newAll);
     try {
       await dataApi.setAnnotations(dataId + '', newAll);
-      return message.success('Save success');
+      return message.success(tbIntl('saveSuccess'));
     } catch (err) {
       return serviceUtils.parseError(err, message);
     }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Button, Space, Spin } from 'antd';
-import { history, useIntl } from 'umi';
+import { Row, Col, Button, Space, Spin, message } from 'antd';
+import { history } from 'umi';
 import PPContainer from '@/components/PPContainer';
 import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
@@ -8,16 +8,13 @@ import PPTable from '@/components/PPTable';
 import PPButton from '@/components/PPButton';
 import PPSampleButton from '@/components/PPSampleButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { toDict, ProjectUtils, getVersion, snake2camel } from '@/services/utils';
+import { toDict, ProjectUtils, getVersion, snake2camel, IntlInit } from '@/services/utils';
 import { createInfo } from '@/services/utils';
 import type { ColumnsType } from 'antd/es/table';
 import type { Project } from '@/services/web/models';
 
 const Projects: React.FC = (props) => {
-  const intl = useIntl();
-  const label = intl.formatMessage({ id: 'pages.welcome.label' });
-  const remove = intl.formatMessage({ id: 'pages.welcome.remove' });
-  const myProjects = intl.formatMessage({ id: 'pages.welcome.myProjects' });
+  const intl = IntlInit('pages.welcome');
 
   console.log('render projects');
   const projects = ProjectUtils(useState);
@@ -66,7 +63,7 @@ const Projects: React.FC = (props) => {
               history.push(`/project_overview?projectId=${project.projectId}`);
             }}
           >
-            {'Overview'}
+            {intl('overview')}
           </PPButton>
           <PPButton
             width="4.375rem"
@@ -76,7 +73,7 @@ const Projects: React.FC = (props) => {
               history.push(`/${project.taskCategory.name}?projectId=${project.projectId}`);
             }}
           >
-            {label}
+            {intl('label')}
           </PPButton>
           <PPButton
             width="4.375rem"
@@ -87,7 +84,7 @@ const Projects: React.FC = (props) => {
               projects.remove(project).then(() => props.setDeleting(false));
             }}
           >
-            {remove}
+            {intl('remove')}
           </PPButton>
         </Space>
       ),
@@ -102,7 +99,7 @@ const Projects: React.FC = (props) => {
   return (
     <Row style={{ marginTop: 20 }}>
       <Col span={24}>
-        <PPBlock title={myProjects}>
+        <PPBlock title={intl('myProjects')}>
           <PPTable columns={columns} dataSource={toDict(projects.all)} showHeader={false} />
         </PPBlock>
       </Col>
@@ -111,23 +108,26 @@ const Projects: React.FC = (props) => {
 };
 
 const Welcome: React.FC = () => {
-  const intl = useIntl();
-  const [deleting, setDeleting] = useState<boolean>(false);
-  const createProject = intl.formatMessage({ id: 'pages.welcome.createProject' });
-  const sampleProject = intl.formatMessage({ id: 'pages.welcome.sampleProject' });
-  const trainingKnowledge = intl.formatMessage({ id: 'pages.welcome.trainingKnowledge' });
-  const paddleClas = intl.formatMessage({ id: 'pages.welcome.paddleClas' });
-  const paddleDet = intl.formatMessage({ id: 'pages.welcome.paddleDet' });
-  const paddleSeg = intl.formatMessage({ id: 'pages.welcome.paddleSeg' });
-  const paddleX = intl.formatMessage({ id: 'pages.welcome.paddleX' });
+  const intl = IntlInit('pages.welcome');
 
+  const [deleting, setDeleting] = useState<boolean>(false);
   function createButtons() {
     const creators = [];
     for (const [taskCategory, info] of Object.entries(createInfo)) {
       creators.push(
         <PPOverlapCol span={4}>
-          <PPCard imgSrc={info.avatar} href={'/project_detail?taskCategory=' + taskCategory}>
-            {info.name}
+          <PPCard
+            imgSrc={info.avatar}
+            href={'/project_detail?taskCategory=' + taskCategory}
+            onClick={
+              taskCategory != 'keypointDetection'
+                ? undefined
+                : () => {
+                    message.info(intl('underDevelopment', 'global'));
+                  }
+            }
+          >
+            {intl(taskCategory, 'global')}
           </PPCard>
         </PPOverlapCol>,
       );
@@ -144,30 +144,30 @@ const Welcome: React.FC = () => {
               history.push('/sample_project');
             }}
           >
-            {sampleProject}
+            {intl('sampleProject')}
           </PPSampleButton>
         </Col>
       </Row>
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>
         <Col span={17}>
-          <PPBlock title={createProject} style={{ height: 430 }}>
+          <PPBlock title={intl('createProject')} style={{ height: 430 }}>
             <Row>{createButtons()}</Row>
           </PPBlock>
         </Col>
         <Col span={7}>
-          <PPBlock title={trainingKnowledge} style={{ height: 430 }}>
+          <PPBlock title={intl('trainingKnowledge')} style={{ height: 430 }}>
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                {paddleClas}
+                {intl('paddleClas')}
               </Button>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                {paddleDet}
+                {intl('paddleDet')}
               </Button>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                {paddleSeg}
+                {intl('paddleSeg')}
               </Button>
               <Button type="primary" style={{ height: '3.125rem' }} block>
-                {paddleX}
+                {intl('paddleX')}
               </Button>
             </Space>
           </PPBlock>
