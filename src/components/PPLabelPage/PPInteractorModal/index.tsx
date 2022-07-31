@@ -54,11 +54,22 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     // project.getCurr(projectId);
     // Call ML LOAD
     model.setMlBackendUrl(project.curr.otherSettings.mlBackendUrl);
-    model.load(
-      project.curr.otherSettings.models.EISeg.mlModelAbsPath,
-      project.curr.otherSettings.models.EISeg.mlWeightAbsPath,
-    );
-    message.info("Ml setting saved. Let's start trainig or inference!");
+    props.model.setLoading(true);
+    model
+      .load(
+        project.curr.otherSettings.models.EISeg.mlModelAbsPath,
+        project.curr.otherSettings.models.EISeg.mlWeightAbsPath,
+      )
+      .then(
+        () => {
+          message.info(intl('modelLoaded'));
+          props.model.setLoading(false);
+        },
+        () => {
+          props.model.setLoading(false);
+        },
+      );
+    message.info(intl('settingSaved'));
   }
 
   // const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });

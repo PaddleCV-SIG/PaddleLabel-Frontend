@@ -95,6 +95,7 @@ export default {
   'pages.tableList.deleting': 'Deleting',
   'pages.tableList.deletSuccess': 'DeletSuccess',
   'pages.tableList.deletFailed': 'Deletion failed, please try again',
+
   'pages.toolBar.polygon': 'Polygon',
   'pages.toolBar.brush': 'Brush',
   'pages.toolBar.rubber': 'Rubber',
@@ -128,6 +129,8 @@ export default {
   'pages.toolBar.chooseCategoryFirst': 'Please choose a annotation category first',
   'pages.toolBar.progress': 'Finished / Total Task count ',
   'pages.toolBar.progress.currentId': 'Current task ID',
+  'pages.toolBar.modelLoading':
+    'Model is still loading, please wait till model loading is finished popup and then use interactor tool',
 
   'pages.Maps.finished': 'Finished',
   'pages.Maps.removeLastVertex': 'Remove Last Vertex',

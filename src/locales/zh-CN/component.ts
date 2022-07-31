@@ -75,4 +75,6 @@ export default {
   'component.PPInteractorModal.modelPath': '模型文件路径',
   'component.PPInteractorModal.weightPath': '权重文件路径',
   'component.PPInteractorModal.pathPh': '不填写使用默认路径，或填写绝对路径',
+  'component.PPInteractorModal.settingSaved': '智能标注配置完成，模型需要约1分钟加载',
+  'component.PPInteractorModal.modelLoaded': '模型加载完成，您可以开始使用智能标注工具了',
 };

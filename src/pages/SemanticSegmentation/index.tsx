@@ -364,6 +364,11 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/intelligent_interaction.png"
           active={interactorData.active}
           onClick={() => {
+            if (model.loading) {
+              message.error(tbIntl('modelLoading'));
+              return;
+            }
+
             if (interactorData.active) {
               tool.setCurr(undefined);
               setInteractorData({ active: false, predictData: [], mousePoints: [] });

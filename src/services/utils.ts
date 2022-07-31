@@ -799,6 +799,8 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   const [curr, setCurr] = useState<Model>();
   const [all, setAll] = useState<Model[]>();
   const [backendUrl, setBackendUrl] = useState<string>(mlBackendUrl);
+  const [loading, setLoading] = useState<boolean>(false);
+
   let modelApi = new ModelApi(new Configuration({ basePath: backendUrl }));
 
   async function getAll() {
@@ -840,20 +842,24 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
 
   async function load(modelPath: string, paramPath: string) {
     try {
-      checkAPI();
+      await checkAPI();
+      setLoading(true);
       return await modelApi.load('EISeg', {
         initParams: { model_path: modelPath, param_path: paramPath },
       });
     } catch (err) {
-      return serviceUtils.parseError(err, message);
+      setLoading(false);
+      serviceUtils.parseError(err, message);
+      throw err;
     }
   }
 
-  function checkAPI() {
+  async function checkAPI() {
     console.log('model api url', modelApi.configuration.configuration.basePath);
     if (!modelApi.configuration.configuration.basePath) {
       throw new Error('Set ML backend url first!');
     }
+    await modelApi.isBackendUp();
   }
 
   return {
@@ -866,5 +872,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     train,
     predict,
     load,
+    loading,
+    setLoading,
   };
 }

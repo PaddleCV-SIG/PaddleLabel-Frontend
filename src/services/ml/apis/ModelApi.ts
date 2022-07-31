@@ -25,7 +25,7 @@ import {
   TrainRequestToJSON,
 } from '../models';
 
-export interface EvalRequest {
+export interface EvaluateRequest {
   modelName: string;
 }
 
@@ -60,14 +60,14 @@ export class ModelApi extends runtime.BaseAPI {
    * Evaluate model performance
    * Evaluate model performance
    */
-  async evalRaw(
-    requestParameters: EvalRequest,
+  async evaluateRaw(
+    requestParameters: EvaluateRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.modelName === null || requestParameters.modelName === undefined) {
       throw new runtime.RequiredError(
         'modelName',
-        'Required parameter requestParameters.modelName was null or undefined when calling eval.',
+        'Required parameter requestParameters.modelName was null or undefined when calling evaluate.',
       );
     }
 
@@ -95,11 +95,11 @@ export class ModelApi extends runtime.BaseAPI {
    * Evaluate model performance
    * Evaluate model performance
    */
-  async eval(
+  async evaluate(
     modelName: string,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
-    await this.evalRaw({ modelName: modelName }, initOverrides);
+    await this.evaluateRaw({ modelName: modelName }, initOverrides);
   }
 
   /**
@@ -179,6 +179,39 @@ export class ModelApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.getProgressRaw({ modelName: modelName }, initOverrides);
+  }
+
+  /**
+   * Detect ml backend running
+   * Detect ml backend running
+   */
+  async isBackendUpRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<string>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/running`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.TextApiResponse(response) as any;
+  }
+
+  /**
+   * Detect ml backend running
+   * Detect ml backend running
+   */
+  async isBackendUp(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
+    const response = await this.isBackendUpRaw(initOverrides);
+    return await response.value();
   }
 
   /**

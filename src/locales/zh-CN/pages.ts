@@ -92,6 +92,7 @@ export default {
   'pages.tableList.deleting': '正在删除',
   'pages.tableList.deletSuccess': '删除成功',
   'pages.tableList.deletFailed': '删除失败，请重试',
+
   'pages.toolBar.polygon': '多边形',
   'pages.toolBar.brush': '笔刷',
   'pages.toolBar.rubber': '橡皮檫',
@@ -123,6 +124,7 @@ export default {
   'pages.toolBar.progress': '进度',
   'pages.toolBar.chooseCategoryFirst': '请先选择一个分类',
   'pages.toolBar.saveSuccess': '保存成功',
+  'pages.toolBar.modelLoading': '模型仍在加载，请在看到模型加载成功弹框后再点击进入智能标注模式',
 
   'pages.Maps.finished': '完成',
   'pages.Maps.removeLastVertex': '删除最后一个顶点',

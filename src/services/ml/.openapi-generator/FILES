@@ -1,4 +1,3 @@
-apis/ManageApi.ts
 apis/ModelApi.ts
 apis/index.ts
 index.ts

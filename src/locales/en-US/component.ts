@@ -78,4 +78,7 @@ export default {
   'component.PPInteractorModal.modelPath': 'Model File Path',
   'component.PPInteractorModal.weightPath': 'Weight File Path',
   'component.PPInteractorModal.pathPh': 'Leave blank for default or fill in absolute path',
+  'component.PPInteractorModal.settingSaved':
+    'Interactor settings configured. Model will take about 1 minute to load.',
+  'component.PPInteractorModal.modelLoaded': 'Model is loaded, you can start using interactor now!',
 };
