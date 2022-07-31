@@ -493,8 +493,6 @@ export function AnnotationUtils(
   };
 
   async function remove(annotation: number | Annotation) {
-    console.log('remove', annotation);
-
     const annId = typeof annotation == 'number' ? annotation : annotation.annotationId;
     if (annId == undefined) return;
     try {
@@ -503,6 +501,7 @@ export function AnnotationUtils(
         const anns = await getAll(all[0].dataId);
         if (anns.length == 0) project.getFinished();
       }
+      message.info(tbIntl('saveSuccess'));
     } catch (err) {
       console.log('annotation remove err', err);
       return serviceUtils.parseError(err, message);
