@@ -195,7 +195,11 @@ export const ProjectUtils = (useState: UseStateType) => {
   async function remove(project: Project | number | string) {
     console.log('remove project', project);
     const projectId: number = typeof project == 'object' ? project.projectId : +project;
-    await projectApi.remove(projectId);
+    try {
+      await projectApi.remove(projectId);
+    } catch (err) {
+      console.log(err);
+    }
     getAll();
   }
 
