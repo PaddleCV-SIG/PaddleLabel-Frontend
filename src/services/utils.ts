@@ -705,7 +705,7 @@ export function PageInit(
   const [refreshVar, setRefreshVar] = useState<number>(0);
 
   function refresh() {
-    for (const t of [100])
+    for (const t of [100, 200, 1000, 2000])
       setTimeout(function () {
         setRefreshVar(Math.random());
       }, t);
