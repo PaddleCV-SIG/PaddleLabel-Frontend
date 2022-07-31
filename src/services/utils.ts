@@ -799,6 +799,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   const [all, setAll] = useState<Model[]>();
   const [backendUrl, setBackendUrl] = useState<string>(mlBackendUrl);
   const [loading, setLoading] = useState<boolean>(false);
+  const intl = IntlInit('component.PPInteractorModal');
 
   let modelApi = new ModelApi(new Configuration({ basePath: backendUrl }));
 
@@ -843,12 +844,13 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     try {
       await checkAPI();
       setLoading(true);
+      message.info(intl('settingSaved'));
       return await modelApi.load('EISeg', {
         initParams: { model_path: modelPath, param_path: paramPath },
       });
     } catch (err) {
       setLoading(false);
-      serviceUtils.parseError(err, message);
+      message.error(intl('loadFail'));
       throw err;
     }
   }

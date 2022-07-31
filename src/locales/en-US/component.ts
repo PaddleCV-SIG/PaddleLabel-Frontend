@@ -81,4 +81,6 @@ export default {
   'component.PPInteractorModal.settingSaved':
     'Interactor settings configured. Model will take about 1 minute to load.',
   'component.PPInteractorModal.modelLoaded': 'Model is loaded, you can start using interactor now!',
+  'component.PPInteractorModal.loadFail':
+    'Loading model failed. Please make sure 1. ML backend is up and running 2.You have entered the correct backend url',
 };

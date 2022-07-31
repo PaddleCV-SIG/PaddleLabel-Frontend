@@ -69,7 +69,6 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           props.model.setLoading(false);
         },
       );
-    message.info(intl('settingSaved'));
   }
 
   // const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
