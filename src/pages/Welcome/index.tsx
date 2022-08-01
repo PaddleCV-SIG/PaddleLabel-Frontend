@@ -157,16 +157,36 @@ const Welcome: React.FC = () => {
         <Col span={7}>
           <PPBlock title={intl('trainingKnowledge')} style={{ height: 430 }}>
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
-              <Button type="primary" style={{ height: '3.125rem' }} block>
+              <Button
+                type="primary"
+                style={{ height: '3.125rem' }}
+                href="https://aistudio.baidu.com/aistudio/projectdetail/4337003"
+                block
+              >
                 {intl('paddleClas')}
               </Button>
-              <Button type="primary" style={{ height: '3.125rem' }} block>
+              <Button
+                type="primary"
+                style={{ height: '3.125rem' }}
+                href="https://aistudio.baidu.com/aistudio/projectdetail/4349280"
+                block
+              >
                 {intl('paddleDet')}
               </Button>
-              <Button type="primary" style={{ height: '3.125rem' }} block>
+              <Button
+                type="primary"
+                style={{ height: '3.125rem' }}
+                href="https://aistudio.baidu.com/aistudio/projectdetail/4353528"
+                block
+              >
                 {intl('paddleSeg')}
               </Button>
-              <Button type="primary" style={{ height: '3.125rem' }} block>
+              <Button
+                type="primary"
+                style={{ height: '3.125rem' }}
+                href="https://aistudio.baidu.com/aistudio/projectdetail/4353528"
+                block
+              >
                 {intl('paddleX')}
               </Button>
             </Space>
