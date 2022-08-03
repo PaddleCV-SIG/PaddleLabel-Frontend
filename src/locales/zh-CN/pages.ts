@@ -125,6 +125,7 @@ export default {
   'pages.toolBar.chooseCategoryFirst': '请先选择一个分类',
   'pages.toolBar.saveSuccess': '保存成功',
   'pages.toolBar.modelLoading': '模型仍在加载，请在看到模型加载成功弹框后再点击进入智能标注模式',
+  'pages.toolBar.noModel': '未找到模型，请先进行智能标注设置',
 
   'pages.Maps.finished': '完成',
   'pages.Maps.removeLastVertex': '删除最后一个顶点',

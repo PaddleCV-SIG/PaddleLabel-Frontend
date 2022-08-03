@@ -371,16 +371,29 @@ const Page: React.FC = () => {
         <PPAIButton
           imgSrc="./pics/buttons/intelligent_interaction.png"
           active={interactorData.active}
-          onClick={() => {
+          onClick={async () => {
             if (model.loading) {
               message.error(tbIntl('modelLoading'));
               return;
             }
-
             if (interactorData.active) {
               tool.setCurr(undefined);
               setInteractorData({ active: false, predictData: [], mousePoints: [] });
             } else {
+              const settings = project.curr.otherSettings ? project.curr.otherSettings : {};
+              if (
+                settings.models?.EISeg?.mlModelAbsPath &&
+                settings.models?.EISeg?.mlWeightAbsPath
+              ) {
+                try {
+                  await model.load(
+                    settings.models.EISeg.mlModelAbsPath,
+                    settings.models.EISeg.mlWeightAbsPath,
+                  );
+                } catch (e) {
+                  return;
+                }
+              }
               tool.setCurr('interactor');
               setInteractorData({ active: true, predictData: [], mousePoints: [] });
             }

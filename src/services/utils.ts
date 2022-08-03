@@ -847,10 +847,10 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     try {
       await checkAPI();
       setLoading(true);
-      message.info(intl('settingSaved'));
-      return await modelApi.load('EISeg', {
+      await modelApi.load('EISeg', {
         initParams: { model_path: modelPath, param_path: paramPath },
       });
+      setLoading(false);
     } catch (err) {
       setLoading(false);
       message.error(intl('loadFail'));
@@ -863,7 +863,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     if (!modelApi.configuration.configuration.basePath) {
       throw new Error('Set ML backend url first!');
     }
-    await modelApi.isBackendUp();
+    return (await modelApi.isBackendUp()).trim();
   }
 
   return {
@@ -878,5 +878,6 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     load,
     loading,
     setLoading,
+    checkAPI,
   };
 }
