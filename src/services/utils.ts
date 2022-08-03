@@ -13,6 +13,7 @@ import {
   LabelApi,
   ManageApi,
   Configuration,
+  SampleApi,
 } from '@/services/web';
 import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi } from '@/services/ml';
@@ -27,6 +28,7 @@ const dataApi = new DataApi(config);
 const annotationApi = new AnnotationApi(config);
 const labelApi = new LabelApi(config);
 export const manageApi = new ManageApi(config);
+export const sampleApi = new SampleApi(config);
 
 export type UseStateType = <S>(initialState?: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
 export type UseEffectType = (effect: EffectCallback, deps?: DependencyList | undefined) => void;

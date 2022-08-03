@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Form, Input, Button, Radio, Row, Spin, message } from 'antd';
+import { Col, Form, Input, Button, Radio, Row, Spin, Tree, message } from 'antd';
+import type { TreeDataNode, DirectoryTreeProps } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
 import { history } from 'umi';
 import styles from './index.less';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, camel2snake, IntlInit, snake2camel } from '@/services/utils';
+import { createInfo, camel2snake, IntlInit, snake2camel, sampleApi } from '@/services/utils';
 import { ProjectUtils } from '@/services/utils';
 
 export type _PPCardProps = {
@@ -43,6 +44,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const projects = ProjectUtils(useState);
   const projectId = serviceUtils.getQueryVariable('projectId');
   const [loading, setLoading] = useState<boolean>(false);
+  const [sampleFiles, setSampleFiles] = useState<TreeDataNode[]>([]);
 
   const intl = IntlInit('component.PPCreater');
 
@@ -67,8 +69,6 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     }
   };
 
-  // const taskCategory = props.taskCategory;
-
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -84,6 +84,52 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       form.setFieldsValue(values);
     });
   }, []);
+
+  const samplePath = {
+    classification: {
+      single_class: 'clas/single/',
+      multi_class: 'clas/multi/',
+    },
+    detection: { coco: 'det/coco/', voc: 'det/voc/' },
+    semanticSegmentation: {
+      mask: 'semantic_seg/mask/',
+      polygon: 'semantic_seg/polygon/',
+    },
+    instanceSegmentation: {
+      mask: 'instance_seg/mask/',
+      polygon: 'instance_seg/polygon/',
+    },
+  };
+  const { DirectoryTree } = Tree;
+  const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
+    console.log('Trigger Select', keys, info, info.node.isLeaf != undefined);
+    const isLeaf = info.node.isLeaf != undefined;
+    if (isLeaf) {
+      window.open('/api/samples/file?path=' + info.node.key);
+    }
+  };
+
+  function getSampleFolderStructure() {
+    if (sampleFiles.length == 0) {
+      return <img src={props.imgSrc} style={{ width: '40rem' }} />;
+    } else {
+      // console.log('asdfasdf', samplePath[props.taskCategory][labelFormat]);
+      return (
+        <div>
+          <DirectoryTree
+            // multiple
+            // defaultExpandAll
+            // showLine={true}
+            // showIcon={true}
+            onSelect={onSelect}
+            // onExpand={onExpand}
+            treeData={sampleFiles}
+            blockNode={false}
+          />
+        </div>
+      );
+    }
+  }
 
   return (
     <div className={styles.shadow} style={props.style}>
@@ -229,7 +275,20 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                     createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
                 }}
               >
-                <Radio.Group size="large" style={{ height: '3.13rem' }}>
+                <Radio.Group
+                  size="large"
+                  style={{ height: '3.13rem' }}
+                  onChange={() => {
+                    sampleApi
+                      .getStructure(
+                        samplePath[props.taskCategory][form.getFieldValue('labelFormat')],
+                      )
+                      .then((res) => {
+                        console.log('sample file structure', res);
+                        setSampleFiles(res);
+                      });
+                  }}
+                >
                   {Object.keys(createInfo[props.taskCategory].labelFormats).map((k) => (
                     <Radio key={k} value={k}>
                       {intl(snake2camel(k), 'global.labelFormat')}
@@ -290,7 +349,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
         </div>
         <div id="right" className={styles.block_r}>
           <_PPBlock style={{ height: '43.63rem', padding: '0.5rem 0' }}>
-            <img src={props.imgSrc} style={{ width: '40rem' }} />
+            {getSampleFolderStructure()}
           </_PPBlock>
         </div>
       </Spin>

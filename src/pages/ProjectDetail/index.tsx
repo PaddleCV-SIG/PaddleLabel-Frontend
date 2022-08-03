@@ -9,10 +9,6 @@ import { createInfo, getVersion, IntlInit } from '@/services/utils';
 const Project: React.FC = () => {
   getVersion();
   const intl = IntlInit('pages.projectDetail');
-  // const noTaskCategory = intl.formatMessage({ id: 'pages.ProjectDetail.noTaskCategory' });
-  // const invalidTaskCategory = intl.formatMessage({
-  //   id: 'pages.ProjectDetail.invalidTaskCategory',
-  // });
 
   // 1. get taskCategory and ensure exist + valid
   const taskCategory = serviceUtils.getQueryVariable('taskCategory');

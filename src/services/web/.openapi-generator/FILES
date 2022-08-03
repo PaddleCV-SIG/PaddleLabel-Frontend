@@ -5,6 +5,7 @@ apis/LabelApi.ts
 apis/ManageApi.ts
 apis/ProjectApi.ts
 apis/RpcApi.ts
+apis/SampleApi.ts
 apis/TagApi.ts
 apis/TaskApi.ts
 apis/UserApi.ts

@@ -11,6 +11,7 @@ export default {
   'component.PPCreater.cancel': 'Cancel',
   'component.PPCreater.labelFormat': 'Label Format',
   'component.PPCreater.project': ' Project',
+  'component.PPCreater.sampleProject': 'Demo Project',
 
   'component.PPAddLabelModal.selectColor': 'Select Color',
   'component.PPAddLabelModal.addLabel': 'Add Label',
