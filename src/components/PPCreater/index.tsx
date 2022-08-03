@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Form, Input, Button, Radio, Row, Spin, Tree, message } from 'antd';
-import type { TreeDataNode } from 'antd';
+import type { TreeDataNode, DirectoryTreeProps } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
 import { history } from 'umi';
@@ -101,6 +101,13 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     },
   };
   const { DirectoryTree } = Tree;
+  const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
+    console.log('Trigger Select', keys, info, info.node.isLeaf != undefined);
+    const isLeaf = info.node.isLeaf != undefined;
+    if (isLeaf) {
+      window.open('/api/samples/file?path=' + info.node.key);
+    }
+  };
 
   function getSampleFolderStructure() {
     if (sampleFiles.length == 0) {
@@ -114,7 +121,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
             // defaultExpandAll
             // showLine={true}
             // showIcon={true}
-            // onSelect={onSelect}
+            onSelect={onSelect}
             // onExpand={onExpand}
             treeData={sampleFiles}
             blockNode={false}

@@ -43,7 +43,7 @@ export class SampleApi extends runtime.BaseAPI {
 
     const response = await this.request(
       {
-        path: `/sampes/file`,
+        path: `/samples/file`,
         method: 'GET',
         headers: headerParameters,
         query: queryParameters,
