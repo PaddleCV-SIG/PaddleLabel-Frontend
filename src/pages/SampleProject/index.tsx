@@ -5,7 +5,7 @@ import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
 import PPContainer from '@/components/PPContainer';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { createInfo, manageApi, IntlInit } from '@/services/utils';
+import { createInfo, sampleApi, IntlInit } from '@/services/utils';
 
 const SampleProject: React.FC = () => {
   const intl = IntlInit('pages.welcome');
@@ -28,7 +28,7 @@ const SampleProject: React.FC = () => {
                       onClick={
                         key != 'keypointDetection'
                           ? () => {
-                              manageApi.loadSample({ taskCategoryId: val.id }).then((res) => {
+                              sampleApi.loadSample({ taskCategoryId: val.id }).then((res) => {
                                 history.push(`/project_overview?projectId=${res.projectId}`);
                               });
                             }

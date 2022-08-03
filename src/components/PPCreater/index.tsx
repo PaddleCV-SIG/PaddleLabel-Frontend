@@ -1,46 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Form, Input, Button, Radio, Row, Spin, message } from 'antd';
+import { Col, Form, Input, Button, Radio, Row, Spin, Tree, message } from 'antd';
+import type { TreeDataNode } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
 import { history } from 'umi';
 import styles from './index.less';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, camel2snake, IntlInit, snake2camel } from '@/services/utils';
+import { createInfo, camel2snake, IntlInit, snake2camel, sampleApi } from '@/services/utils';
 import { ProjectUtils } from '@/services/utils';
 
 export type _PPCardProps = {
   title?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
-  samplePath?: string;
-  sampleText?: string;
-  form?: any;
 };
 
 const _PPBlock: React.FC<_PPCardProps> = (props) => {
-  const getSampleProjectButton = () => {
-    if (props?.samplePath != undefined) {
-      // if (true) {
-      return (
-        <Button
-          onClick={() => {
-            // message.info(props?.samplePath);
-            window.open('/api/samples/static?path=' + props.samplePath);
-          }}
-          type="primary"
-        >
-          {props?.sampleText}
-        </Button>
-      );
-    } else {
-      return null;
-    }
-  };
   return (
     <div className={styles._ppcard} style={props.style}>
       <Row className={styles.titleRow} style={{ display: props.title ? undefined : 'none' }}>
         <Title className={styles.title}>{props.title}</Title>
-        {getSampleProjectButton()}
       </Row>
       <Row style={{ marginTop: 26 }}>
         <Col
@@ -65,7 +44,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const projects = ProjectUtils(useState);
   const projectId = serviceUtils.getQueryVariable('projectId');
   const [loading, setLoading] = useState<boolean>(false);
-  const [labelFormat, setLabelFormat] = useState<string>(undefined);
+  const [sampleFiles, setSampleFiles] = useState<TreeDataNode[]>([]);
 
   const intl = IntlInit('component.PPCreater');
 
@@ -122,6 +101,26 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     },
   };
 
+  function getSampleFolderStructure() {
+    if (sampleFiles.length == 0) {
+      return <img src={props.imgSrc} style={{ width: '40rem' }} />;
+    } else {
+      // console.log('asdfasdf', samplePath[props.taskCategory][labelFormat]);
+      const { DirectoryTree } = Tree;
+      return (
+        <div>
+          <DirectoryTree
+            multiple
+            defaultExpandAll
+            // onSelect={onSelect}
+            // onExpand={onExpand}
+            treeData={sampleFiles}
+          />
+        </div>
+      );
+    }
+  }
+
   return (
     <div className={styles.shadow} style={props.style}>
       <Spin tip="Import in progress" spinning={loading}>
@@ -129,11 +128,6 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
         <div id="left" className={styles.block_l}>
           <_PPBlock
             title={intl(props.taskCategory, 'global') + intl('project')}
-            sampleText={intl('sampleProject')}
-            form={form}
-            samplePath={
-              labelFormat == undefined ? undefined : samplePath[props.taskCategory][labelFormat]
-            }
             style={{ height: 760, padding: '1.25rem 0' }}
           >
             <Form
@@ -275,7 +269,14 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                   size="large"
                   style={{ height: '3.13rem' }}
                   onChange={() => {
-                    setLabelFormat(form.getFieldValue('labelFormat'));
+                    sampleApi
+                      .getStructure(
+                        samplePath[props.taskCategory][form.getFieldValue('labelFormat')],
+                      )
+                      .then((res) => {
+                        console.log('sample file structure', res);
+                        setSampleFiles(res);
+                      });
                   }}
                 >
                   {Object.keys(createInfo[props.taskCategory].labelFormats).map((k) => (
@@ -338,7 +339,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
         </div>
         <div id="right" className={styles.block_r}>
           <_PPBlock style={{ height: '43.63rem', padding: '0.5rem 0' }}>
-            <img src={props.imgSrc} style={{ width: '40rem' }} />
+            {getSampleFolderStructure()}
           </_PPBlock>
         </div>
       </Spin>
