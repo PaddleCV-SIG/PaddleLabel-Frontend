@@ -4,12 +4,12 @@ volumes:
   node_modules:
 
 services:
-  pp-label-frontend:
+  PaddleLabel-Frontend:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    image: pp-label-frontend:latest
-    container_name: 'pp-label-frontend'
+    image: PaddleLabel-Frontend:latest
+    container_name: 'PaddleLabel-Frontend'
     environment:
       - CHOKIDAR_USEPOLLING=true
       - HOST=0.0.0.0

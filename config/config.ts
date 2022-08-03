@@ -8,7 +8,7 @@ import routes from './routes';
 
 const { REACT_APP_ENV } = process.env;
 
-const baseURL = REACT_APP_ENV == 'page' ? '/PP-Label-Frontend/' : '/static/';
+const baseURL = REACT_APP_ENV == 'page' ? '/PaddleLabel-Frontend/' : '/static/';
 
 export default defineConfig({
   hash: true,
