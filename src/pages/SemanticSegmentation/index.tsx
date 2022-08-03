@@ -463,6 +463,7 @@ const Page: React.FC = () => {
       <div className="rightSideBar">
         <div className="determinOutline">
           <Button
+            disabled={tool.curr != 'interactor'}
             style={{ height: 40, fontSize: '0.75rem' }}
             type="primary"
             block
