@@ -85,13 +85,13 @@ If you're in mainland China, recommand to use `tyarn` instead.
 - Build Image
 
 ```bash
-docker build -t pp-label-frontend -f Dockerfile.dev .
+docker build -t PaddleLabel-Frontend -f Dockerfile.dev .
 ```
 
 - Install node_modules
 
 ```bash
-docker run -ti -v ~/gitroot/PaddleLabel-Frontend:/usr/app pp-label-frontend yarn
+docker run -ti -v ~/gitroot/PaddleLabel-Frontend:/usr/app PaddleLabel-Frontend yarn
 ```
 
 - Start APP
