@@ -100,21 +100,24 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       polygon: 'instance_seg/polygon/',
     },
   };
+  const { DirectoryTree } = Tree;
 
   function getSampleFolderStructure() {
     if (sampleFiles.length == 0) {
       return <img src={props.imgSrc} style={{ width: '40rem' }} />;
     } else {
       // console.log('asdfasdf', samplePath[props.taskCategory][labelFormat]);
-      const { DirectoryTree } = Tree;
       return (
         <div>
           <DirectoryTree
-            multiple
-            defaultExpandAll
+            // multiple
+            // defaultExpandAll
+            // showLine={true}
+            // showIcon={true}
             // onSelect={onSelect}
             // onExpand={onExpand}
             treeData={sampleFiles}
+            blockNode={false}
           />
         </div>
       );
