@@ -12,13 +12,35 @@ export type _PPCardProps = {
   title?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
+  samplePath?: string;
+  sampleText?: string;
+  form?: any;
 };
 
 const _PPBlock: React.FC<_PPCardProps> = (props) => {
+  const getSampleProjectButton = () => {
+    if (props?.samplePath != undefined) {
+      // if (true) {
+      return (
+        <Button
+          onClick={() => {
+            // message.info(props?.samplePath);
+            window.open('/api/samples/static?path=' + props.samplePath);
+          }}
+          type="primary"
+        >
+          {props?.sampleText}
+        </Button>
+      );
+    } else {
+      return null;
+    }
+  };
   return (
     <div className={styles._ppcard} style={props.style}>
       <Row className={styles.titleRow} style={{ display: props.title ? undefined : 'none' }}>
         <Title className={styles.title}>{props.title}</Title>
+        {getSampleProjectButton()}
       </Row>
       <Row style={{ marginTop: 26 }}>
         <Col
@@ -43,6 +65,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const projects = ProjectUtils(useState);
   const projectId = serviceUtils.getQueryVariable('projectId');
   const [loading, setLoading] = useState<boolean>(false);
+  const [labelFormat, setLabelFormat] = useState<string>(undefined);
 
   const intl = IntlInit('component.PPCreater');
 
@@ -67,8 +90,6 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     }
   };
 
-  // const taskCategory = props.taskCategory;
-
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -85,6 +106,22 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     });
   }, []);
 
+  const samplePath = {
+    classification: {
+      single_class: 'clas/single/',
+      multi_class: 'clas/multi/',
+    },
+    detection: { coco: 'det/coco/', voc: 'det/voc/' },
+    semanticSegmentation: {
+      mask: 'semantic_seg/mask/',
+      polygon: 'semantic_seg/polygon/',
+    },
+    instanceSegmentation: {
+      mask: 'instance_seg/mask/',
+      polygon: 'instance_seg/polygon/',
+    },
+  };
+
   return (
     <div className={styles.shadow} style={props.style}>
       <Spin tip="Import in progress" spinning={loading}>
@@ -92,6 +129,11 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
         <div id="left" className={styles.block_l}>
           <_PPBlock
             title={intl(props.taskCategory, 'global') + intl('project')}
+            sampleText={intl('sampleProject')}
+            form={form}
+            samplePath={
+              labelFormat == undefined ? undefined : samplePath[props.taskCategory][labelFormat]
+            }
             style={{ height: 760, padding: '1.25rem 0' }}
           >
             <Form
@@ -229,7 +271,13 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                     createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
                 }}
               >
-                <Radio.Group size="large" style={{ height: '3.13rem' }}>
+                <Radio.Group
+                  size="large"
+                  style={{ height: '3.13rem' }}
+                  onChange={() => {
+                    setLabelFormat(form.getFieldValue('labelFormat'));
+                  }}
+                >
                   {Object.keys(createInfo[props.taskCategory].labelFormats).map((k) => (
                     <Radio key={k} value={k}>
                       {intl(snake2camel(k), 'global.labelFormat')}

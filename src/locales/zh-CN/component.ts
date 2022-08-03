@@ -12,6 +12,7 @@ export default {
   'component.PPCreater.cancel': '取消',
   'component.PPCreater.creationFail': '项目创建失败',
   'component.PPCreater.project': '项目',
+  'component.PPCreater.sampleProject': '样例项目',
 
   'component.PPAddLabelModal.selectColor': '选择色彩',
   'component.PPAddLabelModal.addLabel': '创建标签',
