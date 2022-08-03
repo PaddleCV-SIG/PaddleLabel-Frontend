@@ -49,7 +49,7 @@ const GlobalHeaderRight: React.FC = () => {
       <span
         className={styles.action}
         onClick={() => {
-          window.open('https://github.com/PaddleCV-SIG/PP-Label/wiki');
+          window.open('https://github.com/PaddleCV-SIG/PaddleLabel');
         }}
       >
         <QuestionCircleOutlined />
