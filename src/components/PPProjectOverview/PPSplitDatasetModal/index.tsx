@@ -39,12 +39,13 @@ const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
+        width="50rem"
       >
         <Form
           form={form}
           name="basic"
           labelCol={{ span: 8 }}
-          wrapperCol={{ span: 16 }}
+          wrapperCol={{ span: 24 }}
           initialValues={{ remember: false }}
           onFinish={() => {
             if (trainData + validationData + testData != 100) {
