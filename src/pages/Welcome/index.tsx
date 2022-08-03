@@ -159,7 +159,7 @@ const Welcome: React.FC = () => {
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
               <Button
                 type="primary"
-                style={{ height: '3.125rem' }}
+                style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/PPLabel_PaddleClas.md"
                 block
               >
@@ -167,7 +167,7 @@ const Welcome: React.FC = () => {
               </Button>
               <Button
                 type="primary"
-                style={{ height: '3.125rem' }}
+                style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/PPLabel_PaddleDet.md"
                 block
               >
@@ -175,7 +175,7 @@ const Welcome: React.FC = () => {
               </Button>
               <Button
                 type="primary"
-                style={{ height: '3.125rem' }}
+                style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/PPLabel_PaddleSeg.md"
                 block
               >
@@ -183,7 +183,7 @@ const Welcome: React.FC = () => {
               </Button>
               <Button
                 type="primary"
-                style={{ height: '3.125rem' }}
+                style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/PPLabel_PaddleX.md"
                 block
               >
