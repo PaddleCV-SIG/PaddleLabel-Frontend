@@ -160,7 +160,7 @@ const Welcome: React.FC = () => {
               <Button
                 type="primary"
                 style={{ height: '3.125rem' }}
-                href="https://aistudio.baidu.com/aistudio/projectdetail/4337003"
+                href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/PPLabel_PaddleClas.md"
                 block
               >
                 {intl('paddleClas')}
@@ -168,7 +168,7 @@ const Welcome: React.FC = () => {
               <Button
                 type="primary"
                 style={{ height: '3.125rem' }}
-                href="https://aistudio.baidu.com/aistudio/projectdetail/4349280"
+                href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/PPLabel_PaddleDet.md"
                 block
               >
                 {intl('paddleDet')}
@@ -176,7 +176,7 @@ const Welcome: React.FC = () => {
               <Button
                 type="primary"
                 style={{ height: '3.125rem' }}
-                href="https://aistudio.baidu.com/aistudio/projectdetail/4353528"
+                href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/PPLabel_PaddleSeg.md"
                 block
               >
                 {intl('paddleSeg')}
@@ -184,7 +184,7 @@ const Welcome: React.FC = () => {
               <Button
                 type="primary"
                 style={{ height: '3.125rem' }}
-                href="https://aistudio.baidu.com/aistudio/projectdetail/4353528"
+                href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/PPLabel_PaddleX.md"
                 block
               >
                 {intl('paddleX')}
