@@ -42,7 +42,13 @@ const Page: React.FC = () => {
     useState,
     useEffect,
     {
-      effectTrigger: { postTaskChange: () => initHistory() },
+      effectTrigger: {
+        postTaskChange: (allLabels, allAnns) => {
+          initHistory();
+          recordHistory({ annos: allAnns });
+          console.log('allAnns', allAnns);
+        },
+      },
       label: {
         oneHot: true,
         postSelect: () => {
@@ -271,6 +277,7 @@ const Page: React.FC = () => {
             if (res) {
               annotation.setAll(res.annos);
               setCurrentAnnotation(res.currAnno);
+              annotation.pushToBackend(data.curr?.dataId, res.annos);
             }
           }}
           disabled={interactorData.active}
@@ -282,7 +289,7 @@ const Page: React.FC = () => {
           onClick={() => {
             const res = forwardHistory();
             if (res) {
-              annotation.setAll(res.annos);
+              annotation.pushToBackend(data.curr?.dataId, res.annos);
               setCurrentAnnotation(res.currAnno);
             }
           }}
@@ -293,8 +300,9 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/clear_mark.png"
           onClick={() => {
-            annotation.setAll([]);
             annotation.setCurr(undefined);
+            annotation.clear();
+            recordHistory({ annos: [] });
           }}
           disabled={interactorData.active}
         >

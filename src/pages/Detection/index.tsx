@@ -191,7 +191,7 @@ const Page: React.FC = () => {
           onClick={() => {
             const res = forwardHistory();
             if (res) {
-              annotation.setAll(res.annos);
+              annotation.pushToBackend(data.curr?.dataId, res.annos);
               setCurrentAnnotation(res.currAnno);
             }
           }}

@@ -471,7 +471,7 @@ export function AnnotationUtils(
   function clear() {
     if (all.length == 0) return;
     pushToBackend(all[0].dataId, []);
-    setAllRaw([]);
+    // setAllRaw([]);
   }
 
   const create = async (annotation: Annotation) => {
@@ -551,8 +551,11 @@ export function AnnotationUtils(
     const newAll = anns ? anns : all;
     console.log('pushToBackend, dataId:', dataId, 'newAll:', newAll);
     try {
-      await dataApi.setAnnotations(dataId + '', newAll);
-      return message.success(tbIntl('saveSuccess'));
+      const res = await dataApi.setAnnotations(dataId + '', newAll);
+      console.log('res', res);
+      setAllRaw(res);
+      message.success(tbIntl('saveSuccess'));
+      return res;
     } catch (err) {
       return serviceUtils.parseError(err, message);
     }

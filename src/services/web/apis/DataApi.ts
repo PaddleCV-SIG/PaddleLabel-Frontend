@@ -366,7 +366,7 @@ export class DataApi extends runtime.BaseAPI {
   async setAnnotationsRaw(
     requestParameters: SetAnnotationsRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<void>> {
+  ): Promise<runtime.ApiResponse<Array<Annotation>>> {
     if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
       throw new runtime.RequiredError(
         'dataId',
@@ -394,7 +394,7 @@ export class DataApi extends runtime.BaseAPI {
       initOverrides,
     );
 
-    return new runtime.VoidApiResponse(response);
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(AnnotationFromJSON));
   }
 
   /**
@@ -404,8 +404,12 @@ export class DataApi extends runtime.BaseAPI {
     dataId: string,
     annotation?: Array<Annotation>,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<void> {
-    await this.setAnnotationsRaw({ dataId: dataId, annotation: annotation }, initOverrides);
+  ): Promise<Array<Annotation>> {
+    const response = await this.setAnnotationsRaw(
+      { dataId: dataId, annotation: annotation },
+      initOverrides,
+    );
+    return await response.value();
   }
 
   /**
