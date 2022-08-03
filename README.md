@@ -1,4 +1,4 @@
-# PP Label Frontend
+# PaddleLabel Frontend
 
 This project is initialized with [Ant Design Pro](https://pro.ant.design). Follow is the quick guide for how to use.
 
@@ -91,13 +91,13 @@ docker build -t pp-label-frontend -f Dockerfile.dev .
 - Install node_modules
 
 ```bash
-docker run -ti -v ~/gitroot/PP-Label-Frontend:/usr/app pp-label-frontend yarn
+docker run -ti -v ~/gitroot/PaddleLabel-Frontend:/usr/app pp-label-frontend yarn
 ```
 
 - Start APP
 
 ```bash
-docker run -ti -p 8000:8000 -p 3000:3000 -v ~/gitroot/PP-Label-Frontend:/usr/app pp-label-frontend --name pp-label-frontend
+docker run -ti -p 8000:8000 -p 3000:3000 -v ~/gitroot/PaddleLabel-Frontend:/usr/app npm start --name PaddleLabel-Frontend
 ```
 
 ### Tips for Ubuntu or WSL(Windows Subsystem Linux)
@@ -149,7 +149,7 @@ npm test
 
 ### [Optional] With docker
 
-Add `docker run -ti pp-label-frontend` in front of above commands.
+Add `docker run -ti PaddleLabel-Frontend` in front of above commands.
 
 For example, before:
 
@@ -160,7 +160,7 @@ npm test
 After:
 
 ```bash
-docker run -ti pp-label-frontend npm test
+docker run -ti PaddleLabel-Frontend npm test
 ```
 
 ## Generate API
