@@ -120,7 +120,7 @@ export class BaseAPI {
   ): Promise<Response> {
     const { url, init } = await this.createFetchParams(context, initOverrides);
     const response = await this.fetchApi(url, init);
-    if (response && response.status >= 200 && response.status < 300) {
+    if (response.status >= 200 && response.status < 300) {
       return response;
     }
     throw new ResponseError(response, 'Response returned an error code');
