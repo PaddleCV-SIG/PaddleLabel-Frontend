@@ -12,6 +12,8 @@ export default {
   'component.PPCreater.labelFormat': 'Label Format',
   'component.PPCreater.project': ' Project',
   'component.PPCreater.sampleProject': 'Demo Project',
+  'component.PPCreater.segMaskType': 'Mask Type',
+  'component.PPCreater.creationFail': 'Project Creation Failed',
 
   'component.PPAddLabelModal.selectColor': 'Select Color',
   'component.PPAddLabelModal.addLabel': 'Add Label',

@@ -45,14 +45,22 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const projectId = serviceUtils.getQueryVariable('projectId');
   const [loading, setLoading] = useState<boolean>(false);
   const [sampleFiles, setSampleFiles] = useState<TreeDataNode[]>([]);
+  const [labelFormat, setLabelFormat] = useState<string>();
 
   const intl = IntlInit('component.PPCreater');
 
   const saveProject = (values: any) => {
     setLoading(true);
+    const otherSettings = {};
+    if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
+
     if (!projectId) {
       projects
-        .create({ ...values, taskCategoryId: createInfo[props.taskCategory]['id'] })
+        .create({
+          ...values,
+          taskCategoryId: createInfo[props.taskCategory]['id'],
+          otherSettings: otherSettings,
+        })
         .catch((err) => {
           message.error(intl('creationFail'));
           serviceUtils.parseError(err, message);
@@ -63,7 +71,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
             history.push(`/${camel2snake(props.taskCategory)}?projectId=${project.projectId}`);
         });
     } else {
-      projects.update(projectId, { ...values }).then(() => {
+      projects.update(projectId, { ...values, otherSettings: otherSettings }).then(() => {
         history.push(`/project_overview?projectId=${projectId}`);
       });
     }
@@ -79,8 +87,11 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
         dataDir: project?.dataDir,
         labelDir: project?.labelDir,
         labelFormat: project?.labelFormat,
+        segMaskType: project?.otherSettings?.segMaskType,
       };
       console.log('values', values);
+      console.log('othersettings', project?.otherSettings);
+      if (project?.labelFormat) setLabelFormat(project.labelFormat);
       form.setFieldsValue(values);
     });
   }, []);
@@ -100,8 +111,9 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       polygon: 'instance_seg/polygon/',
     },
   };
+
   const { DirectoryTree } = Tree;
-  const onSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
+  const onTreeSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
     console.log('Trigger Select', keys, info, info.node.isLeaf != undefined);
     const isLeaf = info.node.isLeaf != undefined;
     if (isLeaf) {
@@ -117,12 +129,10 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       return (
         <div>
           <DirectoryTree
-            // multiple
             // defaultExpandAll
             // showLine={true}
             // showIcon={true}
-            onSelect={onSelect}
-            // onExpand={onExpand}
+            onSelect={onTreeSelect}
             treeData={sampleFiles}
             blockNode={false}
           />
@@ -279,6 +289,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                   size="large"
                   style={{ height: '3.13rem' }}
                   onChange={() => {
+                    setLabelFormat(form.getFieldValue('labelFormat'));
                     sampleApi
                       .getStructure(
                         samplePath[props.taskCategory][form.getFieldValue('labelFormat')],
@@ -296,6 +307,33 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                   ))}
                 </Radio.Group>
               </Form.Item>
+
+              <Form.Item
+                name="segMaskType"
+                label={intl('segMaskType')}
+                labelCol={{
+                  span: 6,
+                }}
+                wrapperCol={{
+                  span: 16,
+                }}
+                style={{
+                  fontSize: '1.5rem',
+                  display:
+                    labelFormat == 'mask' && props.taskCategory == 'semanticSegmentation'
+                      ? undefined
+                      : 'none',
+                }}
+              >
+                <Radio.Group size="large" style={{ height: '3.13rem' }}>
+                  {['pesudo', 'grayscale'].map((k) => (
+                    <Radio key={k} value={k}>
+                      {intl(k, 'global.segMaskType')}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              </Form.Item>
+
               <Form.Item
                 name="maxPoints"
                 label={intl('maxPoints')}

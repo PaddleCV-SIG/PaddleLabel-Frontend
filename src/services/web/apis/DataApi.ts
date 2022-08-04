@@ -37,11 +37,6 @@ export interface GetImageRequest {
   sault?: string;
 }
 
-export interface GetMaskRequest {
-  dataId: string;
-  sault?: string;
-}
-
 export interface RemoveRequest {
   dataId: string;
 }
@@ -317,55 +312,6 @@ export class DataApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.getImageRaw({ dataId: dataId, sault: sault }, initOverrides);
-  }
-
-  /**
-   * Get the segmentation mask of a data record
-   */
-  async getMaskRaw(
-    requestParameters: GetMaskRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<void>> {
-    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
-      throw new runtime.RequiredError(
-        'dataId',
-        'Required parameter requestParameters.dataId was null or undefined when calling getMask.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    if (requestParameters.sault !== undefined) {
-      queryParameters['sault'] = requestParameters.sault;
-    }
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/datas/{data_id}/mask`.replace(
-          `{${'data_id'}}`,
-          encodeURIComponent(String(requestParameters.dataId)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.VoidApiResponse(response);
-  }
-
-  /**
-   * Get the segmentation mask of a data record
-   */
-  async getMask(
-    dataId: string,
-    sault?: string,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<void> {
-    await this.getMaskRaw({ dataId: dataId, sault: sault }, initOverrides);
   }
 
   /**

@@ -37,6 +37,12 @@ export interface ProjectOtherSettings {
    * @memberof ProjectOtherSettings
    */
   models?: object;
+  /**
+   *
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   */
+  segMaskType?: string;
 }
 
 /**
@@ -63,6 +69,7 @@ export function ProjectOtherSettingsFromJSONTyped(
     mlBackendUrl: !exists(json, 'mlBackendUrl') ? undefined : json['mlBackendUrl'],
     perviousModel: !exists(json, 'perviousModel') ? undefined : json['perviousModel'],
     models: !exists(json, 'models') ? undefined : json['models'],
+    segMaskType: !exists(json, 'segMaskType') ? undefined : json['segMaskType'],
   };
 }
 
@@ -77,5 +84,6 @@ export function ProjectOtherSettingsToJSON(value?: ProjectOtherSettings | null):
     mlBackendUrl: value.mlBackendUrl,
     perviousModel: value.perviousModel,
     models: value.models,
+    segMaskType: value.segMaskType,
   };
 }

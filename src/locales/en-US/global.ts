@@ -16,4 +16,6 @@ export default {
   'global.period': '.',
   'global.absolutePath': 'Absolute path',
   'global.anyString': 'Anything char you can type',
+  'global.segMaskType.grayscale': 'Gray Scale',
+  'global.segMaskType.pesudo': 'Pesudo Color',
 };
