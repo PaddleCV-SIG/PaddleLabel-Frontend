@@ -444,7 +444,11 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any; push
 
 export function AnnotationUtils(
   useState: UseStateType,
-  { label = undefined, project = undefined }: { label: any; project: any },
+  {
+    label = undefined,
+    project = undefined,
+    recordHistory = undefined,
+  }: { label: any; project: any; recordHistory: ({ annos: [] }) => void },
 ) {
   const [all, setAllRaw] = useState<Annotation[]>([]);
   const [curr, setCurrRaw] = useState<Annotation | undefined>();
@@ -501,6 +505,8 @@ export function AnnotationUtils(
       await annotationApi.remove(annId);
       if (all && all.length && all[0].dataId!) {
         const anns = await getAll(all[0].dataId);
+        recordHistory({ annos: anns });
+        console.log('anns', anns);
         if (anns.length == 0) project.getFinished();
       }
       message.info(tbIntl('saveSuccess'));
@@ -693,6 +699,7 @@ export function PageInit(
     tool: { defaultTool: ToolType };
     annotation?: Annotation; // FIXME: setting annotation this way may be overwritten by annotation.getAll in onTaskChange
     task: { push: boolean };
+    recordHistory: ({ annos: [] }) => void;
   },
 ) {
   const tool = ToolUtils(useState, props.tool ? props.tool : {});
@@ -705,6 +712,7 @@ export function PageInit(
     ...props.annotation,
     label: label,
     project: project,
+    recordHistory: props.recordHistory,
   });
   const task = TaskUtils(useState, { annotation, ...props.task });
   const [refreshVar, setRefreshVar] = useState<number>(0);

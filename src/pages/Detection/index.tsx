@@ -39,6 +39,7 @@ const Page: React.FC = () => {
         preUnsetCurr: preCurrLabelUnset,
       },
       tool: { defaultTool: 'mover' },
+      recordHistory: recordHistory,
     },
   );
 
