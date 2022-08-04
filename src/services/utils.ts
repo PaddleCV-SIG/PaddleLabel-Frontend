@@ -699,7 +699,7 @@ export function PageInit(
     tool: { defaultTool: ToolType };
     annotation?: Annotation; // FIXME: setting annotation this way may be overwritten by annotation.getAll in onTaskChange
     task: { push: boolean };
-    recordHistory: ({ annos: [] }) => void;
+    recordHistory?: ({ annos: [] }) => void;
   },
 ) {
   const tool = ToolUtils(useState, props.tool ? props.tool : {});

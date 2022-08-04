@@ -500,6 +500,7 @@ const Page: React.FC = () => {
           onAnnotationModify={() => {}}
           onAnnotationDelete={async (anno: Annotation) => {
             const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
+            recordHistory({ annos: newAll });
             annotation.setAll(newAll);
             setCurrentAnnotation(undefined);
             await annotation.pushToBackend(data.curr?.dataId, newAll);
