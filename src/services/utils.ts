@@ -703,6 +703,7 @@ export function PageInit(
     recordHistory?: ({ annos: [] }) => void;
   },
 ) {
+  message.config({ maxCount: 6, duration: 2 });
   const tool = ToolUtils(useState, props.tool ? props.tool : {});
   const loading = LoadingUtils(useState);
   const scale = ScaleUtils(useState);
