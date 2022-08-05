@@ -340,17 +340,18 @@ export const LabelUtils = (
   }
 
   async function remove(label: Label): Promise<Label[]> {
+    console.log('to delete', label);
     try {
       await labelApi.remove(label.labelId);
       if (activeIds.has(label.labelId)) {
         activeIds.delete(label.labelId);
         setActiveIds(activeIds);
       }
-      if (curr.labelId == label.labelId) unsetCurr();
-      const labels = getAll(label.projectId);
+      if (curr != undefined && curr.labelId == label.labelId) unsetCurr();
+      const labels = await getAll(label.projectId);
       return labels;
     } catch (err) {
-      console.log('label remove err', err);
+      // console.log('label remove err', err);
       serviceUtils.parseError(err, message);
       return [];
     }
@@ -447,7 +448,7 @@ export function AnnotationUtils(
   {
     label = undefined,
     project = undefined,
-    recordHistory = undefined,
+    recordHistory = () => {},
   }: { label: any; project: any; recordHistory: ({ annos: [] }) => void },
 ) {
   const [all, setAllRaw] = useState<Annotation[]>([]);

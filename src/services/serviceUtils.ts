@@ -9,7 +9,6 @@ const serviceUtils = () => {
     const defaultErrStr = defaultErrMsg
       ? defaultErrMsg
       : 'Something unexpected happened, please try again later.';
-    console.log('asdfasdf', err);
     if (!err || !err.response) {
       msgComponent.error(defaultErrStr);
       return;
