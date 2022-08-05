@@ -13,6 +13,8 @@ export type _PPCardProps = {
   title?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
+  content?: string;
+  docUrl?: string;
 };
 
 const _PPBlock: React.FC<_PPCardProps> = (props) => {
@@ -20,6 +22,17 @@ const _PPBlock: React.FC<_PPCardProps> = (props) => {
     <div className={styles._ppcard} style={props.style}>
       <Row className={styles.titleRow} style={{ display: props.title ? undefined : 'none' }}>
         <Title className={styles.title}>{props.title}</Title>
+        <div>
+          <QuestionCircleOutlined
+            style={{ fontSize: '12px' }}
+            onClick={() =>
+              message.info({
+                content: props.content,
+                onClick: () => window.open(props.docUrl),
+              })
+            }
+          />
+        </div>
       </Row>
       <Row style={{ marginTop: 26 }}>
         <Col
@@ -148,6 +161,10 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
         <div id="left" className={styles.block_l}>
           <_PPBlock
             title={intl(props.taskCategory, 'global') + intl('project')}
+            content={intl('titleContent')}
+            docUrl={`https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/${camel2snake(
+              props.taskCategory,
+            )}.md`}
             style={{ height: 760, padding: '1.25rem 0' }}
           >
             <Form
@@ -185,24 +202,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
               </Form.Item>
               <Form.Item
                 name="dataDir"
-                label={
-                  <div>
-                    {intl('datasePath')}{' '}
-                    <QuestionCircleOutlined
-                      style={{ fontSize: '12px' }}
-                      onClick={() =>
-                        message.info({
-                          content:
-                            'The root directory of the dataset, where all images and labels are. Click here for more detail.',
-                          onClick: () =>
-                            window.open(
-                              `https://github.com/PaddleCV-SIG/PP-Label/blob/develop/doc/dataset_file_structure.md#${props.taskCategory}`,
-                            ),
-                        })
-                      }
-                    />
-                  </div>
-                }
+                label={intl('datasePath')}
                 labelCol={{
                   span: 6,
                 }}
@@ -248,25 +248,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
               </Form.Item>
               <Form.Item
                 name="labelFormat"
-                label={
-                  <div>
-                    {intl('labelFormat')}
-                    <QuestionCircleOutlined
-                      style={{ fontSize: '12px' }}
-                      onClick={() =>
-                        message.info({
-                          content:
-                            'Choose the format to import/export dataset. Click here to see details.',
-                          onClick: () => {
-                            window.open(
-                              `https://github.com/PaddleCV-SIG/PP-Label/blob/develop/doc/dataset_file_structure.md#${props.taskCategory}`,
-                            );
-                          },
-                        })
-                      }
-                    />
-                  </div>
-                }
+                label={intl('labelFormat')}
                 labelCol={{
                   span: 6,
                 }}

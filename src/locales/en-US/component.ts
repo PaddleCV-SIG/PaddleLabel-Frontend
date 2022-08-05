@@ -14,6 +14,7 @@ export default {
   'component.PPCreater.sampleProject': 'Demo Project',
   'component.PPCreater.segMaskType': 'Mask Type',
   'component.PPCreater.creationFail': 'Project Creation Failed',
+  'component.PPCreater.titleContent': 'Click to see more details about project folder structure.',
 
   'component.PPAddLabelModal.selectColor': 'Select Color',
   'component.PPAddLabelModal.addLabel': 'Add Label',

@@ -14,6 +14,7 @@ export default {
   'component.PPCreater.project': '项目',
   'component.PPCreater.sampleProject': '样例项目',
   'component.PPCreater.segMaskType': '掩膜类型',
+  'component.PPCreater.titleContent': '点此查看有关项目文件结构更多细节',
 
   'component.PPAddLabelModal.selectColor': '选择色彩',
   'component.PPAddLabelModal.addLabel': '创建标签',
