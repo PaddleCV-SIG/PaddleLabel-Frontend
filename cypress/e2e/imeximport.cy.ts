@@ -27,6 +27,8 @@ describe('Test Import Samples', () => {
     },
     sampleIt.import('classification'),
     // todo: spread parameter
+
+    // create 8 pjs
     ...Object.keys(catgInfo).map(function* (catg) {
       console.log('pjId', pjId);
       for (const labelFormat of Object.keys(catgInfo[catg])) {
@@ -34,7 +36,10 @@ describe('Test Import Samples', () => {
         catgInfo[catg][labelFormat] = pjId;
         pjId += 1;
       }
+    }),
 
+    // export 16 pjs
+    ...Object.keys(catgInfo).map(function* (catg) {
       for (const impFormat of Object.keys(catgInfo[catg]))
         for (const expFormat of Object.keys(catgInfo[catg])) {
           const currPjId = catgInfo[catg][impFormat];
@@ -47,7 +52,9 @@ describe('Test Import Samples', () => {
             },
           };
         }
-    }), // create and export
+    }),
+
+    // import 16 pjs
     ...Object.keys(catgInfo).map(function* (catg) {
       for (const impFormat of Object.keys(catgInfo[catg]))
         for (const expFormat of Object.keys(catgInfo[catg])) {

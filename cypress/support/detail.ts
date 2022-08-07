@@ -37,20 +37,30 @@ export const detail = {
       datasetPath != undefined
         ? datasetPath
         : `${config.sampleBaseDir}/${projectType}/${labelFormat}`;
-
-    cy.get('#name').type(dpath);
+    const name = dpath.replace(config.sampleBaseDir, '');
+    cy.get('#name').type(name);
     cy.get('#dataDir').type(dpath);
-    cy.get('#description').type(dpath);
+    cy.get('#description').type(name);
     cy.g(`global.labelFormat.${labelFormat}`).click();
+    if (projectType == 'semanticSegmentation' && labelFormat == 'mask')
+      cy.g('global.segMaskType.pesudo').should('be.visible');
     cy.g('component.PPCreater.create')
       .click()
       .wait(2000)
       .then(() =>
         cy.screenshot(
-          runId + '/' + dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1),
+          runId +
+            '/' +
+            dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
+            '_afterImport',
         ),
       );
-    label.on(projectType);
+    if (!dpath.includes('polygon2mask')) label.on(projectType); // polygon2mask will be empty pj
+    cy.wait(1000).then(() =>
+      cy.screenshot(
+        runId + '/' + dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) + '_label',
+      ),
+    );
   },
   changeType: (pjId: number, newType: string) => {
     detail.to(pjId);

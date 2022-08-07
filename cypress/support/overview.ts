@@ -4,8 +4,8 @@ import { label } from './label';
 export const overview = {
   on: () => {
     cy.onPage('project_overview');
-
     cy.get('.ant-empty-img-simple-path', { timeout: 20000 }).should('not.exist'); // should have data
+    cy.wait(1000);
   },
   to: (pjId: number) => {
     cy.visit(`/#/static/project_overview?projectId=${pjId}`);

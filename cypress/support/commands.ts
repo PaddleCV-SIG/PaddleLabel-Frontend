@@ -7,8 +7,8 @@ Cypress.Commands.add('spyAllApiCalls', () => {
   cy.intercept('http://localhost:17995/api/**').as('apicalls');
 });
 
-Cypress.Commands.add('g', (testId) => {
-  cy.get(`[data-test-id='${testId}']`);
+Cypress.Commands.add('g', (testId, params = {}) => {
+  cy.get(`[data-test-id='${testId}']`, params);
 });
 
 Cypress.Commands.add('clearPjs', () => {

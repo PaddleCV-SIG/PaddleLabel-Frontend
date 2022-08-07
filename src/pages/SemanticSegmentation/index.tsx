@@ -100,15 +100,15 @@ const Page: React.FC = () => {
   }, []);
 
   // Auto save every 20s
-  useEffect(() => {
-    const int = setInterval(() => {
-      console.log('triggered!', data);
-      annotation.pushToBackend(data.curr?.dataId);
-    }, 20000);
-    return () => {
-      clearInterval(int);
-    };
-  }, [annotation, data, data.curr]);
+  // useEffect(() => {
+  //   const int = setInterval(() => {
+  //     console.log('triggered!', data);
+  //     annotation.pushToBackend(data.curr?.dataId);
+  //   }, 20000);
+  //   return () => {
+  //     clearInterval(int);
+  //   };
+  // }, [annotation, data, data.curr]);
 
   const onAnnotationModify = (anno: Annotation) => {
     if (!anno) return;
