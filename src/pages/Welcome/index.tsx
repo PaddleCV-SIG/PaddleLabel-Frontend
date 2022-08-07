@@ -8,13 +8,14 @@ import PPTable from '@/components/PPTable';
 import PPButton from '@/components/PPButton';
 import PPSampleButton from '@/components/PPSampleButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { toDict, ProjectUtils, getVersion, snake2camel, IntlInit } from '@/services/utils';
+import { toDict, ProjectUtils, getVersion, snake2camel } from '@/services/utils';
+import { IntlInitJsx } from '@/components/PPIntl';
 import { createInfo } from '@/services/utils';
 import type { ColumnsType } from 'antd/es/table';
 import type { Project } from '@/services/web/models';
 
 const Projects: React.FC = (props) => {
-  const intl = IntlInit('pages.welcome');
+  const intl = IntlInitJsx('pages.welcome');
 
   console.log('render projects');
   const projects = ProjectUtils(useState);
@@ -108,7 +109,7 @@ const Projects: React.FC = (props) => {
 };
 
 const Welcome: React.FC = () => {
-  const intl = IntlInit('pages.welcome');
+  const intl = IntlInitJsx('pages.welcome');
 
   const [deleting, setDeleting] = useState<boolean>(false);
   function createButtons() {
@@ -144,6 +145,7 @@ const Welcome: React.FC = () => {
               history.push('/sample_project');
             }}
           >
+            {/* <Intl id={'sampleProject'} /> */}
             {intl('sampleProject')}
           </PPSampleButton>
         </Col>

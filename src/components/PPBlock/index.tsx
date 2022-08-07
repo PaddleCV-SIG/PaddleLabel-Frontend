@@ -4,7 +4,7 @@ import React from 'react';
 import styles from './index.less';
 
 export type PPCardProps = {
-  title?: string;
+  title?: string | React.Component;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
   hidden?: boolean;
