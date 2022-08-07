@@ -6,8 +6,9 @@ import Title from 'antd/lib/typography/Title';
 import { history } from 'umi';
 import styles from './index.less';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, camel2snake, IntlInit, snake2camel, sampleApi } from '@/services/utils';
+import { createInfo, camel2snake, snake2camel, sampleApi, IntlInit } from '@/services/utils';
 import { ProjectUtils } from '@/services/utils';
+import { IntlInitJsx } from '@/components/PPIntl';
 
 export type _PPCardProps = {
   title?: string;
@@ -60,6 +61,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const [sampleFiles, setSampleFiles] = useState<TreeDataNode[]>([]);
   const [labelFormat, setLabelFormat] = useState<string>();
 
+  const intlJsx = IntlInitJsx('component.PPCreater');
   const intl = IntlInit('component.PPCreater');
 
   const saveProject = (values: any) => {
@@ -350,7 +352,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                   style={{ height: '2.5rem', width: '48%' }}
                   block
                 >
-                  {projectId ? intl('update') : intl('create')}
+                  {projectId ? intlJsx('update') : intlJsx('create')}
                 </Button>
                 &nbsp;&nbsp;
                 <Button
@@ -361,7 +363,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                     history.goBack();
                   }}
                 >
-                  {intl('cancel')}
+                  {intlJsx('cancel')}
                 </Button>
               </Form.Item>
             </Form>

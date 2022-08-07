@@ -2,8 +2,9 @@ import { Col, Form, InputNumber, message, Modal, Row, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.less';
-import { splitDataset, IntlInit } from '@/services/utils';
+import { splitDataset } from '@/services/utils';
 import type { Project } from '@/services/models';
+import { IntlInitJsx } from '@/components/PPIntl';
 
 type PPSplitDatasetProps = {
   project: Project;
@@ -12,19 +13,12 @@ type PPSplitDatasetProps = {
 };
 
 const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
-  const intl = IntlInit('component.PPSplitDataset');
+  const intl = IntlInitJsx('component.PPSplitDataset');
   const [visible, setVisible] = useState<boolean>(false);
   const [trainData, setTrainData] = useState<number>(60);
   const [validationData, setValidationData] = useState<number>(20);
   const [testData, setTestData] = useState<number>(20);
   const [loading, setLoading] = useState<boolean>(false);
-
-  // const divideData = intl.formatMessage({ id: 'pages.toolBar.divideData' });
-  // const train = intl.formatMessage({ id: 'component.PPDivideDataModal.train' });
-  // const validation = intl.formatMessage({ id: 'component.PPDivideDataModal.validation' });
-  // const test = intl.formatMessage({ id: 'component.PPDivideDataModal.test' });
-  // const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
-  // const ok = intl.formatMessage({ id: 'component.PPSegMode.ok' });
 
   const [form] = Form.useForm();
 
@@ -49,7 +43,8 @@ const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
           initialValues={{ remember: false }}
           onFinish={() => {
             if (trainData + validationData + testData != 100) {
-              message.error('Train, Validation and Test percent should sum up to 100!');
+              // message.error('Train, Validation and Test percent should sum up to 100!');
+              message.error(intl('success'));
               return;
             }
             console.log(

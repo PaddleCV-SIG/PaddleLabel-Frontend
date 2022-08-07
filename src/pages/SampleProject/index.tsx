@@ -5,10 +5,12 @@ import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
 import PPContainer from '@/components/PPContainer';
 import PPOverlapCol from '@/components/PPOverlapCol';
-import { createInfo, sampleApi, IntlInit } from '@/services/utils';
+import { createInfo, sampleApi } from '@/services/utils';
+import { IntlInitJsx } from '@/components/PPIntl';
 
 const SampleProject: React.FC = () => {
-  const intl = IntlInit('pages.welcome');
+  // const intl = IntlInit('pages.welcome');
+  const intl = IntlInitJsx('pages.welcome');
   return (
     <PPContainer>
       <Row style={{ marginTop: 20 }}>
@@ -18,7 +20,6 @@ const SampleProject: React.FC = () => {
               {Object.entries(createInfo).map((entry) => {
                 const key = entry[0];
                 const val = entry[1];
-                console.log('asdf', key, val);
                 return (
                   <PPOverlapCol span={4} key={key}>
                     <PPCard
