@@ -7,9 +7,6 @@ describe('Test Import Samples', () => {
     cy.spyAllApiCalls();
   });
 
-  // it('Clear Projects', () => {
-  //   cy.clearPjs();
-  // });
   const projectCategories = [
     'classification',
     // 'detection',
@@ -18,14 +15,15 @@ describe('Test Import Samples', () => {
   ];
 
   const tasks = [
-    {
-      name: 'Clear Projects',
-      func: () => {
-        cy.clearPjs();
-      },
-    },
-    ...projectCategories.map((catg) => sampleIt.import(catg)),
-    ...projectCategories.map((catg) => sampleIt.pjSettings(catg)),
+    // {
+    //   name: 'Clear Projects',
+    //   func: () => {
+    //     cy.clearPjs();
+    //   },
+    // },
+    // ...projectCategories.map((catg) => sampleIt.import(catg)), // create
+    // ...projectCategories.map((catg) => sampleIt.pjDetails(catg)), // modify detail
+    ...projectCategories.map((catg) => sampleIt.splitDataset(catg)), // split modal
   ];
 
   for (const task of tasks) {

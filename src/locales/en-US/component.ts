@@ -72,8 +72,9 @@ export default {
   'component.PPSplitDataset.validation': 'Validation',
   'component.PPSplitDataset.test': 'Test',
   'component.PPSplitDataset.success': 'Dataset is randomly splitted',
-  'component.PPImportModal.import': 'Import',
+  'component.PPSplitDataset.fail': 'Train, Validation and Test percentage should sum up to 100!',
 
+  'component.PPImportModal.import': 'Import',
   'component.PPImportModal.title': 'Import Additional Data',
   'component.PPImportModal.path': 'Data Path',
 

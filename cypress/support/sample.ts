@@ -20,24 +20,25 @@
 */
 
 import { detail } from './detail';
+import { overview } from './overview';
+import { welcome } from './welcome';
 
 export const sample = {
-  import: (sampleType: string) => {
-    cy.onPage('welcome').then(() => {
-      cy.g('pages.welcome.sampleProject').click();
-    });
-
-    cy.onPage('sample_project').then(() => {
-      cy.g(`global.${sampleType}`).click();
-    });
-
-    cy.onPage('project_overview').then(() => {
-      cy.get('.ant-empty-img-simple-path').should('not.exist'); // should have data
-    });
+  on: () => {
+    cy.onPage('sample_project');
+  },
+  to: () => {
+    welcome.to();
+    cy.g('pages.welcome.sampleProject').click();
+    sample.on();
   },
   toOverview: (sampleType: string) => {
-    sample.import(sampleType);
-    cy.get('.ant-empty-img-simple-path').should('not.exist'); // should have data
+    cy.g(`global.${sampleType}`).click();
+    overview.on();
+  },
+  import: (sampleType: string) => {
+    sample.to();
+    sample.toOverview(sampleType);
   },
 };
 
@@ -50,13 +51,26 @@ export const sampleIt = {
       },
     };
   },
-  pjSettings: (sampleType: string) => {
+  pjDetails: (sampleType: string) => {
     return {
-      name: `Modify ${sampleType} sample pj setting`,
+      name: `Modify ${sampleType} sample pj details`,
       func: () => {
+        sample.to();
         sample.toOverview(sampleType);
-        cy.g('pages.projectOverview.projectSettings').click();
+        overview.toDetail();
         detail.modify();
+      },
+    };
+  },
+  splitDataset: (sampleType: string) => {
+    return {
+      name: `Split dataset ${sampleType}`,
+      func: () => {
+        sample.to();
+        sample.toOverview(sampleType);
+        overview.toSplit();
+        overview.split(50);
+        overview.split(100);
       },
     };
   },

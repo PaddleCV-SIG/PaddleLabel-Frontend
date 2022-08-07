@@ -61,6 +61,7 @@ export default {
   'component.PPSplitDataset.validation': '验证集比例',
   'component.PPSplitDataset.test': '测试集比例',
   'component.PPSplitDataset.success': '数据集划分成功',
+  'component.PPSplitDataset.fail': '训练，验证和测试集百分比和应为100',
 
   'component.PPExportModal.title': '导出数据集',
   'component.PPExportModal.path': '导出路径',

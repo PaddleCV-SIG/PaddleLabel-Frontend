@@ -1,4 +1,8 @@
 export const detail = {
+  on: () => {
+    cy.onPage('project_detail');
+  },
+  to: () => {},
   modify: () => {
     const randName = (Math.random() + 1).toString(36);
     cy.onPage('project_detail').then(() => {
