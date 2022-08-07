@@ -1,0 +1,73 @@
+/// <reference types="cypress" />
+import { sampleIt } from '../support/sample';
+import { detail, detailIt } from '../support/detail';
+import { overview, overviewIt } from '../support/overview';
+import { config, runId } from '../support/config';
+
+describe('Test Import Samples', () => {
+  beforeEach(() => {
+    cy.visit('/');
+    cy.spyAllApiCalls();
+  });
+
+  var pjId = 2;
+  var catgInfo = {
+    classification: { singleClass: 0, multiClass: 0 },
+    detection: { coco: 0, voc: 0 },
+    semanticSegmentation: { mask: 0, polygon: 0 },
+    instanceSegmentation: { mask: 0, polygon: 0 },
+  };
+
+  const tasks = [
+    {
+      name: 'Clear Projects',
+      func: () => {
+        cy.clearPjs();
+      },
+    },
+    sampleIt.import('classification'),
+    // todo: spread parameter
+    ...Object.keys(catgInfo).map(function* (catg) {
+      console.log('pjId', pjId);
+      for (const labelFormat of Object.keys(catgInfo[catg])) {
+        yield detailIt.import(catg, labelFormat);
+        catgInfo[catg][labelFormat] = pjId;
+        pjId += 1;
+      }
+
+      for (const impFormat of Object.keys(catgInfo[catg]))
+        for (const expFormat of Object.keys(catgInfo[catg])) {
+          const currPjId = catgInfo[catg][impFormat];
+          const exportPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}2${expFormat}`;
+          yield {
+            name: `Export ${catg} ${impFormat} pj to ${expFormat}`,
+            func: () => {
+              detail.changeType(currPjId, expFormat);
+              overview.export(currPjId, exportPath);
+            },
+          };
+        }
+    }), // create and export
+    ...Object.keys(catgInfo).map(function* (catg) {
+      for (const impFormat of Object.keys(catgInfo[catg]))
+        for (const expFormat of Object.keys(catgInfo[catg])) {
+          pjId += 1;
+          const dataPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}2${expFormat}`;
+          yield {
+            name: `Import ${catg} ${expFormat} pj`,
+            func: () => detail.import(catg, expFormat, dataPath),
+          };
+        }
+    }),
+  ];
+
+  for (const task of tasks) {
+    if (Object.keys(task).includes('name')) it(task.name, task.func);
+    // todo
+    else for (const subtask of task) it(subtask.name, subtask.func);
+
+    // it('Cool down', () => {
+    //   cy.wait(5000);
+    // });
+  }
+});

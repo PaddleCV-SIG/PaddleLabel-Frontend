@@ -39,6 +39,7 @@ export const sample = {
   import: (sampleType: string) => {
     sample.to();
     sample.toOverview(sampleType);
+    overview.toLabel(sampleType);
   },
 };
 

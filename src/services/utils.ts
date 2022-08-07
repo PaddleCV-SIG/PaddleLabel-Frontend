@@ -639,12 +639,11 @@ export const DataUtils = (useState: UseStateType) => {
 export function exportDataset(projectId, exportDir) {
   return projectApi
     .exportDataset(projectId, { exportDir: exportDir })
-    .then((res) => {
-      console.log(res);
-    })
+    .then((res) => {})
     .catch((err) => {
       console.log('export error', err);
       serviceUtils.parseError(err, message);
+      throw err;
     });
 }
 export function importDataset(projectId: number, importDir: string) {

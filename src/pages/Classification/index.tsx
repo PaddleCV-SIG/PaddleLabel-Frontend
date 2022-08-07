@@ -8,8 +8,9 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
-import { PageInit, IntlInit } from '@/services/utils';
+import { PageInit } from '@/services/utils';
 import type { Label, Annotation } from '@/models';
+import { IntlInitJsx } from '@/components/PPIntl/';
 
 const Page: React.FC = () => {
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
@@ -22,7 +23,7 @@ const Page: React.FC = () => {
     },
   );
 
-  const tbIntl = IntlInit('pages.toolBar');
+  const tbIntl = IntlInitJsx('pages.toolBar');
 
   function postProjectChanged() {
     if (project.curr?.labelFormat == 'single_class') label.setOneHot(true);
@@ -99,13 +100,14 @@ const Page: React.FC = () => {
               onAnnotationModify={() => {}}
               onAnnotationModifyComplete={() => {}}
               imgSrc={data.imgSrc}
+              annotations={annotation.all}
             />
           </div>
           <div className="pblock">
             <PPProgress task={task} project={project} />
           </div>
-          <div className="prevTask" onClick={task.prevTask} />
-          <div className="nextTask" onClick={task.nextTask} />
+          <div className="prevTask" onClick={task.prevTask} data-test-id={'prevTask'} />
+          <div className="nextTask" onClick={task.nextTask} data-test-id={'nextTask'} />
         </Spin>
       </div>
       <PPToolBar disLoc="right">

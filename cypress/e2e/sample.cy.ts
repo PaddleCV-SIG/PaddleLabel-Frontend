@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import { sample, sampleIt } from '../support/sample';
+import { sampleIt } from '../support/sample';
 
 describe('Test Import Samples', () => {
   beforeEach(() => {
@@ -9,20 +9,20 @@ describe('Test Import Samples', () => {
 
   const projectCategories = [
     'classification',
-    // 'detection',
-    // 'semanticSegmentation',
-    // 'instanceSegmentation',
+    'detection',
+    'semanticSegmentation',
+    'instanceSegmentation',
   ];
 
   const tasks = [
-    // {
-    //   name: 'Clear Projects',
-    //   func: () => {
-    //     cy.clearPjs();
-    //   },
-    // },
-    // ...projectCategories.map((catg) => sampleIt.import(catg)), // create
-    // ...projectCategories.map((catg) => sampleIt.pjDetails(catg)), // modify detail
+    {
+      name: 'Clear Projects',
+      func: () => {
+        cy.clearPjs();
+      },
+    },
+    ...projectCategories.map((catg) => sampleIt.import(catg)), // create
+    ...projectCategories.map((catg) => sampleIt.pjDetails(catg)), // modify detail
     ...projectCategories.map((catg) => sampleIt.splitDataset(catg)), // split modal
   ];
 

@@ -8,17 +8,18 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
-import { IntlInit, PageInit } from '@/services/utils';
+import { PageInit } from '@/services/utils';
 import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import type { Annotation } from '@/models/Annotation';
 import PPRectangle from '@/components/PPDrawTool/PPRectangle';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
+import { IntlInitJsx } from '@/components/PPIntl';
 
 const Page: React.FC = () => {
   // todo: change to use annotation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [frontendId, setFrontendId] = useState<number>(0);
-  const tbIntl = IntlInit('pages.toolBar');
+  const tbIntl = IntlInitJsx('pages.toolBar');
 
   const { tool, loading, scale, annotation, task, data, project, label } = PageInit(
     useState,
@@ -238,6 +239,7 @@ const Page: React.FC = () => {
           </div>
           <div
             className="prevTask"
+            data-test-id="prevTask"
             onClick={() => {
               if (!task.prevTask()) {
                 return;
@@ -247,6 +249,7 @@ const Page: React.FC = () => {
           />
           <div
             className="nextTask"
+            data-test-id="nextTask"
             onClick={() => {
               if (!task.nextTask()) {
                 return;

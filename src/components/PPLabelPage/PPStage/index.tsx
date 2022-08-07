@@ -181,7 +181,11 @@ const Component: React.FC<PPStageProps> = (props) => {
   const draggable = props.currentTool == 'mover';
 
   return (
-    <>
+    <div
+      data-test-id="stage-container"
+      data-label-length={props.annotations ? props.annotations.length : 0}
+      data-image-src={props.imgSrc}
+    >
       <canvas
         style={{ display: 'none' }}
         id="canvasId"
@@ -258,7 +262,7 @@ const Component: React.FC<PPStageProps> = (props) => {
           {shapes}
         </Layer>
       </Stage>
-    </>
+    </div>
   );
 };
 export default Component;

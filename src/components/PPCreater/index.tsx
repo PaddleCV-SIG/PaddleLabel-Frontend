@@ -279,14 +279,13 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                         samplePath[props.taskCategory][form.getFieldValue('labelFormat')],
                       )
                       .then((res) => {
-                        console.log('sample file structure', res);
                         setSampleFiles(res);
                       });
                   }}
                 >
                   {Object.keys(createInfo[props.taskCategory].labelFormats).map((k) => (
                     <Radio key={k} value={k}>
-                      {intl(snake2camel(k), 'global.labelFormat')}
+                      {intlJsx(snake2camel(k), 'global.labelFormat')}
                     </Radio>
                   ))}
                 </Radio.Group>

@@ -13,10 +13,11 @@ import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/c
 import PPBrush from '@/components/PPDrawTool/PPBrush';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
-import { IntlInit, ModelUtils, PageInit } from '@/services/utils';
+import { ModelUtils, PageInit } from '@/services/utils';
 import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 import PPInteractor, { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
+import { IntlInitJsx } from '@/components/PPIntl';
 
 export const MOST_HISTORY_STEPS = 40;
 
@@ -29,7 +30,7 @@ export type HistoryType = {
 };
 
 const Page: React.FC = () => {
-  const tbIntl = IntlInit('pages.toolBar');
+  const tbIntl = IntlInitJsx('pages.toolBar');
   const [frontendId, setFrontendId] = useState<number>(0);
   const [brushSize, setBrushSize] = useState(10);
   const [threshold, setThreshold] = useState(50);
@@ -340,6 +341,7 @@ const Page: React.FC = () => {
           </div>
           <div
             className="prevTask"
+            data-test-id="prevTask"
             onClick={() => {
               if (interactorData.active) saveInteractorData();
               if (!task.prevTask()) {
@@ -352,6 +354,7 @@ const Page: React.FC = () => {
           />
           <div
             className="nextTask"
+            data-test-id="nextTask"
             onClick={() => {
               if (interactorData.active) saveInteractorData();
               if (!task.nextTask()) {
