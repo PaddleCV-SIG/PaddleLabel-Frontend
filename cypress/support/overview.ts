@@ -8,7 +8,7 @@ export const overview = {
     cy.wait(1000);
   },
   to: (pjId: number) => {
-    cy.visit(`/#/static/project_overview?projectId=${pjId}`);
+    cy.visit(`/static/index.html#/static/project_overview?projectId=${pjId}`);
     overview.on();
   },
   toDetail: () => {

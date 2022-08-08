@@ -187,3 +187,10 @@ openapi-generator-cli generate \
 --skip-validate-spec
 
 ```
+
+## E2E Testing
+
+```shell
+npx cypress open # with real time visulization
+npx cypress run # headless
+```

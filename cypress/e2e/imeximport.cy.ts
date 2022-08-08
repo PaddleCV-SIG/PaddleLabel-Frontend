@@ -4,7 +4,7 @@ import { detail, detailIt } from '../support/detail';
 import { overview, overviewIt } from '../support/overview';
 import { config, runId } from '../support/config';
 
-describe('Test Import Samples', () => {
+describe('Test Import Export then Import Back', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.spyAllApiCalls();
@@ -62,7 +62,7 @@ describe('Test Import Samples', () => {
           const dataPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}2${expFormat}`;
           yield {
             name: `Import ${catg} ${expFormat} pj`,
-            func: () => detail.import(catg, expFormat, dataPath),
+            func: () => detail.import(catg, expFormat, dataPath, expFormat != 'mask'),
           };
         }
     }),

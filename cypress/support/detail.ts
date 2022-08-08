@@ -30,7 +30,12 @@ export const detail = {
       cy.g('component.PPCreater.cancel').click();
     });
   },
-  import: (projectType: string, labelFormat: string, datasetPath?: string) => {
+  import: (
+    projectType: string,
+    labelFormat: string,
+    datasetPath?: string,
+    skipAnnTest: boolean = false,
+  ) => {
     welcome.to();
     welcome.toCreate(projectType);
     const dpath =
@@ -55,7 +60,7 @@ export const detail = {
             '_afterImport',
         ),
       );
-    if (!dpath.includes('polygon2mask')) label.on(projectType); // polygon2mask will be empty pj
+    if (!dpath.includes('polygon2mask')) label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
     cy.wait(1000).then(() =>
       cy.screenshot(
         runId + '/' + dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) + '_label',
