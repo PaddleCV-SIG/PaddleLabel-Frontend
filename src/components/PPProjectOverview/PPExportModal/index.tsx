@@ -2,7 +2,7 @@ import { Form, Input, message, Modal, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.less';
-import { exportDataset } from '@/services/utils';
+import { exportDataset, IntlInit } from '@/services/utils';
 import type { Project } from '@/services/web/models/';
 import { IntlInitJsx } from '@/components/PPIntl';
 
@@ -12,8 +12,8 @@ type PPExportProps = {
 };
 
 const PPExportModal: React.FC<PPExportProps> = (props) => {
-  // const intl = IntlInit('component.PPExportModal');
-  const intl = IntlInitJsx('component.PPExportModal');
+  const intl = IntlInit('component.PPExportModal');
+  const intlJsx = IntlInitJsx('component.PPExportModal');
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
 
@@ -22,11 +22,11 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
   return (
     <span hidden={props.visible == false}>
       <Button type="primary" onClick={() => setVisible(true)}>
-        {intl('title')}
+        {intlJsx('title')}
       </Button>
       <Modal
         className={styles.modal}
-        title={intl('title')}
+        title={intlJsx('title')}
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
@@ -40,13 +40,13 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
           onFinish={(values) => {
             const path = values.path;
             if (!path) {
-              message.error(intl('nullPath'));
+              message.error(intlJsx('nullPath'));
               return;
             }
             setLoading(true);
             exportDataset(props.project.projectId, path)
               .then(() => {
-                message.success(intl('exportSuccess'));
+                message.success(intlJsx('exportSuccess'));
               })
               .catch(() => {})
               .finally(() => {
@@ -67,10 +67,10 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
                   form.resetFields();
                 }}
               >
-                {intl('cancel', 'global')}
+                {intlJsx('cancel', 'global')}
               </Button>
               <Button type="primary" htmlType="submit" loading={loading}>
-                {intl('export')}
+                {intlJsx('export')}
               </Button>
             </Space>
           </Form.Item>

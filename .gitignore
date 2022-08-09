@@ -3,6 +3,7 @@
 # Project Specific
 cypress/screenshots
 cypress/videos
+cypress/support/config.ts
 
 # dependencies
 **/node_modules
