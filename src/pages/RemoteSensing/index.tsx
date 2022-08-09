@@ -16,9 +16,7 @@ import type { Map } from 'react-leaflet';
 import PPGeoAnnotationList from '@/components/PPLabelPage/PPGeoAnnotationList';
 import operation from './operation';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
-// import type { Annotation } from '@/models/annotation';
 import { useIntl } from 'umi';
-import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import { PageInit } from '@/services/utils';
 
 export type ToolType =
@@ -80,7 +78,7 @@ const Page: React.FC = () => {
   });
 
   useEffect(() => {
-    initHistory();
+    // initHistory();
   }, []);
 
   console.log(`rs is re-rendering! label.curr: ${JSON.stringify(label.curr)}`);
@@ -91,7 +89,7 @@ const Page: React.FC = () => {
     currentLabel: label.curr,
     setAnnotations: setAnnotations,
     annotations: annotations,
-    recordHistory: recordHistory,
+    // recordHistory: recordHistory,
   });
 
   const intl = useIntl();
@@ -224,10 +222,10 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton
           onClick={() => {
-            const res = backwardHistory();
-            if (res) {
-              // Do something
-            }
+            // const res = backwardHistory();
+            // if (res) {
+            //   // Do something
+            // }
           }}
           imgSrc="./pics/buttons/prev.png"
         >
@@ -235,10 +233,10 @@ const Page: React.FC = () => {
         </PPToolBarButton>
         <PPToolBarButton
           onClick={() => {
-            const res = forwardHistory();
-            if (res) {
-              // Do something
-            }
+            // const res = forwardHistory();
+            // if (res) {
+            //   // Do something
+            // }
           }}
           imgSrc="./pics/buttons/next.png"
         >
