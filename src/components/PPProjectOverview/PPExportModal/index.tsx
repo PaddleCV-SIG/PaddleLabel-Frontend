@@ -47,6 +47,7 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
             exportDataset(props.project.projectId, path)
               .then(() => {
                 message.success(intlJsx('exportSuccess'));
+                setVisible(false);
               })
               .catch(() => {})
               .finally(() => {
