@@ -18,6 +18,7 @@ import {
 import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi } from '@/services/ml';
 import type { InlineObject1, Model } from '@/services/ml/models';
+import { HistoryUtils } from '@/services/history';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -699,7 +700,7 @@ export function PageInit(
     tool: { defaultTool: ToolType };
     annotation?: Annotation; // FIXME: setting annotation this way may be overwritten by annotation.getAll in onTaskChange
     task: { push: boolean };
-    recordHistory?: ({ annos: [] }) => void;
+    // recordHistory?: ({ annos: [] }) => void;
   },
 ) {
   message.config({ maxCount: 6, duration: 2 });
@@ -709,12 +710,14 @@ export function PageInit(
   const data = DataUtils(useState);
   const project = ProjectUtils(useState);
   const label = LabelUtils(useState, props.label ? props.label : {});
+  const annHistory = HistoryUtils();
   const annotation = AnnotationUtils(useState, {
     ...props.annotation,
     label: label,
     project: project,
-    recordHistory: props.recordHistory,
+    recordHistory: annHistory.record,
   });
+
   const task = TaskUtils(useState, { annotation, ...props.task });
   const [refreshVar, setRefreshVar] = useState<number>(0);
 
@@ -804,7 +807,7 @@ export function PageInit(
     refresh();
   }, [annotation.all, label.all]);
 
-  return { tool, loading, scale, annotation, task, data, project, label, refreshVar };
+  return { tool, loading, scale, annotation, task, data, project, label, refreshVar, annHistory };
 }
 
 // ml related

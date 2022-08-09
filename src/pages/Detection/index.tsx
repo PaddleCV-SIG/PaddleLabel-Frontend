@@ -9,7 +9,6 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import { PageInit } from '@/services/utils';
-import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import type { Annotation } from '@/models/Annotation';
 import PPRectangle from '@/components/PPDrawTool/PPRectangle';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
@@ -21,14 +20,14 @@ const Page: React.FC = () => {
   const [frontendId, setFrontendId] = useState<number>(0);
   const tbIntl = IntlInitJsx('pages.toolBar');
 
-  const { tool, loading, scale, annotation, task, data, project, label } = PageInit(
+  const { tool, loading, scale, annotation, task, data, project, label, annHistory } = PageInit(
     useState,
     useEffect,
     {
       effectTrigger: {
         postTaskChange: (allLabels, allAnns) => {
-          initHistory();
-          recordHistory({ annos: allAnns });
+          annHistory.init();
+          annHistory.record({ annos: allAnns });
         },
       },
       label: {
@@ -40,7 +39,6 @@ const Page: React.FC = () => {
         preUnsetCurr: preCurrLabelUnset,
       },
       tool: { defaultTool: 'mover' },
-      recordHistory: recordHistory,
     },
   );
 
@@ -74,11 +72,11 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
-    initHistory();
+    annHistory.init();
   }, []);
 
   function onFinishEdit() {
-    recordHistory({ annos: annotation.all, currAnno: annotation.curr });
+    annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     console.log('finish before', annotation.curr);
     if (!annotation.curr) return;
     if (!annotation.curr.result || annotation.curr.result.split(',').length != 4) return;
@@ -178,7 +176,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
-            const res = backwardHistory();
+            const res = annHistory.backward();
             if (res) {
               annotation.setAll(res.annos);
               setCurrentAnnotation(res.currAnno);
@@ -191,7 +189,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
           onClick={() => {
-            const res = forwardHistory();
+            const res = annHistory.forward();
             if (res) {
               annotation.pushToBackend(data.curr?.dataId, res.annos);
               setCurrentAnnotation(res.currAnno);
@@ -204,7 +202,7 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/clear_mark.png"
           onClick={() => {
             annotation.clear();
-            recordHistory({ annos: [] });
+            annHistory.record({ annos: [] });
           }}
         >
           {tbIntl('clearMark')}
@@ -220,9 +218,7 @@ const Page: React.FC = () => {
               currentAnnotation={annotation.curr}
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={onAnnotationModify}
-              onAnnotationModifyComplete={() => {
-                // recordHistory({ annos: annotation.all, currAnno: annotation.curr });
-              }}
+              onAnnotationModifyComplete={() => {}}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
               imgSrc={data.imgSrc}
               transparency={100}

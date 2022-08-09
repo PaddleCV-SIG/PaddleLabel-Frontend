@@ -17,7 +17,7 @@ import PPGeoAnnotationList from '@/components/PPLabelPage/PPGeoAnnotationList';
 import operation from './operation';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 // import type { Annotation } from '@/models/annotation';
-import { MOST_HISTORY_STEPS } from '../SemanticSegmentation';
+import { MOST_HISTORY_STEPS } from '@/services/history';
 import { useIntl } from 'umi';
 
 export type ToolType =

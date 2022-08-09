@@ -9,7 +9,6 @@ import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
-import { backwardHistory, forwardHistory, initHistory, recordHistory } from '@/components/history';
 import PPBrush from '@/components/PPDrawTool/PPBrush';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
@@ -18,16 +17,6 @@ import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 import PPInteractor, { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
 import { IntlInitJsx } from '@/components/PPIntl';
-
-export const MOST_HISTORY_STEPS = 40;
-
-export type HistoryType = {
-  index: number;
-  items: {
-    currentAnnotation?: Annotation;
-    annotations: Annotation[];
-  }[];
-};
 
 const Page: React.FC = () => {
   const tbIntl = IntlInitJsx('pages.toolBar');
@@ -39,15 +28,12 @@ const Page: React.FC = () => {
   const { interactorData, setInteractorData } = useModel('InteractorData');
 
   const model = ModelUtils(useState);
-  const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
-    useState,
-    useEffect,
-    {
+  const { tool, loading, scale, annotation, task, data, project, label, refreshVar, annHistory } =
+    PageInit(useState, useEffect, {
       effectTrigger: {
         postTaskChange: (allLabels, allAnns) => {
-          initHistory();
-          recordHistory({ annos: allAnns });
-          console.log('allAnns', allAnns);
+          annHistory.init();
+          annHistory.record({ annos: allAnns });
         },
       },
       label: {
@@ -60,8 +46,7 @@ const Page: React.FC = () => {
       },
       tool: { defaultTool: 'mover' },
       task: { push: true },
-    },
-  );
+    });
 
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
@@ -96,7 +81,7 @@ const Page: React.FC = () => {
   };
 
   useEffect(() => {
-    initHistory();
+    annHistory.init();
   }, []);
 
   // Auto save every 20s
@@ -150,7 +135,7 @@ const Page: React.FC = () => {
     onMouseUp: () => {
       // Do not record interactor's history, do not pushToBackend either
       if (interactorData.active) return;
-      recordHistory({ annos: annotation.all, currAnno: annotation.curr });
+      annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
       annotation.pushToBackend(data.curr?.dataId, annotation.all);
     },
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
@@ -274,7 +259,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
-            const res = backwardHistory();
+            const res = annHistory.backward();
             if (res) {
               annotation.setAll(res.annos);
               setCurrentAnnotation(res.currAnno);
@@ -288,7 +273,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
           onClick={() => {
-            const res = forwardHistory();
+            const res = annHistory.forward();
             if (res) {
               annotation.pushToBackend(data.curr?.dataId, res.annos);
               setCurrentAnnotation(res.currAnno);
@@ -303,7 +288,7 @@ const Page: React.FC = () => {
           onClick={() => {
             annotation.setCurr(undefined);
             annotation.clear();
-            recordHistory({ annos: [] });
+            annHistory.record({ annos: [] });
           }}
           disabled={interactorData.active}
         >
@@ -324,7 +309,7 @@ const Page: React.FC = () => {
               onAnnotationModifyComplete={() => {
                 // Do not record interactor's history
                 if (interactorData.active) return;
-                recordHistory({ annos: annotation.all, currAnno: annotation.curr });
+                annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
               }}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
               imgSrc={data.imgSrc}
@@ -503,7 +488,7 @@ const Page: React.FC = () => {
           onAnnotationModify={() => {}}
           onAnnotationDelete={async (anno: Annotation) => {
             const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
-            recordHistory({ annos: newAll });
+            annHistory.record({ annos: newAll });
             annotation.setAll(newAll);
             setCurrentAnnotation(undefined);
             await annotation.pushToBackend(data.curr?.dataId, newAll);
