@@ -76,16 +76,21 @@ export const detail = {
 };
 
 export const detailIt = {
-  import: (projectType: string, labelFormat: string, datasetPath?: string) => {
+  import: (
+    projectType: string,
+    labelFormat: string,
+    datasetPath?: string,
+    skipAnnTest: boolean = false,
+  ) => {
     return {
       name: `Import ${projectType} project in ${labelFormat} format`,
-      func: () => detail.import(projectType, labelFormat, datasetPath),
+      func: () => detail.import(projectType, labelFormat, datasetPath, skipAnnTest),
     };
   },
-  export: (projectType: string, labelFormat: string, datasetPath?: string) => {
-    return {
-      name: `Export ${projectType} project in ${labelFormat} format`,
-      func: () => detail.export(projectId, exportFormat, exportPath),
-    };
-  },
+  // export: (projectType: string, labelFormat: string, datasetPath?: string) => {
+  //   return {
+  //     name: `Export ${projectType} project in ${labelFormat} format`,
+  //     func: () => detail.export(projectId, exportFormat, exportPath),
+  //   };
+  // },
 };

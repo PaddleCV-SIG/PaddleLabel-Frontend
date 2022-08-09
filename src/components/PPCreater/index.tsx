@@ -111,21 +111,21 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     });
   }, []);
 
-  const samplePath = {
-    classification: {
-      single_class: 'clas/single/',
-      multi_class: 'clas/multi/',
-    },
-    detection: { coco: 'det/coco/', voc: 'det/voc/' },
-    semanticSegmentation: {
-      mask: 'semantic_seg/mask/',
-      polygon: 'semantic_seg/polygon/',
-    },
-    instanceSegmentation: {
-      mask: 'instance_seg/mask/',
-      polygon: 'instance_seg/polygon/',
-    },
-  };
+  // const samplePath = {
+  //   classification: {
+  //     single_class: 'clas/single/',
+  //     multi_class: 'clas/multi/',
+  //   },
+  //   detection: { coco: 'det/coco/', voc: 'det/voc/' },
+  //   semanticSegmentation: {
+  //     mask: 'semantic_seg/mask/',
+  //     polygon: 'semantic_seg/polygon/',
+  //   },
+  //   instanceSegmentation: {
+  //     mask: 'instance_seg/mask/',
+  //     polygon: 'instance_seg/polygon/',
+  //   },
+  // };
 
   const { DirectoryTree } = Tree;
   const onTreeSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
@@ -140,7 +140,6 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     if (sampleFiles.length == 0) {
       return <img src={props.imgSrc} style={{ width: '40rem' }} />;
     } else {
-      // console.log('asdfasdf', samplePath[props.taskCategory][labelFormat]);
       return (
         <div>
           <DirectoryTree
@@ -276,7 +275,8 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                     setLabelFormat(form.getFieldValue('labelFormat'));
                     sampleApi
                       .getStructure(
-                        samplePath[props.taskCategory][form.getFieldValue('labelFormat')],
+                        // samplePath[props.taskCategory][form.getFieldValue('labelFormat')],
+                        `${props.taskCategory}/${snake2camel(form.getFieldValue('labelFormat'))}/`,
                       )
                       .then((res) => {
                         setSampleFiles(res);

@@ -22,8 +22,6 @@ describe('Test Import Samples', () => {
       },
     },
     ...projectCategories.map((catg) => sampleIt.import(catg)), // create
-    ...projectCategories.map((catg) => sampleIt.pjDetails(catg)), // modify detail
-    ...projectCategories.map((catg) => sampleIt.splitDataset(catg)), // split modal
   ];
 
   for (const task of tasks) {

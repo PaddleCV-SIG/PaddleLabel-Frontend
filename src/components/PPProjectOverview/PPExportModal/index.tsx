@@ -40,7 +40,7 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
           onFinish={(values) => {
             const path = values.path;
             if (!path) {
-              message.error(intlJsx('nullPath'));
+              message.error(intlJsx('pathNotNull'));
               return;
             }
             setLoading(true);

@@ -64,7 +64,7 @@ export default {
   'component.PPExportModal.export': 'Export',
   'component.PPExportModal.title': 'Export',
   'component.PPExportModal.path': 'Path',
-  'component.PPExportModal.pathNotNull': 'Must input path',
+  'component.PPExportModal.pathNotNull': 'Export path cannot be empty!',
   'component.PPExportModal.exportSuccess': 'Export Success',
 
   'component.PPSplitDataset.title': 'Split Dataset',

@@ -11,12 +11,7 @@ describe('Test Import Export then Import Back', () => {
   });
 
   var pjId = 2;
-  var catgInfo = {
-    classification: { singleClass: 0, multiClass: 0 },
-    detection: { coco: 0, voc: 0 },
-    semanticSegmentation: { mask: 0, polygon: 0 },
-    instanceSegmentation: { mask: 0, polygon: 0 },
-  };
+  var catgInfo = { ...config.catgInfo };
 
   const tasks = [
     {
@@ -25,8 +20,7 @@ describe('Test Import Export then Import Back', () => {
         cy.clearPjs();
       },
     },
-    sampleIt.import('classification'),
-    // todo: spread parameter
+    detailIt.import('classification', 'singleClass', `${config.sampleBaseDir}/imgs`, true),
 
     // create 8 pjs
     ...Object.keys(catgInfo).map(function* (catg) {
