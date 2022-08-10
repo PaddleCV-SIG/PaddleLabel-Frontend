@@ -20,7 +20,7 @@ describe('Test Import Export then Import Back', () => {
         cy.clearPjs();
       },
     },
-    detailIt.import('classification', 'singleClass', `${config.sampleBaseDir}/imgs`, true),
+    detailIt.import('classification', 'singleClass', `${config.sampleBaseDir}/img`, true),
 
     // create 8 pjs
     ...Object.keys(catgInfo).map(function* (catg) {

@@ -111,22 +111,6 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     });
   }, []);
 
-  // const samplePath = {
-  //   classification: {
-  //     single_class: 'clas/single/',
-  //     multi_class: 'clas/multi/',
-  //   },
-  //   detection: { coco: 'det/coco/', voc: 'det/voc/' },
-  //   semanticSegmentation: {
-  //     mask: 'semantic_seg/mask/',
-  //     polygon: 'semantic_seg/polygon/',
-  //   },
-  //   instanceSegmentation: {
-  //     mask: 'instance_seg/mask/',
-  //     polygon: 'instance_seg/polygon/',
-  //   },
-  // };
-
   const { DirectoryTree } = Tree;
   const onTreeSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
     console.log('Trigger Select', keys, info, info.node.isLeaf != undefined);
@@ -276,7 +260,9 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                     sampleApi
                       .getStructure(
                         // samplePath[props.taskCategory][form.getFieldValue('labelFormat')],
-                        `${props.taskCategory}/${snake2camel(form.getFieldValue('labelFormat'))}/`,
+                        `sample/bear/${props.taskCategory}/${snake2camel(
+                          form.getFieldValue('labelFormat'),
+                        )}/`,
                       )
                       .then((res) => {
                         setSampleFiles(res);

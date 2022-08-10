@@ -17,10 +17,8 @@ export const initialStateConfig = {
 if (window.location.hostname == 'paddlecv-sig.github.io') {
   localStorage.setItem('basePath', 'https://pplabel.herokuapp.com/api');
 } else {
-  localStorage.setItem(
-    'basePath',
-    `http://${window.location.hostname}:${window.location.port}/api`,
-  );
+  const port = window.location.port == '8000' ? '17995' : window.location.port;
+  localStorage.setItem('basePath', `http://${window.location.hostname}:${port}/api`);
 }
 
 /**
