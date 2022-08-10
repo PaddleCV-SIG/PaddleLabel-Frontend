@@ -49,7 +49,9 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
                 message.success(intlJsx('exportSuccess'));
                 setVisible(false);
               })
-              .catch(() => {})
+              .catch((err) => {
+                console.log(err);
+              })
               .finally(() => {
                 setLoading(false);
               });

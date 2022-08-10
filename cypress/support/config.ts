@@ -1,5 +1,6 @@
 export const config = {
-  sampleBaseDir: '~/.paddlelabel/sample/bear', // should not have ending /, don't forget to \\ on windows
+  // sampleBaseDir: '~/.paddlelabel/sample/bear', // should not have ending /, don't forget to \\ on windows
+  sampleBaseDir: '~/.paddlelabel/sample/fruit', // should not have ending /, don't forget to \\ on windows
   catgInfo: {
     classification: { singleClass: 0, multiClass: 0 },
     detection: { coco: 0, voc: 0 },
