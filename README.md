@@ -190,11 +190,11 @@ openapi-generator-cli generate \
 
 ## E2E Testing
 
-- specify path to sample folder in [config file](./cypress/support/config.ts)
+- There are two sets of testing data, choose one in [config file](./cypress/support/config.ts)
 - run paddlelabel on 17995 or specify port in [cypress config](./cypress.config.ts)
 - test with one of the followings:
 
 ```shell
 npx cypress open # with real time visulization
-npx cypress run # headless
+npx cypress run # headless with video playback
 ```

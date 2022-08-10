@@ -37,6 +37,10 @@ export interface GetImageRequest {
   sault?: string;
 }
 
+export interface GetMaskRequest {
+  dataId: string;
+}
+
 export interface RemoveRequest {
   dataId: string;
 }
@@ -312,6 +316,50 @@ export class DataApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.getImageRaw({ dataId: dataId, sault: sault }, initOverrides);
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getMaskRaw(
+    requestParameters: GetMaskRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.dataId === null || requestParameters.dataId === undefined) {
+      throw new runtime.RequiredError(
+        'dataId',
+        'Required parameter requestParameters.dataId was null or undefined when calling getMask.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/datas/{data_id}/mask`.replace(
+          `{${'data_id'}}`,
+          encodeURIComponent(String(requestParameters.dataId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getMask(
+    dataId: string,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.getMaskRaw({ dataId: dataId }, initOverrides);
   }
 
   /**
