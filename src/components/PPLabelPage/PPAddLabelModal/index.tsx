@@ -104,7 +104,7 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
           name="labelname"
           rules={[{ required: true, message: 'Please input label name!' }]}
         >
-          <Input />
+          <Input autoComplete="off" />
         </Form.Item>
 
         {colorPicker}

@@ -180,6 +180,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 style={{ fontSize: '1.5rem' }}
               >
                 <Input
+                  autoComplete="off"
                   size="large"
                   placeholder={intl('anyString', 'global')}
                   style={{ height: '3.13rem' }}
@@ -203,6 +204,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 style={{ fontSize: '1.5rem' }}
               >
                 <Input
+                  autoComplete="off"
                   size="large"
                   placeholder={intl('absolutePath', 'global')}
                   style={{ height: '3.13rem' }}
@@ -226,6 +228,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 style={{ fontSize: '1.5rem' }}
               >
                 <Input
+                  autoComplete="off"
                   size="large"
                   placeholder={intl('anyString', 'global')}
                   style={{ height: '3.13rem' }}
@@ -323,7 +326,12 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                   display: props.taskCategory == 'keypointDetection' ? undefined : 'none',
                 }}
               >
-                <Input size="large" placeholder="Numbers (Int)" style={{ height: '3.13rem' }} />
+                <Input
+                  autoComplete="off"
+                  size="large"
+                  placeholder="Numbers (Int)"
+                  style={{ height: '3.13rem' }}
+                />
               </Form.Item>
               <Form.Item
                 wrapperCol={{

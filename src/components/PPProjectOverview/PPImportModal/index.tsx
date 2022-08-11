@@ -56,7 +56,7 @@ const PPImportModal: React.FC<PPImportProps> = (props) => {
           autoComplete="off"
         >
           <Form.Item label={intl('path')} name="path">
-            <Input />
+            <Input autoComplete="off" />
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

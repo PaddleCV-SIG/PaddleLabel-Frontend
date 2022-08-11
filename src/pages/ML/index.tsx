@@ -186,6 +186,7 @@ const ML: React.FC = () => {
               style={{ fontSize: '1.5rem' }}
             >
               <Input
+                autoComplete="off"
                 allowClear={true}
                 addonBefore={'ML Backend URL '}
                 style={{ textAlign: 'left' }}
@@ -230,7 +231,7 @@ const ML: React.FC = () => {
             }}
             style={{ fontSize: '1.5rem' }}
           >
-            <Input placeholder="Training batch size" />
+            <Input autoComplete="off" placeholder="Training batch size" />
           </Form.Item>
           <Form.Item
             wrapperCol={{

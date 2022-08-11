@@ -27,7 +27,7 @@ const Component: React.FC<PPGrids> = () => {
           <span>{gridSize}</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
-          <Input placeholder="Basic usage" />
+          <Input autoComplete="off" placeholder="Basic usage" />
         </Col>
       </Row>
       <Row>
@@ -35,7 +35,7 @@ const Component: React.FC<PPGrids> = () => {
           <span>{overlap}</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
-          <Input placeholder="Basic usage" />
+          <Input autoComplete="off" placeholder="Basic usage" />
         </Col>
       </Row>
       <Row>

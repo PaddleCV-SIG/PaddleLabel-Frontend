@@ -77,6 +77,7 @@ const HeaderSearch: React.FC<HeaderSearchProps> = (props) => {
         onChange={setValue}
       >
         <Input
+          autoComplete="off"
           size="small"
           ref={inputRef}
           defaultValue={defaultValue}

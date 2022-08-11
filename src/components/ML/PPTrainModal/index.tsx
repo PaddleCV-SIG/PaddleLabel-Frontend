@@ -68,7 +68,7 @@ const PPTrainModal: React.FC<PPTrainProps> = (props) => {
               },
             ]}
           >
-            <Input />
+            <Input autoComplete="off" />
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

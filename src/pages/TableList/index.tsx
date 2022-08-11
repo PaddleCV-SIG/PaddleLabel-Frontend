@@ -226,6 +226,7 @@ const TableList: React.FC = () => {
         if (`${status}` === '3') {
           return (
             <Input
+              autoComplete="off"
               {...rest}
               placeholder={intl.formatMessage({
                 id: 'pages.searchTable.exception',

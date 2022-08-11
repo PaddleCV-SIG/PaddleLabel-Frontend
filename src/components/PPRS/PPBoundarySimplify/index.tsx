@@ -57,7 +57,7 @@ const Component: React.FC<PPBoundarySimplify> = () => {
           <span>{simplifiedDistance}</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
-          <Input placeholder="Basic usage" />
+          <Input autoComplete="off" placeholder="Basic usage" />
         </Col>
       </Row>
       <Row>
@@ -65,7 +65,7 @@ const Component: React.FC<PPBoundarySimplify> = () => {
           <span>{simplifiedAngle}</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
-          <Input placeholder="Basic usage" />
+          <Input autoComplete="off" placeholder="Basic usage" />
         </Col>
       </Row>
       <Row>
@@ -73,7 +73,7 @@ const Component: React.FC<PPBoundarySimplify> = () => {
           <span>{threshold}</span>
         </Col>
         <Col span={12} className={styles.RSPop2}>
-          <Input placeholder="Basic usage" />
+          <Input autoComplete="off" placeholder="Basic usage" />
         </Col>
       </Row>
     </div>

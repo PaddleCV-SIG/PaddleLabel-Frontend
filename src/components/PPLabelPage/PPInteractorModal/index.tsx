@@ -106,7 +106,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           initialValue={DEFAULT_ML_URL}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input placeholder={DEFAULT_ML_URL} />
+          <Input autoComplete="off" placeholder={DEFAULT_ML_URL} />
         </Form.Item>
         <Form.Item
           name={'mlModelAbsPath'}
@@ -119,7 +119,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           }}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input placeholder={intl('pathPh')} />
+          <Input autoComplete="off" placeholder={intl('pathPh')} />
         </Form.Item>
         <Form.Item
           name={'mlWeightAbsPath'}
@@ -132,7 +132,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           }}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input placeholder={intl('pathPh')} />
+          <Input autoComplete="off" placeholder={intl('pathPh')} />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
