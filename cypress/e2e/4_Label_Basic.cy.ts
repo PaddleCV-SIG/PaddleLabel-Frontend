@@ -33,10 +33,15 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
     ...Object.keys(catgInfo).map(function* (catg) {
       for (const labelFormat of Object.keys(catgInfo[catg])) {
         const currPjId = catgInfo[catg][labelFormat];
-        console.log(currPjId, catg);
-        yield labelIt.rmCatg(currPjId, catg, false, 0, 'inuse');
+
+        if (labelFormat != 'coco' && labelFormat != 'polygon')
+          yield labelIt.rmCatg(currPjId, catg, false, 0, 'inuse');
+        else yield labelIt.rmCatg(currPjId, catg, false, 0, 'supercatg');
+
         yield labelIt.tour(currPjId, 4, catg, true, false);
-        if (labelFormat != 'coco') yield labelIt.rmCatg(currPjId, catg, true, 0, 'success');
+
+        if (labelFormat != 'coco' && labelFormat != 'polygon')
+          yield labelIt.rmCatg(currPjId, catg, true, 0, 'success');
         else {
           yield labelIt.rmCatg(currPjId, catg, true, 0, 'supercatg');
           yield labelIt.rmCatg(currPjId, catg, true, 1, 'success');
