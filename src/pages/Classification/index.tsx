@@ -89,9 +89,17 @@ const Page: React.FC = () => {
         >
           {tbIntl('move')}
         </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/clear_mark.png"
+          onClick={() => {
+            annotation.clear();
+          }}
+        >
+          {tbIntl('clearMark')}
+        </PPToolBarButton>
       </PPToolBar>
       <div id="dr" className="mainStage">
-        <Spin tip="loading" spinning={loading.curr}>
+        <Spin tip={tbIntl('loading', 'global')} spinning={loading.curr}>
           <div className="draw">
             <PPStage
               scale={scale.curr}
@@ -135,7 +143,6 @@ const Page: React.FC = () => {
           onLabelSelect={label.onSelect}
           onLabelAdd={(lab) => label.create({ ...lab, projectId: project.curr.projectId })}
           onLabelDelete={label.remove}
-          onLabelModify={() => {}}
           hideColorPicker={true}
           hideEye={true}
           refresh={refreshVar}

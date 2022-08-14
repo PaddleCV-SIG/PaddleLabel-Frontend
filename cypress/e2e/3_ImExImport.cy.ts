@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 import { sampleIt } from '../support/sample';
 import { detail, detailIt } from '../support/detail';
-import { overview, overviewIt } from '../support/overview';
+import { overview } from '../support/overview';
 import { config, runId } from '../support/config';
 
 describe('Test Import Export then Import Back', () => {
@@ -20,7 +20,7 @@ describe('Test Import Export then Import Back', () => {
         cy.clearPjs();
       },
     },
-    detailIt.import('classification', 'singleClass', `${config.sampleBaseDir}/img`, true),
+    sampleIt.import('placeholder'),
 
     // create 8 pjs
     ...Object.keys(catgInfo).map(function* (catg) {

@@ -22,6 +22,7 @@
 import { detail } from './detail';
 import { overview } from './overview';
 import { welcome } from './welcome';
+import { config } from './config';
 
 export const sample = {
   on: () => {
@@ -37,6 +38,10 @@ export const sample = {
     overview.on();
   },
   import: (sampleType: string) => {
+    if (sampleType == 'placeholder') {
+      detail.import('classification', 'singleClass', `${config.sampleBaseDir}/placeholder`, true);
+      return;
+    }
     sample.to();
     sample.toOverview(sampleType);
     overview.toLabel(sampleType);

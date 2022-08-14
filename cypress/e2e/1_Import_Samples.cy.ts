@@ -1,7 +1,5 @@
 /// <reference types="cypress" />
 import { sampleIt } from '../support/sample';
-import { config } from '../support/config';
-import { detailIt } from '../support/detail';
 
 describe('Test Import Samples', () => {
   beforeEach(() => {
@@ -23,7 +21,7 @@ describe('Test Import Samples', () => {
         cy.clearPjs();
       },
     },
-    detailIt.import('classification', 'singleClass', `${config.sampleBaseDir}/img`, true),
+    sampleIt.import('placeholder'),
     ...projectCategories.map((catg) => sampleIt.import(catg)), // create
   ];
 

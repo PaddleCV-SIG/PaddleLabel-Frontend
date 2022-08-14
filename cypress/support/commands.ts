@@ -21,12 +21,13 @@ Cypress.Commands.add('clearPjs', () => {
   });
 });
 
-Cypress.Commands.add('onPage', (urlPart, screenshotFolder) => {
+Cypress.Commands.add('onPage', (urlPart, allowError: boolean = false) => {
   const url_part = camel2snake(urlPart);
-  cy.get('[data-icon="close-circle"]').should('not.exist');
+  if (!allowError) cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
   cy.url({ timeout: 15000 }).should('contain', url_part);
-  cy.get('[data-icon="close-circle"]').should('not.exist');
+  if (!allowError) cy.get('[data-icon="close-circle"]').should('not.exist');
   cy.wait('@apicalls', { timeout: 15000 });
-  cy.get('[data-icon="close-circle"]').should('not.exist');
+  if (!allowError) cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
+  cy.g('global.loading').should('not.exist');
   cy.wait(500);
 });

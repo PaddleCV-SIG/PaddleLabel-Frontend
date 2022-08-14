@@ -18,4 +18,5 @@ export default {
   'global.period': '。',
   'global.absolutePath': '绝对路径',
   'global.anyString': '中英文，数字，特殊符号',
+  'global.loading': '加载中',
 };

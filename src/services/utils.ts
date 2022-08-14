@@ -19,6 +19,7 @@ import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi } from '@/services/ml';
 import type { InlineObject1, Model } from '@/services/ml/models';
 import { HistoryUtils } from '@/services/history';
+import { IntlInitJsx } from '@/components/PPIntl';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -268,6 +269,8 @@ export const LabelUtils = (
   useState: UseStateType,
   { oneHot = true, postSelect, preUnsetCurr }: labelUtilProps,
 ) => {
+  const intlJsx = IntlInitJsx('component.label');
+
   const [all, setAll] = useState<Label[]>();
   const [curr, setCurrRaw] = useState<Label | undefined>();
   const [activeIds, setActiveIds] = useState(new Set<number>());
@@ -350,6 +353,7 @@ export const LabelUtils = (
       }
       if (curr != undefined && curr.labelId == label.labelId) unsetCurr();
       const labels = await getAll(label.projectId);
+      message.success(intlJsx('deleteSuccess'));
       return labels;
     } catch (err) {
       // console.log('label remove err', err);
@@ -365,6 +369,7 @@ export const LabelUtils = (
     all,
     getAll,
     activeIds,
+    setActiveIds,
     initActive,
     onSelect,
     curr,
@@ -380,7 +385,7 @@ export const LabelUtils = (
 export const TaskUtils = (useState: UseStateType, props: { annotation: any; push: boolean }) => {
   const [all, setAll] = useState<Task[]>();
   const [currIdx, setCurrIdx] = useState<number>();
-  const intl = IntlInit('pages.toolBar.task');
+  const intl = IntlInitJsx('pages.toolBar.task');
 
   const turnTo = async (turnToIdx: number) => {
     if (!all) return false;
@@ -454,7 +459,9 @@ export function AnnotationUtils(
 ) {
   const [all, setAllRaw] = useState<Annotation[]>([]);
   const [curr, setCurrRaw] = useState<Annotation | undefined>();
-  const tbIntl = IntlInit('pages.toolBar');
+  // const tbIntl = IntlInit('pages.toolBar');
+
+  const tbIntl = IntlInitJsx('pages.toolBar');
 
   function setAll(annos: Annotation[]) {
     setAllRaw(annos);
@@ -479,7 +486,11 @@ export function AnnotationUtils(
   function clear() {
     if (all.length == 0) return;
     pushToBackend(all[0].dataId, []);
-    // setAllRaw([]);
+    setAllRaw([]);
+    if (label) {
+      console.log('asdf', label);
+      label.setActiveIds(new Set());
+    }
   }
 
   const create = async (annotation: Annotation) => {

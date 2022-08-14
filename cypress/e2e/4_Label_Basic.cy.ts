@@ -1,7 +1,8 @@
 /// <reference types="cypress" />
-import { detail, detailIt } from '../support/detail';
-import { overview, overviewIt } from '../support/overview';
-import { config, runId } from '../support/config';
+import { detailIt } from '../support/detail';
+import { config } from '../support/config';
+import { labelIt } from '../support/label';
+import { sampleIt } from '../support/sample';
 
 describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
   beforeEach(() => {
@@ -19,8 +20,7 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
         cy.clearPjs();
       },
     },
-    detailIt.import('classification', 'singleClass', `${config.sampleBaseDir}/img`, true),
-
+    sampleIt.import('placeholder'),
     // create 8 pjs
     ...Object.keys(catgInfo).map(function* (catg) {
       for (const labelFormat of Object.keys(catgInfo[catg])) {
@@ -33,9 +33,15 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
     ...Object.keys(catgInfo).map(function* (catg) {
       for (const labelFormat of Object.keys(catgInfo[catg])) {
         const currPjId = catgInfo[catg][labelFormat];
-        yield overviewIt.split50(currPjId);
-        yield overviewIt.split100(currPjId);
-        yield overviewIt.export(currPjId, `${config.sampleBaseDir}/export/dummy`);
+        console.log(currPjId, catg);
+        yield labelIt.rmCatg(currPjId, catg, false, 0, 'inuse');
+        yield labelIt.tour(currPjId, 4, catg, true, false);
+        if (labelFormat != 'coco') yield labelIt.rmCatg(currPjId, catg, true, 0, 'success');
+        else {
+          yield labelIt.rmCatg(currPjId, catg, true, 0, 'supercatg');
+          yield labelIt.rmCatg(currPjId, catg, true, 1, 'success');
+          yield labelIt.rmCatg(currPjId, catg, true, 0, 'success');
+        }
       }
     }),
   ];

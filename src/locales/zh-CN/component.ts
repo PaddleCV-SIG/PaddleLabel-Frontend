@@ -86,4 +86,6 @@ export default {
 
   'component.history.noPrev': '已是最老的历史记录',
   'component.history.noNext': '已是最新的历史记录',
+
+  'component.label.deleteSuccess': '类别删除成功',
 };

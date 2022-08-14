@@ -35,6 +35,7 @@ export const detail = {
     labelFormat: string,
     datasetPath?: string,
     skipAnnTest: boolean = false,
+    screenshot: boolean = false,
   ) => {
     welcome.to();
     welcome.toCreate(projectType);

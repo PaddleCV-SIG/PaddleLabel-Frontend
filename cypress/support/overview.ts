@@ -23,7 +23,7 @@ export const overview = {
   },
   toLabel: (projectType: string, skipAnnTest: string = false) => {
     cy.g('pages.projectOverview.label').first().click();
-    label.on(projectType);
+    label.on(projectType, skipAnnTest);
   },
   toExport: () => {
     cy.g('component.PPExportModal.title').click();

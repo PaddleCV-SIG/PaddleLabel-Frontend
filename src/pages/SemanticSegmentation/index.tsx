@@ -467,7 +467,6 @@ const Page: React.FC = () => {
           labels={label.all}
           activeIds={label.activeIds}
           onLabelSelect={label.onSelect}
-          onLabelModify={() => {}}
           onLabelDelete={label.remove}
           onLabelAdd={(lab) => {
             label.create({ ...lab, projectId: project.curr.projectId }).then((newLabel) => {

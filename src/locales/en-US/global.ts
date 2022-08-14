@@ -18,4 +18,5 @@ export default {
   'global.anyString': 'Anything char you can type',
   'global.segMaskType.grayscale': 'Gray Scale',
   'global.segMaskType.pesudo': 'Pesudo Color',
+  'global.loading': 'Loading',
 };

@@ -91,4 +91,6 @@ export default {
 
   'component.history.noNext': 'No next history',
   'component.history.noPrev': 'No previous history',
+
+  'component.label.deleteSuccess': 'Successfully deleted label',
 };

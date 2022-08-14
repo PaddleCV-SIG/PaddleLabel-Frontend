@@ -13,7 +13,7 @@ export type PPLabelListProps = {
   selectedLabel?: Label;
   hideEye?: boolean;
   hideColorPicker?: boolean;
-  onLabelModify: (label: Label) => void;
+  onLabelModify?: (label: Label) => void;
   onLabelDelete: (label: Label) => void;
   onLabelAdd: (label: Label) => void;
   onLabelSelect: (label: Label) => void;
@@ -26,6 +26,10 @@ const Component: React.FC<PPLabelListProps> = (props) => {
     id: 'component.PPLabelList.addLabel',
   });
   const labelList = intl.formatMessage({ id: 'component.PPLabelList.labelList' });
+  if (props.labels)
+    for (let idx = 0; idx < props.labels.length; idx++) {
+      props.labels[idx].ith = idx;
+    }
 
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
 

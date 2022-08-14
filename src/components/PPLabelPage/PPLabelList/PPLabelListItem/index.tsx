@@ -10,7 +10,7 @@ export type PPLabelListItemProps = {
   hideEye?: boolean;
   hideColorPicker?: boolean;
   // Currently, only support modify visibility and color
-  onLabelModify: (label: Label) => void;
+  onLabelModify?: (label: Label) => void;
   onLabelDelete: (label: Label) => void;
   onClick: (label: Label) => void;
 };
@@ -32,7 +32,7 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
         onClick={(e) => {
           e.stopPropagation();
           setInvisible(!invisible);
-          props.onLabelModify(label);
+          if (props.onLabelModify) props.onLabelModify(label);
         }}
       />{' '}
     </>
@@ -58,13 +58,13 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
       onClick={() => {
         props.onClick(label);
       }}
+      data-test-id={`category-${label.ith}`}
     >
       <Space align="center" size={5}>
         {eye}
         {label.name}
         {colorPicker}
       </Space>
-
       <a
         className={styles.delete}
         onClick={(e) => {
@@ -74,6 +74,7 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
           setLastClickTime(time);
           props.onLabelDelete(label);
         }}
+        data-test-id={`deleteCategory-${label.ith}`}
       />
     </List.Item>
   );
