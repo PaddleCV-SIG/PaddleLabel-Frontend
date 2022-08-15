@@ -76,7 +76,7 @@ export const labelIt = {
     expect: string = 'success',
   ) => {
     return {
-      name: `Remove project ${projectId} category ${ith} and expect ${expect}.`,
+      name: `Remove project ${projectId} category ${ith} and expect ${expect}`,
       func: () => {
         label.to(projectId, projectType, skipAnnTest);
         label.rmCatg(ith, expect);
