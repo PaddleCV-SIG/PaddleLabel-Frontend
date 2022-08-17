@@ -158,6 +158,7 @@ const TaskList: React.FC = () => {
       <PPBlock title={intl('tasks')}>
         {intl('taskCount')}
         {': ' + task.all?.length}
+        <br />
         {(() => {
           if (task.all?.length == 0)
             return (

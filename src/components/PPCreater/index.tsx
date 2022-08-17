@@ -147,7 +147,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
           <_PPBlock
             title={intl(props.taskCategory, 'global') + intl('project')}
             content={intl('titleContent')}
-            docUrl={`https://github.com/PaddleCV-SIG/PaddleLabel/blob/develop/doc/${camel2snake(
+            docUrl={`https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/project/${camel2snake(
               props.taskCategory,
             )}.md`}
             style={{ height: 760, padding: '1.25rem 0' }}
