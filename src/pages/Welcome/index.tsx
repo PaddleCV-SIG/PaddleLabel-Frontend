@@ -162,7 +162,11 @@ const Welcome: React.FC = () => {
               <Button
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
-                href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdClas.md"
+                onClick={() => {
+                  window.open(
+                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdClas.md',
+                  );
+                }}
                 block
               >
                 {intl('paddleClas')}
@@ -170,7 +174,11 @@ const Welcome: React.FC = () => {
               <Button
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
-                href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdDet.md"
+                onClick={() => {
+                  window.open(
+                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdDet.md',
+                  );
+                }}
                 block
               >
                 {intl('paddleDet')}
@@ -178,7 +186,11 @@ const Welcome: React.FC = () => {
               <Button
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
-                href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdSeg.md"
+                onClick={() => {
+                  window.open(
+                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdSeg.md',
+                  );
+                }}
                 block
               >
                 {intl('paddleSeg')}
@@ -186,7 +198,11 @@ const Welcome: React.FC = () => {
               <Button
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
-                href="https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdX.md"
+                onClick={() => {
+                  window.open(
+                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdX.md',
+                  );
+                }}
                 block
               >
                 {intl('paddleX')}

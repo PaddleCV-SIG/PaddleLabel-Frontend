@@ -3,6 +3,7 @@ import { config } from './config';
 import { overview } from './overview';
 import { label } from './label';
 import { runId } from './config';
+import { notGithub404 } from './util';
 
 export const detail = {
   on: () => {
@@ -88,10 +89,35 @@ export const detailIt = {
       func: () => detail.import(projectType, labelFormat, datasetPath, skipAnnTest),
     };
   },
-  // export: (projectType: string, labelFormat: string, datasetPath?: string) => {
-  //   return {
-  //     name: `Export ${projectType} project in ${labelFormat} format`,
-  //     func: () => detail.export(projectId, exportFormat, exportPath),
-  //   };
-  // },
+
+  toDoc: function* () {
+    for (const type of [
+      'classification',
+      'detection',
+      'semanticSegmentation',
+      'instanceSegmentation',
+    ]) {
+      yield {
+        name: `Test ${type} doc not 404`,
+        func: () => {
+          let url = undefined;
+          cy.visit('/', {
+            onBeforeLoad(win) {
+              cy.stub(win, 'open', (u) => {
+                url = u;
+              });
+            },
+          });
+          welcome.on();
+          welcome.toCreate(type);
+          cy.g('projectDetailDoc').find('svg').click().wait(200);
+          cy.g('component.PPCreater.titleContent')
+            .click()
+            .then(() => {
+              notGithub404(url);
+            });
+        },
+      };
+    }
+  },
 };

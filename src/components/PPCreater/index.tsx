@@ -23,7 +23,7 @@ const _PPBlock: React.FC<_PPCardProps> = (props) => {
     <div className={styles._ppcard} style={props.style}>
       <Row className={styles.titleRow} style={{ display: props.title ? undefined : 'none' }}>
         <Title className={styles.title}>{props.title}</Title>
-        <div>
+        <div data-test-id={props.title != undefined ? 'projectDetailDoc' : ''}>
           <QuestionCircleOutlined
             style={{ fontSize: '12px' }}
             onClick={() =>
@@ -146,7 +146,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
         <div id="left" className={styles.block_l}>
           <_PPBlock
             title={intl(props.taskCategory, 'global') + intl('project')}
-            content={intl('titleContent')}
+            content={intlJsx('titleContent')}
             docUrl={`https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/project/${camel2snake(
               props.taskCategory,
             )}.md`}
@@ -158,7 +158,6 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
               size="large"
               style={{ marginTop: '5.69rem' }}
               onFinish={(values) => {
-                console.log(values);
                 saveProject(values);
               }}
             >
