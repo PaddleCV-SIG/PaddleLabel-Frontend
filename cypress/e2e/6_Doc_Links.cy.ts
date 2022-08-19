@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 import { config } from '../support/config';
 import { detailIt } from '../support/detail';
+import { runTasks } from '../support/util';
 import { welcomeIt } from '../support/welcome';
 
 describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
@@ -14,8 +15,5 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
 
   const tasks = [welcomeIt.toReadme(), welcomeIt.toTrainKnoleget(), detailIt.toDoc()];
 
-  for (const task of tasks) {
-    if (Object.keys(task).includes('name')) it(task.name, task.func);
-    else for (const subtask of task) it(subtask.name, subtask.func);
-  }
+  runTasks(tasks);
 });

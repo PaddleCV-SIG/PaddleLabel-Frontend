@@ -15,7 +15,6 @@ Cypress.Commands.add('clearPjs', () => {
   cy.request('GET', 'http://localhost:17995/api/projects').then((res) => {
     console.log('res', res.body);
     for (const pj of res.body) {
-      console.log('pj', pj);
       cy.request('DELETE', `http://localhost:17995/api/projects/${pj.project_id}`);
     }
   });
@@ -30,4 +29,8 @@ Cypress.Commands.add('onPage', (urlPart, allowError: boolean = false) => {
   if (!allowError) cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
   cy.g('global.loading').should('not.exist');
   cy.wait(500);
+});
+
+Cypress.Commands.add('printDebugId', (debugId) => {
+  cy.request('GET', `http://localhost:17995/api/debug/printid/${debugId}`);
 });

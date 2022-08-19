@@ -1,5 +1,6 @@
 /// <reference types="cypress" />
 import { sampleIt } from '../support/sample';
+import { runTasks } from '../support/util';
 
 describe('Test Import Samples', () => {
   beforeEach(() => {
@@ -25,7 +26,5 @@ describe('Test Import Samples', () => {
     ...projectCategories.map((catg) => sampleIt.import(catg)), // create
   ];
 
-  for (const task of tasks) {
-    it(task.name, task.func);
-  }
+  runTasks(tasks);
 });

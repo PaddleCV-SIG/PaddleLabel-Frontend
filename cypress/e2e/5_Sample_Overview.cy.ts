@@ -3,6 +3,7 @@ import { detailIt } from '../support/detail';
 import { overviewIt } from '../support/overview';
 import { config } from '../support/config';
 import { sampleIt } from '../support/sample';
+import { runTasks } from '../support/util';
 
 describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
   beforeEach(() => {
@@ -40,8 +41,5 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
     }),
   ];
 
-  for (const task of tasks) {
-    if (Object.keys(task).includes('name')) it(task.name, task.func);
-    else for (const subtask of task) it(subtask.name, subtask.func);
-  }
+  runTasks(tasks);
 });
