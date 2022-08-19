@@ -3,6 +3,7 @@
 # Project Specific
 cypress/screenshots
 cypress/videos
+cypress/log
 
 # dependencies
 **/node_modules
