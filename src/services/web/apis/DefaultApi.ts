@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * PP-Label API Spec
+ * PaddleLabel API Specs
  * Back end APIs for PP-Label
  *
  * The version of the OpenAPI document: 0.1.0
@@ -18,6 +18,10 @@ import { Points2polygonRequestFromJSON, Points2polygonRequestToJSON } from '../m
 
 export interface Points2polygonOperationRequest {
   points2polygonRequest?: Points2polygonRequest;
+}
+
+export interface PrintDebugIdRequest {
+  debugId: string;
 }
 
 /**
@@ -63,5 +67,49 @@ export class DefaultApi extends runtime.BaseAPI {
       initOverrides,
     );
     return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async printDebugIdRaw(
+    requestParameters: PrintDebugIdRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.debugId === null || requestParameters.debugId === undefined) {
+      throw new runtime.RequiredError(
+        'debugId',
+        'Required parameter requestParameters.debugId was null or undefined when calling printDebugId.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/debug/printid/{debug_id}`.replace(
+          `{${'debug_id'}}`,
+          encodeURIComponent(String(requestParameters.debugId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async printDebugId(
+    debugId: string,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.printDebugIdRaw({ debugId: debugId }, initOverrides);
   }
 }

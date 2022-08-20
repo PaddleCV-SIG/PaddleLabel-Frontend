@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * PP-Label API Spec
+ * PaddleLabel API Specs
  * Back end APIs for PP-Label
  *
  * The version of the OpenAPI document: 0.1.0
