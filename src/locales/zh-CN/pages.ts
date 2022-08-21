@@ -135,7 +135,7 @@ export default {
   'pages.Maps.grids': '宫格',
   'pages.ProjectDetail.taskNot': 'url中不存在任务类别',
   'pages.ProjectDetail.taskCtg': '无效的任务类别：',
-  'pages.projectDetail.labelFormat': '标注格式',
+  // 'pages.projectDetail.labelFormat': '标注格式',
   'pages.projectDetail.noTaskCategory': '请求路径中未发现项目类别',
   'pages.projectDetail.invalidTaskCategory': '不支持传入的项目类别',
 

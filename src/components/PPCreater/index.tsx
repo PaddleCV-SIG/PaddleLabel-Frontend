@@ -242,12 +242,14 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 wrapperCol={{
                   span: 16,
                 }}
-                rules={[
-                  {
-                    required: createInfo[props.taskCategory].labelFormats != undefined,
-                    message: 'Please choose a label import/export format',
-                  },
-                ]}
+                rules={
+                  [
+                    // {
+                    //   required: createInfo[props.taskCategory].labelFormats != undefined,
+                    //   message: 'Please choose a label import/export format',
+                    // },
+                  ]
+                }
                 style={{
                   fontSize: '1.5rem',
                   display:

@@ -8,6 +8,7 @@ export default {
   'global.labelFormat.multiClass': 'Multi class',
   'global.labelFormat.coco': 'COCO',
   'global.labelFormat.voc': 'VOC',
+  'global.labelFormat.yolo': 'YOLO',
   'global.labelFormat.mask': 'Mask',
   'global.labelFormat.polygon': 'Polygon',
   'global.underDevelopment': 'This feature is still under development. Check back later.',

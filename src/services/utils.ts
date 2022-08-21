@@ -46,7 +46,7 @@ export const createInfo = {
     name: 'Detection',
     avatar: './pics/object_detection.jpg',
     id: 2,
-    labelFormats: { coco: 'COCO', voc: 'VOC' },
+    labelFormats: { coco: 'COCO', voc: 'VOC', yolo: 'YOLO' },
   },
   semanticSegmentation: {
     name: 'Semantic Segmentation',

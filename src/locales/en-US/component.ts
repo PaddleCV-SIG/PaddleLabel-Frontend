@@ -9,7 +9,7 @@ export default {
   'component.PPCreater.update': 'Update',
   'component.PPCreater.create': 'Create',
   'component.PPCreater.cancel': 'Cancel',
-  'component.PPCreater.labelFormat': 'Label Format',
+  'component.PPCreater.labelFormat': 'Import Label Format',
   'component.PPCreater.project': ' Project',
   'component.PPCreater.sampleProject': 'Demo Project',
   'component.PPCreater.segMaskType': 'Mask Type',

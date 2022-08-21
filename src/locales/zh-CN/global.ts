@@ -8,6 +8,7 @@ export default {
   'global.labelFormat.multiClass': '多分类',
   'global.labelFormat.coco': 'COCO格式',
   'global.labelFormat.voc': 'VOC格式',
+  'global.labelFormat.yolo': 'YOLO格式',
   'global.labelFormat.mask': '掩膜',
   'global.labelFormat.polygon': '多边形',
   'global.segMaskType.pesudo': '伪彩色',
