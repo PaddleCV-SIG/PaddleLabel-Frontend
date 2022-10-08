@@ -24,7 +24,6 @@ const Page: React.FC = () => {
   const [pathNames] = useState(history?.location?.pathname !== '/instance_segmentation');
   const [finlyList, setfinlyList] = useState<Annotation[]>([]);
   const [selectFinly, setSelectFinly] = useState<Annotation>();
-  const [isFlag, setisFlag] = useState(true);
   const [brushSize, setBrushSize] = useState(10);
   const [threshold, setThreshold] = useState(50);
   const [transparency, setTransparency] = useState(60);
@@ -56,6 +55,8 @@ const Page: React.FC = () => {
     setFrontendId(0);
   }
   console.log('annos', annotation.all);
+  console.log('loading', loading);
+
   const setCurrentAnnotation = (anno?: Annotation) => {
     annotation.setCurr(anno);
     if (!anno?.frontendId) setFrontendId(0);
@@ -78,7 +79,7 @@ const Page: React.FC = () => {
         const newAnnos = annotation.all.concat([anno]);
         annotation.setAll(newAnnos);
         setCurrentAnnotation(anno);
-        // annotation.pushToBackend(data.curr?.dataId, newAnnos);
+        annotation.pushToBackend(data.curr?.dataId, newAnnos);
       }
       setInteractorData({ active: false, predictData: [], mousePoints: [] });
       // setCurrentAnnotation(undefined);
@@ -102,19 +103,23 @@ const Page: React.FC = () => {
   useEffect(() => {
     annHistory.init();
   }, []);
+  // useEffect(() => {
+  //   if (pathNames) {
+  //     return;
+  //   }
+  //   if (!annotation.all?.length) {
+  //     setisFlag(false);
+  //     return;
+  //   }
+  //   if (annotation.all?.length) {
+  //     setisFlag(true);
+  //   }
+  // }, [annotation.all, pathNames]);
+  // 初始用来判断执行增不增加
   useEffect(() => {
-    if (pathNames) {
-      return;
-    }
-    if (!annotation.all?.length) {
-      savefinlyList();
-      return;
-    }
-    if (annotation.all?.length && isFlag) {
-      setisFlag(false);
-      savefinlyList();
-    }
-  }, [annotation.all, isFlag]);
+    // console.log('useEffect函数执行了', annotation.all);
+    savefinlyList();
+  }, [loading.curr]);
   useEffect(() => {
     if (interactorData.predictData.length) {
       console.log('interactorData', interactorData);
@@ -143,7 +148,7 @@ const Page: React.FC = () => {
   };
 
   const modifyAnnoByFrontendId = (anno: Annotation) => {
-    // console.log('modifyAnnoByFrontendId:', anno);
+    console.log('modifyAnnoByFrontendId:', anno);
     const newAnnos = [];
     for (const item of annotation.all) {
       if (item.frontendId == anno.frontendId) {
@@ -191,6 +196,8 @@ const Page: React.FC = () => {
     interactor: PPInteractor(drawToolParam),
     rubber: PPRubber(drawToolParam),
   };
+  console.log('tool.curr', tool.curr, pathNames, interactorData.active, label.curr);
+
   return (
     <PPLabelPageContainer className="segment">
       <PPToolBar>
@@ -227,7 +234,7 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/brush.png"
           size={brushSize}
           active={tool.curr == 'brush'}
-          disabled={pathNames && interactorData.active}
+          disabled={(pathNames && interactorData.active) || !label.curr}
           onClick={() => {
             if (!label.curr) {
               message.error(tbIntl('chooseCategoryFirst'));
@@ -351,7 +358,8 @@ const Page: React.FC = () => {
             annHistory.record({ annos: [] });
             setSelectFinly(null);
             setfinlyList([]);
-            // setisFlag(true);
+            tool.setCurr(undefined);
+            label.setCurr(undefined);
           }}
           disabled={pathNames && interactorData.active}
         >
@@ -403,8 +411,9 @@ const Page: React.FC = () => {
                 setInteractorData({ active: false, predictData: [], mousePoints: [] });
               scale.setScale(1);
               setSelectFinly(null);
-              // setfinlyList([]);
-              setisFlag(true);
+              // setisFlag(true);
+              // savefinlyList();
+              setfinlyList([]);
             }}
           />
           <div
@@ -420,8 +429,10 @@ const Page: React.FC = () => {
                 setInteractorData({ active: false, predictData: [], mousePoints: [] });
               scale.setScale(1);
               setSelectFinly(null);
+              // savefinlyList();
+              setfinlyList([]);
               // setfinlyList([]);
-              setisFlag(true);
+              // setisFlag(true);
             }}
           />
         </Spin>
@@ -587,13 +598,13 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
             }}
             onAnnotationModify={() => {}}
-            onAnnotationDelete={async () => {
-              // {async (anno: Annotation) => {
-              // const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
-              // annHistory.record({ annos: newAll });
-              // annotation.setAll(newAll);
-              // setCurrentAnnotation(undefined);
-              // await annotation.pushToBackend(data.curr?.dataId, newAll);
+            onAnnotationDelete={async (anno: Annotation) => {
+              const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
+              annHistory.record({ annos: newAll });
+              annotation.setAll(newAll);
+              setCurrentAnnotation(undefined);
+              await annotation.pushToBackend(data.curr?.dataId, newAll);
+              // savefinlyList();
             }}
             disabled={interactorData.active}
           />

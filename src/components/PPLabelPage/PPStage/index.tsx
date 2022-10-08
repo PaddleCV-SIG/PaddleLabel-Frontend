@@ -313,7 +313,7 @@ const Component: React.FC<PPStageProps> = (props) => {
   if (props.annotations && props?.currentTool !== 'rectangle') {
     // Draw normal elements
     // Clear canvas
-    const ctx = canvasRef.current?.getContext('2d');
+    // const ctx = canvasRef.current?.getContext('2d');
     // if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     props.annotations.forEach((annotation, index) => {
       if (annotation) {
