@@ -4,16 +4,80 @@ import type { ReactElement } from 'react';
 import { Circle, Group, Rect } from 'react-konva';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import { getMaxId, hexToRgb } from './drawUtils';
-
 function createRectangle(points: number[]): string | undefined {
   if (!points || points.length < 2) return undefined;
   return points.join(',');
 }
+const p1 = {
+  x: 0,
+  y: 0,
+};
+const p2 = {
+  x: 0,
+  y: 0,
+};
+let isClick = false;
+// let drawingSurfaceImageData;
+// const renderReact = (canvasRef: React.RefObject<HTMLCanvasElement>) => {
+//   const width = Math.abs(p1.x - p2.x);
+//   const height = Math.abs(p1.y - p2.y);
+//   const ctx = canvasRef.current?.getContext('2d');
+//   if (!ctx) return <></>;
+//   console.log('canvasRef', canvasRef, ctx);
 
+//   ctx.beginPath();
+//   if (p2.x >= p1.x) {
+//     if (p2.y >= p1.y) {
+//       ctx.rect(p1.x, p1.y, width, height);
+//     } else {
+//       ctx.rect(p1.x, p1.y, width, -height);
+//     }
+//   } else {
+//     if (p2.y >= p1.y) {
+//       ctx.rect(p1.x, p1.y, -width, height);
+//     } else {
+//       ctx.rect(p1.x, p1.y, -width, -height);
+//     }
+//   }
+//   console.log('p1', p1, p2);
+//   ctx.strokeStyle = 'red'; //将线条颜色设置为蓝色
+//   ctx.stroke();
+//   // ctx.save();
+// };
+function drawGuidewires(x, y, context) {
+  context.save();
+  context.strokeStyle = 'rgba(0,0,230,0.4)';
+  context.lineWidth = 0.5;
+  drawVerticalLine(x, context);
+  drawHorizontalLine(y, context);
+  context.restore();
+}
+function drawHorizontalLine(y, context) {
+  console.log('context.canvas.width', context.canvas.width);
+
+  context.beginPath();
+  context.moveTo(0, y + 0.5);
+  context.lineTo(context.canvas.width, y + 0.5);
+  context.stroke();
+}
+function drawVerticalLine(x, context) {
+  context.beginPath();
+  context.moveTo(x + 0.5, 0);
+  context.lineTo(x + 0.5, context.canvas.height);
+  context.stroke();
+}
 function drawRectangle(props: PPRenderFuncProps): ReactElement {
-  // console.log(`drawRectangle, annotation:`, props.annotation);
+  console.log(`drawRectangle, annotation:`, props.annotation);
+  // return;
+  // renderReact(props.canvasRef);
   const annotation = props.annotation;
-  if (!annotation || !annotation.result || !annotation.label || !annotation.label.color)
+  if (
+    !annotation ||
+    !annotation.result ||
+    !annotation.label ||
+    !annotation.label.color ||
+    !annotation.annotationId
+  )
     return <></>;
   const pointsRaw = annotation.result.split(',');
   const points = {
@@ -26,10 +90,14 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
 
-  // console.log(`drawRectangle, points:`, points, `color:`, color);
+  console.log(
+    `props.currentAnnotatio:`,
+    props.currentAnnotation?.frontendId,
+    annotation?.frontendId,
+  );
   const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
   const transparency = selected ? 0.5 : 0.1;
-
+  // renderReact(param);
   const rect =
     points.xmax != undefined && points.ymax != undefined ? (
       <Rect
@@ -42,6 +110,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
           document.body.style.cursor = 'default';
         }}
         onClick={() => {
+          console.log('props.currentTool', props.currentTool, annotation);
           if (props.currentTool == 'editor') props.onSelect(annotation);
         }}
         stroke={color}
@@ -143,7 +212,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   const startNewRectangle = (mouseX: number, mouseY: number) => {
     const polygon = createRectangle([mouseX, mouseY]);
     if (!polygon || !props.dataId) return;
-    console.log(polygon);
+    console.log('polygons', polygon);
     props.onAnnotationAdd({
       dataId: props.dataId,
       type: 'rectangle',
@@ -162,31 +231,68 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       ...props.currentAnnotation,
       result: result,
     };
+    console.log('addDotToRectangle', anno);
+
     props.modifyAnnoByFrontendId(anno);
   };
 
   const OnMouseDown = (param: EvtProps) => {
     if (props.currentTool != 'rectangle') return;
+    isClick = true;
+    // saveDrawingSurface(param.canvasRef);
     const mouseX = param.mouseX + param.offsetX;
     const mouseY = param.mouseY + param.offsetY;
-    console.log(`currentAnnotation:`, props.currentAnnotation);
+    // console.log(`currentAnnotation:`, props.currentAnnotation);
+    console.log(`mouseX:`, p1, p2);
+    p1.x = param.mouseX;
+    p1.y = param.mouseY;
     // No annotation is marking, start new
-    if (!props.currentAnnotation) {
-      startNewRectangle(mouseX, mouseY);
-    } else {
-      addDotToRectangle(mouseX, mouseY);
-    }
-  };
+    console.log(
+      'props.currentAnnotation',
+      param.mouseX,
+      param.mouseX,
+      param.offsetX,
+      param.offsetY,
+    );
+    startNewRectangle(mouseX, mouseY);
+    // if (!props.currentAnnotation) {
+    //   startNewRectangle(mouseX, mouseY);
+    // } else {
+    //   addDotToRectangle(mouseX, mouseY);
+    // }
+    // setTimeout(() => {
 
-  const OnMouseUp = () => {
-    if (props.currentTool != 'rectangle' && props.currentTool != 'editor') return;
-    // console.log(`OnMouseUp`);
+    // }, 0);
+    if (props.onMouseDown) props.onMouseDown();
+  };
+  const OnMousemove = (param: EvtProps) => {
+    if (props.currentTool != 'rectangle' && isClick !== true) return;
+    // p2.x = param.mouseX + param.offsetX;
+    // p2.y = param.mouseY + param.offsetY;
+    p2.x = param.mouseX;
+    p2.y = param.mouseY;
+    // const ctx = param.canvasRef.current?.getContext('2d');
+    if (isClick) {
+      console.log('renderReact函数执行了');
+      // restoreDrawingSurface(param.canvasRef);
+      // renderReact(param.canvasRef);
+    }
+    // drawGuidewires(param.mouseX, param.mouseY, ctx);
+  };
+  const OnMouseUp = (param: EvtProps) => {
+    if (props.currentTool != 'rectangle' && props.currentTool != 'editor' && isClick) return;
+    isClick = false;
+    console.log(`OnMouseUp`);
+    const mouseX = param.mouseX + param.offsetX;
+    const mouseY = param.mouseY + param.offsetY;
+    addDotToRectangle(mouseX, mouseY);
     if (props.onMouseUp) props.onMouseUp();
   };
   return {
     onMouseDown: OnMouseDown,
-    onMouseMove: () => {},
+    onMouseMove: OnMousemove,
     onMouseUp: OnMouseUp,
     drawAnnotation: drawRectangle,
+    drawGuidewires: drawGuidewires,
   };
 }

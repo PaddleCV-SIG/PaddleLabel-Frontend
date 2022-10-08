@@ -464,6 +464,7 @@ export function AnnotationUtils(
   const tbIntl = IntlInitJsx('pages.toolBar');
 
   function setAll(annos: Annotation[]) {
+    console.log('annos函数执行了', annos);
     setAllRaw(annos);
   }
 

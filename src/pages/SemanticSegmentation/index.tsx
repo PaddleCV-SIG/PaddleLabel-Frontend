@@ -10,6 +10,7 @@ import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import PPBrush from '@/components/PPDrawTool/PPBrush';
+import PPRubber from '@/components/PPDrawTool/PPRubber';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { ModelUtils, PageInit } from '@/services/utils';
@@ -17,16 +18,18 @@ import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 import PPInteractor, { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
 import { IntlInitJsx } from '@/components/PPIntl';
-
 const Page: React.FC = () => {
   const tbIntl = IntlInitJsx('pages.toolBar');
   const [frontendId, setFrontendId] = useState<number>(0);
+  const [pathNames] = useState(history?.location?.pathname !== '/instance_segmentation');
+  const [finlyList, setfinlyList] = useState<Annotation[]>([]);
+  const [selectFinly, setSelectFinly] = useState<Annotation>();
+  const [isFlag, setisFlag] = useState(true);
   const [brushSize, setBrushSize] = useState(10);
   const [threshold, setThreshold] = useState(50);
   const [transparency, setTransparency] = useState(60);
   const { radius, setRadius } = useModel('VisualRadius');
   const { interactorData, setInteractorData } = useModel('InteractorData');
-
   const model = ModelUtils(useState);
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar, annHistory } =
     PageInit(useState, useEffect, {
@@ -47,12 +50,12 @@ const Page: React.FC = () => {
       tool: { defaultTool: 'mover' },
       task: { push: true },
     });
-
+  console.log('tool.curr', tool.curr);
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
     setFrontendId(0);
   }
-
+  console.log('annos', annotation.all);
   const setCurrentAnnotation = (anno?: Annotation) => {
     annotation.setCurr(anno);
     if (!anno?.frontendId) setFrontendId(0);
@@ -61,28 +64,63 @@ const Page: React.FC = () => {
 
   const saveInteractorData = () => {
     if (interactorData.active) {
-      console.log(tool.curr);
+      console.log('label.curr', label.curr);
       const anno = interactorToAnnotation(
         threshold,
         annotation.all,
         interactorData?.predictData,
         data.curr?.dataId,
+        finlyList,
+        selectFinly,
         label.curr,
       );
       if (anno) {
         const newAnnos = annotation.all.concat([anno]);
         annotation.setAll(newAnnos);
         setCurrentAnnotation(anno);
-        annotation.pushToBackend(data.curr?.dataId, newAnnos);
+        // annotation.pushToBackend(data.curr?.dataId, newAnnos);
       }
-      setInteractorData({ active: true, predictData: [], mousePoints: [] });
-      setCurrentAnnotation(undefined);
+      setInteractorData({ active: false, predictData: [], mousePoints: [] });
+      // setCurrentAnnotation(undefined);
     }
   };
+  const savefinlyList = () => {
+    console.log('annotation.all', annotation.all);
+    const frontendId = new Map();
+    const items: Annotation[] = [];
+    for (const anno of annotation.all) {
+      frontendId.set(anno.frontendId, anno);
+    }
+    frontendId.forEach((anno: Annotation) => {
+      items.push(anno);
+    });
+    console.log('items', items);
 
+    setfinlyList(items);
+    setSelectFinly(null);
+  };
   useEffect(() => {
     annHistory.init();
   }, []);
+  useEffect(() => {
+    if (pathNames) {
+      return;
+    }
+    if (!annotation.all?.length) {
+      savefinlyList();
+      return;
+    }
+    if (annotation.all?.length && isFlag) {
+      setisFlag(false);
+      savefinlyList();
+    }
+  }, [annotation.all, isFlag]);
+  useEffect(() => {
+    if (interactorData.predictData.length) {
+      console.log('interactorData', interactorData);
+      saveInteractorData();
+    }
+  }, [interactorData]);
 
   // Auto save every 20s
   // useEffect(() => {
@@ -97,6 +135,7 @@ const Page: React.FC = () => {
 
   const onAnnotationModify = (anno: Annotation) => {
     if (!anno) return;
+    console.log('onAnnotationModify', anno);
     annotation.all.pop();
     annotation.all.push(anno);
     setCurrentAnnotation(anno);
@@ -124,6 +163,7 @@ const Page: React.FC = () => {
     scale: scale.curr,
     currentTool: tool.curr,
     annotations: annotation.all,
+    labels: label.all,
     currentAnnotation: annotation.curr,
     onAnnotationAdd: (anno: Annotation) => {
       const newAnnos = annotation.all.concat([anno]);
@@ -137,23 +177,28 @@ const Page: React.FC = () => {
       if (interactorData.active) return;
       annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
       annotation.pushToBackend(data.curr?.dataId, annotation.all);
+      // 存下一份记录
     },
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
     model: model,
+    finlyList: finlyList,
+    selectFinly: selectFinly,
   };
 
   const drawTool = {
     polygon: PPPolygon(drawToolParam),
     brush: PPBrush(drawToolParam),
     interactor: PPInteractor(drawToolParam),
+    rubber: PPRubber(drawToolParam),
   };
   return (
     <PPLabelPageContainer className="segment">
       <PPToolBar>
+        {/* 多边形 */}
         <PPToolBarButton
           imgSrc="./pics/buttons/polygon.png"
           active={tool.curr == 'polygon'}
-          disabled={interactorData.active}
+          disabled={pathNames && interactorData.active}
           onClick={() => {
             if (!label.curr) {
               message.error(tbIntl('chooseCategoryFirst'));
@@ -165,22 +210,24 @@ const Page: React.FC = () => {
         >
           {tbIntl('polygon')}
         </PPToolBarButton>
+        {/* 编辑 */}
         <PPToolBarButton
           active={tool.curr == 'editor'}
-          disabled={interactorData.active}
+          disabled={pathNames && interactorData.active}
           imgSrc="./pics/buttons/edit.png"
           onClick={() => {
             tool.setCurr('editor');
-            setCurrentAnnotation(undefined);
+            // setCurrentAnnotation(undefined);
           }}
         >
           {tbIntl('edit')}
         </PPToolBarButton>
+        {/* 笔刷 */}
         <PPSetButton
           imgSrc="./pics/buttons/brush.png"
           size={brushSize}
           active={tool.curr == 'brush'}
-          disabled={interactorData.active}
+          disabled={pathNames && interactorData.active}
           onClick={() => {
             if (!label.curr) {
               message.error(tbIntl('chooseCategoryFirst'));
@@ -192,15 +239,18 @@ const Page: React.FC = () => {
             tool.setCurr('brush');
           }}
           onChange={(newBrushSize) => {
-            setBrushSize(newBrushSize);
+            if (newBrushSize >= 1) {
+              setBrushSize(newBrushSize);
+            }
           }}
         >
           {tbIntl('brush')}
         </PPSetButton>
+        {/* 橡皮擦 */}
         <PPSetButton
           size={brushSize}
           active={tool.curr == 'rubber'}
-          disabled={interactorData.active}
+          disabled={pathNames && interactorData.active}
           onClick={() => {
             if (tool.curr != 'rubber' && tool.curr != 'brush') {
               setCurrentAnnotation(undefined);
@@ -214,6 +264,7 @@ const Page: React.FC = () => {
         >
           {tbIntl('rubber')}
         </PPSetButton>
+        {/* 放大 */}
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
@@ -222,6 +273,7 @@ const Page: React.FC = () => {
         >
           {tbIntl('zoomIn')}
         </PPToolBarButton>
+        {/* 缩小 */}
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_out.png"
           onClick={() => {
@@ -230,15 +282,17 @@ const Page: React.FC = () => {
         >
           {tbIntl('zoomOut')}
         </PPToolBarButton>
+        {/* 保存 */}
         <PPToolBarButton
           imgSrc="./pics/buttons/save.png"
           onClick={() => {
             annotation.pushToBackend(data.curr?.dataId);
           }}
-          disabled={interactorData.active}
+          disabled={pathNames && interactorData.active}
         >
           {tbIntl('save')}
         </PPToolBarButton>
+        {/* 移动 */}
         <PPToolBarButton
           active={tool.curr == 'mover'}
           imgSrc="./pics/buttons/move.png"
@@ -256,6 +310,8 @@ const Page: React.FC = () => {
         >
           {tbIntl('move')}
         </PPToolBarButton>
+        {/* 撤销 */}
+
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
@@ -266,10 +322,12 @@ const Page: React.FC = () => {
               annotation.pushToBackend(data.curr?.dataId, res.annos);
             }
           }}
-          disabled={interactorData.active}
+          disabled={pathNames && interactorData.active}
         >
           {tbIntl('unDo')}
         </PPToolBarButton>
+        {/* 重做 */}
+
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
           onClick={() => {
@@ -279,22 +337,28 @@ const Page: React.FC = () => {
               setCurrentAnnotation(res.currAnno);
             }
           }}
-          disabled={interactorData.active}
+          disabled={pathNames && interactorData.active}
         >
           {tbIntl('reDo')}
         </PPToolBarButton>
+        {/* 删除 */}
+
         <PPToolBarButton
           imgSrc="./pics/buttons/clear_mark.png"
           onClick={() => {
             annotation.setCurr(undefined);
             annotation.clear();
             annHistory.record({ annos: [] });
+            setSelectFinly(null);
+            setfinlyList([]);
+            // setisFlag(true);
           }}
-          disabled={interactorData.active}
+          disabled={pathNames && interactorData.active}
         >
           {tbIntl('clearMark')}
         </PPToolBarButton>
       </PPToolBar>
+      {/* 主内容区域 */}
       <div id="dr" className="mainStage">
         <Spin tip="loading" spinning={!!loading.curr}>
           <div className="draw">
@@ -302,6 +366,8 @@ const Page: React.FC = () => {
               scale={scale.curr}
               annotations={annotation.all}
               currentTool={tool.curr}
+              labels={label.all}
+              tool={tool}
               currentAnnotation={annotation.curr}
               currentLabel={label.curr}
               setCurrentAnnotation={setCurrentAnnotation}
@@ -335,6 +401,10 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
               if (!interactorData.active)
                 setInteractorData({ active: false, predictData: [], mousePoints: [] });
+              scale.setScale(1);
+              setSelectFinly(null);
+              // setfinlyList([]);
+              setisFlag(true);
             }}
           />
           <div
@@ -348,6 +418,10 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
               if (!interactorData.active)
                 setInteractorData({ active: false, predictData: [], mousePoints: [] });
+              scale.setScale(1);
+              setSelectFinly(null);
+              // setfinlyList([]);
+              setisFlag(true);
             }}
           />
         </Spin>
@@ -355,6 +429,7 @@ const Page: React.FC = () => {
           <PPProgress task={task} project={project} />
         </div>
       </div>
+
       <PPToolBar disLoc="right">
         <PPAIButton
           imgSrc="./pics/buttons/intelligent_interaction.png"
@@ -451,12 +526,13 @@ const Page: React.FC = () => {
       <div className="rightSideBar">
         <div className="determinOutline">
           <Button
-            disabled={tool.curr != 'interactor'}
+            disabled={pathNames}
             style={{ height: 40, fontSize: '0.75rem' }}
             type="primary"
             block
             onClick={() => {
-              saveInteractorData();
+              // saveInteractorData();
+              savefinlyList();
             }}
           >
             {tbIntl('determineOutline')}
@@ -475,25 +551,53 @@ const Page: React.FC = () => {
             });
           }}
         />
-        <PPAnnotationList
-          currAnnotation={annotation.curr}
-          annotations={annotation.all}
-          onAnnotationSelect={(selectedAnno) => {
-            if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
-          }}
-          onAnnotationAdd={() => {
-            setCurrentAnnotation(undefined);
-          }}
-          onAnnotationModify={() => {}}
-          onAnnotationDelete={async (anno: Annotation) => {
-            const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
-            annHistory.record({ annos: newAll });
-            annotation.setAll(newAll);
-            setCurrentAnnotation(undefined);
-            await annotation.pushToBackend(data.curr?.dataId, newAll);
-          }}
-          disabled={interactorData.active}
-        />
+        {pathNames ? (
+          <PPAnnotationList
+            currAnnotation={annotation.curr}
+            annotations={annotation.all}
+            onAnnotationSelect={(selectedAnno) => {
+              if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
+            }}
+            onAnnotationAdd={() => {
+              setCurrentAnnotation(undefined);
+            }}
+            onAnnotationModify={() => {}}
+            onAnnotationDelete={async (anno: Annotation) => {
+              const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
+              annHistory.record({ annos: newAll });
+              annotation.setAll(newAll);
+              setCurrentAnnotation(undefined);
+              await annotation.pushToBackend(data.curr?.dataId, newAll);
+            }}
+            disabled={interactorData.active}
+          />
+        ) : (
+          <PPAnnotationList
+            currAnnotation={selectFinly}
+            annotations={finlyList}
+            onAnnotationSelect={(selectedAnno) => {
+              // if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
+              if (!selectedAnno?.delete) {
+                console.log('selectedAnno', selectedAnno);
+
+                setSelectFinly(selectedAnno);
+              }
+            }}
+            onAnnotationAdd={() => {
+              setCurrentAnnotation(undefined);
+            }}
+            onAnnotationModify={() => {}}
+            onAnnotationDelete={async () => {
+              // {async (anno: Annotation) => {
+              // const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
+              // annHistory.record({ annos: newAll });
+              // annotation.setAll(newAll);
+              // setCurrentAnnotation(undefined);
+              // await annotation.pushToBackend(data.curr?.dataId, newAll);
+            }}
+            disabled={interactorData.active}
+          />
+        )}
       </div>
     </PPLabelPageContainer>
   );

@@ -22,9 +22,19 @@ export type PPRenderFuncProps = {
   interactorData?: InteractorData;
   label?: Label;
   radius?: number;
+  tool?: {
+    curr: ToolType;
+    setCurr: (tool: ToolType) => void;
+  };
 };
 
 export type PPDrawToolProps = {
+  frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
+  model: any;
+  onAnnotationAdd: (annotation: Annotation) => void;
+  onAnnotationModify: (annotation: Annotation) => void;
+  modifyAnnoByFrontendId: (annotation: Annotation) => void;
+  onMouseUp: () => void;
   currentLabel?: Label;
   brushSize?: number;
   scale: number;
@@ -32,12 +42,10 @@ export type PPDrawToolProps = {
   currentTool?: ToolType;
   annotations?: Annotation[];
   currentAnnotation?: Annotation;
-  onAnnotationAdd: (annotation: Annotation) => void;
-  onAnnotationModify: (annotation: Annotation) => void;
-  modifyAnnoByFrontendId: (annotation: Annotation) => void;
-  onMouseUp: () => void;
-  frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
-  model: any;
+  onMouseDown?: () => void;
+  labels?: Label[];
+  finlyList?: Annotation[];
+  selectFinly?: Annotation;
 };
 
 export type EvtProps = {
@@ -58,6 +66,7 @@ export type PPDrawToolRet = {
   onMouseMove: EvtType;
   onMouseUp: EvtType;
   drawAnnotation: (props: PPRenderFuncProps) => ReactElement;
+  drawGuidewires?: (x: any, y: any, context: any) => void;
 };
 
 export function getMaxId(annotations?: Annotation[]): any {

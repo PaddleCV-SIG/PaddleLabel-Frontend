@@ -15,6 +15,8 @@ export const HistoryUtils = () => {
     const historyStr = localStorage.getItem('history');
     const history: HistoryType = historyStr ? JSON.parse(historyStr) : { index: -1, items: [] };
     if (JSON.stringify(history.items[history.index]) == JSON.stringify(newItem)) {
+      console.log('历史函数返回了');
+
       return;
     }
     const earliestIndex =

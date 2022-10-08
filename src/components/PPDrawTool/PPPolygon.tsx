@@ -4,7 +4,7 @@ import type { ReactElement } from 'react';
 import { Circle, Group, Line } from 'react-konva';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import { hexToRgb } from './drawUtils';
-
+let isMove = false;
 function createPolygon(color?: string, points?: number[]): string | undefined {
   if (!color || !points) return undefined;
   return points.join(',');
@@ -164,7 +164,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   };
 
   const OnMouseDown = (param: EvtProps) => {
-    if (props.currentTool != 'polygon') return;
+    if (props.currentTool != 'polygon' && props.currentTool != 'editor') return;
     const mouseX = param.mouseX + param.offsetX;
     const mouseY = param.mouseY + param.offsetY;
     console.log(`currentAnnotation:`, props.currentAnnotation);
@@ -174,8 +174,39 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     } else {
       addDotToPolygon(mouseX, mouseY);
     }
+    isMove = false;
   };
-
+  const OnMousemove = (param: EvtProps) => {
+    if (props.currentTool != 'polygon' && props.currentTool != 'editor') return;
+    const mouseX = param.mouseX + param.offsetX;
+    const mouseY = param.mouseY + param.offsetY;
+    // console.log(`currentAnnotation:`, props.currentAnnotation);
+    // No annotation is marking, start new
+    if (props.currentAnnotation) {
+      // console.log('OnMousemoveResult', result);
+      const array = props.currentAnnotation.result?.split(',');
+      const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+      if (array?.length >= 4 && !isMove) {
+        console.log('result1', result);
+        const anno = {
+          ...props.currentAnnotation,
+          result: result,
+        };
+        props.modifyAnnoByFrontendId(anno);
+        isMove = true;
+      } else if (array?.length >= 6 && isMove) {
+        array.splice(array.length - 2, 2);
+        console.log('newArray', array);
+        const results = array.join(',');
+        const resultss = results + `,${mouseX},${mouseY}`;
+        const anno = {
+          ...props.currentAnnotation,
+          result: resultss,
+        };
+        props.modifyAnnoByFrontendId(anno);
+      }
+    }
+  };
   const OnMouseUp = () => {
     if (props.currentTool != 'polygon') return;
     // console.log(`OnMouseUp`);
@@ -183,7 +214,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   };
   return {
     onMouseDown: OnMouseDown,
-    onMouseMove: () => {},
+    onMouseMove: OnMousemove,
     onMouseUp: OnMouseUp,
     drawAnnotation: drawPolygon,
   };

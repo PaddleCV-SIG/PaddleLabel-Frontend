@@ -41,9 +41,9 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
             props.onAnnotationModify(annotation);
           }}
         />{' '}
-        <span className={styles.annotationId}>{annotation.frontendId}</span>
-        <span className={styles.labelName}>{annotation.label.name}</span>
-        <PPColorBall color={annotation.label.color} />
+        <span className={styles.annotationId}>{annotation?.frontendId}</span>
+        <span className={styles.labelName}>{annotation?.label?.name}</span>
+        <PPColorBall color={annotation?.label?.color} />
       </Space>
 
       <a

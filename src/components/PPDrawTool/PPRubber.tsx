@@ -2,7 +2,8 @@ import type { ToolType } from '@/models/ToolType';
 import { useState } from 'react';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import type { Annotation } from '@/models/Annotation';
-import { history } from 'umi';
+// import { label } from '../../../cypress/support/label';
+
 type CanvasLineType = {
   frontendId: number;
   type: ToolType;
@@ -10,7 +11,6 @@ type CanvasLineType = {
   color: string;
   points: number[];
 };
-// let pubPointes = [];
 // let colors = '';
 function createLine(param: CanvasLineType): string {
   if (
@@ -181,7 +181,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     isClick = true;
     if (
       (props.currentTool != 'brush' && props.currentTool != 'rubber') ||
-      !props.currentLabel?.color ||
+      // !props.currentLabel?.color ||
       !props.brushSize
     )
       return;
@@ -195,35 +195,11 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       'maxId:',
       getMaxFrontendId(props.annotations),
     );
-    let frontendId;
-    console.log('props.finlyList', props.finlyList, props.selectFinly, history?.location?.pathname);
-    // debugger;
-    if (history?.location?.pathname === '/instance_segmentation') {
-      if (props.finlyList && props.finlyList?.length > 0 && props.selectFinly) {
-        // 有列表长度且有选中
-
-        frontendId = props.selectFinly.frontendId;
-        console.log('有列表长度且有选中', frontendId);
-      } else if (props.finlyList && props.finlyList?.length > 0 && !props.selectFinly) {
-        // 有列表长度，无选中
-        frontendId = props.finlyList?.length > 0 ? getMaxFrontendId(props.finlyList) + 1 : 1;
-        console.log('有列表长度，无选中', frontendId);
-      } else if (props.finlyList?.length === 0 && !props.selectFinly) {
-        // 无列表长度，无选中
-        frontendId =
-          props.frontendIdOps.frontendId > 0
-            ? props.frontendIdOps.frontendId
-            : getMaxFrontendId(props.annotations) + 1;
-        console.log('无列表长度，无选中', frontendId);
-      }
-    } else {
-      frontendId =
-        props.frontendIdOps.frontendId > 0
-          ? props.frontendIdOps.frontendId
-          : getMaxFrontendId(props.annotations) + 1;
-    }
+    const frontendId =
+      props.frontendIdOps.frontendId > 0
+        ? props.frontendIdOps.frontendId
+        : getMaxFrontendId(props.annotations) + 1;
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
-    console.log('frontendId', frontendId);
     const line = createLine({
       width: props.brushSize || 10,
       color: props.currentLabel?.color || 'blue',
@@ -234,59 +210,53 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     // console.log(line);
     if (!line) return;
     setCurrentTool(tool);
-    if (props.currentLabel) {
+    if (props.currentTool === 'brush') {
+      if (props.currentLabel) {
+        const anno: Annotation = {
+          dataId: props.dataId,
+          label: props.currentLabel,
+          labelId: props.currentLabel?.labelId,
+          frontendId: frontendId,
+          result: line,
+          type: 'brush',
+        };
+        props.onAnnotationAdd(anno);
+      }
+    } else {
       const anno: Annotation = {
         dataId: props.dataId,
-        label: props.currentLabel,
-        labelId: props.currentLabel?.labelId,
+        label: props.currentAnnotation ? props.currentAnnotation?.label : props.labels[0],
+        labelId: props.currentAnnotation
+          ? props.currentAnnotation?.labelId
+          : props.labels[0]?.labelId,
         frontendId: frontendId,
         result: line,
-        type: 'brush',
+        type: 'rubber',
       };
       props.onAnnotationAdd(anno);
     }
   };
 
   const OnMouseMove = (param: EvtProps) => {
-    // if (
-    //   currentTool === 'brush' &&
-    //   (!props.currentAnnotation ||
-    //     !props.currentAnnotation.result ||
-    //     props.currentAnnotation.result.length < 2 ||
-    //     !props.currentLabel?.color)
-    // ) {
-    //   return;
-    // } else if (currentTool === 'rubber') {
-    //   return;
-    // }
-    if (
-      !currentTool ||
-      !props.currentAnnotation ||
-      !props.currentAnnotation.result ||
-      props.currentAnnotation.result.length < 2 ||
-      !props.currentLabel?.color
-    ) {
+    if (!currentTool) {
       return;
     }
     console.log('props.currentAnnotation', props.currentAnnotation, props.annotations);
+    const LastAnnotations = props.annotations[props.annotations?.length - 1];
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
     console.log('mouseX', mouseX, mouseY);
     // props.currentAnnotation 最新的一个节点，假设不使用这个的话 可以取Annotation里面的节点来用
-    const newResult = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
-    props.onAnnotationModify({ ...props.currentAnnotation, result: newResult });
+    const newResult = LastAnnotations.result + `,${mouseX},${mouseY}`;
+    props.onAnnotationModify({ ...LastAnnotations, result: newResult });
   };
 
   const OnMouseUp = () => {
-    if (
-      !currentTool ||
-      !props.currentAnnotation ||
-      !props.currentAnnotation.result ||
-      props.currentAnnotation.result.length < 2 ||
-      !props.currentLabel?.color
-    ) {
-      return;
-    }
+    if (props.currentTool != 'brush' && props.currentTool != 'rubber') return;
+    // console.log(`OnMouseUp`);
+    // const ctx = param.canvasRef;
+    // const width = props.brushSize || 10;
+    // renderBrush(ctx, width, pubPointes.slice(2), colors);
     isClick = false;
     setCurrentTool(undefined);
     props.onMouseUp();

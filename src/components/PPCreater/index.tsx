@@ -126,6 +126,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     } else {
       return (
         <div>
+          <div className={styles.DirectoryTitle}>标注保存结构示例</div>
           <DirectoryTree
             // defaultExpandAll
             // showLine={true}
@@ -134,6 +135,10 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
             treeData={sampleFiles}
             blockNode={false}
           />
+          <div className={styles.DirectoryContent}>
+            <div>1.标注完成后，生成标注结果的组织形式ru如上所示</div>
+            <div>2.若重新导入已有标注，请参加如上标注结构组织文件夹下的文件</div>
+          </div>
         </div>
       );
     }

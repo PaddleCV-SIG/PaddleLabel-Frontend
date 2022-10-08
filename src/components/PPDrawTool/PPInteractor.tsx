@@ -236,8 +236,9 @@ function getBase64Image(img?: HTMLImageElement) {
   const canvas = document.createElement('canvas');
   canvas.width = img.width;
   canvas.height = img.height;
+  console.log('img.width', img.width);
   const ctx = canvas.getContext('2d');
-  ctx?.drawImage(img, 0, 0);
+  ctx?.drawImage(img, 0, 0, img.width, img.height);
   const dataURL = canvas.toDataURL('image/png');
   return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
 }
@@ -261,8 +262,8 @@ function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D, 
   if (!mousePoints) return;
   for (const [x, y, positive] of mousePoints) {
     ctx.beginPath();
-    if (positive) ctx.fillStyle = '#FF0000';
-    else ctx.fillStyle = '#008000';
+    if (positive) ctx.fillStyle = '#008000';
+    else ctx.fillStyle = '#FF0000';
     // Filled triangle
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, 2 * Math.PI);
@@ -300,12 +301,34 @@ export function interactorToAnnotation(
   annotations: Annotation[],
   interactorData?: number[][],
   dataId?: number,
+  finlyList?: Annotation[],
+  selectFinly?: Annotation,
   label?: Label,
 ): Annotation | null {
   if (!dataId || !label || !interactorData) return null;
   const points = filterPoints(interactorData, threshold);
   const width = 0; // Pixel type
-  const frontendId = getMaxFrontendId(annotations);
+  console.log('selectFinly', selectFinly);
+
+  let frontendId;
+  // 有模型
+  if (selectFinly?.frontendId) {
+    frontendId = selectFinly?.frontendId;
+  } else {
+    frontendId = finlyList?.length ? getMaxFrontendId(finlyList) + 1 : 1;
+  }
+  // if (finlyList) {
+  //   if (finlyList?.length > 0 && selectFinly) {
+  //     frontendId = selectFinly.frontendId;
+  //   } else if (finlyList?.length > 0 && !selectFinly) {
+  //     frontendId = getMaxFrontendId(finlyList) + 1;
+  //   } else if (finlyList?.length === 0) {
+  //     frontendId = getMaxFrontendId(finlyList) + 1;
+  //   }
+  // } else {
+  //   frontendId = getMaxFrontendId(finlyList) + 1;
+  // }
+  console.log('frontendIds', frontendId);
   const result = `${width},${frontendId},` + points.join(',');
   const anno = {
     dataId: dataId,
@@ -374,13 +397,18 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (!interactorData.mousePoints.length || !param.stageRef.current || frontendId == undefined) {
       return;
     }
+    console.log('param.img', param.img?.width, interactorData.mousePoints);
+
     const imgBase64 = getBase64Image(param.img);
+
     const line = await model.predict({
       format: 'b64',
       img: imgBase64,
       other: { clicks: interactorData.mousePoints },
     });
     if (!line) return;
+    console.log('line.result', line.result);
+
     setInteractorData({
       active: true,
       mousePoints: interactorData.mousePoints,

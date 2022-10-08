@@ -3,6 +3,7 @@ import { Button } from 'antd';
 import React from 'react';
 import styles from './index.less';
 import { Annotation } from '@/models/annotation';
+import { history } from 'umi';
 import PPAnnotationListItem from './PPAnnotationListItem';
 import { useIntl } from 'umi';
 
@@ -14,6 +15,7 @@ export type PPLabelListProps = {
   onAnnotationAdd: (annotation: Annotation) => void | undefined;
   onAnnotationSelect: (annotation: Annotation | undefined) => void;
   disabled?: boolean;
+  type?: string;
 };
 
 const Component: React.FC<PPLabelListProps> = (props) => {
@@ -24,12 +26,44 @@ const Component: React.FC<PPLabelListProps> = (props) => {
   const addAnnotation = intl.formatMessage({ id: 'component.PPAnnotationList.addAnnotation' });
 
   const added = new Set();
+  const labelId = new Map();
   const items: Annotation[] = [];
-  for (const anno of props.annotations) {
-    if (added.has(anno.frontendId)) continue;
-    items.push(anno);
-    added.add(anno.frontendId);
+  let newItemns: Annotation[] = [];
+  // const added = new Set();
+  // const items: Annotation[] = [];
+
+  if (history?.location?.pathname === '/semantic_segmentation' && props.annotations.length > 0) {
+    for (const anno of props.annotations) {
+      if (added.has(anno.frontendId)) continue;
+      if (anno.type === 'rubber') continue;
+      if (labelId.has(anno.labelId)) {
+        const old = labelId.get(anno.labelId);
+        if (old.frontendId < anno?.frontendId) {
+          labelId.set(anno.labelId, anno);
+        }
+      } else {
+        labelId.set(anno.labelId, anno);
+      }
+      // items.push(anno);
+      added.add(anno.frontendId);
+    }
+    labelId.forEach((anno: Annotation) => {
+      items.push(anno);
+    });
+  } else {
+    for (const anno of props.annotations) {
+      if (added.has(anno.frontendId)) continue;
+      items.push(anno);
+      added.add(anno.frontendId);
+    }
   }
+  if (props.type === 'Detection') {
+    newItemns = items.sort((a: Annotation, b: Annotation) => {
+      return a?.annotationId - b?.annotationId;
+    });
+  }
+  console.log('props.disabled', props.disabled);
+
   return (
     <Spin spinning={props.disabled} indicator={<></>}>
       <List
@@ -37,7 +71,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         size="large"
         header={<div className={styles.listHeader}>{annotationList}</div>}
         bordered
-        dataSource={items}
+        dataSource={props.type === 'Detection' ? newItemns : items}
         renderItem={(item) => {
           return (
             <PPAnnotationListItem

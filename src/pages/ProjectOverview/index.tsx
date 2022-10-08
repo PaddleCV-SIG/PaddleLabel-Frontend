@@ -112,6 +112,7 @@ const TaskList: React.FC = () => {
     message.error('No valid project id');
     history.push('/');
   }
+  console.log('project.curr.taskCategory.name', project?.curr?.taskCategory?.name);
 
   return (
     <PPContainer>
@@ -127,6 +128,7 @@ const TaskList: React.FC = () => {
         >
           {intl('label')}
         </Button>
+
         <Button
           type="primary"
           onClick={() => {
@@ -140,6 +142,7 @@ const TaskList: React.FC = () => {
         >
           {intl('projectSettings')}
         </Button>
+
         <PPSplitDatasetModal
           project={project.curr}
           visible={task.all?.length != 0}

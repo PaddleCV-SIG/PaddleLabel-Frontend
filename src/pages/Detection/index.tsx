@@ -18,6 +18,7 @@ const Page: React.FC = () => {
   // todo: change to use annotation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [frontendId, setFrontendId] = useState<number>(0);
+  const [isClick, setisClick] = useState<boolean>(true);
   const tbIntl = IntlInitJsx('pages.toolBar');
 
   const { tool, loading, scale, annotation, task, data, project, label, annHistory } = PageInit(
@@ -57,9 +58,9 @@ const Page: React.FC = () => {
   };
 
   const onAnnotationModify = (anno: Annotation) => {
-    // console.log('modifyAnnoByFrontendId:', anno);
     const newAnnos = [];
     for (const item of annotation.all) {
+      console.log('annotation:', item, anno);
       if (item.frontendId == anno.frontendId) {
         newAnnos.push(anno);
       } else {
@@ -74,8 +75,24 @@ const Page: React.FC = () => {
   useEffect(() => {
     annHistory.init();
   }, []);
-
+  useEffect(() => {
+    console.log('onStartEdit函数执行了', annotation.all);
+    if (!isClick) {
+      onFinishEdit();
+    }
+  }, [isClick]);
+  function onStartEdit() {
+    // console.log('onStartEdit函数执行了', annotation.all);
+    // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+    setisClick(true);
+  }
+  function onEndEdit() {
+    // console.log('onStartEdit函数执行了', annotation.all);
+    // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+    setisClick(false);
+  }
   function onFinishEdit() {
+    // 鼠标抬起的时候
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     console.log('finish before', annotation.curr);
     if (!annotation.curr) return;
@@ -106,14 +123,24 @@ const Page: React.FC = () => {
     },
     onAnnotationModify: onAnnotationModify,
     modifyAnnoByFrontendId: onAnnotationModify,
-    onMouseUp: onFinishEdit,
+    onMouseUp: onEndEdit,
+    onMouseDown: onStartEdit,
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
   };
 
   const rectagle = PPRectangle(drawToolParam);
 
   const drawTool = { polygon: rectagle, brush: undefined };
-
+  const setAnnotation = (select: Annotation) => {
+    const items = annotation.all;
+    const id = select.annotationId;
+    const item = items.find((i) => i.annotationId === id);
+    const index = items.indexOf(item);
+    items.splice(index, 1);
+    // add to the top
+    items.push(item);
+    annotation.setAll(items);
+  };
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -177,6 +204,7 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
             const res = annHistory.backward();
+            // const res2 = annHistory.backward();
             if (res) {
               annotation.setAll(res.annos);
               setCurrentAnnotation(res.currAnno);
@@ -288,11 +316,13 @@ const Page: React.FC = () => {
         />
         <PPAnnotationList
           disabled={false}
+          type={'Detection'}
           currAnnotation={annotation.curr}
           annotations={annotation.all}
           onAnnotationSelect={(selectedAnno) => {
             if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
-            console.log(selectedAnno);
+            setAnnotation(selectedAnno);
+            // console.log('selectedAnno', selectedAnno);
           }}
           onAnnotationAdd={() => {
             console.log('onAnnotationAdd');
