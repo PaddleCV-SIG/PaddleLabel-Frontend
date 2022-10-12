@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import type { ProjectOtherSettingsLabelMappingInner } from './ProjectOtherSettingsLabelMappingInner';
+import {
+  ProjectOtherSettingsLabelMappingInnerFromJSON,
+  ProjectOtherSettingsLabelMappingInnerFromJSONTyped,
+  ProjectOtherSettingsLabelMappingInnerToJSON,
+} from './ProjectOtherSettingsLabelMappingInner';
+
 /**
  *
  * @export
@@ -20,7 +27,7 @@ import { exists, mapValues } from '../runtime';
  */
 export interface ProjectOtherSettings {
   /**
-   *
+   * ML后端地址，一般是 http://localhost:1234
    * @type {string}
    * @memberof ProjectOtherSettings
    */
@@ -29,20 +36,35 @@ export interface ProjectOtherSettings {
    *
    * @type {string}
    * @memberof ProjectOtherSettings
+   * @deprecated
    */
   perviousModel?: string;
   /**
    *
    * @type {object}
    * @memberof ProjectOtherSettings
+   * @deprecated
    */
   models?: object;
   /**
    *
    * @type {string}
    * @memberof ProjectOtherSettings
+   * @deprecated
    */
   segMaskType?: string;
+  /**
+   * 正在使用的模型名称
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   */
+  modelName?: string;
+  /**
+   * 标签对应关系
+   * @type {Array<ProjectOtherSettingsLabelMappingInner>}
+   * @memberof ProjectOtherSettings
+   */
+  labelMapping?: Array<ProjectOtherSettingsLabelMappingInner>;
 }
 
 /**
@@ -70,6 +92,10 @@ export function ProjectOtherSettingsFromJSONTyped(
     perviousModel: !exists(json, 'perviousModel') ? undefined : json['perviousModel'],
     models: !exists(json, 'models') ? undefined : json['models'],
     segMaskType: !exists(json, 'segMaskType') ? undefined : json['segMaskType'],
+    modelName: !exists(json, 'modelName') ? undefined : json['modelName'],
+    labelMapping: !exists(json, 'label_mapping')
+      ? undefined
+      : (json['label_mapping'] as Array<any>).map(ProjectOtherSettingsLabelMappingInnerFromJSON),
   };
 }
 
@@ -85,5 +111,10 @@ export function ProjectOtherSettingsToJSON(value?: ProjectOtherSettings | null):
     perviousModel: value.perviousModel,
     models: value.models,
     segMaskType: value.segMaskType,
+    modelName: value.modelName,
+    label_mapping:
+      value.labelMapping === undefined
+        ? undefined
+        : (value.labelMapping as Array<any>).map(ProjectOtherSettingsLabelMappingInnerToJSON),
   };
 }

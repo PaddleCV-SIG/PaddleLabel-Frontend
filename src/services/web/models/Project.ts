@@ -23,19 +23,19 @@ import {
 } from './ProjectOtherSettings';
 
 /**
- * Contains project details and settings
+ * 项目基本信息和设置
  * @export
  * @interface Project
  */
 export interface Project {
   /**
-   *
+   * project表的主键，从1开始
    * @type {number}
    * @memberof Project
    */
   readonly projectId?: number;
   /**
-   * Project name
+   * 项目名字
    * @type {string}
    * @memberof Project
    */

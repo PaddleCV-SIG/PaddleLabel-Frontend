@@ -38,6 +38,7 @@ export interface Annotation {
    *
    * @type {number}
    * @memberof Annotation
+   * @deprecated
    */
   taskId?: number;
   /**
@@ -56,6 +57,7 @@ export interface Annotation {
    *
    * @type {number}
    * @memberof Annotation
+   * @deprecated
    */
   projectId?: number;
   /**
@@ -88,6 +90,12 @@ export interface Annotation {
    * @memberof Annotation
    */
   readonly modified?: string;
+  /**
+   * 推理出这个结果的模型的名字
+   * @type {string}
+   * @memberof Annotation
+   */
+  predictedBy?: string;
 }
 
 /**
@@ -120,6 +128,7 @@ export function AnnotationFromJSONTyped(json: any, ignoreDiscriminator: boolean)
     type: !exists(json, 'type') ? undefined : json['type'],
     created: !exists(json, 'created') ? undefined : json['created'],
     modified: !exists(json, 'modified') ? undefined : json['modified'],
+    predictedBy: !exists(json, 'predicted_by') ? undefined : json['predicted_by'],
   };
 }
 
@@ -140,5 +149,6 @@ export function AnnotationToJSON(value?: Annotation | null): any {
     data_id: value.dataId,
     result: value.result,
     type: value.type,
+    predicted_by: value.predictedBy,
   };
 }
