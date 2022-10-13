@@ -58,7 +58,7 @@
     "@types/react-leaflet": "2.8.0",
     "@umijs/route-utils": "^2.0.0",
     "ahooks": "^3.7.1",
-    "antd": "^4.17.0",
+    "antd": "^4.23.5",
     "browserslist": "^4.21.3",
     "classnames": "^2.3.0",
     "konva": "^8.3.2",
@@ -78,6 +78,7 @@
     "react-leaflet": "2.8.0",
     "umi": "^3.5.0",
     "use-image": "^1.0.8",
+    "uuid": "^9.0.0",
     "yarn": "^1.22.18"
   },
   "devDependencies": {

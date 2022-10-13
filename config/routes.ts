@@ -41,6 +41,10 @@ export default [
     component: './ProjectDetail',
   },
   {
+    path: '/project_ai',
+    component: './ProjectAi',
+  },
+  {
     path: '/classification',
     component: './Classification',
   },
