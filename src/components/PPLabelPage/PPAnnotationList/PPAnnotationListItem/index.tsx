@@ -21,6 +21,8 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
   useEffect(() => {
     setInvisible(props.annotation.invisible);
   }, [props.annotation.invisible]);
+  console.log('...props.annotation', annotation);
+
   const item = (
     <List.Item
       className={`${styles.listItem} ${props.active ? styles.listItemActive : ''}`}

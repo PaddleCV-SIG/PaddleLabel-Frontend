@@ -2,6 +2,7 @@ import type { ToolType } from '@/models/ToolType';
 import { useState } from 'react';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import type { Annotation } from '@/models/Annotation';
+// import { getRandomColor } from '@/services/utils';
 import { history } from 'umi';
 type CanvasLineType = {
   frontendId: number;

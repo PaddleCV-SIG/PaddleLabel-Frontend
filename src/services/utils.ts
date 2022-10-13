@@ -34,6 +34,15 @@ export const sampleApi = new SampleApi(config);
 
 export type UseStateType = <S>(initialState?: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
 export type UseEffectType = (effect: EffectCallback, deps?: DependencyList | undefined) => void;
+export const getRandomColor = () => {
+  const rgb = [];
+  for (let i = 0; i < 3; ++i) {
+    let color = Math.floor(Math.random() * 256).toString(16);
+    color = color.length == 1 ? '0' + color : color;
+    rgb.push(color);
+  }
+  return '#' + rgb.join('');
+};
 
 export const createInfo = {
   classification: {
@@ -192,6 +201,7 @@ export const ProjectUtils = (useState: UseStateType) => {
   async function getCurr(projectId: string) {
     if (projectId == undefined) return undefined;
     const project: Project = await projectApi.get(projectId);
+    //
     setCurr(project);
     return project;
   }

@@ -6,6 +6,8 @@ import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer'
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
+import PPSButtons from '@/components/PPLabelPage/PPButtons';
+
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
@@ -14,6 +16,8 @@ import PPRubber from '@/components/PPDrawTool/PPRubber';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { ModelUtils, PageInit } from '@/services/utils';
+import { ColorMaker } from '@/services/ColorMaker';
+
 import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 import PPInteractor, { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
@@ -24,8 +28,10 @@ const Page: React.FC = () => {
   const [pathNames] = useState(history?.location?.pathname !== '/instance_segmentation');
   const [finlyList, setfinlyList] = useState<Annotation[]>([]);
   const [selectFinly, setSelectFinly] = useState<Annotation>();
+  const [isLabel, setisLabel] = useState<string>('label');
   const [brushSize, setBrushSize] = useState(10);
   const [threshold, setThreshold] = useState(50);
+  const [newAnnotation, setNewAnnotation] = useState<Annotation[]>();
   const [transparency, setTransparency] = useState(60);
   const { radius, setRadius } = useModel('VisualRadius');
   const { interactorData, setInteractorData } = useModel('InteractorData');
@@ -89,8 +95,17 @@ const Page: React.FC = () => {
     console.log('annotation.all', annotation.all);
     const frontendId = new Map();
     const items: Annotation[] = [];
-    for (const anno of annotation.all) {
-      frontendId.set(anno.frontendId, anno);
+    if (isLabel !== 'label') {
+      for (const anno of annotation.all) {
+        const myColor = ColorMaker.GetColor(anno.frontendId);
+        const items = JSON.parse(JSON.stringify(anno));
+        items.label.color = '#' + myColor.Color;
+        frontendId.set(anno.frontendId, items);
+      }
+    } else {
+      for (const anno of annotation.all) {
+        frontendId.set(anno.frontendId, anno);
+      }
     }
     frontendId.forEach((anno: Annotation) => {
       items.push(anno);
@@ -103,30 +118,37 @@ const Page: React.FC = () => {
   useEffect(() => {
     annHistory.init();
   }, []);
-  // useEffect(() => {
-  //   if (pathNames) {
-  //     return;
-  //   }
-  //   if (!annotation.all?.length) {
-  //     setisFlag(false);
-  //     return;
-  //   }
-  //   if (annotation.all?.length) {
-  //     setisFlag(true);
-  //   }
-  // }, [annotation.all, pathNames]);
   // 初始用来判断执行增不增加
   useEffect(() => {
     // console.log('useEffect函数执行了', annotation.all);
     savefinlyList();
-  }, [loading.curr]);
+  }, [loading.curr, isLabel]);
   useEffect(() => {
     if (interactorData.predictData.length) {
       console.log('interactorData', interactorData);
       saveInteractorData();
     }
   }, [interactorData]);
-
+  useEffect(() => {
+    if (loading.curr) return;
+    if (isLabel === 'label') return;
+    // const frontendId = new Map();
+    // const items: Annotation[] = [];
+    const newAnnotation = annotation.all.map((item: Annotation) => {
+      const myColor = ColorMaker.GetColor(item.frontendId);
+      const items: Annotation = JSON.parse(JSON.stringify(item));
+      items.label.color = '#' + myColor.Color;
+      // if (frontendId.has(item.frontendId)) {
+      //   items.label.color = frontendId.get(item.frontendId);
+      // } else {
+      //   items.label.color = '#' + myColor.Color;
+      //   frontendId.set(items.frontendId, '#' + myColor.Color);
+      // }
+      return items;
+    });
+    console.log('newAnnotation', newAnnotation);
+    setNewAnnotation(newAnnotation);
+  }, [isLabel, annotation.all, loading.curr]);
   // Auto save every 20s
   // useEffect(() => {
   //   const int = setInterval(() => {
@@ -188,6 +210,7 @@ const Page: React.FC = () => {
     model: model,
     finlyList: finlyList,
     selectFinly: selectFinly,
+    isLabel: isLabel,
   };
 
   const drawTool = {
@@ -196,8 +219,11 @@ const Page: React.FC = () => {
     interactor: PPInteractor(drawToolParam),
     rubber: PPRubber(drawToolParam),
   };
-  console.log('tool.curr', tool.curr, pathNames, interactorData.active, label.curr);
-
+  console.log('annotation.all', annotation.all);
+  const handleChange = (value: string) => {
+    console.log(`selected ${value}`);
+    setisLabel(value);
+  };
   return (
     <PPLabelPageContainer className="segment">
       <PPToolBar>
@@ -372,7 +398,7 @@ const Page: React.FC = () => {
           <div className="draw">
             <PPStage
               scale={scale.curr}
-              annotations={annotation.all}
+              annotations={isLabel == 'label' ? annotation.all : newAnnotation ? newAnnotation : []}
               currentTool={tool.curr}
               labels={label.all}
               tool={tool}
@@ -411,8 +437,6 @@ const Page: React.FC = () => {
                 setInteractorData({ active: false, predictData: [], mousePoints: [] });
               scale.setScale(1);
               setSelectFinly(null);
-              // setisFlag(true);
-              // savefinlyList();
               setfinlyList([]);
             }}
           />
@@ -429,10 +453,7 @@ const Page: React.FC = () => {
                 setInteractorData({ active: false, predictData: [], mousePoints: [] });
               scale.setScale(1);
               setSelectFinly(null);
-              // savefinlyList();
               setfinlyList([]);
-              // setfinlyList([]);
-              // setisFlag(true);
             }}
           />
         </Spin>
@@ -525,6 +546,16 @@ const Page: React.FC = () => {
         >
           {tbIntl('projectOverview')}
         </PPToolBarButton>
+        <PPSButtons
+          imgSrc="./pics/buttons/alpha.png"
+          disLoc="left"
+          size={transparency}
+          maxSize={100}
+          minSize={0}
+          onChange={handleChange}
+        >
+          {'label切换'}
+        </PPSButtons>
         {/* <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() => {
@@ -565,7 +596,7 @@ const Page: React.FC = () => {
         {pathNames ? (
           <PPAnnotationList
             currAnnotation={annotation.curr}
-            annotations={annotation.all}
+            annotations={isLabel == 'label' ? annotation.all : newAnnotation ? newAnnotation : []}
             onAnnotationSelect={(selectedAnno) => {
               if (!selectedAnno?.delete) setCurrentAnnotation(selectedAnno);
             }}

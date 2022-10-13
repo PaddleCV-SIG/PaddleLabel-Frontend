@@ -46,6 +46,7 @@ export type PPDrawToolProps = {
   labels?: Label[];
   finlyList?: Annotation[];
   selectFinly?: Annotation;
+  isLabel: string;
 };
 
 export type EvtProps = {

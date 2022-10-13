@@ -157,6 +157,19 @@ const TaskList: React.FC = () => {
           }}
           visible={task.all?.length != 0}
         />
+        <Button
+          type="primary"
+          onClick={() => {
+            console.log('project', project.curr);
+            history.push(
+              `/project_ai?taskCategory=${snake2camel(project.curr.taskCategory.name)}&projectId=${
+                project.curr.projectId
+              }`,
+            );
+          }}
+        >
+          {'智能标注'}
+        </Button>
       </PPBlock>
       <PPBlock title={intl('tasks')}>
         {intl('taskCount')}

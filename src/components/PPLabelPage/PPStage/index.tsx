@@ -107,7 +107,6 @@ const Component: React.FC<PPStageProps> = (props) => {
   function handleWindowResize() {
     const parent = document.getElementById('dr');
     if (parent) {
-      // console.log(`parentSize: `, parent.clientWidth, parent.clientHeight);
       setCanvasWidth(parent.clientWidth);
       setCanvasHeight(parent.clientHeight);
     }
@@ -165,8 +164,6 @@ const Component: React.FC<PPStageProps> = (props) => {
   }
   function saveDrawingSurface() {
     const ctx = canvasRef.current?.getContext('2d');
-    console.log('ctx', ctx);
-
     const drawingSurfaceImageDatas = ctx?.getImageData(
       0,
       0,
@@ -283,6 +280,7 @@ const Component: React.FC<PPStageProps> = (props) => {
     radius,
   ]);
   console.log('PPStage rendering currentAnnotation:', props.currentAnnotation, props.currentTool);
+  console.log('PPStage rendering annotations', props.annotations);
   useDeepCompareEffect(() => {
     const newShapes = [];
     if (props.annotations) {
