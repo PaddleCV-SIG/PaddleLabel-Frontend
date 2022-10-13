@@ -295,7 +295,6 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   *
    * Read all projects, sort by last modify date
    */
   async getAllRaw(
@@ -328,7 +327,6 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   *
    * Read all projects, sort by last modify date
    */
   async getAll(

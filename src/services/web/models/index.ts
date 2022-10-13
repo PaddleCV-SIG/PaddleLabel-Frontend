@@ -16,6 +16,7 @@ export * from './Polygon2pointsRequest';
 export * from './PredictRequest';
 export * from './Project';
 export * from './ProjectOtherSettings';
+export * from './ProjectOtherSettingsLabelMappingInner';
 export * from './SplitDataset200Response';
 export * from './SplitDatasetRequest';
 export * from './Tag';
