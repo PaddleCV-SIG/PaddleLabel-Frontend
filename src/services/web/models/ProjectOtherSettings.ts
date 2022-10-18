@@ -106,6 +106,18 @@ export function ProjectOtherSettingsToJSON(value?: ProjectOtherSettings | null):
   if (value === null) {
     return null;
   }
+  console.log('label_mapping', {
+    mlBackendUrl: value.mlBackendUrl,
+    perviousModel: value.perviousModel,
+    models: value.models,
+    segMaskType: value.segMaskType,
+    modelName: value.modelName,
+    label_mapping:
+      value.labelMapping === undefined
+        ? undefined
+        : (value.labelMapping as Array<any>).map(ProjectOtherSettingsLabelMappingInnerToJSON),
+  });
+
   return {
     mlBackendUrl: value.mlBackendUrl,
     perviousModel: value.perviousModel,

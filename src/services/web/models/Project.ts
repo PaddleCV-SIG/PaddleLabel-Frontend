@@ -144,6 +144,8 @@ export function ProjectToJSON(value?: Project | null): any {
   if (value === null) {
     return null;
   }
+  console.log('label_mapping', value.otherSettings.label_mapping);
+
   return {
     name: value.name,
     description: value.description,

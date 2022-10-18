@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
-import { ProjectUtils, ModelUtils } from '@/services/utils';
+import { ProjectUtils, ModelUtils, LabelUtils } from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
 import styles from './index.less';
 import { v4 as uuid } from 'uuid';
@@ -13,34 +13,71 @@ import { history } from 'umi';
 // import Project from '../../services/web/models/Project';
 const { Option } = Select;
 const { TextArea } = Input;
-let index = 0;
+// let index = 0;
+const generatedColorList: string[] = [
+  '#FF0000',
+  '#008000',
+  '#0000FF',
+  '#FFFF00',
+  '#FFA500',
+  '#00FFFF',
+  '#8B00FF',
+  '#FFC0CB',
+  '#7CFC00',
+  '#007FFF',
+  '#800080',
+  '#36BF36',
+  '#DAA520',
+  '#800000',
+  '#008B8B',
+  '#B22222',
+  '#E6D933',
+  '#000080',
+  '#FF00FF',
+  '#FFFF99',
+  '#87CEEB',
+  '#5C50E6',
+  '#CD5C5C',
+  '#20B2AA',
+  '#E680FF',
+  '#4D1F00',
+  '#006374',
+  '#B399FF',
+  '#8B4513',
+  '#BA55D3',
+  '#C0C0C0',
+  '#808080',
+  '#000000',
+];
 const PaddleAi: React.FC = () => {
   const DEFAULT_ML_URL = 'http://127.0.0.1:1234';
   //   const intl = IntlInit('component.PPCreater');
+  const [frontendId, setFrontendId] = useState<number>(0);
   const [form] = Form.useForm();
   const [modelUrl, setModelUrl] = useState(DEFAULT_ML_URL);
   const [modelSelected, setModelSelected] = useState();
   const [isFlag, setisFlag] = useState<Boolean>(true);
-  const [items, setItems] = useState([]);
+  // const [items, setItems] = useState([]);
   const [items2, setItems2] = useState([]);
-  const [name, setName] = useState('');
+  // const [name, setName] = useState('');
   const [name2, setName2] = useState('');
   const [labels, setLabels] = useState('');
+  const [labelOption, setLabelOption] = useState('');
   const [labels2, setLabels2] = useState('');
   const [labelItem, setlabelItem] = useState([]);
-  const inputRef = useRef<InputRef>(null);
+  // const inputRef = useRef<InputRef>(null);
   const inputRef2 = useRef<InputRef>(null);
   const project = ProjectUtils(useState);
   const port = window.location.port == '8000' ? '1234' : window.location.port;
   const baseUrl = `http://${window.location.hostname}:${port}/`;
   const model = ModelUtils(useState, baseUrl);
   const projectId = serviceUtils.getQueryVariable('projectId');
-  useEffect(() => {
-    if (projectId) {
-      project.getCurr(projectId);
-      model.getAll();
-    }
-  }, [projectId]);
+  console.log('FrontendId', frontendId);
+
+  const preCurrLabelUnset = () => {
+    // annotation.setCurr(undefined);
+    setFrontendId(0);
+  };
   const handleChange = (value: string) => {
     console.log(`modelSelected ${value}`);
     setModelSelected(value);
@@ -57,45 +94,35 @@ const PaddleAi: React.FC = () => {
     console.log(`multipleChange2: ${value}`);
     setLabels2(value);
   };
-  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
-  };
+  // const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setName(event.target.value);
+  // };
   const onNameChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName2(event.target.value);
   };
-  const addItem = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setItems([...items, name || `New item ${index++}`]);
-    setName('');
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
-  };
-  const addItem2 = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    setItems2([...items2, name2 || `New item ${index++}`]);
-    setName2('');
-    setTimeout(() => {
-      inputRef2.current?.focus();
-    }, 0);
-  };
+  // const addItem = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  //   e.preventDefault();
+  //   setItems([...items, name || `New item ${index++}`]);
+  //   setName('');
+  //   setTimeout(() => {
+  //     inputRef.current?.focus();
+  //   }, 0);
+  // };
   const addLabel = () => {
     console.log('labels', labels, labels2);
 
-    if (labels && labels2) {
-      setlabelItem((labelItems) => {
-        return [
-          ...labelItems,
-          {
-            id: uuid(),
-            model: labels,
-            project: labels2,
-          },
-        ];
-      });
-      setLabels('');
-      setLabels2('');
-    }
+    setlabelItem((labelItems) => {
+      return [
+        ...labelItems,
+        {
+          id: uuid(),
+          model: labels,
+          project: labels2,
+        },
+      ];
+    });
+    setLabels('');
+    setLabels2('');
   };
   const deleteItems = (id) => {
     const newLabelItems = labelItem.filter((item) => {
@@ -103,20 +130,94 @@ const PaddleAi: React.FC = () => {
     });
     setlabelItem(newLabelItems);
   };
+  const label = LabelUtils(useState, {
+    oneHot: true,
+    postSelect: () => {
+      //   annotation.setCurr(undefined);
+      setFrontendId(0);
+    },
+    preUnsetCurr: preCurrLabelUnset,
+  });
+  const onLabelAdd = (lab) => {
+    label.create({ ...lab, projectId: project.curr.projectId }).then((newLabel) => {
+      label.setCurr(newLabel);
+    });
+  };
+  const addLabels = () => {
+    const labelIdMap = new Map();
+    label.all.forEach((labelItems) => {
+      labelIdMap.set(labelItems.labelId, '');
+    });
+    items2.forEach((items) => {
+      console.log('items', items);
+
+      if (!items.labelId) {
+        onLabelAdd(items);
+      }
+    });
+  };
+  const addItem2 = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const lab = {
+      name: name2,
+      color: generatedColorList[items2.length || 0],
+    };
+    const labelIdMap = new Map();
+    items2.forEach((labelItems) => {
+      labelIdMap.set(labelItems.name, '');
+    });
+    if (!labelIdMap.has(name2)) {
+      setItems2((item) => {
+        return [...item, lab];
+      });
+    }
+
+    // onLabelAdd();
+    setName2('');
+    setTimeout(() => {
+      inputRef2.current?.focus();
+    }, 0);
+  };
   const saveProject = () => {
     // setLoading(true);
     const otherSettings = {
       mlBackendUrl: 'http://localhost:1234',
       modelName: modelSelected,
-      label_mapping: labelItem,
+      labelMapping: labelItem,
     };
     // if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
     console.log('otherSettings', otherSettings);
     // const values = project.curr;
     project.update(projectId, { otherSettings: otherSettings }).then(() => {
+      addLabels();
       history.push(`/project_overview?projectId=${projectId}`);
     });
   };
+  useEffect(() => {
+    if (projectId) {
+      project.getCurr(projectId);
+      model.getAll();
+      label.getAll(projectId);
+    }
+  }, [projectId]);
+  useEffect(() => {
+    if (label.all) {
+      setItems2(label.all);
+    }
+  }, [label.all]);
+  useEffect(() => {
+    if (modelSelected) {
+      for (const models of model.all) {
+        console.log('models', models);
+
+        if (models.name === modelSelected) {
+          if (models.labelNames) {
+            setLabelOption(models.labelNames);
+          }
+        }
+      }
+    }
+  }, [modelSelected]);
   return (
     <PPContainer>
       <PPBlock style={{ height: '100%' }}>
@@ -268,18 +369,21 @@ const PaddleAi: React.FC = () => {
                 />
               ) : (
                 <div className={styles.Corresponding_list_content}>
-                  {labelItem.map((item) => {
+                  {labelItem.map((item, labelItemIndex) => {
                     return (
                       <div className={styles.Corresponding_list} key={item.id}>
                         <div className={styles.Corresponding_li}>
                           <div className={styles.Corresponding_label1}>
-                            {item.model.map((models, modelIndex) => {
+                            {/* {item.model.map((models, modelIndex) => {
                               return (
                                 <div className={styles.label} key={modelIndex}>
                                   {models}
                                 </div>
                               );
-                            })}
+                            })} */}
+                            <div className={styles.label} key={labelItemIndex}>
+                              {item.model}
+                            </div>
                           </div>
                           <div className={styles.Corresponding_label2}>
                             {item.project.map((projects, indexs) => {
@@ -315,32 +419,17 @@ const PaddleAi: React.FC = () => {
                         }}
                       >
                         <Select
-                          style={{ width: 200 }}
-                          mode="multiple"
-                          placeholder="custom dropdown render"
-                          value={labels ? (labels + '').split(',') : undefined}
+                          defaultValue=""
                           onChange={multipleChange}
-                          dropdownRender={(menu) => (
-                            <>
-                              {menu}
-                              <Divider style={{ margin: '8px 0' }} />
-                              <Space style={{ padding: '0 8px 4px' }}>
-                                <Input
-                                  placeholder="Please enter item"
-                                  ref={inputRef}
-                                  value={name}
-                                  onChange={onNameChange}
-                                />
-                                <Button type="text" icon={<PlusOutlined />} onClick={addItem}>
-                                  Add
-                                </Button>
-                              </Space>
-                            </>
-                          )}
+                          value={labels}
+                          style={{
+                            width: '100%',
+                          }}
                         >
-                          {items.map((item) => (
-                            <Option key={item}>{item}</Option>
-                          ))}
+                          {labelOption &&
+                            labelOption?.map((item) => {
+                              return <Option value={item}>{item}</Option>;
+                            })}
                         </Select>
                       </div>
                     </div>
@@ -374,9 +463,20 @@ const PaddleAi: React.FC = () => {
                             </>
                           )}
                         >
-                          {items2.map((item) => (
-                            <Option key={item}>{item}</Option>
-                          ))}
+                          {items2.map((item) => {
+                            return (
+                              <Option value={item.name} key={item.id}>
+                                {item.name}
+                              </Option>
+                            );
+                          })}
+                          {/* {label.all?.map((item) => {
+                            return (
+                              <Option value={item.name} key={item.id}>
+                                {item.name}
+                              </Option>
+                            );
+                          })} */}
                         </Select>
                       </div>
                     </div>

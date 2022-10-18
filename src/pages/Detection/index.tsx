@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Spin, message } from 'antd';
-import { history } from 'umi';
+import { history, useModel } from 'umi';
 import styles from './index.less';
+import useImage from 'use-image';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
-import { PageInit } from '@/services/utils';
+import { PageInit, ModelUtils } from '@/services/utils';
 import type { Annotation } from '@/models/Annotation';
 import PPRectangle from '@/components/PPDrawTool/PPRectangle';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
@@ -19,6 +20,9 @@ const Page: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [frontendId, setFrontendId] = useState<number>(0);
   const [isClick, setisClick] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { interactorData, setInteractorData } = useModel('InteractorData');
+  const model = ModelUtils(useState);
   const tbIntl = IntlInitJsx('pages.toolBar');
 
   const { tool, loading, scale, annotation, task, data, project, label, annHistory } = PageInit(
@@ -42,7 +46,6 @@ const Page: React.FC = () => {
       tool: { defaultTool: 'mover' },
     },
   );
-
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
     setFrontendId(0);
@@ -56,7 +59,17 @@ const Page: React.FC = () => {
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
   };
-
+  const getBase64Image = (img?: HTMLImageElement) => {
+    if (!img) return '';
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    console.log('img.width', img.width);
+    const ctx = canvas.getContext('2d');
+    ctx?.drawImage(img, 0, 0, img.width, img.height);
+    const dataURL = canvas.toDataURL('image/png');
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
+  };
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
@@ -71,7 +84,7 @@ const Page: React.FC = () => {
     annotation.setAll(newAnnos);
     // console.log('save invoked', anno.annotationId);
   };
-
+  const [image] = useImage(data.imgSrc || '', 'anonymous');
   useEffect(() => {
     annHistory.init();
   }, []);
@@ -81,6 +94,49 @@ const Page: React.FC = () => {
       onFinishEdit();
     }
   }, [isClick]);
+  useEffect(() => {
+    if (model.loading) {
+      message.error(tbIntl('modelLoading'));
+      return;
+    }
+    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
+    console.log('settings', settings);
+    model.setMlBackendUrl(settings.mlBackendUrl);
+    model.setLoading(true);
+    model.load().then(
+      () => {
+        // message.info(intl('modelLoaded'));
+        model.setLoading(false);
+        setIsLoading(false);
+      },
+      () => {
+        model.setLoading(false);
+        setIsLoading(true);
+      },
+    );
+    // setInteractorData({ active: true, predictData: [], mousePoints: [] });
+  }, [project.curr]);
+  useEffect(() => {
+    if (!isLoading && data.imgSrc) {
+      console.log('data.imgSrc', data.imgSrc);
+
+      const imgBase64 = getBase64Image(image);
+      console.log('', data.imgSrc);
+      const line = model.predict({
+        format: 'b64',
+        img: imgBase64,
+        // other: { clicks: interactorData.mousePoints },
+      });
+      if (!line) return;
+      console.log('line.result', line.result);
+
+      setInteractorData({
+        active: true,
+        mousePoints: interactorData.mousePoints,
+        predictData: line.result,
+      });
+    }
+  }, [isLoading, data.imgSrc]);
   function onStartEdit() {
     // console.log('onStartEdit函数执行了', annotation.all);
     // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
@@ -300,6 +356,17 @@ const Page: React.FC = () => {
         >
           {'ML Settings'}
         </PPToolBarButton> */}
+        {/* <PPAIButton
+          imgSrc="./pics/buttons/intelligent_interaction.png"
+          active={interactorData.active}
+          onClick={async () => {
+            
+          }}
+          model={model}
+          project={project}
+        > */}
+        {/* {tbIntl('interactor')}
+        </PPAIButton> */}
       </PPToolBar>
       <div className="rightSideBar">
         <PPLabelList

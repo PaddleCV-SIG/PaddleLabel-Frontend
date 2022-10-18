@@ -70,6 +70,8 @@ export function ProjectOtherSettingsLabelMappingInnerToJSON(
   if (value === null) {
     return null;
   }
+  console.log('ProjectOtherSettingsLabelMappingInnerToJSON', value);
+
   return {
     model: value.model,
     project: value.project,
