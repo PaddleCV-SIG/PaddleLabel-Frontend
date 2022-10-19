@@ -31,6 +31,8 @@ Cypress.Commands.add('onPage', (urlPart, allowError: boolean = false) => {
   cy.wait(500);
 });
 
-Cypress.Commands.add('printDebugId', (debugId) => {
+Cypress.Commands.add('printDebugId', (debugId: string) => {
+  debugId = debugId.replace(/\//g, '|');
+  console.log('replace', debugId);
   cy.request('GET', `http://localhost:17995/api/debug/printid/${debugId}`);
 });
