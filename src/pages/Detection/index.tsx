@@ -247,11 +247,10 @@ const Page: React.FC = () => {
     console.log('data.imgSrc', data.imgSrc, image, isLoading);
     if (!isLoading && data.imgSrc && image) {
       const imgBase64 = getBase64Image(image);
-      console.log('', data.imgSrc);
-      const line = model.predict({
+      console.log('asdasdf', data.imgSrc);
+      const line = model.predict('PicoDet', {
         format: 'b64',
         img: imgBase64,
-        // other: { clicks: interactorData.mousePoints },
       });
       if (!line) return;
       console.log('line.result', line);
