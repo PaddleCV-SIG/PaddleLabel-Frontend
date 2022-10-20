@@ -109,7 +109,6 @@ export function CreateRequestToJSON(value?: CreateRequest | null): any {
   if (value === null) {
     return null;
   }
-  debugger;
   return {
     label_id: value.labelId,
     project_id: value.projectId,
