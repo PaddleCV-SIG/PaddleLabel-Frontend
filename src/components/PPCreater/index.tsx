@@ -116,7 +116,8 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     console.log('Trigger Select', keys, info, info.node.isLeaf != undefined);
     const isLeaf = info.node.isLeaf != undefined;
     if (isLeaf) {
-      window.open('/api/samples/file?path=' + info.node.key);
+      console.log('url', encodeURIComponent(info.node.key));
+      window.open('/api/samples/file?path=' + encodeURIComponent(info.node.key));
     }
   };
 
@@ -240,7 +241,20 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
               </Form.Item>
               <Form.Item
                 name="labelFormat"
-                label={intl('labelFormat')}
+                label={
+                  <p>
+                    {intlJsx('labelFormat')}{' '}
+                    <QuestionCircleOutlined
+                      style={{ fontSize: '12px' }}
+                      onClick={() =>
+                        message.info({
+                          content: intlJsx('labelFormatDetail'),
+                          // onClick: () => window.open(),
+                        })
+                      }
+                    />
+                  </p>
+                }
                 labelCol={{
                   span: 6,
                 }}

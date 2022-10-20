@@ -849,7 +849,6 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
       setAll(models);
       return models;
     } catch (err) {
-      console.log('model getAll err', err);
       serviceUtils.parseError(err, message, 'ML backend unavaliable!');
       return;
     }
@@ -870,20 +869,20 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     }
   }
 
-  async function predict(data: InlineObject1) {
+  async function predict(model: string, data: InlineObject1) {
     try {
       checkAPI();
-      return await modelApi.predict('PicoDet', data);
+      return await modelApi.predict(model, data);
     } catch (err) {
       return serviceUtils.parseError(err, message);
     }
   }
 
-  async function load(modelPath?: string, paramPath?: string) {
+  async function load(modelName: string, modelPath?: string, paramPath?: string) {
     try {
       await checkAPI();
       setLoading(true);
-      await modelApi.load('PicoDet', {
+      await modelApi.load(modelName, {
         initParams: { model_path: modelPath, param_path: paramPath },
       });
       setLoading(false);

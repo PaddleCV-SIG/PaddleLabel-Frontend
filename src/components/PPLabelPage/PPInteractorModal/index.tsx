@@ -15,7 +15,6 @@ const DEFAULT_ML_URL = 'http://127.0.0.1:1234';
 
 const Component: React.FC<PPInteractorModalProps> = (props) => {
   const [form] = Form.useForm();
-  // const intl = useIntl();
   const intl = IntlInit('component.PPInteractorModal');
 
   const model = props.model;
@@ -26,14 +25,14 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     const settings = project.curr.otherSettings ? project.curr.otherSettings : {};
     const initialValues = {
       mlBackendUrl: settings.mlBackendUrl,
-      mlModelAbsPath: settings.models?.EISeg?.mlModelAbsPath,
-      mlWeightAbsPath: settings.models?.EISeg?.mlWeightAbsPath,
+      modelFilePath: settings.modelSettings?.EISeg?.modelFilePath,
+      paramFilePath: settings.modelSettings?.EISeg?.paramFilePath,
     };
     form.setFieldsValue(initialValues);
-    if (settings?.mlBackendUrl) model.setMlBackendUrl(settings.mlBackendUrl);
+    if (settings.mlBackendUrl) model.setMlBackendUrl(settings.mlBackendUrl);
     else model.setMlBackendUrl(DEFAULT_ML_URL);
-    if (settings.mlModelAbsPath && settings.mlWeightAbsPath)
-      model.load(settings.mlModelAbsPath, settings.mlWeightAbsPath);
+    if (settings.modelFilePath && settings.paramFilePath)
+      model.load('EISeg', settings.modelFilePath, settings.paramFilePath);
   }, [project.curr]);
 
   function saveMlsettings(settings: any) {
@@ -44,11 +43,13 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     if (!project.curr.otherSettings) project.curr.otherSettings = {};
 
     project.curr.otherSettings.mlBackendUrl = form.getFieldValue('mlBackendUrl');
-    project.curr.otherSettings.models = {};
-    project.curr.otherSettings.models.EISeg = {};
-    project.curr.otherSettings.models.EISeg.mlModelAbsPath = form.getFieldValue('mlModelAbsPath');
-    project.curr.otherSettings.models.EISeg.mlWeightAbsPath = form.getFieldValue('mlWeightAbsPath');
-    project.curr.otherSettings.perviousModel = settings.modelName;
+    project.curr.otherSettings.modelSettings = {};
+    project.curr.otherSettings.modelSettings.EISeg = {};
+    project.curr.otherSettings.modelSettings.EISeg.modelFilePath =
+      form.getFieldValue('modelFilePath');
+    project.curr.otherSettings.modelSettings.EISeg.paramFilePath =
+      form.getFieldValue('paramFilePath');
+    // project.curr.otherSettings.perviousModel = settings.modelName;
     // project.curr.otherSettings.models = allModelSettings;
     project.update(project.curr.projectId, { otherSettings: project.curr.otherSettings });
     // project.getCurr(projectId);
@@ -57,8 +58,9 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     props.model.setLoading(true);
     model
       .load(
-        project.curr.otherSettings.models.EISeg.mlModelAbsPath,
-        project.curr.otherSettings.models.EISeg.mlWeightAbsPath,
+        'EISeg',
+        project.curr.otherSettings.models.EISeg.modelFilePath,
+        project.curr.otherSettings.models.EISeg.paramFilePath,
       )
       .then(
         () => {
@@ -70,9 +72,6 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
         },
       );
   }
-
-  // const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
-  // const ok = intl.formatMessage({ id: 'component.PPSegMode.ok' });
 
   return (
     <Modal
@@ -109,7 +108,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           <Input autoComplete="off" placeholder={DEFAULT_ML_URL} />
         </Form.Item>
         <Form.Item
-          name={'mlModelAbsPath'}
+          name={'modelFilePath'}
           label={intl('modelPath')}
           labelCol={{
             span: 6,
@@ -122,7 +121,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           <Input autoComplete="off" placeholder={intl('pathPh')} />
         </Form.Item>
         <Form.Item
-          name={'mlWeightAbsPath'}
+          name={'paramFilePath'}
           label={intl('weightPath')}
           labelCol={{
             span: 6,

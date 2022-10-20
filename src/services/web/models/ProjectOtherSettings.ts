@@ -15,101 +15,141 @@
 import { exists, mapValues } from '../runtime';
 import type { ProjectOtherSettingsLabelMappingInner } from './ProjectOtherSettingsLabelMappingInner';
 import {
-    ProjectOtherSettingsLabelMappingInnerFromJSON,
-    ProjectOtherSettingsLabelMappingInnerFromJSONTyped,
-    ProjectOtherSettingsLabelMappingInnerToJSON,
+  ProjectOtherSettingsLabelMappingInnerFromJSON,
+  ProjectOtherSettingsLabelMappingInnerFromJSONTyped,
+  ProjectOtherSettingsLabelMappingInnerToJSON,
 } from './ProjectOtherSettingsLabelMappingInner';
+import type { ProjectOtherSettingsModelSettingsValue } from './ProjectOtherSettingsModelSettingsValue';
+import {
+  ProjectOtherSettingsModelSettingsValueFromJSON,
+  ProjectOtherSettingsModelSettingsValueFromJSONTyped,
+  ProjectOtherSettingsModelSettingsValueToJSON,
+} from './ProjectOtherSettingsModelSettingsValue';
 
 /**
- * 
+ *
  * @export
  * @interface ProjectOtherSettings
  */
 export interface ProjectOtherSettings {
-    /**
-     * ML后端地址，一般是 http://localhost:1234
-     * @type {string}
-     * @memberof ProjectOtherSettings
-     */
-    mlBackendUrl?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ProjectOtherSettings
-     * @deprecated
-     */
-    perviousModel?: string;
-    /**
-     * 
-     * @type {object}
-     * @memberof ProjectOtherSettings
-     * @deprecated
-     */
-    models?: object;
-    /**
-     * 
-     * @type {string}
-     * @memberof ProjectOtherSettings
-     * @deprecated
-     */
-    segMaskType?: string;
-    /**
-     * 正在使用的模型名称
-     * @type {string}
-     * @memberof ProjectOtherSettings
-     */
-    modelName?: string;
-    /**
-     * 标签对应关系
-     * @type {Array<ProjectOtherSettingsLabelMappingInner>}
-     * @memberof ProjectOtherSettings
-     */
-    labelMapping?: Array<ProjectOtherSettingsLabelMappingInner>;
+  /**
+   * ML后端地址，一般是 http://localhost:1234
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   */
+  mlBackendUrl?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   * @deprecated
+   */
+  perviousModel?: string;
+  /**
+   *
+   * @type {object}
+   * @memberof ProjectOtherSettings
+   * @deprecated
+   */
+  models?: object;
+  /**
+   *
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   * @deprecated
+   */
+  segMaskType?: string;
+  /**
+   * 正在使用的模型名称
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   */
+  modelName?: string;
+  /**
+   * 标签对应关系
+   * @type {Array<ProjectOtherSettingsLabelMappingInner>}
+   * @memberof ProjectOtherSettings
+   */
+  labelMapping?: Array<ProjectOtherSettingsLabelMappingInner>;
+  /**
+   *
+   * @type {{ [key: string]: ProjectOtherSettingsModelSettingsValue; }}
+   * @memberof ProjectOtherSettings
+   */
+  modelSettings?: { [key: string]: ProjectOtherSettingsModelSettingsValue };
+  /**
+   *
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   */
+  modelFilePath?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   */
+  paramFilePath?: string;
 }
 
 /**
  * Check if a given object implements the ProjectOtherSettings interface.
  */
 export function instanceOfProjectOtherSettings(value: object): boolean {
-    let isInstance = true;
+  let isInstance = true;
 
-    return isInstance;
+  return isInstance;
 }
 
 export function ProjectOtherSettingsFromJSON(json: any): ProjectOtherSettings {
-    return ProjectOtherSettingsFromJSONTyped(json, false);
+  return ProjectOtherSettingsFromJSONTyped(json, false);
 }
 
-export function ProjectOtherSettingsFromJSONTyped(json: any, ignoreDiscriminator: boolean): ProjectOtherSettings {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'mlBackendUrl': !exists(json, 'mlBackendUrl') ? undefined : json['mlBackendUrl'],
-        'perviousModel': !exists(json, 'perviousModel') ? undefined : json['perviousModel'],
-        'models': !exists(json, 'models') ? undefined : json['models'],
-        'segMaskType': !exists(json, 'segMaskType') ? undefined : json['segMaskType'],
-        'modelName': !exists(json, 'modelName') ? undefined : json['modelName'],
-        'labelMapping': !exists(json, 'label_mapping') ? undefined : ((json['label_mapping'] as Array<any>).map(ProjectOtherSettingsLabelMappingInnerFromJSON)),
-    };
+export function ProjectOtherSettingsFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean,
+): ProjectOtherSettings {
+  if (json === undefined || json === null) {
+    return json;
+  }
+  return {
+    mlBackendUrl: !exists(json, 'mlBackendUrl') ? undefined : json['mlBackendUrl'],
+    perviousModel: !exists(json, 'perviousModel') ? undefined : json['perviousModel'],
+    models: !exists(json, 'models') ? undefined : json['models'],
+    segMaskType: !exists(json, 'segMaskType') ? undefined : json['segMaskType'],
+    modelName: !exists(json, 'modelName') ? undefined : json['modelName'],
+    labelMapping: !exists(json, 'labelMapping')
+      ? undefined
+      : (json['labelMapping'] as Array<any>).map(ProjectOtherSettingsLabelMappingInnerFromJSON),
+    modelSettings: !exists(json, 'modelSettings')
+      ? undefined
+      : mapValues(json['modelSettings'], ProjectOtherSettingsModelSettingsValueFromJSON),
+    modelFilePath: !exists(json, 'modelFilePath') ? undefined : json['modelFilePath'],
+    paramFilePath: !exists(json, 'paramFilePath') ? undefined : json['paramFilePath'],
+  };
 }
 
 export function ProjectOtherSettingsToJSON(value?: ProjectOtherSettings | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'mlBackendUrl': value.mlBackendUrl,
-        'perviousModel': value.perviousModel,
-        'models': value.models,
-        'segMaskType': value.segMaskType,
-        'modelName': value.modelName,
-        'label_mapping': value.labelMapping === undefined ? undefined : ((value.labelMapping as Array<any>).map(ProjectOtherSettingsLabelMappingInnerToJSON)),
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return null;
+  }
+  return {
+    mlBackendUrl: value.mlBackendUrl,
+    perviousModel: value.perviousModel,
+    models: value.models,
+    segMaskType: value.segMaskType,
+    modelName: value.modelName,
+    labelMapping:
+      value.labelMapping === undefined
+        ? undefined
+        : (value.labelMapping as Array<any>).map(ProjectOtherSettingsLabelMappingInnerToJSON),
+    modelSettings:
+      value.modelSettings === undefined
+        ? undefined
+        : mapValues(value.modelSettings, ProjectOtherSettingsModelSettingsValueToJSON),
+    modelFilePath: value.modelFilePath,
+    paramFilePath: value.paramFilePath,
+  };
 }
-

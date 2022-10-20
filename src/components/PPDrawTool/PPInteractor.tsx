@@ -435,7 +435,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
 
     const imgBase64 = getBase64Image(param.img);
 
-    const line = await model.predict({
+    const line = await model.predict('EISeg', {
       format: 'b64',
       img: imgBase64,
       other: { clicks: interactorData.mousePoints },

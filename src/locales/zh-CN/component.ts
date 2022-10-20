@@ -2,7 +2,9 @@ export default {
   'component.PPCreater.projectName': '项目名称',
   'component.PPCreater.datasePath': '数据集路径',
   'component.PPCreater.description': '项目描述',
-  'component.PPCreater.labelFormat': '标注导入格式',
+  'component.PPCreater.labelFormat': '导入标注格式',
+  'component.PPCreater.labelFormatDetail':
+    '如果要导入的数据集没有任何标注信息，这里不需要选择。如果有标注信息，请选择标注信息的格式。',
   'component.PPCreater.maxPoints': '最大点数',
   'component.PPCreater.annotationMode': '标注模式',
   'component.PPCreater.pixelMode': '像素级标注',

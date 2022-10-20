@@ -55,13 +55,13 @@ const Page: React.FC = () => {
       tool: { defaultTool: 'mover' },
       task: { push: true },
     });
-  console.log('tool.curr', tool.curr);
+  // console.log('tool.curr', tool.curr);
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
     setFrontendId(0);
   }
-  console.log('annos', annotation.all);
-  console.log('loading', loading);
+  // console.log('annos', annotation.all);
+  // console.log('loading', loading);
 
   const setCurrentAnnotation = (anno?: Annotation) => {
     annotation.setCurr(anno);
@@ -260,7 +260,7 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/brush.png"
           size={brushSize}
           active={tool.curr == 'brush'}
-          disabled={(pathNames && interactorData.active) || !label.curr}
+          disabled={pathNames && interactorData.active}
           onClick={() => {
             if (!label.curr) {
               message.error(tbIntl('chooseCategoryFirst'));
@@ -477,13 +477,14 @@ const Page: React.FC = () => {
             } else {
               const settings = project.curr.otherSettings ? project.curr.otherSettings : {};
               if (
-                settings.models?.EISeg?.mlModelAbsPath &&
-                settings.models?.EISeg?.mlWeightAbsPath
+                settings.modelSettings?.EISeg?.modelFilePath &&
+                settings.modelSettings?.EISeg?.paramFilePath
               ) {
                 try {
                   await model.load(
-                    settings.models.EISeg.mlModelAbsPath,
-                    settings.models.EISeg.mlWeightAbsPath,
+                    'EISeg',
+                    settings.modelSettings.EISeg.modelFilePath,
+                    settings.modelSettings.EISeg.paramFilePath,
                   );
                 } catch (e) {
                   return;
@@ -554,16 +555,8 @@ const Page: React.FC = () => {
           minSize={0}
           onChange={handleChange}
         >
-          {'label切换'}
+          {tbIntl('colorMode')}
         </PPSButtons>
-        {/* <PPToolBarButton
-          imgSrc="./pics/buttons/data_division.png"
-          onClick={() => {
-            history.push(`/ml?projectId=${project.curr.projectId}`);
-          }}
-        >
-          {'ML Settings'}
-        </PPToolBarButton> */}
       </PPToolBar>
       <div className="rightSideBar">
         <div className="determinOutline">

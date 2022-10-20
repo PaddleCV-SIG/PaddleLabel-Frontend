@@ -105,7 +105,7 @@ export default {
   'pages.toolBar.autoSave': '本类型项目标注完成后会自动保存，不需要点击保存按钮',
   'pages.toolBar.edit': '编辑',
   'pages.toolBar.projectOverview': '项目总览',
-  'pages.toolBar.clearMark': '清除',
+  'pages.toolBar.clearMark': '清空标注',
   'pages.toolBar.interactor': '智能标注',
   'pages.toolBar.segmentThreshold': '分割阈值',
   'pages.toolBar.transparency': '透明度',
@@ -126,6 +126,7 @@ export default {
   'pages.toolBar.saveSuccess': '保存成功',
   'pages.toolBar.modelLoading': '模型仍在加载，请在看到模型加载成功弹框后再点击进入智能标注模式',
   'pages.toolBar.noModel': '未找到模型，请先进行智能标注设置',
+  'pages.toolBar.colorMode': '颜色模式',
 
   'pages.Maps.finished': '完成',
   'pages.Maps.removeLastVertex': '删除最后一个顶点',

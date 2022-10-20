@@ -28,6 +28,7 @@ models/PredictRequest.ts
 models/Project.ts
 models/ProjectOtherSettings.ts
 models/ProjectOtherSettingsLabelMappingInner.ts
+models/ProjectOtherSettingsModelSettingsValue.ts
 models/SplitDataset200Response.ts
 models/SplitDatasetRequest.ts
 models/Tag.ts
