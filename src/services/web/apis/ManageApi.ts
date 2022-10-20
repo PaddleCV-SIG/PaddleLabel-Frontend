@@ -12,40 +12,38 @@
  * Do not edit the class manually.
  */
 
+
 import * as runtime from '../runtime';
 
 /**
- *
+ * 
  */
 export class ManageApi extends runtime.BaseAPI {
-  /**
-   * Get backend version
-   */
-  async getVersionRaw(
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<string>> {
-    const queryParameters: any = {};
 
-    const headerParameters: runtime.HTTPHeaders = {};
+    /**
+     * Get backend version
+     */
+    async getVersionRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+        const queryParameters: any = {};
 
-    const response = await this.request(
-      {
-        path: `/version`,
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
+        const headerParameters: runtime.HTTPHeaders = {};
 
-    return new runtime.TextApiResponse(response) as any;
-  }
+        const response = await this.request({
+            path: `/version`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
 
-  /**
-   * Get backend version
-   */
-  async getVersion(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
-    const response = await this.getVersionRaw(initOverrides);
-    return await response.value();
-  }
+        return new runtime.TextApiResponse(response) as any;
+    }
+
+    /**
+     * Get backend version
+     */
+    async getVersion(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
+        const response = await this.getVersionRaw(initOverrides);
+        return await response.value();
+    }
+
 }

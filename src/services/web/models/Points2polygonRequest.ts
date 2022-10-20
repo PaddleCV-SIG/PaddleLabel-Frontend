@@ -14,52 +14,52 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- *
+ * 
  * @export
  * @interface Points2polygonRequest
  */
 export interface Points2polygonRequest {
-  /**
-   *
-   * @type {string}
-   * @memberof Points2polygonRequest
-   */
-  points?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Points2polygonRequest
+     */
+    points?: string;
 }
 
 /**
  * Check if a given object implements the Points2polygonRequest interface.
  */
 export function instanceOfPoints2polygonRequest(value: object): boolean {
-  let isInstance = true;
+    let isInstance = true;
 
-  return isInstance;
+    return isInstance;
 }
 
 export function Points2polygonRequestFromJSON(json: any): Points2polygonRequest {
-  return Points2polygonRequestFromJSONTyped(json, false);
+    return Points2polygonRequestFromJSONTyped(json, false);
 }
 
-export function Points2polygonRequestFromJSONTyped(
-  json: any,
-  ignoreDiscriminator: boolean,
-): Points2polygonRequest {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    points: !exists(json, 'points') ? undefined : json['points'],
-  };
+export function Points2polygonRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): Points2polygonRequest {
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'points': !exists(json, 'points') ? undefined : json['points'],
+    };
 }
 
 export function Points2polygonRequestToJSON(value?: Points2polygonRequest | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    points: value.points,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'points': value.points,
+    };
 }
+

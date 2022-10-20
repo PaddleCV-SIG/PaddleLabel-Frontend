@@ -14,52 +14,52 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- *
+ * 
  * @export
  * @interface GetFoldersRequest
  */
 export interface GetFoldersRequest {
-  /**
-   *
-   * @type {string}
-   * @memberof GetFoldersRequest
-   */
-  path?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetFoldersRequest
+     */
+    path?: string;
 }
 
 /**
  * Check if a given object implements the GetFoldersRequest interface.
  */
 export function instanceOfGetFoldersRequest(value: object): boolean {
-  let isInstance = true;
+    let isInstance = true;
 
-  return isInstance;
+    return isInstance;
 }
 
 export function GetFoldersRequestFromJSON(json: any): GetFoldersRequest {
-  return GetFoldersRequestFromJSONTyped(json, false);
+    return GetFoldersRequestFromJSONTyped(json, false);
 }
 
-export function GetFoldersRequestFromJSONTyped(
-  json: any,
-  ignoreDiscriminator: boolean,
-): GetFoldersRequest {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    path: !exists(json, 'path') ? undefined : json['path'],
-  };
+export function GetFoldersRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): GetFoldersRequest {
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'path': !exists(json, 'path') ? undefined : json['path'],
+    };
 }
 
 export function GetFoldersRequestToJSON(value?: GetFoldersRequest | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    path: value.path,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'path': value.path,
+    };
 }
+

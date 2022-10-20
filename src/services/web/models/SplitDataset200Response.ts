@@ -14,68 +14,68 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- *
+ * 
  * @export
  * @interface SplitDataset200Response
  */
 export interface SplitDataset200Response {
-  /**
-   *
-   * @type {number}
-   * @memberof SplitDataset200Response
-   */
-  train?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof SplitDataset200Response
-   */
-  val?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof SplitDataset200Response
-   */
-  test?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SplitDataset200Response
+     */
+    train?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SplitDataset200Response
+     */
+    val?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SplitDataset200Response
+     */
+    test?: number;
 }
 
 /**
  * Check if a given object implements the SplitDataset200Response interface.
  */
 export function instanceOfSplitDataset200Response(value: object): boolean {
-  let isInstance = true;
+    let isInstance = true;
 
-  return isInstance;
+    return isInstance;
 }
 
 export function SplitDataset200ResponseFromJSON(json: any): SplitDataset200Response {
-  return SplitDataset200ResponseFromJSONTyped(json, false);
+    return SplitDataset200ResponseFromJSONTyped(json, false);
 }
 
-export function SplitDataset200ResponseFromJSONTyped(
-  json: any,
-  ignoreDiscriminator: boolean,
-): SplitDataset200Response {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    train: !exists(json, 'train') ? undefined : json['train'],
-    val: !exists(json, 'val') ? undefined : json['val'],
-    test: !exists(json, 'test') ? undefined : json['test'],
-  };
+export function SplitDataset200ResponseFromJSONTyped(json: any, ignoreDiscriminator: boolean): SplitDataset200Response {
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'train': !exists(json, 'train') ? undefined : json['train'],
+        'val': !exists(json, 'val') ? undefined : json['val'],
+        'test': !exists(json, 'test') ? undefined : json['test'],
+    };
 }
 
 export function SplitDataset200ResponseToJSON(value?: SplitDataset200Response | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    train: value.train,
-    val: value.val,
-    test: value.test,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'train': value.train,
+        'val': value.val,
+        'test': value.test,
+    };
 }
+

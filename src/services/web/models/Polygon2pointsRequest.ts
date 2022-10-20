@@ -14,52 +14,52 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- *
+ * 
  * @export
  * @interface Polygon2pointsRequest
  */
 export interface Polygon2pointsRequest {
-  /**
-   *
-   * @type {string}
-   * @memberof Polygon2pointsRequest
-   */
-  polygon?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Polygon2pointsRequest
+     */
+    polygon?: string;
 }
 
 /**
  * Check if a given object implements the Polygon2pointsRequest interface.
  */
 export function instanceOfPolygon2pointsRequest(value: object): boolean {
-  let isInstance = true;
+    let isInstance = true;
 
-  return isInstance;
+    return isInstance;
 }
 
 export function Polygon2pointsRequestFromJSON(json: any): Polygon2pointsRequest {
-  return Polygon2pointsRequestFromJSONTyped(json, false);
+    return Polygon2pointsRequestFromJSONTyped(json, false);
 }
 
-export function Polygon2pointsRequestFromJSONTyped(
-  json: any,
-  ignoreDiscriminator: boolean,
-): Polygon2pointsRequest {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    polygon: !exists(json, 'polygon') ? undefined : json['polygon'],
-  };
+export function Polygon2pointsRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): Polygon2pointsRequest {
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'polygon': !exists(json, 'polygon') ? undefined : json['polygon'],
+    };
 }
 
 export function Polygon2pointsRequestToJSON(value?: Polygon2pointsRequest | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    polygon: value.polygon,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'polygon': value.polygon,
+    };
 }
+

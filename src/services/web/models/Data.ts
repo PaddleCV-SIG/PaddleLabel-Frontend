@@ -14,97 +14,104 @@
 
 import { exists, mapValues } from '../runtime';
 import type { Task } from './Task';
-import { TaskFromJSON, TaskFromJSONTyped, TaskToJSON } from './Task';
+import {
+    TaskFromJSON,
+    TaskFromJSONTyped,
+    TaskToJSON,
+} from './Task';
 
 /**
- *
+ * 
  * @export
  * @interface Data
  */
 export interface Data {
-  /**
-   *
-   * @type {number}
-   * @memberof Data
-   */
-  readonly dataId?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof Data
-   */
-  taskId?: number;
-  /**
-   *
-   * @type {string}
-   * @memberof Data
-   */
-  size?: string;
-  /**
-   *
-   * @type {Task}
-   * @memberof Data
-   */
-  task?: Task;
-  /**
-   *
-   * @type {string}
-   * @memberof Data
-   */
-  readonly created?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Data
-   */
-  readonly modified?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof Data
-   */
-  sault?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof Data
+     */
+    readonly dataId?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof Data
+     */
+    taskId?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof Data
+     */
+    size?: string;
+    /**
+     * 
+     * @type {Task}
+     * @memberof Data
+     */
+    task?: Task;
+    /**
+     * 
+     * @type {string}
+     * @memberof Data
+     */
+    readonly created?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Data
+     */
+    readonly modified?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Data
+     */
+    sault?: string;
 }
 
 /**
  * Check if a given object implements the Data interface.
  */
 export function instanceOfData(value: object): boolean {
-  let isInstance = true;
+    let isInstance = true;
 
-  return isInstance;
+    return isInstance;
 }
 
 export function DataFromJSON(json: any): Data {
-  return DataFromJSONTyped(json, false);
+    return DataFromJSONTyped(json, false);
 }
 
 export function DataFromJSONTyped(json: any, ignoreDiscriminator: boolean): Data {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    dataId: !exists(json, 'data_id') ? undefined : json['data_id'],
-    taskId: !exists(json, 'task_id') ? undefined : json['task_id'],
-    size: !exists(json, 'size') ? undefined : json['size'],
-    task: !exists(json, 'task') ? undefined : TaskFromJSON(json['task']),
-    created: !exists(json, 'created') ? undefined : json['created'],
-    modified: !exists(json, 'modified') ? undefined : json['modified'],
-    sault: !exists(json, 'sault') ? undefined : json['sault'],
-  };
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'dataId': !exists(json, 'data_id') ? undefined : json['data_id'],
+        'taskId': !exists(json, 'task_id') ? undefined : json['task_id'],
+        'size': !exists(json, 'size') ? undefined : json['size'],
+        'task': !exists(json, 'task') ? undefined : TaskFromJSON(json['task']),
+        'created': !exists(json, 'created') ? undefined : json['created'],
+        'modified': !exists(json, 'modified') ? undefined : json['modified'],
+        'sault': !exists(json, 'sault') ? undefined : json['sault'],
+    };
 }
 
 export function DataToJSON(value?: Data | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    task_id: value.taskId,
-    size: value.size,
-    task: TaskToJSON(value.task),
-    sault: value.sault,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'task_id': value.taskId,
+        'size': value.size,
+        'task': TaskToJSON(value.task),
+        'sault': value.sault,
+    };
 }
+

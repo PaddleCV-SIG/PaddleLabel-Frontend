@@ -14,52 +14,52 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- *
+ * 
  * @export
  * @interface ImportDatasetRequest
  */
 export interface ImportDatasetRequest {
-  /**
-   *
-   * @type {string}
-   * @memberof ImportDatasetRequest
-   */
-  importDir?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ImportDatasetRequest
+     */
+    importDir?: string;
 }
 
 /**
  * Check if a given object implements the ImportDatasetRequest interface.
  */
 export function instanceOfImportDatasetRequest(value: object): boolean {
-  let isInstance = true;
+    let isInstance = true;
 
-  return isInstance;
+    return isInstance;
 }
 
 export function ImportDatasetRequestFromJSON(json: any): ImportDatasetRequest {
-  return ImportDatasetRequestFromJSONTyped(json, false);
+    return ImportDatasetRequestFromJSONTyped(json, false);
 }
 
-export function ImportDatasetRequestFromJSONTyped(
-  json: any,
-  ignoreDiscriminator: boolean,
-): ImportDatasetRequest {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    importDir: !exists(json, 'import_dir') ? undefined : json['import_dir'],
-  };
+export function ImportDatasetRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): ImportDatasetRequest {
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'importDir': !exists(json, 'import_dir') ? undefined : json['import_dir'],
+    };
 }
 
 export function ImportDatasetRequestToJSON(value?: ImportDatasetRequest | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    import_dir: value.importDir,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'import_dir': value.importDir,
+    };
 }
+
