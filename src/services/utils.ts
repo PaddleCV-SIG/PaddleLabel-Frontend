@@ -340,12 +340,13 @@ export const LabelUtils = (
       message.error('Label list is one hot, but have multiple active labels!');
   }
 
-  async function create(label: Label): Promise<Label | undefined> {
+  async function create(label: Label): Promise<Label[] | undefined> {
     console.log('create label', label);
     try {
-      const newLabel = await labelApi.create(label);
-      getAll(label.projectId);
-      return newLabel;
+      console.log();
+      const newLabels = await labelApi.create(typeof label == 'object' ? [label] : label);
+      getAll(typeof label == 'object' ? label.projectId : label[0].projectId);
+      return newLabels;
     } catch (err) {
       console.log('label create err', err);
       serviceUtils.parseError(err, message);
