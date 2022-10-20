@@ -14,68 +14,68 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- *
+ * 
  * @export
  * @interface SplitDatasetRequest
  */
 export interface SplitDatasetRequest {
-  /**
-   *
-   * @type {number}
-   * @memberof SplitDatasetRequest
-   */
-  train?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof SplitDatasetRequest
-   */
-  val?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof SplitDatasetRequest
-   */
-  test?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SplitDatasetRequest
+     */
+    train?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SplitDatasetRequest
+     */
+    val?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SplitDatasetRequest
+     */
+    test?: number;
 }
 
 /**
  * Check if a given object implements the SplitDatasetRequest interface.
  */
 export function instanceOfSplitDatasetRequest(value: object): boolean {
-  let isInstance = true;
+    let isInstance = true;
 
-  return isInstance;
+    return isInstance;
 }
 
 export function SplitDatasetRequestFromJSON(json: any): SplitDatasetRequest {
-  return SplitDatasetRequestFromJSONTyped(json, false);
+    return SplitDatasetRequestFromJSONTyped(json, false);
 }
 
-export function SplitDatasetRequestFromJSONTyped(
-  json: any,
-  ignoreDiscriminator: boolean,
-): SplitDatasetRequest {
-  if (json === undefined || json === null) {
-    return json;
-  }
-  return {
-    train: !exists(json, 'train') ? undefined : json['train'],
-    val: !exists(json, 'val') ? undefined : json['val'],
-    test: !exists(json, 'test') ? undefined : json['test'],
-  };
+export function SplitDatasetRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): SplitDatasetRequest {
+    if ((json === undefined) || (json === null)) {
+        return json;
+    }
+    return {
+        
+        'train': !exists(json, 'train') ? undefined : json['train'],
+        'val': !exists(json, 'val') ? undefined : json['val'],
+        'test': !exists(json, 'test') ? undefined : json['test'],
+    };
 }
 
 export function SplitDatasetRequestToJSON(value?: SplitDatasetRequest | null): any {
-  if (value === undefined) {
-    return undefined;
-  }
-  if (value === null) {
-    return null;
-  }
-  return {
-    train: value.train,
-    val: value.val,
-    test: value.test,
-  };
+    if (value === undefined) {
+        return undefined;
+    }
+    if (value === null) {
+        return null;
+    }
+    return {
+        
+        'train': value.train,
+        'val': value.val,
+        'test': value.test,
+    };
 }
+

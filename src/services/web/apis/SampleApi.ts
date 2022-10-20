@@ -12,155 +12,126 @@
  * Do not edit the class manually.
  */
 
+
 import * as runtime from '../runtime';
-import type { LoadSample200Response, LoadSampleRequest } from '../models';
+import type {
+  LoadSample200Response,
+  LoadSampleRequest,
+} from '../models';
 import {
-  LoadSample200ResponseFromJSON,
-  LoadSample200ResponseToJSON,
-  LoadSampleRequestFromJSON,
-  LoadSampleRequestToJSON,
+    LoadSample200ResponseFromJSON,
+    LoadSample200ResponseToJSON,
+    LoadSampleRequestFromJSON,
+    LoadSampleRequestToJSON,
 } from '../models';
 
 export interface GetFileRequest {
-  path?: string;
+    path?: string;
 }
 
 export interface GetStructureRequest {
-  path: string;
+    path: string;
 }
 
 export interface LoadSampleOperationRequest {
-  loadSampleRequest?: LoadSampleRequest;
+    loadSampleRequest?: LoadSampleRequest;
 }
 
 /**
- *
+ * 
  */
 export class SampleApi extends runtime.BaseAPI {
-  /**
-   * Your GET endpoint
-   */
-  async getFileRaw(
-    requestParameters: GetFileRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<void>> {
-    const queryParameters: any = {};
 
-    if (requestParameters.path !== undefined) {
-      queryParameters['path'] = requestParameters.path;
+    /**
+     * Your GET endpoint
+     */
+    async getFileRaw(requestParameters: GetFileRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.path !== undefined) {
+            queryParameters['path'] = requestParameters.path;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/samples/file`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
     }
 
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    const response = await this.request(
-      {
-        path: `/samples/file`,
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.VoidApiResponse(response);
-  }
-
-  /**
-   * Your GET endpoint
-   */
-  async getFile(
-    path?: string,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<void> {
-    await this.getFileRaw({ path: path }, initOverrides);
-  }
-
-  /**
-   * Get sample file or folder
-   */
-  async getStructureRaw(
-    requestParameters: GetStructureRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<object>>> {
-    if (requestParameters.path === null || requestParameters.path === undefined) {
-      throw new runtime.RequiredError(
-        'path',
-        'Required parameter requestParameters.path was null or undefined when calling getStructure.',
-      );
+    /**
+     * Your GET endpoint
+     */
+    async getFile(path?: string, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.getFileRaw({ path: path }, initOverrides);
     }
 
-    const queryParameters: any = {};
+    /**
+     * Get sample file or folder
+     */
+    async getStructureRaw(requestParameters: GetStructureRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<object>>> {
+        if (requestParameters.path === null || requestParameters.path === undefined) {
+            throw new runtime.RequiredError('path','Required parameter requestParameters.path was null or undefined when calling getStructure.');
+        }
 
-    if (requestParameters.path !== undefined) {
-      queryParameters['path'] = requestParameters.path;
+        const queryParameters: any = {};
+
+        if (requestParameters.path !== undefined) {
+            queryParameters['path'] = requestParameters.path;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/samples/structure`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse<any>(response);
     }
 
-    const headerParameters: runtime.HTTPHeaders = {};
+    /**
+     * Get sample file or folder
+     */
+    async getStructure(path: string, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<object>> {
+        const response = await this.getStructureRaw({ path: path }, initOverrides);
+        return await response.value();
+    }
 
-    const response = await this.request(
-      {
-        path: `/samples/structure`,
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
+    /**
+     * Download and import sample project
+     */
+    async loadSampleRaw(requestParameters: LoadSampleOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<LoadSample200Response>> {
+        const queryParameters: any = {};
 
-    return new runtime.JSONApiResponse<any>(response);
-  }
+        const headerParameters: runtime.HTTPHeaders = {};
 
-  /**
-   * Get sample file or folder
-   */
-  async getStructure(
-    path: string,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<object>> {
-    const response = await this.getStructureRaw({ path: path }, initOverrides);
-    return await response.value();
-  }
+        headerParameters['Content-Type'] = 'application/json';
 
-  /**
-   * Download and import sample project
-   */
-  async loadSampleRaw(
-    requestParameters: LoadSampleOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<LoadSample200Response>> {
-    const queryParameters: any = {};
+        const response = await this.request({
+            path: `/samples`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: LoadSampleRequestToJSON(requestParameters.loadSampleRequest),
+        }, initOverrides);
 
-    const headerParameters: runtime.HTTPHeaders = {};
+        return new runtime.JSONApiResponse(response, (jsonValue) => LoadSample200ResponseFromJSON(jsonValue));
+    }
 
-    headerParameters['Content-Type'] = 'application/json';
+    /**
+     * Download and import sample project
+     */
+    async loadSample(loadSampleRequest?: LoadSampleRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LoadSample200Response> {
+        const response = await this.loadSampleRaw({ loadSampleRequest: loadSampleRequest }, initOverrides);
+        return await response.value();
+    }
 
-    const response = await this.request(
-      {
-        path: `/samples`,
-        method: 'POST',
-        headers: headerParameters,
-        query: queryParameters,
-        body: LoadSampleRequestToJSON(requestParameters.loadSampleRequest),
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      LoadSample200ResponseFromJSON(jsonValue),
-    );
-  }
-
-  /**
-   * Download and import sample project
-   */
-  async loadSample(
-    loadSampleRequest?: LoadSampleRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<LoadSample200Response> {
-    const response = await this.loadSampleRaw(
-      { loadSampleRequest: loadSampleRequest },
-      initOverrides,
-    );
-    return await response.value();
-  }
 }
