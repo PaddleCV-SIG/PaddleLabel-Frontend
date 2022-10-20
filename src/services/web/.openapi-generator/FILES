@@ -13,7 +13,6 @@ apis/index.ts
 index.ts
 models/AddTagRequest.ts
 models/Annotation.ts
-models/CreateRequest.ts
 models/Data.ts
 models/ExportDatasetRequest.ts
 models/GetFoldersRequest.ts

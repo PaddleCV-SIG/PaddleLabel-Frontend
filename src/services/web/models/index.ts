@@ -2,7 +2,6 @@
 /* eslint-disable */
 export * from './AddTagRequest';
 export * from './Annotation';
-export * from './CreateRequest';
 export * from './Data';
 export * from './ExportDatasetRequest';
 export * from './GetFoldersRequest';
