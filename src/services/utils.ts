@@ -504,16 +504,21 @@ export function AnnotationUtils(
     }
   }
 
-  const create = async (annotation: Annotation) => {
+  const create = async (annotation: Annotation | Annotation[]) => {
     // console.log('create label', annotation.label);
-    try {
-      const ann = { ...annotation };
+    const prepAnn = (anno: Annotation) => {
+      const ann = { ...anno };
       if (ann.label) ann.labelId = ann.label.labelId;
       ann.label = undefined;
-      await annotationApi.create(ann);
+      return ann;
+    };
+    try {
+      const anns = annotation instanceof Array ? annotation.map(prepAnn) : [prepAnn(annotation)];
+      console.log('asdfasdf', anns);
+      await annotationApi.create(anns);
       let annRes: Annotation[] = [];
       // sync anns from backend
-      if (ann.dataId) annRes = await getAll(ann.dataId);
+      if (anns[0].dataId) annRes = await getAll(anns[0].dataId);
       // if currently 1 ann -> this is the first ann -> update progress
       if (project && annRes.length == 1) project.getFinished();
     } catch (err) {
