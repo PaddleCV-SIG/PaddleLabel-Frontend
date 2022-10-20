@@ -279,8 +279,8 @@ const Component: React.FC<PPStageProps> = (props) => {
     props.currentLabel,
     radius,
   ]);
-  console.log('PPStage rendering currentAnnotation:', props.currentAnnotation, props.currentTool);
-  console.log('PPStage rendering annotations', props.annotations);
+  // console.log('PPStage rendering currentAnnotation:', props.currentAnnotation, props.currentTool);
+  // console.log('PPStage rendering annotations', props.annotations);
   useDeepCompareEffect(() => {
     const newShapes = [];
     if (props.annotations) {

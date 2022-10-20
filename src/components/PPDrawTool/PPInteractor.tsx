@@ -280,6 +280,7 @@ function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D, 
 
 function filterPoints(result: number[][], thresholdRaw?: number) {
   const threshold = thresholdRaw ? thresholdRaw * 0.01 : 0.5;
+  // 域值
   const points: number[] = [];
   let rowNum = 0;
   for (const row of result) {
@@ -339,6 +340,39 @@ export function interactorToAnnotation(
     type: 'brush',
   };
   return anno;
+}
+export function ectInteractorToAnnotation(
+  threshold: number,
+  annotations: Annotation[],
+  interactorData?: number[][],
+  dataId?: number,
+  finlyList?: Annotation[],
+  selectFinly?: Annotation,
+  label?: Label,
+): Annotation | null {
+  if (!dataId || !label || !interactorData) return null;
+  // const points = filterPoints(interactorData, threshold);
+  // const width = 0; // Pixel type
+  // console.log('selectFinly', selectFinly);
+
+  // let frontendId;
+  // // 有模型
+  // if (selectFinly?.frontendId) {
+  //   frontendId = selectFinly?.frontendId;
+  // } else {
+  //   frontendId = finlyList?.length ? getMaxFrontendId(finlyList) + 1 : 1;
+  // }
+  // console.log('frontendIds', frontendId);
+  // const result = `${width},${frontendId},` + points.join(',');
+  // const anno = {
+  //   dataId: dataId,
+  //   label: label,
+  //   labelId: label.labelId,
+  //   frontendId: frontendId,
+  //   result: result,
+  //   type: 'brush',
+  // };
+  // return anno;
 }
 
 function renderPoints(points: number[], ctx: CanvasRenderingContext2D, color: string | undefined) {

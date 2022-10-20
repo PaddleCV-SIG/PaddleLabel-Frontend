@@ -874,17 +874,17 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   async function predict(data: InlineObject1) {
     try {
       checkAPI();
-      return await modelApi.predict('EISeg', data);
+      return await modelApi.predict('PicoDet', data);
     } catch (err) {
       return serviceUtils.parseError(err, message);
     }
   }
 
-  async function load(modelPath: string, paramPath: string) {
+  async function load(modelPath?: string, paramPath?: string) {
     try {
       await checkAPI();
       setLoading(true);
-      await modelApi.load('EISeg', {
+      await modelApi.load('PicoDet', {
         initParams: { model_path: modelPath, param_path: paramPath },
       });
       setLoading(false);

@@ -13,11 +13,11 @@
  */
 
 import * as runtime from '../runtime';
-import type { Label } from '../models';
-import { LabelFromJSON, LabelToJSON } from '../models';
+import type { CreateRequest, Label } from '../models';
+import { CreateRequestFromJSON, CreateRequestToJSON, LabelFromJSON, LabelToJSON } from '../models';
 
-export interface CreateRequest {
-  label: Array<Label>;
+export interface CreateOperationRequest {
+  createRequest: CreateRequest;
   requestId?: string;
 }
 
@@ -42,13 +42,13 @@ export class LabelApi extends runtime.BaseAPI {
    * Create a new label
    */
   async createRaw(
-    requestParameters: CreateRequest,
+    requestParameters: CreateOperationRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<Label>>> {
-    if (requestParameters.label === null || requestParameters.label === undefined) {
+  ): Promise<runtime.ApiResponse<object>> {
+    if (requestParameters.createRequest === null || requestParameters.createRequest === undefined) {
       throw new runtime.RequiredError(
-        'label',
-        'Required parameter requestParameters.label was null or undefined when calling create.',
+        'createRequest',
+        'Required parameter requestParameters.createRequest was null or undefined when calling create.',
       );
     }
 
@@ -61,30 +61,32 @@ export class LabelApi extends runtime.BaseAPI {
     if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
       headerParameters['request_id'] = String(requestParameters.requestId);
     }
-
     const response = await this.request(
       {
         path: `/labels`,
         method: 'POST',
         headers: headerParameters,
         query: queryParameters,
-        body: requestParameters.label.map(LabelToJSON),
+        body: CreateRequestToJSON(requestParameters.createRequest),
       },
       initOverrides,
     );
 
-    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LabelFromJSON));
+    return new runtime.JSONApiResponse<any>(response);
   }
 
   /**
    * Create a new label
    */
   async create(
-    label: Array<Label>,
+    createRequest: CreateRequest,
     requestId?: string,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<Label>> {
-    const response = await this.createRaw({ label: label, requestId: requestId }, initOverrides);
+  ): Promise<object> {
+    const response = await this.createRaw(
+      { createRequest: createRequest, requestId: requestId },
+      initOverrides,
+    );
     return await response.value();
   }
 

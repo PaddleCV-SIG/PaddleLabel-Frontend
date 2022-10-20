@@ -8,13 +8,49 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
+// import { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import { PageInit, ModelUtils } from '@/services/utils';
 import type { Annotation } from '@/models/Annotation';
 import PPRectangle from '@/components/PPDrawTool/PPRectangle';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { IntlInitJsx } from '@/components/PPIntl';
-
+import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
+const generatedColorList: string[] = [
+  '#FF0000',
+  '#008000',
+  '#0000FF',
+  '#FFFF00',
+  '#FFA500',
+  '#00FFFF',
+  '#8B00FF',
+  '#FFC0CB',
+  '#7CFC00',
+  '#007FFF',
+  '#800080',
+  '#36BF36',
+  '#DAA520',
+  '#800000',
+  '#008B8B',
+  '#B22222',
+  '#E6D933',
+  '#000080',
+  '#FF00FF',
+  '#FFFF99',
+  '#87CEEB',
+  '#5C50E6',
+  '#CD5C5C',
+  '#20B2AA',
+  '#E680FF',
+  '#4D1F00',
+  '#006374',
+  '#B399FF',
+  '#8B4513',
+  '#BA55D3',
+  '#C0C0C0',
+  '#808080',
+  '#000000',
+];
 const Page: React.FC = () => {
   // todo: change to use annotation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,6 +58,9 @@ const Page: React.FC = () => {
   const [isClick, setisClick] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { interactorData, setInteractorData } = useModel('InteractorData');
+  // const [finlyList] = useState<Annotation[]>([]);
+  // const [selectFinly] = useState<Annotation>();
+  const [threshold, setThreshold] = useState(50);
   const model = ModelUtils(useState);
   const tbIntl = IntlInitJsx('pages.toolBar');
 
@@ -60,6 +99,8 @@ const Page: React.FC = () => {
     else setFrontendId(anno.frontendId);
   };
   const getBase64Image = (img?: HTMLImageElement) => {
+    console.log('getBase64Image', img);
+
     if (!img) return '';
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
@@ -68,6 +109,8 @@ const Page: React.FC = () => {
     const ctx = canvas.getContext('2d');
     ctx?.drawImage(img, 0, 0, img.width, img.height);
     const dataURL = canvas.toDataURL('image/png');
+    console.log('dataURL', dataURL);
+
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
   };
   const onAnnotationModify = (anno: Annotation) => {
@@ -85,58 +128,6 @@ const Page: React.FC = () => {
     // console.log('save invoked', anno.annotationId);
   };
   const [image] = useImage(data.imgSrc || '', 'anonymous');
-  useEffect(() => {
-    annHistory.init();
-  }, []);
-  useEffect(() => {
-    console.log('onStartEdit函数执行了', annotation.all);
-    if (!isClick) {
-      onFinishEdit();
-    }
-  }, [isClick]);
-  useEffect(() => {
-    if (model.loading) {
-      message.error(tbIntl('modelLoading'));
-      return;
-    }
-    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
-    console.log('settings', settings);
-    model.setMlBackendUrl(settings.mlBackendUrl);
-    model.setLoading(true);
-    model.load().then(
-      () => {
-        // message.info(intl('modelLoaded'));
-        model.setLoading(false);
-        setIsLoading(false);
-      },
-      () => {
-        model.setLoading(false);
-        setIsLoading(true);
-      },
-    );
-    // setInteractorData({ active: true, predictData: [], mousePoints: [] });
-  }, [project.curr]);
-  useEffect(() => {
-    if (!isLoading && data.imgSrc) {
-      console.log('data.imgSrc', data.imgSrc);
-
-      const imgBase64 = getBase64Image(image);
-      console.log('', data.imgSrc);
-      const line = model.predict({
-        format: 'b64',
-        img: imgBase64,
-        // other: { clicks: interactorData.mousePoints },
-      });
-      if (!line) return;
-      console.log('line.result', line.result);
-
-      setInteractorData({
-        active: true,
-        mousePoints: interactorData.mousePoints,
-        predictData: line.result,
-      });
-    }
-  }, [isLoading, data.imgSrc]);
   function onStartEdit() {
     // console.log('onStartEdit函数执行了', annotation.all);
     // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
@@ -197,6 +188,117 @@ const Page: React.FC = () => {
     items.push(item);
     annotation.setAll(items);
   };
+  // const saveInteractorData = () => {
+  //   if (interactorData.active) {
+  //     console.log('label.curr', label.curr, interactorData?.predictData);
+  //     const anno = interactorToAnnotation(
+  //       threshold,
+  //       annotation.all,
+  //       interactorData?.predictData,
+  //       data.curr?.dataId,
+  //       finlyList,
+  //       selectFinly,
+  //       label.curr,
+  //     );
+  //     console.log('annos', anno);
+
+  //     if (anno) {
+  //       const newAnnos = annotation.all.concat([anno]);
+  //       annotation.setAll(newAnnos);
+  //       setCurrentAnnotation(anno);
+  //       annotation.pushToBackend(data.curr?.dataId, newAnnos);
+  //     }
+  //     setInteractorData({ active: false, predictData: [], mousePoints: [] });
+  //     // setCurrentAnnotation(undefined);
+  //   }
+  // };
+  useEffect(() => {
+    annHistory.init();
+  }, []);
+  useEffect(() => {
+    console.log('onStartEdit函数执行了', annotation.all);
+    if (!isClick) {
+      onFinishEdit();
+    }
+  }, [isClick]);
+  useEffect(() => {
+    if (model.loading) {
+      message.error(tbIntl('modelLoading'));
+      return;
+    }
+    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
+    model.setMlBackendUrl(settings.mlBackendUrl);
+    model.setLoading(true);
+    model.load().then(
+      () => {
+        // message.info(intl('modelLoaded'));
+        console.log('settings', settings);
+        model.setLoading(false);
+        setIsLoading(false);
+      },
+      () => {
+        model.setLoading(false);
+        setIsLoading(true);
+      },
+    );
+    // setInteractorData({ active: true, predictData: [], mousePoints: [] });
+  }, [project.curr]);
+  useEffect(() => {
+    console.log('data.imgSrc', data.imgSrc, image, isLoading);
+    if (!isLoading && data.imgSrc && image) {
+      const imgBase64 = getBase64Image(image);
+      console.log('', data.imgSrc);
+      const line = model.predict({
+        format: 'b64',
+        img: imgBase64,
+        // other: { clicks: interactorData.mousePoints },
+      });
+      if (!line) return;
+      console.log('line.result', line);
+      line.then(
+        (res) => {
+          // message.info(intl('modelLoaded'));
+          // model.setLoading(false);
+          // setIsLoading(false);
+          // console.log('line.result', e);
+          setInteractorData({
+            active: true,
+            mousePoints: interactorData.mousePoints,
+            predictData: res.predictions,
+          });
+        },
+        (error) => {
+          // model.setLoading(false);
+          // setIsLoading(true);
+          console.log('line.error', error);
+        },
+      );
+    }
+  }, [isLoading, data.imgSrc, image]);
+  useEffect(() => {
+    if (interactorData.predictData.length && label.all.length) {
+      const length = label.all.length;
+      const labels = new Set();
+      for (const labelItem of interactorData.predictData) {
+        labels.add(labelItem.label_name);
+      }
+      const newlabels = [...labels].map((item, index) => {
+        const addlabel = {
+          color: generatedColorList[index + length],
+          name: item,
+          // labelId: index + length + 1,
+          projectId: project.curr.projectId,
+        };
+        return addlabel;
+      });
+      console.log('newlabels', newlabels);
+      label.create(newlabels).then((newLabel) => {
+        setCurrentAnnotation(undefined);
+        label.setCurr(newLabel);
+      });
+      // saveInteractorData();
+    }
+  }, [interactorData, label.all]);
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -348,6 +450,20 @@ const Page: React.FC = () => {
         >
           {tbIntl('projectOverview')}
         </PPToolBarButton>
+        <PPSetButton
+          disabled={!interactorData.active}
+          imgSrc="./pics/buttons/threshold.png"
+          disLoc="left"
+          size={threshold}
+          maxSize={100}
+          minSize={10}
+          step={10}
+          onChange={(newSize) => {
+            setThreshold(newSize);
+          }}
+        >
+          {tbIntl('segmentThreshold')}
+        </PPSetButton>
         {/* <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
           onClick={() => {

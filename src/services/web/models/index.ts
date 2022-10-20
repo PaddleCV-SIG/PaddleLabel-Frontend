@@ -23,3 +23,4 @@ export * from './Tag';
 export * from './TagTask';
 export * from './Task';
 export * from './User';
+export * from './CreateRequest';
