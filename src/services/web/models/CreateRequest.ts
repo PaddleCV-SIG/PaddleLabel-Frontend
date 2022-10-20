@@ -12,54 +12,109 @@
  * Do not edit the class manually.
  */
 
-import {
-    Array<Label>,
-    instanceOfArray<Label>,
-    Array<Label>FromJSON,
-    Array<Label>FromJSONTyped,
-    Array<Label>ToJSON,
-} from './Array&lt;Label&gt;';
-import {
-    Label,
-    instanceOfLabel,
-    LabelFromJSON,
-    LabelFromJSONTyped,
-    LabelToJSON,
-} from './Label';
+import { exists, mapValues } from '../runtime';
+import type { Label } from './Label';
+import { LabelFromJSON, LabelFromJSONTyped, LabelToJSON } from './Label';
 
 /**
- * @type CreateRequest
- * 
+ *
  * @export
+ * @interface CreateRequest
  */
-export type CreateRequest = Array<Label> | Label;
+export interface CreateRequest {
+  /**
+   *
+   * @type {number}
+   * @memberof CreateRequest
+   */
+  labelId?: number;
+  /**
+   *
+   * @type {number}
+   * @memberof CreateRequest
+   */
+  projectId?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateRequest
+   */
+  name: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateRequest
+   */
+  color?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateRequest
+   */
+  comment?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateRequest
+   */
+  readonly created?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof CreateRequest
+   */
+  readonly modified?: string;
+  /**
+   *
+   * @type {number}
+   * @memberof CreateRequest
+   */
+  superCategoryId?: number;
+}
+
+/**
+ * Check if a given object implements the CreateRequest interface.
+ */
+export function instanceOfCreateRequest(value: object): boolean {
+  let isInstance = true;
+  isInstance = isInstance && 'name' in value;
+
+  return isInstance;
+}
 
 export function CreateRequestFromJSON(json: any): CreateRequest {
-    return CreateRequestFromJSONTyped(json, false);
+  return CreateRequestFromJSONTyped(json, false);
 }
 
 export function CreateRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): CreateRequest {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return { ...Array<Label>FromJSONTyped(json, true), ...LabelFromJSONTyped(json, true) };
+  if (json === undefined || json === null) {
+    return json;
+  }
+  return {
+    labelId: !exists(json, 'label_id') ? undefined : json['label_id'],
+    projectId: !exists(json, 'project_id') ? undefined : json['project_id'],
+    name: json['name'],
+    color: !exists(json, 'color') ? undefined : json['color'],
+    comment: !exists(json, 'comment') ? undefined : json['comment'],
+    created: !exists(json, 'created') ? undefined : json['created'],
+    modified: !exists(json, 'modified') ? undefined : json['modified'],
+    superCategoryId: !exists(json, 'super_category_id') ? undefined : json['super_category_id'],
+  };
 }
 
 export function CreateRequestToJSON(value?: CreateRequest | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-
-    if (instanceOfArray<Label>(value)) {
-        return Array<Label>ToJSON(value as Array<Label>);
-    }
-    if (instanceOfLabel(value)) {
-        return LabelToJSON(value as Label);
-    }
-
-    return {};
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return null;
+  }
+  return {
+    label_id: value.labelId,
+    project_id: value.projectId,
+    name: value.name,
+    color: value.color,
+    comment: value.comment,
+    super_category_id: value.superCategoryId,
+  };
 }
-
