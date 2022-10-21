@@ -342,37 +342,24 @@ export function interactorToAnnotation(
   return anno;
 }
 export function ectInteractorToAnnotation(
-  threshold: number,
   annotations: Annotation[],
-  interactorData?: number[][],
+  result?: string,
   dataId?: number,
-  finlyList?: Annotation[],
-  selectFinly?: Annotation,
   label?: Label,
 ): Annotation | null {
-  if (!dataId || !label || !interactorData) return null;
-  // const points = filterPoints(interactorData, threshold);
-  // const width = 0; // Pixel type
-  // console.log('selectFinly', selectFinly);
+  if (!dataId || !label || !result) return null;
+  const frontendId = annotations?.length ? getMaxFrontendId(annotations) + 1 : 1;
+  const anno = {
+    dataId: dataId,
+    label: label,
+    labelId: label.labelId,
+    frontendId: frontendId,
+    result: result,
+    type: 'rectangle',
+    predictedBy: 'PicoDet',
+  };
 
-  // let frontendId;
-  // // 有模型
-  // if (selectFinly?.frontendId) {
-  //   frontendId = selectFinly?.frontendId;
-  // } else {
-  //   frontendId = finlyList?.length ? getMaxFrontendId(finlyList) + 1 : 1;
-  // }
-  // console.log('frontendIds', frontendId);
-  // const result = `${width},${frontendId},` + points.join(',');
-  // const anno = {
-  //   dataId: dataId,
-  //   label: label,
-  //   labelId: label.labelId,
-  //   frontendId: frontendId,
-  //   result: result,
-  //   type: 'brush',
-  // };
-  // return anno;
+  return anno;
 }
 
 function renderPoints(points: number[], ctx: CanvasRenderingContext2D, color: string | undefined) {

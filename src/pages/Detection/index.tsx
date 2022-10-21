@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useUpdateEffect } from 'ahooks';
 import { Spin, message } from 'antd';
 import { history, useModel } from 'umi';
 import styles from './index.less';
@@ -8,7 +9,8 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
-// import { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
+import { ectInteractorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
+import type { Label } from '@/models/';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import { PageInit, ModelUtils } from '@/services/utils';
 import type { Annotation } from '@/models/Annotation';
@@ -16,41 +18,6 @@ import PPRectangle from '@/components/PPDrawTool/PPRectangle';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { IntlInitJsx } from '@/components/PPIntl';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
-const generatedColorList: string[] = [
-  '#FF0000',
-  '#008000',
-  '#0000FF',
-  '#FFFF00',
-  '#FFA500',
-  '#00FFFF',
-  '#8B00FF',
-  '#FFC0CB',
-  '#7CFC00',
-  '#007FFF',
-  '#800080',
-  '#36BF36',
-  '#DAA520',
-  '#800000',
-  '#008B8B',
-  '#B22222',
-  '#E6D933',
-  '#000080',
-  '#FF00FF',
-  '#FFFF99',
-  '#87CEEB',
-  '#5C50E6',
-  '#CD5C5C',
-  '#20B2AA',
-  '#E680FF',
-  '#4D1F00',
-  '#006374',
-  '#B399FF',
-  '#8B4513',
-  '#BA55D3',
-  '#C0C0C0',
-  '#808080',
-  '#000000',
-];
 const Page: React.FC = () => {
   // todo: change to use annotation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,6 +28,7 @@ const Page: React.FC = () => {
   // const [finlyList] = useState<Annotation[]>([]);
   // const [selectFinly] = useState<Annotation>();
   const [threshold, setThreshold] = useState(50);
+  const [isLoad, setIsLoad] = useState<boolean>(false);
   const model = ModelUtils(useState);
   const tbIntl = IntlInitJsx('pages.toolBar');
 
@@ -83,6 +51,9 @@ const Page: React.FC = () => {
         preUnsetCurr: preCurrLabelUnset,
       },
       tool: { defaultTool: 'mover' },
+      task: {
+        push: false,
+      },
     },
   );
   function preCurrLabelUnset() {
@@ -188,33 +159,38 @@ const Page: React.FC = () => {
     items.push(item);
     annotation.setAll(items);
   };
-  // const saveInteractorData = () => {
-  //   if (interactorData.active) {
-  //     console.log('label.curr', label.curr, interactorData?.predictData);
-  //     const anno = interactorToAnnotation(
-  //       threshold,
-  //       annotation.all,
-  //       interactorData?.predictData,
-  //       data.curr?.dataId,
-  //       finlyList,
-  //       selectFinly,
-  //       label.curr,
-  //     );
-  //     console.log('annos', anno);
-
-  //     if (anno) {
-  //       const newAnnos = annotation.all.concat([anno]);
-  //       annotation.setAll(newAnnos);
-  //       setCurrentAnnotation(anno);
-  //       annotation.pushToBackend(data.curr?.dataId, newAnnos);
-  //     }
-  //     setInteractorData({ active: false, predictData: [], mousePoints: [] });
-  //     // setCurrentAnnotation(undefined);
-  //   }
-  // };
+  const saveInteractorData = (labels: Label, result: string) => {
+    if (interactorData.active) {
+      const anno = ectInteractorToAnnotation(annotation.all, result, data.curr?.dataId, labels);
+      if (anno) {
+        // debugger;
+        const newAnnos = annotation.all.concat([anno]);
+        annotation.setAll(newAnnos);
+        setCurrentAnnotation(anno);
+        // annotation.pushToBackend(data.curr?.dataId, newAnnos);
+      }
+      // setInteractorData({ active: false, predictData: [], mousePoints: [] });
+      // setCurrentAnnotation(undefined);
+    }
+  };
   useEffect(() => {
     annHistory.init();
   }, []);
+  useUpdateEffect(() => {
+    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
+    if (annotation.all.length && project.curr.otherSettings?.modelName) {
+      const flag = annotation.all.every((item: Annotation) => {
+        return settings.modelName !== item.predictedBy;
+      });
+      if (flag !== isLoad) {
+        debugger;
+        setIsLoad(flag);
+      }
+    } else if (annotation.all.length === 0 && project.curr) {
+      // debugger;
+      setIsLoad(true);
+    }
+  }, [annotation.all, project.curr?.otherSettings]);
   useEffect(() => {
     console.log('onStartEdit函数执行了', annotation.all);
     if (!isClick) {
@@ -222,27 +198,29 @@ const Page: React.FC = () => {
     }
   }, [isClick]);
   useEffect(() => {
-    if (model.loading) {
-      message.error(tbIntl('modelLoading'));
-      return;
+    if (isLoad) {
+      if (model.loading) {
+        message.error(tbIntl('modelLoading'));
+        return;
+      }
+      const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
+      model.setMlBackendUrl(settings.mlBackendUrl);
+      model.setLoading(true);
+      model.load().then(
+        () => {
+          // message.info(intl('modelLoaded'));
+          console.log('settings', settings);
+          model.setLoading(false);
+          setIsLoading(false);
+        },
+        () => {
+          model.setLoading(false);
+          setIsLoading(true);
+        },
+      );
     }
-    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
-    model.setMlBackendUrl(settings.mlBackendUrl);
-    model.setLoading(true);
-    model.load().then(
-      () => {
-        // message.info(intl('modelLoaded'));
-        console.log('settings', settings);
-        model.setLoading(false);
-        setIsLoading(false);
-      },
-      () => {
-        model.setLoading(false);
-        setIsLoading(true);
-      },
-    );
     // setInteractorData({ active: true, predictData: [], mousePoints: [] });
-  }, [project.curr]);
+  }, [isLoad]);
   useEffect(() => {
     console.log('data.imgSrc', data.imgSrc, image, isLoading);
     if (!isLoading && data.imgSrc && image) {
@@ -251,16 +229,11 @@ const Page: React.FC = () => {
       const line = model.predict({
         format: 'b64',
         img: imgBase64,
-        // other: { clicks: interactorData.mousePoints },
       });
       if (!line) return;
       console.log('line.result', line);
       line.then(
         (res) => {
-          // message.info(intl('modelLoaded'));
-          // model.setLoading(false);
-          // setIsLoading(false);
-          // console.log('line.result', e);
           setInteractorData({
             active: true,
             mousePoints: interactorData.mousePoints,
@@ -275,18 +248,15 @@ const Page: React.FC = () => {
       );
     }
   }, [isLoading, data.imgSrc, image]);
-  useEffect(() => {
-    if (interactorData.predictData.length && label.all.length) {
-      const length = label.all.length;
+  useUpdateEffect(() => {
+    if (interactorData.predictData.length) {
       const labels = new Set();
       for (const labelItem of interactorData.predictData) {
         labels.add(labelItem.label_name);
       }
-      const newlabels = [...labels].map((item, index) => {
+      const newlabels = [...labels].map((item) => {
         const addlabel = {
-          color: generatedColorList[index + length],
           name: item,
-          // labelId: index + length + 1,
           projectId: project.curr.projectId,
         };
         return addlabel;
@@ -296,9 +266,23 @@ const Page: React.FC = () => {
         setCurrentAnnotation(undefined);
         label.setCurr(newLabel);
       });
-      // saveInteractorData();
     }
-  }, [interactorData, label.all]);
+  }, [interactorData]);
+  useUpdateEffect(() => {
+    if (interactorData.predictData.length && label.all.length) {
+      const labels = new Map();
+      for (const labelItem of label.all) {
+        labels.set(labelItem.name, labelItem);
+      }
+      interactorData.predictData.map((item) => {
+        const labelitem = labels.get(item.label_name);
+        // const result = item.result.split(',');
+        // debugger;
+        saveInteractorData(labelitem, item.result);
+      });
+      // debugger;
+    }
+  }, [label.all, interactorData.predictData.length]);
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
