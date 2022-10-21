@@ -67,9 +67,11 @@ export default {
 
   'component.PPExportModal.title': '导出数据集',
   'component.PPExportModal.path': '导出路径',
+  'component.PPExportModal.labelFormat': '导出格式',
   'component.PPExportModal.exportSuccess': '数据集导出成功',
   'component.PPExportModal.export': '导出',
   'component.PPExportModal.nullPath': '导出路径不能为空',
+  'component.PPExportModal.nullLabelFormat': '请选择一个导出数据集格式',
 
   'component.PPImportModal.title': '导入额外数据',
   'component.PPImportModal.path': '额外数据路径',

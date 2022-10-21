@@ -60,11 +60,14 @@ export default {
   'component.PPDivideDataModal.validation': 'Validation',
   'component.PPDivideDataModal.test': 'Test',
   'component.PPDivideDataModal.success': 'Dataset Splited',
-  'component.PPExportModal.imagenet': 'Imagenet Format',
+
+  // 'component.PPExportModal.imagenet': 'Imagenet Format',
   'component.PPExportModal.export': 'Export',
-  'component.PPExportModal.title': 'Export',
-  'component.PPExportModal.path': 'Path',
-  'component.PPExportModal.pathNotNull': 'Export path cannot be empty!',
+  'component.PPExportModal.labelFormat': 'Export Format',
+  'component.PPExportModal.title': 'Export Dataset',
+  'component.PPExportModal.path': 'Export Path',
+  'component.PPExportModal.nullPath': 'Export path cannot be empty.',
+  'component.PPExportModal.nullLabelFormat': 'Please choose an export format.',
   'component.PPExportModal.exportSuccess': 'Export Success',
 
   'component.PPSplitDataset.title': 'Split Dataset',

@@ -664,9 +664,10 @@ export const DataUtils = (useState: UseStateType) => {
   };
 };
 
-export function exportDataset(projectId, exportDir) {
+export function exportDataset(projectId: number, exportDir: string, exportFormat: string) {
+  console.log('format', { exportDir: exportDir, exportFormat: exportFormat });
   return projectApi
-    .exportDataset(projectId, { exportDir: exportDir })
+    .exportDataset(projectId, { exportDir: exportDir, exportFormat: exportFormat })
     .then((res) => {})
     .catch((err) => {
       console.log('export error', err);

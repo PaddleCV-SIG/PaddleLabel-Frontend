@@ -272,7 +272,9 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 style={{
                   fontSize: '1.5rem',
                   display:
-                    createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
+                    createInfo[props.taskCategory].labelFormats != undefined && !projectId
+                      ? undefined
+                      : 'none',
                 }}
               >
                 <Radio.Group
@@ -326,7 +328,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 </Radio.Group>
               </Form.Item>
 
-              <Form.Item
+              {/* <Form.Item
                 name="maxPoints"
                 label={intl('maxPoints')}
                 labelCol={{
@@ -352,7 +354,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                   placeholder="Numbers (Int)"
                   style={{ height: '3.13rem' }}
                 />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item
                 wrapperCol={{
                   span: 16,
