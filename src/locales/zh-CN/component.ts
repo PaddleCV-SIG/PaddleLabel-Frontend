@@ -17,6 +17,9 @@ export default {
   'component.PPCreater.sampleProject': '样例项目',
   'component.PPCreater.segMaskType': '掩膜类型',
   'component.PPCreater.titleContent': '点此查看有关项目文件结构更多细节',
+  'component.PPCreater.folderStructureSample': '数据集文件结构示例',
+  'component.PPCreater.folderStructureSampleDetail':
+    '如果需要导入的数据集已有标注信息，请参考如上文件结构组织文件夹下的文件',
 
   'component.PPAddLabelModal.selectColor': '选择色彩',
   'component.PPAddLabelModal.addLabel': '创建标签',

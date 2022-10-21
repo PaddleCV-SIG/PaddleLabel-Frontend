@@ -15,6 +15,9 @@ export default {
   'component.PPCreater.segMaskType': 'Mask Type',
   'component.PPCreater.creationFail': 'Project Creation Failed',
   'component.PPCreater.titleContent': 'Click to see more details about project folder structure.',
+  'component.PPCreater.folderStructureSample': 'Folder Structure Example',
+  'component.PPCreater.folderStructureSampleDetail':
+    'If the dataset to be imported contains annotations, please arrange files in the folder following the above example',
 
   'component.PPAddLabelModal.selectColor': 'Select Color',
   'component.PPAddLabelModal.addLabel': 'Add Label',
