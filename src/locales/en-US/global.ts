@@ -4,6 +4,7 @@ export default {
   'global.semanticSegmentation': 'Semantic Segmentation',
   'global.instanceSegmentation': 'Instance Segmentation',
   'global.keypointDetection': 'Keypoint Detection',
+  'global.opticalCharacterRecognition': 'OCR',
   'global.labelFormat.singleClass': 'Single Class',
   'global.labelFormat.multiClass': 'Multi class',
   'global.labelFormat.coco': 'COCO',

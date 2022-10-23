@@ -69,10 +69,16 @@ export const createInfo = {
     id: 4,
     labelFormats: { mask: 'Mask', polygon: 'Polygon' },
   },
-  keypointDetection: {
-    name: 'Keypoint Detection',
+  // keypointDetection: {
+  //   name: 'Keypoint Detection',
+  //   avatar: './pics/keypoint_detection.jpg',
+  //   id: 5,
+  // },
+
+  opticalCharacterRecognition: {
+    name: 'OCR',
     avatar: './pics/keypoint_detection.jpg',
-    id: 5,
+    id: 7,
   },
 };
 
