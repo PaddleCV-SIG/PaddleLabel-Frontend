@@ -505,7 +505,6 @@ export function AnnotationUtils(
     pushToBackend(all[0].dataId, []);
     setAllRaw([]);
     if (label) {
-      console.log('asdf', label);
       label.setActiveIds(new Set());
     }
   }
@@ -520,7 +519,6 @@ export function AnnotationUtils(
     };
     try {
       const anns = annotation instanceof Array ? annotation.map(prepAnn) : [prepAnn(annotation)];
-      console.log('asdfasdf', anns);
       await annotationApi.create(anns);
       let annRes: Annotation[] = [];
       // sync anns from backend
@@ -631,6 +629,8 @@ export const DataUtils = (useState: UseStateType) => {
     try {
       const allRes = await taskApi.getDatas(taskId);
       setAll(allRes);
+      console.log('allRes[0].dataId', allRes[0].dataId);
+      dataApi.update(allRes[0].dataId, { predicted: true });
       if (turnToIdx != undefined) {
         turnTo(turnToIdx);
         return [allRes, allRes[turnToIdx]];
