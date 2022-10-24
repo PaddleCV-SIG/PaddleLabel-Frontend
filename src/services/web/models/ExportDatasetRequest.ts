@@ -30,7 +30,7 @@ export interface ExportDatasetRequest {
    * @type {string}
    * @memberof ExportDatasetRequest
    */
-  exportFormat: string;
+  exportFormat?: string;
 }
 
 /**
@@ -39,7 +39,6 @@ export interface ExportDatasetRequest {
 export function instanceOfExportDatasetRequest(value: object): boolean {
   let isInstance = true;
   isInstance = isInstance && 'exportDir' in value;
-  isInstance = isInstance && 'exportFormat' in value;
 
   return isInstance;
 }
@@ -57,7 +56,7 @@ export function ExportDatasetRequestFromJSONTyped(
   }
   return {
     exportDir: json['export_dir'],
-    exportFormat: json['export_format'],
+    exportFormat: !exists(json, 'export_format') ? undefined : json['export_format'],
   };
 }
 
