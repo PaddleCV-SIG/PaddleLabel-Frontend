@@ -19,6 +19,7 @@ import { AnnotationFromJSON, AnnotationToJSON } from '../models';
 export interface CreateRequest {
   annotation: Array<Annotation>;
   requestId?: string;
+  deduplicate?: boolean;
 }
 
 export interface GetRequest {
@@ -62,6 +63,10 @@ export class AnnotationApi extends runtime.BaseAPI {
       headerParameters['request_id'] = String(requestParameters.requestId);
     }
 
+    if (requestParameters.deduplicate !== undefined && requestParameters.deduplicate !== null) {
+      headerParameters['deduplicate'] = String(requestParameters.deduplicate);
+    }
+
     const response = await this.request(
       {
         path: `/annotations/`,
@@ -82,10 +87,11 @@ export class AnnotationApi extends runtime.BaseAPI {
   async create(
     annotation: Array<Annotation>,
     requestId?: string,
+    deduplicate?: boolean,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Annotation>> {
     const response = await this.createRaw(
-      { annotation: annotation, requestId: requestId },
+      { annotation: annotation, requestId: requestId, deduplicate: deduplicate },
       initOverrides,
     );
     return await response.value();
