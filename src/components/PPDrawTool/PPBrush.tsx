@@ -81,12 +81,13 @@ function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
       renderPoints(points, ctx, annotation);
     }
   }
-  console.log('annotation param.currentAnnotation', param.currentAnnotation, annotation);
+  console.log('annotation param.currentAnnotation brush', isClick, param.currentTool, flag);
   if (isClick && param.currentTool !== 'rubber' && flag) {
     ctx.beginPath();
     const pointss = points.slice(2);
     const x = pointss.at(-2);
     const y = pointss.at(-1);
+    console.log('Brushs', x, y);
     ctx?.arc(x, y, points[0] / 16, 0, 2 * Math.PI);
     ctx.strokeStyle = 'red'; //将线条颜色设置为蓝色
     ctx.stroke();

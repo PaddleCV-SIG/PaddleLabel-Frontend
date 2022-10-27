@@ -149,4 +149,5 @@ export default {
   'pages.projectOverview.image': 'Image',
   'pages.projectOverview.label': 'Label',
   'pages.projectOverview.projectSettings': 'Project Settings',
+  'pages.projectOverview.mlSettings': 'ML Settings',
 };

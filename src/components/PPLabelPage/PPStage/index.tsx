@@ -5,7 +5,15 @@ import type Konva from 'konva';
 import { useDeepCompareEffect } from 'ahooks';
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Layer as LayerType } from 'konva/lib/Layer';
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  ForwardRefRenderFunction,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 import { Layer, Stage, Image, Circle } from 'react-konva';
 import useImage from 'use-image';
 import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/drawUtils';
@@ -29,7 +37,11 @@ function getPointer(toolType: ToolType) {
       return 'default';
   }
 }
-
+export type pageRef = {
+  image: HTMLImageElement;
+  scaleImage: number;
+  setDragEndPos?: () => void;
+};
 export type PPStageProps = {
   imgSrc?: string;
   scale: number;
@@ -58,10 +70,8 @@ export type PPStageProps = {
   };
 };
 
-const Component: React.FC<PPStageProps> = (props) => {
+const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
   const [image] = useImage(props.imgSrc || '', 'anonymous');
-  // console.log('stage redraw', width, height);
-  // const imageBi = W ? imageHeight / imageWidth : null;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   const interactorData = useModel('InteractorData', (x) => x.interactorData);
   const radius = useModel('VisualRadius', (x) => x.radius);
@@ -77,13 +87,13 @@ const Component: React.FC<PPStageProps> = (props) => {
     drawToolTemp = props.drawTool.rubber;
   } else if (props.currentTool == 'interactor') drawToolTemp = props.drawTool.interactor;
   const drawTool = drawToolTemp;
-
-  // const drawTool =
-  //   props.currentTool == 'polygon' ? props.drawTool.polygon : props.drawTool.brush;
-  // console.log(`imageWidth,imageHeight: `, imageWith, imageHeight);
+  console.log('drawToolTemp', drawToolTemp);
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
+  const [imageWidth, setimageWidth] = useState<number>(500);
+  const [imageHeight, setimageHeight] = useState<number>(500);
+  const [scaleImage, setscaleImage] = useState<number>(0);
   const [shapes, setShapes] = useState<any[]>([]);
   const [dragEndPos, setDragEndPos] = useState({ x: 0, y: 0 });
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
@@ -93,20 +103,13 @@ const Component: React.FC<PPStageProps> = (props) => {
   const stageRef = useRef<StageType>(null);
   const layerRef = useRef<LayerType>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagewidth = image?.width || 0;
-  const imageheight = image?.height || 0;
 
-  const W = imagewidth > imageheight ? true : false;
-  // (canvasHeight / imageHeight) * imageWidth;
-  const imageWidth = W ? canvasWidth : (canvasHeight / imageheight) * imagewidth;
-  const imageHeight = W ? (canvasWidth / imagewidth) * imageheight : canvasHeight;
-  image?.setAttribute('width', imageWidth + 'px');
-  image?.setAttribute('height', imageHeight + 'px');
   // Dynamically adjust canvas size, prevent content overflow
 
   function handleWindowResize() {
     const parent = document.getElementById('dr');
     if (parent) {
+      // console.log(`parentSize: `, parent.clientWidth, parent.clientHeight);
       setCanvasWidth(parent.clientWidth);
       setCanvasHeight(parent.clientHeight);
     }
@@ -123,7 +126,24 @@ const Component: React.FC<PPStageProps> = (props) => {
       setCanvasHeight(parent.clientHeight);
     }
   }, []);
+  useEffect(() => {
+    console.log('typeof(image)', typeof image);
 
+    if (canvasHeight && canvasWidth && image && typeof image !== 'string') {
+      const imagewidth = image?.width || 0;
+      const imageheight = image?.height || 0;
+      const W = imagewidth > imageheight ? true : false;
+      const scaleImages = W ? canvasWidth / imagewidth : canvasHeight / imagewidth;
+      const imageWidth1 = W ? canvasWidth : (canvasHeight / imageheight) * imagewidth;
+      const imageHeight1 = W ? (canvasWidth / imagewidth) * imageheight : canvasHeight;
+      image?.setAttribute('width', imageWidth1 + 'px');
+      image?.setAttribute('height', imageHeight1 + 'px');
+      console.log('imagewidth', imageWidth1);
+      setimageHeight(parseInt(imageHeight1));
+      setimageWidth(parseInt(imageWidth1));
+      setscaleImage(scaleImages);
+    }
+  }, [canvasHeight, canvasWidth, image]);
   useEffect(() => {
     if (!stageRef.current) return;
     stageRef.current.container().style.cursor = getPointer(props.currentTool);
@@ -132,7 +152,7 @@ const Component: React.FC<PPStageProps> = (props) => {
     if (image?.height) {
       saveDrawingSurface();
     }
-  }, [image]);
+  }, [image?.height, image?.width]);
   const renderReact = (endPos: any) => {
     const width = Math.abs(startPos.x - endPos.x);
     const height = Math.abs(startPos.y - endPos.y);
@@ -160,17 +180,20 @@ const Component: React.FC<PPStageProps> = (props) => {
   };
   function restoreDrawingSurface(drawingSurfaceImageData: any) {
     const ctx = canvasRef.current?.getContext('2d');
-    ctx.putImageData(drawingSurfaceImageData, 0, 0);
+    ctx?.putImageData(drawingSurfaceImageData, 0, 0);
   }
   function saveDrawingSurface() {
     const ctx = canvasRef.current?.getContext('2d');
-    const drawingSurfaceImageDatas = ctx?.getImageData(
-      0,
-      0,
-      canvasRef?.current?.width,
-      canvasRef?.current?.height,
-    );
-    setDrawingSurfaceImageData(drawingSurfaceImageDatas);
+    console.log('ctx', ctx);
+    if (canvasRef?.current?.width && canvasRef?.current?.height) {
+      const drawingSurfaceImageDatas = ctx?.getImageData(
+        0,
+        0,
+        canvasRef?.current?.width,
+        canvasRef?.current?.height,
+      );
+      setDrawingSurfaceImageData(drawingSurfaceImageDatas);
+    }
   }
   const getEvtParam = (e: Konva.KonvaEventObject<MouseEvent>) => {
     return {
@@ -195,7 +218,7 @@ const Component: React.FC<PPStageProps> = (props) => {
     if (props?.tool?.curr == 'polygon') {
       if (e.evt.button === 2) {
         const array = props.currentAnnotation?.result?.split(',');
-        if (array?.length >= 4) {
+        if (array && array.length >= 4) {
           array.splice(array.length - 2, 2);
           const results = array.join(',');
           const anno = {
@@ -229,7 +252,8 @@ const Component: React.FC<PPStageProps> = (props) => {
         (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
       const ctx = canvasRef.current?.getContext('2d');
       restoreDrawingSurface(DrawingSurfaceImageData);
-      drawTool?.drawGuidewires(mouseX, mouseY, ctx);
+      const drawGuidewires = drawTool?.drawGuidewires;
+      drawGuidewires(mouseX, mouseY, ctx);
       const endpos = {
         x: mouseX,
         y: mouseY,
@@ -279,10 +303,9 @@ const Component: React.FC<PPStageProps> = (props) => {
     props.currentLabel,
     radius,
   ]);
-  // console.log('PPStage rendering currentAnnotation:', props.currentAnnotation, props.currentTool);
-  // console.log('PPStage rendering annotations', props.annotations);
-  useDeepCompareEffect(() => {
-    const newShapes = [];
+  console.log('PPStage rendering currentAnnotation:', props.currentAnnotation, props.currentTool);
+  useEffect(() => {
+    const newShapes: React.ReactElement[] = [];
     if (props.annotations) {
       console.log('PPStage rendering annotations:', props.annotations);
       const ctx = canvasRef.current?.getContext('2d');
@@ -299,7 +322,7 @@ const Component: React.FC<PPStageProps> = (props) => {
           }
           console.log('shape', shape);
 
-          if (shape?.key !== null) {
+          if (shape && shape?.key !== null) {
             newShapes.push(shape);
           }
         }
@@ -308,20 +331,21 @@ const Component: React.FC<PPStageProps> = (props) => {
       console.log('shapes', newShapes);
     }
   }, [props.annotations, props.currentAnnotation, param]);
-  if (props.annotations && props?.currentTool !== 'rectangle') {
-    // Draw normal elements
-    // Clear canvas
-    // const ctx = canvasRef.current?.getContext('2d');
-    // if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  // useEffect(() => {
+  //   const newrefoce = refoce + 1;
+  //   setRefoce(newrefoce);
+  // }, [dragEndPos]);
+  if (props.annotations && props?.currentTool !== 'rectangle' && props?.currentTool !== 'polygon') {
+    const length = props?.annotations?.length;
     props.annotations.forEach((annotation, index) => {
       if (annotation) {
         param.annotation = annotation;
         let shape;
         if (annotation.type == 'brush') {
-          const flag = index === props?.annotations?.length - 1 ? true : false;
+          const flag = index === length - 1 ? true : false;
           shape = props.drawTool.brush?.drawAnnotation(param, flag);
         } else if (annotation.type == 'rubber') {
-          const flag = index === props?.annotations?.length - 1 ? true : false;
+          const flag = index === length - 1 ? true : false;
           shape = props.drawTool.rubber?.drawAnnotation(param, flag);
         }
         console.log('shape', shape);
@@ -333,6 +357,13 @@ const Component: React.FC<PPStageProps> = (props) => {
   layerRef.current?.batchDraw();
 
   const draggable = props.currentTool == 'mover';
+  useImperativeHandle(ref, () => ({
+    image,
+    scaleImage,
+    setDragEndPos,
+  }));
+  console.log('image?.width', image?.width, imageWidth);
+
   return (
     <div
       data-test-id="stage-container"
@@ -378,6 +409,8 @@ const Component: React.FC<PPStageProps> = (props) => {
             y: evt.target.y(),
           });
         }}
+        x={dragEndPos.x}
+        y={dragEndPos.y}
       >
         <Layer
           onMouseDown={onMouseDown}
@@ -391,7 +424,7 @@ const Component: React.FC<PPStageProps> = (props) => {
           <Image
             name="baseImage"
             draggable={false}
-            image={image}
+            image={image?.width === imageWidth ? image : undefined}
             x={-(imageWidth || 0) / 2}
             y={-(imageHeight || 0) / 2}
           />
@@ -406,13 +439,13 @@ const Component: React.FC<PPStageProps> = (props) => {
           onMouseUp={onMouseUp}
           onContextMenu={onContextMenu}
           opacity={transparency}
-          onMouseOut={() => {
-            console.log(`Circle onMouseOut`);
-            // restoreDrawingSurface(DrawingSurfaceImageData);
-            const ctx = canvasRef.current?.getContext('2d');
-            ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
-            setRefoce(refoce + 1);
-          }}
+          // onMouseOut={() => {
+          //   console.log(`Circle onMouseOut`);
+          //   // restoreDrawingSurface(DrawingSurfaceImageData);
+          //   const ctx = canvasRef.current?.getContext('2d');
+          //   ctx?.clearRect(0, 0, canvasWidth, canvasHeight);
+          //   setRefoce(refoce + 1);
+          // }}
         >
           {
             <Image
@@ -428,4 +461,4 @@ const Component: React.FC<PPStageProps> = (props) => {
     </div>
   );
 };
-export default Component;
+export default forwardRef(Component);

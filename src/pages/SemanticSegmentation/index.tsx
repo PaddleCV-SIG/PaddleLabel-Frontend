@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button, message, Spin } from 'antd';
 import { history, useModel } from 'umi';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
@@ -9,7 +9,7 @@ import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import PPSButtons from '@/components/PPLabelPage/PPButtons';
 
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
-import PPStage from '@/components/PPLabelPage/PPStage';
+import PPStage, { pageRef } from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import PPBrush from '@/components/PPDrawTool/PPBrush';
 import PPRubber from '@/components/PPDrawTool/PPRubber';
@@ -36,6 +36,7 @@ const Page: React.FC = () => {
   const { radius, setRadius } = useModel('VisualRadius');
   const { interactorData, setInteractorData } = useModel('InteractorData');
   const model = ModelUtils(useState);
+  const page = useRef<pageRef>(null);
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar, annHistory } =
     PageInit(useState, useEffect, {
       effectTrigger: {
@@ -55,20 +56,15 @@ const Page: React.FC = () => {
       tool: { defaultTool: 'mover' },
       task: { push: true },
     });
-  console.log('tool.curr', tool.curr);
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
     setFrontendId(0);
   }
-  console.log('annos', annotation.all);
-  console.log('loading', loading);
-
   const setCurrentAnnotation = (anno?: Annotation) => {
     annotation.setCurr(anno);
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
   };
-
   const saveInteractorData = () => {
     if (interactorData.active) {
       console.log('label.curr', label.curr);
@@ -92,28 +88,34 @@ const Page: React.FC = () => {
     }
   };
   const savefinlyList = () => {
-    console.log('annotation.all', annotation.all);
-    const frontendId = new Map();
-    const items: Annotation[] = [];
-    if (isLabel !== 'label') {
-      for (const anno of annotation.all) {
-        const myColor = ColorMaker.GetColor(anno.frontendId);
-        const items = JSON.parse(JSON.stringify(anno));
-        items.label.color = '#' + myColor.Color;
-        frontendId.set(anno.frontendId, items);
+    if (annotation.all) {
+      console.log('annotation.all', annotation.all);
+      const frontendId = new Map();
+      const items: Annotation[] = [];
+      if (isLabel !== 'label') {
+        for (const anno of annotation.all) {
+          const myColor = ColorMaker.GetColor(anno.frontendId);
+          const items = JSON.parse(JSON.stringify(anno));
+          items.label.color = '#' + myColor.Color;
+          frontendId.set(anno.frontendId, items);
+        }
+      } else {
+        for (const anno of annotation.all) {
+          frontendId.set(anno.frontendId, anno);
+        }
       }
-    } else {
-      for (const anno of annotation.all) {
-        frontendId.set(anno.frontendId, anno);
-      }
-    }
-    frontendId.forEach((anno: Annotation) => {
-      items.push(anno);
-    });
-    console.log('items', items);
+      frontendId.forEach((anno: Annotation) => {
+        console.log('annos', anno.type);
 
-    setfinlyList(items);
-    setSelectFinly(null);
+        if (anno.type === 'brush') {
+          items.push(anno);
+        }
+      });
+      console.log('items', items);
+
+      setfinlyList(items);
+      setSelectFinly(null);
+    }
   };
   useEffect(() => {
     annHistory.init();
@@ -260,7 +262,7 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/brush.png"
           size={brushSize}
           active={tool.curr == 'brush'}
-          disabled={(pathNames && interactorData.active) || !label.curr}
+          disabled={pathNames && interactorData.active}
           onClick={() => {
             if (!label.curr) {
               message.error(tbIntl('chooseCategoryFirst'));
@@ -397,6 +399,7 @@ const Page: React.FC = () => {
         <Spin tip="loading" spinning={!!loading.curr}>
           <div className="draw">
             <PPStage
+              ref={page}
               scale={scale.curr}
               annotations={isLabel == 'label' ? annotation.all : newAnnotation ? newAnnotation : []}
               currentTool={tool.curr}
@@ -438,6 +441,10 @@ const Page: React.FC = () => {
               scale.setScale(1);
               setSelectFinly(null);
               setfinlyList([]);
+              page?.current?.setDragEndPos({
+                x: 0,
+                y: 0,
+              });
             }}
           />
           <div
@@ -454,6 +461,10 @@ const Page: React.FC = () => {
               scale.setScale(1);
               setSelectFinly(null);
               setfinlyList([]);
+              page?.current?.setDragEndPos({
+                x: 0,
+                y: 0,
+              });
             }}
           />
         </Spin>
@@ -477,13 +488,14 @@ const Page: React.FC = () => {
             } else {
               const settings = project.curr.otherSettings ? project.curr.otherSettings : {};
               if (
-                settings.models?.EISeg?.mlModelAbsPath &&
-                settings.models?.EISeg?.mlWeightAbsPath
+                settings.modelSettings?.EISeg?.modelFilePath &&
+                settings.modelSettings?.EISeg?.paramFilePath
               ) {
                 try {
                   await model.load(
-                    settings.models.EISeg.mlModelAbsPath,
-                    settings.models.EISeg.mlWeightAbsPath,
+                    'EISeg',
+                    settings.modelSettings.EISeg.modelFilePath,
+                    settings.modelSettings.EISeg.paramFilePath,
                   );
                 } catch (e) {
                   return;
@@ -554,16 +566,8 @@ const Page: React.FC = () => {
           minSize={0}
           onChange={handleChange}
         >
-          {'label切换'}
+          {tbIntl('colorMode')}
         </PPSButtons>
-        {/* <PPToolBarButton
-          imgSrc="./pics/buttons/data_division.png"
-          onClick={() => {
-            history.push(`/ml?projectId=${project.curr.projectId}`);
-          }}
-        >
-          {'ML Settings'}
-        </PPToolBarButton> */}
       </PPToolBar>
       <div className="rightSideBar">
         <div className="determinOutline">
@@ -631,8 +635,10 @@ const Page: React.FC = () => {
             onAnnotationModify={() => {}}
             onAnnotationDelete={async (anno: Annotation) => {
               const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
+              const newfinlyList = finlyList.filter((x) => x.frontendId != anno.frontendId);
               annHistory.record({ annos: newAll });
               annotation.setAll(newAll);
+              setfinlyList(newfinlyList);
               setCurrentAnnotation(undefined);
               await annotation.pushToBackend(data.curr?.dataId, newAll);
               // savefinlyList();

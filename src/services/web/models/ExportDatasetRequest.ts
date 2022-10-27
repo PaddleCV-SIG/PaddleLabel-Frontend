@@ -14,52 +14,61 @@
 
 import { exists, mapValues } from '../runtime';
 /**
- * 
+ *
  * @export
  * @interface ExportDatasetRequest
  */
 export interface ExportDatasetRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ExportDatasetRequest
-     */
-    exportDir?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ExportDatasetRequest
+   */
+  exportDir: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ExportDatasetRequest
+   */
+  exportFormat?: string;
 }
 
 /**
  * Check if a given object implements the ExportDatasetRequest interface.
  */
 export function instanceOfExportDatasetRequest(value: object): boolean {
-    let isInstance = true;
+  let isInstance = true;
+  isInstance = isInstance && 'exportDir' in value;
 
-    return isInstance;
+  return isInstance;
 }
 
 export function ExportDatasetRequestFromJSON(json: any): ExportDatasetRequest {
-    return ExportDatasetRequestFromJSONTyped(json, false);
+  return ExportDatasetRequestFromJSONTyped(json, false);
 }
 
-export function ExportDatasetRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean): ExportDatasetRequest {
-    if ((json === undefined) || (json === null)) {
-        return json;
-    }
-    return {
-        
-        'exportDir': !exists(json, 'export_dir') ? undefined : json['export_dir'],
-    };
+export function ExportDatasetRequestFromJSONTyped(
+  json: any,
+  ignoreDiscriminator: boolean,
+): ExportDatasetRequest {
+  if (json === undefined || json === null) {
+    return json;
+  }
+  return {
+    exportDir: json['export_dir'],
+    exportFormat: !exists(json, 'export_format') ? undefined : json['export_format'],
+  };
 }
 
 export function ExportDatasetRequestToJSON(value?: ExportDatasetRequest | null): any {
-    if (value === undefined) {
-        return undefined;
-    }
-    if (value === null) {
-        return null;
-    }
-    return {
-        
-        'export_dir': value.exportDir,
-    };
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return null;
+  }
+  return {
+    export_dir: value.exportDir,
+    export_format: value.exportFormat,
+  };
 }
-

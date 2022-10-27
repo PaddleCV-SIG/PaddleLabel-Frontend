@@ -62,7 +62,7 @@ const PaddleAi: React.FC = () => {
   // const [name, setName] = useState('');
   const [name2, setName2] = useState('');
   const [labels, setLabels] = useState('');
-  const [labelOption, setLabelOption] = useState('');
+  const [labelOption, setLabelOption] = useState([]);
   const [labels2, setLabels2] = useState('');
   const [labelItem, setlabelItem] = useState([]);
   // const inputRef = useRef<InputRef>(null);
@@ -89,6 +89,10 @@ const PaddleAi: React.FC = () => {
   const multipleChange = (value: string | string[]) => {
     console.log(`multipleChange: ${value}`);
     setLabels(value);
+    const labelOptions = labelOption.filter((item) => {
+      return item !== value;
+    });
+    setLabelOption(labelOptions);
   };
   const multipleChange2 = (value: string | string[]) => {
     console.log(`multipleChange2: ${value}`);
@@ -124,11 +128,12 @@ const PaddleAi: React.FC = () => {
     setLabels('');
     setLabels2('');
   };
-  const deleteItems = (id) => {
+  const deleteItems = (id: string, modelName: string) => {
     const newLabelItems = labelItem.filter((item) => {
       return item.id !== id;
     });
     setlabelItem(newLabelItems);
+    setLabelOption([...labelOption, modelName]);
   };
   const label = LabelUtils(useState, {
     oneHot: true,
@@ -386,18 +391,12 @@ const PaddleAi: React.FC = () => {
                             </div>
                           </div>
                           <div className={styles.Corresponding_label2}>
-                            {item.project.map((projects, indexs) => {
-                              return (
-                                <div className={styles.label} key={indexs}>
-                                  {projects}
-                                </div>
-                              );
-                            })}
+                            <div className={styles.label}>{item.project}</div>
                           </div>
                           <div
                             className={styles.Corresponding_button}
                             onClick={() => {
-                              deleteItems(item.id);
+                              deleteItems(item.id, item.model);
                             }}
                           >
                             删除
@@ -441,10 +440,10 @@ const PaddleAi: React.FC = () => {
                       >
                         <Select
                           style={{ width: 200 }}
-                          mode="multiple"
+                          // mode="multiple"
                           placeholder="custom dropdown render"
                           onChange={multipleChange2}
-                          value={labels2 ? (labels2 + '').split(',') : undefined}
+                          value={labels2}
                           dropdownRender={(menu) => (
                             <>
                               {menu}
@@ -501,6 +500,7 @@ const PaddleAi: React.FC = () => {
                   setisFlag(() => {
                     return false;
                   });
+                  history.push(`/project_overview?projectId=${projectId}`);
                 }}
               >
                 {'返回'}

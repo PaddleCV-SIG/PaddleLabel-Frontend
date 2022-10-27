@@ -17,6 +17,7 @@ export type PPLabelListProps = {
   onLabelDelete: (label: Label) => void;
   onLabelAdd: (label: Label) => void;
   onLabelSelect: (label: Label) => void;
+  disabled?: boolean;
   refresh?: number;
 };
 
@@ -45,6 +46,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
             <Button
               style={{ height: 40, fontSize: '0.75rem' }}
               type="primary"
+              disabled={props.disabled}
               onClick={() => {
                 setAddLabelModalVisible(true);
               }}

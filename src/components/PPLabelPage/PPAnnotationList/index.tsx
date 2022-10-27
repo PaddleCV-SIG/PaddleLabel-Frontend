@@ -32,7 +32,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
   // const added = new Set();
   // const items: Annotation[] = [];
 
-  if (history?.location?.pathname === '/semantic_segmentation' && props.annotations.length > 0) {
+  if (history?.location?.pathname === '/semantic_segmentation' && props.annotations?.length > 0) {
     for (const anno of props.annotations) {
       if (added.has(anno.frontendId)) continue;
       if (anno.type === 'rubber') continue;
@@ -51,10 +51,12 @@ const Component: React.FC<PPLabelListProps> = (props) => {
       items.push(anno);
     });
   } else {
-    for (const anno of props.annotations) {
-      if (added.has(anno.frontendId)) continue;
-      items.push(anno);
-      added.add(anno.frontendId);
+    if (props.annotations) {
+      for (const anno of props.annotations) {
+        if (added.has(anno.frontendId)) continue;
+        items.push(anno);
+        added.add(anno.frontendId);
+      }
     }
   }
   if (props.type === 'Detection') {

@@ -2,7 +2,9 @@ export default {
   'component.PPCreater.projectName': '项目名称',
   'component.PPCreater.datasePath': '数据集路径',
   'component.PPCreater.description': '项目描述',
-  'component.PPCreater.labelFormat': '标注导入格式',
+  'component.PPCreater.labelFormat': '导入标注格式',
+  'component.PPCreater.labelFormatDetail':
+    '如果要导入的数据集没有任何标注信息，这里不需要选择。如果有标注信息，请选择标注信息的格式。',
   'component.PPCreater.maxPoints': '最大点数',
   'component.PPCreater.annotationMode': '标注模式',
   'component.PPCreater.pixelMode': '像素级标注',
@@ -15,6 +17,9 @@ export default {
   'component.PPCreater.sampleProject': '样例项目',
   'component.PPCreater.segMaskType': '掩膜类型',
   'component.PPCreater.titleContent': '点此查看有关项目文件结构更多细节',
+  'component.PPCreater.folderStructureSample': '数据集文件结构示例',
+  'component.PPCreater.folderStructureSampleDetail':
+    '如果需要导入的数据集已有标注信息，请参考如上文件结构组织文件夹下的文件',
 
   'component.PPAddLabelModal.selectColor': '选择色彩',
   'component.PPAddLabelModal.addLabel': '创建标签',
@@ -65,9 +70,11 @@ export default {
 
   'component.PPExportModal.title': '导出数据集',
   'component.PPExportModal.path': '导出路径',
+  'component.PPExportModal.labelFormat': '导出格式',
   'component.PPExportModal.exportSuccess': '数据集导出成功',
   'component.PPExportModal.export': '导出',
   'component.PPExportModal.nullPath': '导出路径不能为空',
+  'component.PPExportModal.nullLabelFormat': '请选择一个导出数据集格式',
 
   'component.PPImportModal.title': '导入额外数据',
   'component.PPImportModal.path': '额外数据路径',

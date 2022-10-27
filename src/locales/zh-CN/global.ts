@@ -4,6 +4,7 @@ export default {
   'global.semanticSegmentation': '语义分割',
   'global.instanceSegmentation': '实例分割',
   'global.keypointDetection': '关键点检测',
+  'global.opticalCharacterRecognition': '字符识别',
   'global.labelFormat.singleClass': '单分类',
   'global.labelFormat.multiClass': '多分类',
   'global.labelFormat.coco': 'COCO格式',

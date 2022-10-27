@@ -69,10 +69,16 @@ export const createInfo = {
     id: 4,
     labelFormats: { mask: 'Mask', polygon: 'Polygon' },
   },
-  keypointDetection: {
-    name: 'Keypoint Detection',
+  // keypointDetection: {
+  //   name: 'Keypoint Detection',
+  //   avatar: './pics/keypoint_detection.jpg',
+  //   id: 5,
+  // },
+
+  opticalCharacterRecognition: {
+    name: 'OCR',
     avatar: './pics/keypoint_detection.jpg',
-    id: 5,
+    id: 7,
   },
 };
 
@@ -467,7 +473,7 @@ export function AnnotationUtils(
     recordHistory = () => {},
   }: { label: any; project: any; recordHistory: ({ annos: [] }) => void },
 ) {
-  const [all, setAllRaw] = useState<Annotation[]>([]);
+  const [all, setAllRaw] = useState<Annotation[]>();
   const [curr, setCurrRaw] = useState<Annotation | undefined>();
   // const tbIntl = IntlInit('pages.toolBar');
 
@@ -484,7 +490,7 @@ export function AnnotationUtils(
     try {
       const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
       console.log('All annotations', annRes);
-      setAll([]);
+      // setAll([]);
       setAll(annRes);
       return annRes;
     } catch (err) {
@@ -499,21 +505,25 @@ export function AnnotationUtils(
     pushToBackend(all[0].dataId, []);
     setAllRaw([]);
     if (label) {
-      console.log('asdf', label);
       label.setActiveIds(new Set());
     }
   }
 
-  const create = async (annotation: Annotation) => {
+  const create = async (annotation: Annotation | Annotation[]) => {
     // console.log('create label', annotation.label);
-    try {
-      const ann = { ...annotation };
+    const prepAnn = (anno: Annotation) => {
+      const ann = { ...anno };
       if (ann.label) ann.labelId = ann.label.labelId;
       ann.label = undefined;
-      await annotationApi.create(ann);
+      return ann;
+    };
+    try {
+      const anns = annotation instanceof Array ? annotation.map(prepAnn) : [prepAnn(annotation)];
+      console.log('asdfasdf', anns);
+      await annotationApi.create(anns);
       let annRes: Annotation[] = [];
       // sync anns from backend
-      if (ann.dataId) annRes = await getAll(ann.dataId);
+      if (anns[0].dataId) annRes = await getAll(anns[0].dataId);
       // if currently 1 ann -> this is the first ann -> update progress
       if (project && annRes.length == 1) project.getFinished();
     } catch (err) {
@@ -620,6 +630,7 @@ export const DataUtils = (useState: UseStateType) => {
     try {
       const allRes = await taskApi.getDatas(taskId);
       setAll(allRes);
+      console.log('allRes[0].dataId', allRes[0].dataId);
       if (turnToIdx != undefined) {
         turnTo(turnToIdx);
         return [allRes, allRes[turnToIdx]];
@@ -630,7 +641,24 @@ export const DataUtils = (useState: UseStateType) => {
       return serviceUtils.parseError(err, message);
     }
   };
-
+  const updatePredicted = async (dataId: string, flag: boolean) => {
+    try {
+      // const params = {
+      //   dataId: dataId,
+      //   data: {
+      //     predicted: true,
+      //   },
+      // };
+      await dataApi.update(dataId, {
+        // predicted: false,
+        predicted: flag,
+      });
+      // debugger;
+    } catch (err) {
+      console.log('data getall err ', err);
+      return serviceUtils.parseError(err, message);
+    }
+  };
   const setAnnotations = async (dataId: number, annotations: Annotation[]) => {
     try {
       await dataApi.setAnnotations(dataId + '', annotations);
@@ -645,6 +673,7 @@ export const DataUtils = (useState: UseStateType) => {
     getAll,
     turnTo,
     setAnnotations,
+    updatePredicted,
     get curr() {
       // console.log('data.getcurr');
       if (currIdx == undefined || all == undefined) return undefined;
@@ -659,9 +688,10 @@ export const DataUtils = (useState: UseStateType) => {
   };
 };
 
-export function exportDataset(projectId, exportDir) {
+export function exportDataset(projectId: number, exportDir: string, exportFormat: string) {
+  console.log('format', { exportDir: exportDir, exportFormat: exportFormat });
   return projectApi
-    .exportDataset(projectId, { exportDir: exportDir })
+    .exportDataset(projectId, { exportDir: exportDir, exportFormat: exportFormat })
     .then((res) => {})
     .catch((err) => {
       console.log('export error', err);
@@ -849,7 +879,6 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
       setAll(models);
       return models;
     } catch (err) {
-      console.log('model getAll err', err);
       serviceUtils.parseError(err, message, 'ML backend unavaliable!');
       return;
     }
@@ -870,20 +899,20 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     }
   }
 
-  async function predict(data: InlineObject1) {
+  async function predict(model: string, data: InlineObject1) {
     try {
       checkAPI();
-      return await modelApi.predict('PicoDet', data);
+      return await modelApi.predict(model, data);
     } catch (err) {
       return serviceUtils.parseError(err, message);
     }
   }
 
-  async function load(modelPath?: string, paramPath?: string) {
+  async function load(modelName: string, modelPath?: string, paramPath?: string) {
     try {
       await checkAPI();
       setLoading(true);
-      await modelApi.load('PicoDet', {
+      await modelApi.load(modelName, {
         initParams: { model_path: modelPath, param_path: paramPath },
       });
       setLoading(false);
@@ -897,6 +926,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   async function checkAPI() {
     console.log('model api url', modelApi.configuration.configuration.basePath);
     if (!modelApi.configuration.configuration.basePath) {
+      // debugger;
       throw new Error('Set ML backend url first!');
     }
     return (await modelApi.isBackendUp()).trim();

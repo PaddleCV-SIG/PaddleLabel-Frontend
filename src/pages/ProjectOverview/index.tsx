@@ -168,7 +168,7 @@ const TaskList: React.FC = () => {
             );
           }}
         >
-          {'智能标注'}
+          {intl('mlSettings')}
         </Button>
       </PPBlock>
       <PPBlock title={intl('tasks')}>

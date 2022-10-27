@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useUpdateEffect } from 'ahooks';
 import { Spin, message } from 'antd';
 import { history, useModel } from 'umi';
@@ -8,9 +8,9 @@ import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer'
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
-import PPStage from '@/components/PPLabelPage/PPStage';
+import PPStage, { pageRef } from '@/components/PPLabelPage/PPStage';
 import { ectInteractorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
-import type { Label } from '@/models/';
+// import type { Label } from '@/models/';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import { PageInit, ModelUtils } from '@/services/utils';
 import type { Annotation } from '@/models/Annotation';
@@ -18,18 +18,21 @@ import PPRectangle from '@/components/PPDrawTool/PPRectangle';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { IntlInitJsx } from '@/components/PPIntl';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
-const Page: React.FC = () => {
+const port = window.location.port == '8000' ? '1234' : window.location.port;
+const baseUrl = `http://${window.location.hostname}:${port}/`;
+const Page = () => {
   // todo: change to use annotation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [frontendId, setFrontendId] = useState<number>(0);
   const [isClick, setisClick] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { interactorData, setInteractorData } = useModel('InteractorData');
-  // const [finlyList] = useState<Annotation[]>([]);
-  // const [selectFinly] = useState<Annotation>();
   const [threshold, setThreshold] = useState(50);
   const [isLoad, setIsLoad] = useState<boolean>(false);
-  const model = ModelUtils(useState);
+  const [otherSetting, setotherSetting] = useState();
+
+  const model = ModelUtils(useState, baseUrl);
+  const page = useRef<pageRef>(null);
   const tbIntl = IntlInitJsx('pages.toolBar');
 
   const { tool, loading, scale, annotation, task, data, project, label, annHistory } = PageInit(
@@ -96,23 +99,17 @@ const Page: React.FC = () => {
     }
     setCurrentAnnotation(anno);
     annotation.setAll(newAnnos);
-    // console.log('save invoked', anno.annotationId);
   };
   const [image] = useImage(data.imgSrc || '', 'anonymous');
   function onStartEdit() {
-    // console.log('onStartEdit函数执行了', annotation.all);
-    // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     setisClick(true);
   }
   function onEndEdit() {
-    // console.log('onStartEdit函数执行了', annotation.all);
-    // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     setisClick(false);
   }
   function onFinishEdit() {
     // 鼠标抬起的时候
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
-    console.log('finish before', annotation.curr);
     if (!annotation.curr) return;
     if (!annotation.curr.result || annotation.curr.result.split(',').length != 4) return;
     if (annotation?.curr?.annotationId == undefined) {
@@ -121,9 +118,7 @@ const Page: React.FC = () => {
     } else {
       annotation.update(annotation?.curr);
     }
-    // console.log('finish after', annotation.curr);
     message.success(tbIntl('saveSuccess'));
-    // console.log('tool', tool.curr);
     if (tool.curr == 'rectangle') setCurrentAnnotation(undefined);
   }
 
@@ -153,136 +148,211 @@ const Page: React.FC = () => {
     const items = annotation.all;
     const id = select.annotationId;
     const item = items.find((i) => i.annotationId === id);
-    const index = items.indexOf(item);
-    items.splice(index, 1);
-    // add to the top
-    items.push(item);
-    annotation.setAll(items);
+    if (item) {
+      const index = items.indexOf(item);
+      items.splice(index, 1);
+      // add to the top
+      items.push(item);
+      annotation.setAll(items);
+    }
   };
-  const saveInteractorData = (labels: Label, result: string) => {
-    if (interactorData.active) {
-      const anno = ectInteractorToAnnotation(annotation.all, result, data.curr?.dataId, labels);
-      if (anno) {
-        // debugger;
-        const newAnnos = annotation.all.concat([anno]);
-        annotation.setAll(newAnnos);
-        setCurrentAnnotation(anno);
-        // annotation.pushToBackend(data.curr?.dataId, newAnnos);
-      }
-      // setInteractorData({ active: false, predictData: [], mousePoints: [] });
-      // setCurrentAnnotation(undefined);
+  const getMaxFrontendId = (annotations?: Annotation[]) => {
+    if (!annotations || annotations.length == 0) return 0;
+    let max = 0;
+    for (const annotationItem of annotations) {
+      if (annotationItem.frontendId > max) max = annotationItem.frontendId;
+    }
+    return max;
+  };
+  const onPredicted = (images: HTMLImageElement) => {
+    // debugger;
+    console.log('page.current?.image', image, page.current?.image, page.current?.scaleImage);
+    const imgBase64 = getBase64Image(images);
+    const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
+    const line = model.predict('PicoDet', {
+      format: 'b64',
+      img: imgBase64,
+    });
+    if (!line) return;
+    line.then(
+      (res) => {
+        if (res) {
+          const predictions = res.predictions.map((item) => {
+            if (item.score > thresholdRaw) {
+              // return item;
+              const results = item.result.split(',').map((items) => {
+                // debugger;
+                const newitems = parseInt(items * page.current?.scaleImage);
+                return newitems;
+              });
+              item.result = results.join(',');
+              // debugger;
+              return item;
+            }
+          });
+          setIsLoad(false);
+          data.updatePredicted(data.all[0].dataId, true);
+          setInteractorData({
+            active: true,
+            mousePoints: interactorData.mousePoints,
+            predictData: predictions,
+          });
+        }
+      },
+      (error) => {
+        model.setLoading(false);
+        console.log('line.error', error);
+      },
+    );
+  };
+  const createLabels = (labels) => {
+    const newlabels = [...labels].map((item) => {
+      const addlabel = {
+        name: item,
+        projectId: project.curr.projectId,
+      };
+      return addlabel;
+    });
+    if (newlabels.length > 0) {
+      label.create(newlabels).then((newLabel) => {
+        setCurrentAnnotation(undefined);
+        label.setCurr(newLabel);
+      });
     }
   };
   useEffect(() => {
     annHistory.init();
   }, []);
   useUpdateEffect(() => {
-    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
-    if (annotation.all.length && project.curr.otherSettings?.modelName) {
-      const flag = annotation.all.every((item: Annotation) => {
-        return settings.modelName !== item.predictedBy;
-      });
-      if (flag !== isLoad) {
-        debugger;
-        setIsLoad(flag);
+    if (data.all.length > 0) {
+      // data.updatePredicted(data.all[0].dataId);
+      if (data.all[0].predicted) {
+        const flag = false;
+        if (flag !== isLoad) {
+          setIsLoad(flag);
+        }
+      } else {
+        const flag = true;
+        if (flag !== isLoad) {
+          setIsLoad(flag);
+        }
       }
-    } else if (annotation.all.length === 0 && project.curr) {
-      // debugger;
-      setIsLoad(true);
     }
-  }, [annotation.all, project.curr?.otherSettings]);
+  }, [data.all]);
   useEffect(() => {
-    console.log('onStartEdit函数执行了', annotation.all);
     if (!isClick) {
       onFinishEdit();
     }
   }, [isClick]);
-  useEffect(() => {
+  useUpdateEffect(() => {
+    setotherSetting(project.curr?.otherSettings);
     if (isLoad) {
       if (model.loading) {
         message.error(tbIntl('modelLoading'));
         return;
       }
       const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
-      model.setMlBackendUrl(settings.mlBackendUrl);
+      model.setMlBackendUrl(settings.mlBackendUrl || '');
       model.setLoading(true);
-      model.load().then(
+      model.load(settings.modelName).then(
         () => {
           // message.info(intl('modelLoaded'));
-          console.log('settings', settings);
           model.setLoading(false);
-          setIsLoading(false);
+          if (isLoading) {
+            setIsLoading(false);
+          }
         },
         () => {
           model.setLoading(false);
-          setIsLoading(true);
+          if (!isLoading) {
+            setIsLoading(true);
+          }
         },
       );
     }
     // setInteractorData({ active: true, predictData: [], mousePoints: [] });
-  }, [isLoad]);
-  useEffect(() => {
-    console.log('data.imgSrc', data.imgSrc, image, isLoading);
-    if (!isLoading && data.imgSrc && image) {
-      const imgBase64 = getBase64Image(image);
-      console.log('', data.imgSrc);
-      const line = model.predict({
-        format: 'b64',
-        img: imgBase64,
-      });
-      if (!line) return;
-      console.log('line.result', line);
-      line.then(
-        (res) => {
-          setInteractorData({
-            active: true,
-            mousePoints: interactorData.mousePoints,
-            predictData: res.predictions,
-          });
-        },
-        (error) => {
-          // model.setLoading(false);
-          // setIsLoading(true);
-          console.log('line.error', error);
-        },
-      );
-    }
-  }, [isLoading, data.imgSrc, image]);
+  }, [isLoad, project.curr?.otherSettings]);
   useUpdateEffect(() => {
-    if (interactorData.predictData.length) {
+    const predictflag = !isLoading && image && isLoad;
+    if (predictflag) {
+      onPredicted(image);
+    }
+  }, [isLoading, isLoad, image]);
+  useUpdateEffect(() => {
+    console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
+    if (interactorData.predictData.length && otherSetting) {
       const labels = new Set();
-      for (const labelItem of interactorData.predictData) {
-        labels.add(labelItem.label_name);
+      const oldLabel = new Map();
+      for (const labelItem of label.all) {
+        if (labelItem.name) {
+          oldLabel.set(labelItem.name, labelItem);
+        }
       }
-      const newlabels = [...labels].map((item) => {
-        const addlabel = {
-          name: item,
-          projectId: project.curr.projectId,
-        };
-        return addlabel;
-      });
-      console.log('newlabels', newlabels);
-      label.create(newlabels).then((newLabel) => {
-        setCurrentAnnotation(undefined);
-        label.setCurr(newLabel);
-      });
+      if (otherSetting?.labelMapping?.length > 0) {
+        for (const labelMap of otherSetting?.labelMapping) {
+          if (!oldLabel.has(labelMap.project)) {
+            labels.add(labelMap.project);
+          }
+        }
+        createLabels(labels);
+      } else {
+        for (const labelItem of interactorData.predictData) {
+          console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
+          if (labelItem && !oldLabel.has(labelItem?.label_name)) {
+            labels.add(labelItem?.label_name);
+          }
+        }
+        createLabels(labels);
+      }
     }
-  }, [interactorData]);
+  }, [interactorData, otherSetting]);
   useUpdateEffect(() => {
-    if (interactorData.predictData.length && label.all.length) {
+    if (interactorData.predictData.length && label.all.length && otherSetting) {
       const labels = new Map();
       for (const labelItem of label.all) {
         labels.set(labelItem.name, labelItem);
       }
+      const annos = [];
+      const labelMapping = new Map();
+      // eslint-disable-next-line @typescript-eslint/no-shadow
+      let frontendId = annotation.all?.length ? getMaxFrontendId(annotation.all) + 1 : 1;
+      if (otherSetting.labelMapping.length > 0) {
+        for (const labelMaps of otherSetting.labelMapping) {
+          labelMapping.set(labelMaps.model, labelMaps.project);
+        }
+      }
       interactorData.predictData.map((item) => {
-        const labelitem = labels.get(item.label_name);
-        // const result = item.result.split(',');
-        // debugger;
-        saveInteractorData(labelitem, item.result);
+        console.log('label_name', item);
+        if (item) {
+          let name = '';
+          if (labelMapping.has(item.label_name)) {
+            name = labelMapping.get(item.label_name);
+          } else {
+            name = item.label_name;
+          }
+          const labelitem = labels.get(name);
+          const result = item.result;
+          // debugger;
+          // saveInteractorData(labelitem, item.result);
+          if (interactorData.active) {
+            const anno = ectInteractorToAnnotation(
+              annotation.all,
+              frontendId,
+              result,
+              data.curr?.dataId,
+              labelitem,
+            );
+            if (anno) {
+              annos.push(anno);
+              frontendId++;
+            }
+          }
+        }
       });
+      annotation.create(annos);
       // debugger;
     }
-  }, [label.all, interactorData.predictData.length]);
+  }, [label.all, interactorData.predictData, otherSetting]);
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -382,6 +452,7 @@ const Page: React.FC = () => {
         <Spin tip="loading" spinning={!!loading.curr}>
           <div className="draw">
             <PPStage
+              ref={page}
               scale={scale.curr}
               annotations={annotation.all}
               currentTool={tool.curr}
@@ -434,6 +505,14 @@ const Page: React.FC = () => {
         >
           {tbIntl('projectOverview')}
         </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/intelligent_interaction.png"
+          onClick={() => {
+            onPredicted(image);
+          }}
+        >
+          {tbIntl('interactor')}
+        </PPToolBarButton>
         <PPSetButton
           disabled={!interactorData.active}
           imgSrc="./pics/buttons/threshold.png"
@@ -464,8 +543,8 @@ const Page: React.FC = () => {
           }}
           model={model}
           project={project}
-        > */}
-        {/* {tbIntl('interactor')}
+        >
+        {tbIntl('interactor')}
         </PPAIButton> */}
       </PPToolBar>
       <div className="rightSideBar">
@@ -474,6 +553,7 @@ const Page: React.FC = () => {
           activeIds={label.activeIds}
           onLabelSelect={label.onSelect}
           onLabelDelete={label.remove}
+          disabled={otherSetting?.labelMapping?.length > 0}
           onLabelAdd={(lab) => {
             label.create({ ...lab, projectId: project.curr.projectId }).then((newLabel) => {
               setCurrentAnnotation(undefined);

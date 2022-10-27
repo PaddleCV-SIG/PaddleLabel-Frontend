@@ -343,12 +343,12 @@ export function interactorToAnnotation(
 }
 export function ectInteractorToAnnotation(
   annotations: Annotation[],
+  frontendId?: number,
   result?: string,
   dataId?: number,
   label?: Label,
 ): Annotation | null {
   if (!dataId || !label || !result) return null;
-  const frontendId = annotations?.length ? getMaxFrontendId(annotations) + 1 : 1;
   const anno = {
     dataId: dataId,
     label: label,
@@ -418,22 +418,22 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (!interactorData.mousePoints.length || !param.stageRef.current || frontendId == undefined) {
       return;
     }
-    console.log('param.img', param.img?.width, interactorData.mousePoints);
+    console.log('param.img', param);
 
     const imgBase64 = getBase64Image(param.img);
 
-    const line = await model.predict({
+    const line = await model.predict('EISeg', {
       format: 'b64',
       img: imgBase64,
       other: { clicks: interactorData.mousePoints },
     });
     if (!line) return;
-    console.log('line.result', line.result);
+    console.log('line.result', line.predictions);
 
     setInteractorData({
       active: true,
       mousePoints: interactorData.mousePoints,
-      predictData: line.result,
+      predictData: line.predictions,
     });
   };
 

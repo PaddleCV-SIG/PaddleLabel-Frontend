@@ -111,7 +111,8 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
         }}
         onClick={() => {
           console.log('props.currentTool', props.currentTool, annotation);
-          if (props.currentTool == 'editor') props.onSelect(annotation);
+          if (props.currentTool !== 'rectangle') props.onSelect(annotation);
+          // props.onSelect(annotation);
         }}
         stroke={color}
         strokeWidth={2 / props.scale}

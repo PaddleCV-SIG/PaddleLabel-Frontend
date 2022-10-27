@@ -1,8 +1,8 @@
 import { Form, Input, message, Modal, Space } from 'antd';
-import { Button } from 'antd';
+import { Button, Radio } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.less';
-import { exportDataset, IntlInit } from '@/services/utils';
+import { createInfo, exportDataset, IntlInit, snake2camel } from '@/services/utils';
 import type { Project } from '@/services/web/models/';
 import { IntlInitJsx } from '@/components/PPIntl';
 
@@ -16,7 +16,6 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
   const intlJsx = IntlInitJsx('component.PPExportModal');
   const [loading, setLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
-
   const [form] = Form.useForm();
 
   return (
@@ -38,13 +37,9 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: false }}
           onFinish={(values) => {
-            const path = values.path;
-            if (!path) {
-              message.error(intlJsx('pathNotNull'));
-              return;
-            }
+            console.log('values', values);
             setLoading(true);
-            exportDataset(props.project.projectId, path)
+            exportDataset(props.project.projectId, values.path, values.labelFormat)
               .then(() => {
                 message.success(intlJsx('exportSuccess'));
                 setVisible(false);
@@ -58,8 +53,37 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
           }}
           autoComplete="off"
         >
-          <Form.Item label={intl('path')} name="path">
-            <Input autoComplete="off" />
+          <Form.Item
+            label={intl('path')}
+            name="path"
+            rules={[{ required: true, message: intlJsx('nullPath') }]}
+          >
+            <Input />
+            {/* autoComplete="off" */}
+          </Form.Item>
+
+          <Form.Item
+            name="labelFormat"
+            label={<p>{intlJsx('labelFormat')} </p>}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 16 }}
+            rules={[{ required: true, message: intlJsx('nullLabelFormat') }]}
+            style={{
+              fontSize: '1.5rem',
+              // display:
+              //   createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
+            }}
+          >
+            <Radio.Group size="large" style={{ height: '3.13rem' }}>
+              {(props.project && createInfo[props.project?.taskCategory?.name]?.labelFormats
+                ? Object.keys(createInfo[props.project?.taskCategory?.name]?.labelFormats)
+                : []
+              ).map((k) => (
+                <Radio key={k} value={k}>
+                  {intlJsx(snake2camel(k), 'global.labelFormat')}
+                </Radio>
+              ))}
+            </Radio.Group>
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

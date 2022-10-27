@@ -4,7 +4,7 @@ export const config = {
   catgInfo: {
     // classification: { multiClass: 0 },
     classification: { singleClass: 0, multiClass: 0 },
-    detection: { coco: 0, voc: 0 },
+    detection: { coco: 0, voc: 0, yolo: 0 },
     semanticSegmentation: { mask: 0, polygon: 0 },
     instanceSegmentation: { mask: 0, polygon: 0 },
   },

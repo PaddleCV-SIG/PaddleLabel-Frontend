@@ -66,7 +66,7 @@ export type PPDrawToolRet = {
   onMouseDown: EvtType;
   onMouseMove: EvtType;
   onMouseUp: EvtType;
-  drawAnnotation: (props: PPRenderFuncProps) => ReactElement;
+  drawAnnotation: (props: PPRenderFuncProps, flag?: boolean) => ReactElement;
   drawGuidewires?: (x: any, y: any, context: any) => void;
 };
 

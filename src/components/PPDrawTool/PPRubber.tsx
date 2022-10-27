@@ -80,14 +80,15 @@ function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
       renderPoints(points, ctx, annotation);
     }
   }
-  console.log('annotation param.currentAnnotation', param.currentAnnotation, annotation);
-  if (isClick && param.currentTool !== 'rubber' && flag) {
+  console.log('annotation param.currentAnnotation rubber', isClick, param.currentTool, flag);
+  if (isClick && param.currentTool === 'rubber' && flag) {
     ctx.beginPath();
     const pointss = points.slice(2);
     const x = pointss.at(-2);
     const y = pointss.at(-1);
-    ctx?.arc(x, y, points[0] / 16, 0, 2 * Math.PI);
-    ctx.strokeStyle = 'red'; //将线条颜色设置为蓝色
+    console.log('rubbers', x, y);
+    ctx?.arc(x, y, points[0] / 2, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'blue'; //将线条颜色设置为蓝色
     ctx.stroke();
   }
   return <></>;
@@ -122,7 +123,7 @@ function renderBrush(
   points: number[], // x1, y1, x2, y2
   color: string | undefined, // No color means rubber
 ) {
-  // console.log(`renderBrush: `, points, width, color, ctx);
+  console.log(`renderBrush: `, points, width, color, ctx);
   ctx.beginPath();
   ctx.moveTo(points[0], points[1]);
   for (let i = 0; i <= points.length / 2 - 1; i++) {
@@ -136,6 +137,7 @@ function renderBrush(
   ctx.lineWidth = width;
   if (color) ctx.strokeStyle = color;
   ctx.globalCompositeOperation = color ? 'source-over' : 'destination-out';
+  // ctx.strokeStyle = 'r';
   ctx.stroke();
 }
 function renderPixel(ctx: CanvasRenderingContext2D, points: number[], color: string | undefined) {
@@ -202,7 +204,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
     const line = createLine({
       width: props.brushSize || 10,
-      color: props.currentLabel?.color || 'blue',
+      color: props.currentLabel?.color || '',
       points: [mouseX, mouseY, mouseX, mouseY],
       type: tool,
       frontendId: frontendId,
@@ -252,7 +254,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   };
 
   const OnMouseUp = () => {
-    if (props.currentTool != 'brush' && props.currentTool != 'rubber') return;
+    if (props.currentTool != 'rubber') return;
     // console.log(`OnMouseUp`);
     // const ctx = param.canvasRef;
     // const width = props.brushSize || 10;

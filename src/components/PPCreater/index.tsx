@@ -116,7 +116,8 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     console.log('Trigger Select', keys, info, info.node.isLeaf != undefined);
     const isLeaf = info.node.isLeaf != undefined;
     if (isLeaf) {
-      window.open('/api/samples/file?path=' + info.node.key);
+      console.log('url', encodeURIComponent(info.node.key));
+      window.open('/api/samples/file?path=' + encodeURIComponent(info.node.key));
     }
   };
 
@@ -126,7 +127,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
     } else {
       return (
         <div>
-          <div className={styles.DirectoryTitle}>标注保存结构示例</div>
+          <div className={styles.DirectoryTitle}>{intlJsx('folderStructureSample')}</div>
           <DirectoryTree
             // defaultExpandAll
             // showLine={true}
@@ -136,8 +137,9 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
             blockNode={false}
           />
           <div className={styles.DirectoryContent}>
-            <div>1.标注完成后，生成标注结果的组织形式ru如上所示</div>
-            <div>2.若重新导入已有标注，请参加如上标注结构组织文件夹下的文件</div>
+            <div>{intlJsx('folderStructureSampleDetail')}</div>
+            {/* <div>1.标注完成后，生成标注结果的组织形式ru如上所示</div>
+            <div>2.若重新导入已有标注，请参加如上标注结构组织文件夹下的文件</div> */}
           </div>
         </div>
       );
@@ -240,7 +242,20 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
               </Form.Item>
               <Form.Item
                 name="labelFormat"
-                label={intl('labelFormat')}
+                label={
+                  <p>
+                    {intlJsx('labelFormat')}{' '}
+                    <QuestionCircleOutlined
+                      style={{ fontSize: '12px' }}
+                      onClick={() =>
+                        message.info({
+                          content: intlJsx('labelFormatDetail'),
+                          // onClick: () => window.open(),
+                        })
+                      }
+                    />
+                  </p>
+                }
                 labelCol={{
                   span: 6,
                 }}
@@ -258,7 +273,9 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 style={{
                   fontSize: '1.5rem',
                   display:
-                    createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
+                    createInfo[props.taskCategory].labelFormats != undefined && !projectId
+                      ? undefined
+                      : 'none',
                 }}
               >
                 <Radio.Group
@@ -312,7 +329,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 </Radio.Group>
               </Form.Item>
 
-              <Form.Item
+              {/* <Form.Item
                 name="maxPoints"
                 label={intl('maxPoints')}
                 labelCol={{
@@ -338,7 +355,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                   placeholder="Numbers (Int)"
                   style={{ height: '3.13rem' }}
                 />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item
                 wrapperCol={{
                   span: 16,
