@@ -154,8 +154,6 @@ const PaddleAi: React.FC = () => {
       labelIdMap.set(labelItems.labelId, '');
     });
     items2.forEach((items) => {
-      console.log('items', items);
-
       if (!items.labelId) {
         onLabelAdd(items);
       }

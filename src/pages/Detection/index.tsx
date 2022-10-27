@@ -245,8 +245,8 @@ const Page = () => {
     }
   }, [isClick]);
   useUpdateEffect(() => {
-    setotherSetting(project.curr?.otherSettings);
-    if (isLoad) {
+    // debugger;
+    if (isLoad && project.curr?.otherSettings?.labelMapping) {
       if (model.loading) {
         message.error(tbIntl('modelLoading'));
         return;
@@ -269,6 +269,8 @@ const Page = () => {
           }
         },
       );
+    } else {
+      setotherSetting(project.curr?.otherSettings);
     }
     // setInteractorData({ active: true, predictData: [], mousePoints: [] });
   }, [isLoad, project.curr?.otherSettings]);
@@ -280,7 +282,7 @@ const Page = () => {
   }, [isLoading, isLoad, image]);
   useUpdateEffect(() => {
     console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
-    if (interactorData.predictData.length && otherSetting) {
+    if (interactorData.predictData.length && otherSetting?.labelMapping) {
       const labels = new Set();
       const oldLabel = new Map();
       for (const labelItem of label.all) {
@@ -307,7 +309,7 @@ const Page = () => {
     }
   }, [interactorData, otherSetting]);
   useUpdateEffect(() => {
-    if (interactorData.predictData.length && label.all.length && otherSetting) {
+    if (interactorData.predictData.length && label.all.length && otherSetting?.labelMapping) {
       const labels = new Map();
       for (const labelItem of label.all) {
         labels.set(labelItem.name, labelItem);
@@ -316,7 +318,7 @@ const Page = () => {
       const labelMapping = new Map();
       // eslint-disable-next-line @typescript-eslint/no-shadow
       let frontendId = annotation.all?.length ? getMaxFrontendId(annotation.all) + 1 : 1;
-      if (otherSetting.labelMapping.length > 0) {
+      if (otherSetting?.labelMapping?.length > 0) {
         for (const labelMaps of otherSetting.labelMapping) {
           labelMapping.set(labelMaps.model, labelMaps.project);
         }
@@ -507,6 +509,7 @@ const Page = () => {
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/intelligent_interaction.png"
+          disabled={!otherSetting?.labelMapping}
           onClick={() => {
             onPredicted(image);
           }}
