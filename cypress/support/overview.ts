@@ -43,25 +43,48 @@ export const overview = {
       cy.g('global.cancel').click();
     }
   },
-  export: (pjId: number, exportPath: string) => {
+  // export: (pjId: number, exportPath: string) => {
+  //   overview.to(pjId);
+  //   overview.toExport();
+
+  //   // empty export path
+  //   cy.g('component.PPExportModal.export').click();
+  //   cy.g('component.PPExportModal.pathNotNull').should('be.visible');
+  //   cy.g('component.PPExportModal.export').should('be.visible'); // modal shouldn't close
+
+  //   // type not absolute path
+  //   cy.get('#basic_path')
+  //     .clear()
+  //     .type('./' + exportPath);
+  //   cy.g('component.PPExportModal.export').click();
+  //   cy.contains('Only supports absolute path').should('be.visible');
+  //   cy.g('component.PPExportModal.export').should('be.visible'); // modal shouldn't close
+
+  //   // correct path, should success
+  //   cy.get('#basic_path').clear().type(exportPath);
+  //   cy.g('component.PPExportModal.export').click();
+  //   cy.g('component.PPExportModal.exportSuccess').should('be.visible'); // should show success message
+  //   cy.g('component.PPExportModal.export').should('not.be.visible'); // modal should close
+  // },
+  export: (pjId: number, exportPath: string, exportFormat: string) => {
     overview.to(pjId);
     overview.toExport();
 
     // empty export path
     cy.g('component.PPExportModal.export').click();
-    cy.g('component.PPExportModal.pathNotNull').should('be.visible');
+    cy.g('component.PPExportModal.nullPath').should('be.visible');
     cy.g('component.PPExportModal.export').should('be.visible'); // modal shouldn't close
 
-    // type not absolute path
-    cy.get('#basic_path')
-      .clear()
-      .type('./' + exportPath);
-    cy.g('component.PPExportModal.export').click();
-    cy.contains('Only supports absolute path').should('be.visible');
-    cy.g('component.PPExportModal.export').should('be.visible'); // modal shouldn't close
-
-    // correct path, should success
+    // input correct path
     cy.get('#basic_path').clear().type(exportPath);
+
+    // omit choosing export format
+    cy.g('component.PPExportModal.nullLabelFormat').should('be.visible');
+    cy.g('component.PPExportModal.export').should('be.visible'); // modal shouldn't close
+
+    // choose format
+    cy.g('global.labelFormat.' + exportFormat).click();
+
     cy.g('component.PPExportModal.export').click();
     cy.g('component.PPExportModal.exportSuccess').should('be.visible'); // should show success message
     cy.g('component.PPExportModal.export').should('not.be.visible'); // modal should close

@@ -78,6 +78,7 @@ export default {
 
   'component.PPImportModal.title': '导入额外数据',
   'component.PPImportModal.path': '额外数据路径',
+  'component.PPImportModal.labelFormat': '数据标注格式',
   'component.PPImportModal.import': '导入',
   'component.PPImportModal.nullPath': '额外数据路径不能为空',
 
