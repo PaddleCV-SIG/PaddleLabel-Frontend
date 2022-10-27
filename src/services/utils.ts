@@ -258,6 +258,9 @@ export const ProjectUtils = (useState: UseStateType) => {
       serviceUtils.parseError(err, message);
     });
   }
+  function setAllPredicted(predicted: boolean) {
+    taskApi.setAll(curr.projectId, { dataPredicted: predicted });
+  }
   return {
     all,
     getAll,
@@ -269,6 +272,7 @@ export const ProjectUtils = (useState: UseStateType) => {
     finished,
     getFinished,
     predict,
+    setAllPredicted,
   };
 };
 

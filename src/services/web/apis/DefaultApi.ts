@@ -13,13 +13,8 @@
  */
 
 import * as runtime from '../runtime';
-import type { Points2polygonRequest, SetAllRequest } from '../models';
-import {
-  Points2polygonRequestFromJSON,
-  Points2polygonRequestToJSON,
-  SetAllRequestFromJSON,
-  SetAllRequestToJSON,
-} from '../models';
+import type { Points2polygonRequest } from '../models';
+import { Points2polygonRequestFromJSON, Points2polygonRequestToJSON } from '../models';
 
 export interface Points2polygonOperationRequest {
   points2polygonRequest?: Points2polygonRequest;
@@ -27,11 +22,6 @@ export interface Points2polygonOperationRequest {
 
 export interface PrintDebugIdRequest {
   debugId: string;
-}
-
-export interface SetAllOperationRequest {
-  projectId: string;
-  setAllRequest?: SetAllRequest;
 }
 
 /**
@@ -121,53 +111,5 @@ export class DefaultApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.printDebugIdRaw({ debugId: debugId }, initOverrides);
-  }
-
-  /**
-   *
-   */
-  async setAllRaw(
-    requestParameters: SetAllOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<void>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling setAll.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    headerParameters['Content-Type'] = 'application/json';
-
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}/tasks`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'PUT',
-        headers: headerParameters,
-        query: queryParameters,
-        body: SetAllRequestToJSON(requestParameters.setAllRequest),
-      },
-      initOverrides,
-    );
-
-    return new runtime.VoidApiResponse(response);
-  }
-
-  /**
-   *
-   */
-  async setAll(
-    projectId: string,
-    setAllRequest?: SetAllRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<void> {
-    await this.setAllRaw({ projectId: projectId, setAllRequest: setAllRequest }, initOverrides);
   }
 }

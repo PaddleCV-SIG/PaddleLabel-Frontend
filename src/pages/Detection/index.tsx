@@ -238,6 +238,7 @@ const Page = () => {
         }
       }
     }
+    project.setAllPredicted(true);
   }, [data.all]);
   useEffect(() => {
     if (!isClick) {
