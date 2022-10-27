@@ -13,7 +13,7 @@
  */
 
 import * as runtime from '../runtime';
-import type { AddTagRequest, Annotation, Data, SetAllRequest, Tag, Task } from '../models';
+import type { AddTagRequest, Annotation, Data, Tag, Task } from '../models';
 import {
   AddTagRequestFromJSON,
   AddTagRequestToJSON,
@@ -21,8 +21,6 @@ import {
   AnnotationToJSON,
   DataFromJSON,
   DataToJSON,
-  SetAllRequestFromJSON,
-  SetAllRequestToJSON,
   TagFromJSON,
   TagToJSON,
   TaskFromJSON,
@@ -57,11 +55,6 @@ export interface GetTagsRequest {
 
 export interface RemoveRequest {
   taskId: string;
-}
-
-export interface SetAllOperationRequest {
-  projectId: string;
-  setAllRequest?: SetAllRequest;
 }
 
 export interface UpdateRequest {
@@ -432,54 +425,6 @@ export class TaskApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.removeRaw({ taskId: taskId }, initOverrides);
-  }
-
-  /**
-   *
-   */
-  async setAllRaw(
-    requestParameters: SetAllOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<void>> {
-    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
-      throw new runtime.RequiredError(
-        'projectId',
-        'Required parameter requestParameters.projectId was null or undefined when calling setAll.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    headerParameters['Content-Type'] = 'application/json';
-
-    const response = await this.request(
-      {
-        path: `/projects/{project_id}/tasks`.replace(
-          `{${'project_id'}}`,
-          encodeURIComponent(String(requestParameters.projectId)),
-        ),
-        method: 'PUT',
-        headers: headerParameters,
-        query: queryParameters,
-        body: SetAllRequestToJSON(requestParameters.setAllRequest),
-      },
-      initOverrides,
-    );
-
-    return new runtime.VoidApiResponse(response);
-  }
-
-  /**
-   *
-   */
-  async setAll(
-    projectId: string,
-    setAllRequest?: SetAllRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<void> {
-    await this.setAllRaw({ projectId: projectId, setAllRequest: setAllRequest }, initOverrides);
   }
 
   /**

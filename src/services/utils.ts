@@ -259,7 +259,7 @@ export const ProjectUtils = (useState: UseStateType) => {
     });
   }
   function setAllPredicted(predicted: boolean) {
-    taskApi.setAll(curr.projectId, { dataPredicted: predicted });
+    projectApi.setAll(curr.projectId, { dataPredicted: predicted });
   }
   return {
     all,
