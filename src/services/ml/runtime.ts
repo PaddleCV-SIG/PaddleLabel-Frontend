@@ -31,7 +31,7 @@ export interface ConfigurationParameters {
 }
 
 export class Configuration {
-  constructor(public configuration: ConfigurationParameters = {}) {}
+  constructor(private configuration: ConfigurationParameters = {}) {}
 
   set config(configuration: Configuration) {
     this.configuration = configuration;
@@ -94,7 +94,7 @@ export const DefaultConfig = new Configuration();
 export class BaseAPI {
   private middleware: Middleware[];
 
-  constructor(public configuration = DefaultConfig) {
+  constructor(protected configuration = DefaultConfig) {
     this.middleware = configuration.middleware;
   }
 
