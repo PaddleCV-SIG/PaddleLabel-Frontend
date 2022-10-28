@@ -36,7 +36,7 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
         const currPjId = catgInfo[catg][labelFormat];
         yield overviewIt.split50(currPjId);
         yield overviewIt.split100(currPjId);
-        yield overviewIt.export(currPjId, `${config.sampleBaseDir}/export/dummy`);
+        yield overviewIt.export(currPjId, `${config.sampleBaseDir}/export/dummy`, labelFormat);
       }
     }),
   ];

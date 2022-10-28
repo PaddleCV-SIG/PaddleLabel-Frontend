@@ -112,11 +112,11 @@ export const overviewIt = {
       func: () => overview.to(pjId),
     };
   },
-  export: (pjId: number, exportPath: string) => {
+  export: (pjId: number, exportPath: string, labelFormat: string) => {
     return {
       name: `Export pj ${pjId} to ${exportPath}`,
       func: () => {
-        overview.export(pjId, exportPath);
+        overview.export(pjId, exportPath, labelFormat);
       },
     };
   },
