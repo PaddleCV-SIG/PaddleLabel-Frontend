@@ -258,8 +258,8 @@ export const ProjectUtils = (useState: UseStateType) => {
       serviceUtils.parseError(err, message);
     });
   }
-  function setAllPredicted(predicted: boolean) {
-    projectApi.setAll(curr.projectId, { dataPredicted: predicted });
+  function setAllPredicted(predicted: boolean, projectId: string) {
+    projectApi.setAll(projectId, { dataPredicted: predicted });
   }
   return {
     all,
@@ -513,7 +513,7 @@ export function AnnotationUtils(
     }
   }
 
-  const create = async (annotation: Annotation | Annotation[]) => {
+  const create = async (annotation: Annotation | Annotation[], deduplicate?: boolean) => {
     // console.log('create label', annotation.label);
     const prepAnn = (anno: Annotation) => {
       const ann = { ...anno };
@@ -524,7 +524,11 @@ export function AnnotationUtils(
     try {
       const anns = annotation instanceof Array ? annotation.map(prepAnn) : [prepAnn(annotation)];
       console.log('asdfasdf', anns);
-      await annotationApi.create(anns);
+      if (deduplicate) {
+        await annotationApi.create(anns, deduplicate);
+      } else {
+        await annotationApi.create(anns);
+      }
       let annRes: Annotation[] = [];
       // sync anns from backend
       if (anns[0].dataId) annRes = await getAll(anns[0].dataId);

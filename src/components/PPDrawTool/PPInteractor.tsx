@@ -347,6 +347,7 @@ export function ectInteractorToAnnotation(
   result?: string,
   dataId?: number,
   label?: Label,
+  predictedBy?: string,
 ): Annotation | null {
   if (!dataId || !label || !result) return null;
   const anno = {
@@ -356,7 +357,7 @@ export function ectInteractorToAnnotation(
     frontendId: frontendId,
     result: result,
     type: 'rectangle',
-    predictedBy: 'PicoDet',
+    predictedBy: predictedBy,
   };
 
   return anno;

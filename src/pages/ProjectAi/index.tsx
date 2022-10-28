@@ -195,6 +195,7 @@ const PaddleAi: React.FC = () => {
       addLabels();
       history.push(`/project_overview?projectId=${projectId}`);
     });
+    project.setAllPredicted(false, projectId);
   };
   useEffect(() => {
     if (projectId) {

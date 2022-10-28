@@ -169,6 +169,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
       }
       const newAnno = {
         ...annotation,
+        predicted_by: null,
         result: `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`,
       };
       props.onDrag(newAnno);

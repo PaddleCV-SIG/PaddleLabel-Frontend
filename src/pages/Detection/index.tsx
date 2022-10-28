@@ -3,7 +3,6 @@ import { useUpdateEffect } from 'ahooks';
 import { Spin, message } from 'antd';
 import { history, useModel } from 'umi';
 import styles from './index.less';
-import useImage from 'use-image';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
@@ -100,7 +99,6 @@ const Page = () => {
     setCurrentAnnotation(anno);
     annotation.setAll(newAnnos);
   };
-  const [image] = useImage(data.imgSrc || '', 'anonymous');
   function onStartEdit() {
     setisClick(true);
   }
@@ -165,8 +163,6 @@ const Page = () => {
     return max;
   };
   const onPredicted = (images: HTMLImageElement) => {
-    // debugger;
-    console.log('page.current?.image', image, page.current?.scaleImage);
     const imgBase64 = getBase64Image(images);
     const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
     const line = model.predict('PicoDet', {
@@ -179,14 +175,6 @@ const Page = () => {
         if (res) {
           const predictions = res.predictions.map((item) => {
             if (item.score > thresholdRaw) {
-              // return item;
-              // const results = item.result.split(',').map((items) => {
-              //   // debugger;
-              //   const newitems = parseInt(items * page.current?.scaleImage);
-              //   return newitems;
-              // });
-              // item.result = results.join(',');
-              // debugger;
               return item;
             }
           });
@@ -238,7 +226,6 @@ const Page = () => {
         }
       }
     }
-    project.setAllPredicted(true);
   }, [data.all]);
   useEffect(() => {
     if (!isClick) {
@@ -276,14 +263,14 @@ const Page = () => {
     // setInteractorData({ active: true, predictData: [], mousePoints: [] });
   }, [isLoad, project.curr?.otherSettings]);
   useUpdateEffect(() => {
-    const predictflag = !isLoading && image && isLoad;
+    const predictflag = !isLoading && page.current?.image && isLoad;
     if (predictflag) {
-      onPredicted(image);
+      onPredicted(page.current?.image);
     }
-  }, [isLoading, isLoad, image]);
+  }, [isLoading, isLoad, page.current?.image]);
   useUpdateEffect(() => {
     console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
-    if (interactorData.predictData.length && otherSetting?.labelMapping) {
+    if (interactorData.predictData.length && otherSetting?.labelMapping && label.all) {
       const labels = new Set();
       const oldLabel = new Map();
       for (const labelItem of label.all) {
@@ -310,7 +297,7 @@ const Page = () => {
     }
   }, [interactorData, otherSetting]);
   useUpdateEffect(() => {
-    if (interactorData.predictData.length && label.all.length && otherSetting?.labelMapping) {
+    if (interactorData.predictData.length && label.all?.length && otherSetting?.labelMapping) {
       const labels = new Map();
       for (const labelItem of label.all) {
         labels.set(labelItem.name, labelItem);
@@ -335,6 +322,7 @@ const Page = () => {
           }
           const labelitem = labels.get(name);
           const result = item.result;
+          const predictedBy = otherSetting.modelName;
           // debugger;
           // saveInteractorData(labelitem, item.result);
           if (interactorData.active) {
@@ -344,6 +332,7 @@ const Page = () => {
               result,
               data.curr?.dataId,
               labelitem,
+              predictedBy,
             );
             if (anno) {
               annos.push(anno);
@@ -352,7 +341,8 @@ const Page = () => {
           }
         }
       });
-      annotation.create(annos);
+      const deduplicate = true;
+      annotation.create(annos, deduplicate);
       // debugger;
     }
   }, [label.all, interactorData.predictData, otherSetting]);
@@ -458,7 +448,6 @@ const Page = () => {
               ref={page}
               scale={scale.curr}
               scaleChange={scale.change}
-              image={image}
               annotations={annotation.all}
               currentTool={tool.curr}
               currentAnnotation={annotation.curr}
@@ -516,7 +505,7 @@ const Page = () => {
           imgSrc="./pics/buttons/intelligent_interaction.png"
           disabled={!otherSetting?.labelMapping}
           onClick={() => {
-            onPredicted(image);
+            onPredicted(page.current?.image);
           }}
         >
           {tbIntl('interactor')}

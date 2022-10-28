@@ -86,8 +86,8 @@ export class AnnotationApi extends runtime.BaseAPI {
    */
   async create(
     annotation: Array<Annotation>,
-    requestId?: string,
     deduplicate?: boolean,
+    requestId?: string,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Annotation>> {
     const response = await this.createRaw(

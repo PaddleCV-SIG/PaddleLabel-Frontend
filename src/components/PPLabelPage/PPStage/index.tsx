@@ -73,6 +73,7 @@ export type PPStageProps = {
 };
 
 const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
+  const [image] = useImage(imgSrc || '', 'anonymous');
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   const interactorData = useModel('InteractorData', (x) => x.interactorData);
   const radius = useModel('VisualRadius', (x) => x.radius);
@@ -93,7 +94,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
   const [imageWidth, setimageWidth] = useState<number>(500);
   const [imageHeight, setimageHeight] = useState<number>(500);
-  const [scaleImage, setscaleImage] = useState<number>(0);
   const [shapes, setShapes] = useState<any[]>([]);
   const [dragEndPos, setDragEndPos] = useState({ x: 0, y: 0 });
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
@@ -127,38 +127,34 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     }
   }, []);
   useEffect(() => {
-    if (
-      canvasHeight &&
-      canvasWidth &&
-      props.image &&
-      typeof props.image !== 'string' &&
-      props.scaleChange
-    ) {
-      const imagewidth = props.image?.width || 0;
-      const imageheight = props.image?.height || 0;
+    if (image?.height && image?.width) {
+      saveDrawingSurface();
+    }
+  }, [image?.height, image?.width]);
+  useEffect(() => {
+    // debugger;
+    if (canvasHeight && canvasWidth && image && typeof image !== 'string' && props.scaleChange) {
+      const imagewidth = image?.width || 0;
+      const imageheight = image?.height || 0;
       const W = imagewidth > imageheight ? true : false;
       const scaleImages = W ? canvasWidth / imagewidth : canvasHeight / imagewidth;
       const scales = scaleImages - 1;
       props.scaleChange(scales);
-      setimageHeight(parseInt(imageheight));
-      setimageWidth(parseInt(imagewidth));
+      // debugger;
+      setimageHeight(imageheight);
+      setimageWidth(imagewidth);
       // const imageWidth1 = W ? canvasWidth : (canvasHeight / imageheight) * imagewidth;
       // const imageHeight1 = W ? (canvasWidth / imagewidth) * imageheight : canvasHeight;
-      // props.image?.setAttribute('width', imageWidth1 + 'px');
-      // props.image?.setAttribute('height', imageHeight1 + 'px');
+      // image?.setAttribute('width', imageWidth1 + 'px');
+      // image?.setAttribute('height', imageHeight1 + 'px');
       // console.log('imagewidth', imageWidth1);
       // setscaleImage(scaleImages);
     }
-  }, [canvasHeight, canvasWidth, props.image]);
+  }, [canvasHeight, canvasWidth, image]);
   useEffect(() => {
     if (!stageRef.current) return;
     stageRef.current.container().style.cursor = getPointer(props.currentTool);
   }, [props.currentTool]);
-  useEffect(() => {
-    if (props.image?.height) {
-      saveDrawingSurface();
-    }
-  }, [props.image?.height, props.image?.width]);
   const renderReact = (endPos: any) => {
     const width = Math.abs(startPos.x - endPos.x);
     const height = Math.abs(startPos.y - endPos.y);
@@ -190,8 +186,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   }
   function saveDrawingSurface() {
     const ctx = canvasRef.current?.getContext('2d');
-    console.log('ctx', ctx);
     if (canvasRef?.current?.width && canvasRef?.current?.height) {
+      console.log('ctx', ctx);
       const drawingSurfaceImageDatas = ctx?.getImageData(
         0,
         0,
@@ -210,7 +206,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       offsetY: -imageHeight / 2,
       canvasRef: canvasRef,
       stageRef: stageRef,
-      img: props.image,
+      img: image,
     };
   };
 
@@ -364,10 +360,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
 
   const draggable = props.currentTool == 'mover';
   useImperativeHandle(ref, () => ({
-    scaleImage,
+    image,
     setDragEndPos,
   }));
-  console.log('props.image?.width', props.image?.width, imageWidth);
+  console.log('image?.width', image?.width, imageWidth);
 
   return (
     <div
@@ -429,7 +425,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           <Image
             name="baseImage"
             draggable={false}
-            image={props.image?.width === imageWidth ? props.image : undefined}
+            image={image?.width === imageWidth ? image : undefined}
             x={-(imageWidth || 0) / 2}
             y={-(imageHeight || 0) / 2}
           />

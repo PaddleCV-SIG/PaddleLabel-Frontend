@@ -88,28 +88,36 @@ const Page: React.FC = () => {
     }
   };
   const savefinlyList = () => {
-    if (annotation.all) {
+    if (annotation.all?.length > 0) {
       console.log('annotation.all', annotation.all);
       const frontendId = new Map();
       const items: Annotation[] = [];
       if (isLabel !== 'label') {
-        for (const anno of annotation.all) {
+        annotation.all.forEach((anno) => {
           const myColor = ColorMaker.GetColor(anno.frontendId);
           const items = JSON.parse(JSON.stringify(anno));
           items.label.color = '#' + myColor.Color;
           frontendId.set(anno.frontendId, items);
-        }
+        });
       } else {
-        for (const anno of annotation.all) {
+        annotation.all.forEach((anno) => {
+          console.log('debuggerannos', anno);
+          // debugger;
           frontendId.set(anno.frontendId, anno);
-        }
+        });
+        // for (const anno of annotation.all) {
+        //   console.log('debuggerannos', anno);
+        //   debugger;
+        //   frontendId.set(anno.frontendId, anno);
+        // }
       }
       frontendId.forEach((anno: Annotation) => {
-        console.log('annos', anno.type);
+        // console.log('annos', anno.type);
 
-        if (anno.type === 'brush') {
-          items.push(anno);
-        }
+        // if (anno.type === 'brush') {
+        //   items.push(anno);
+        // }
+        items.push(anno);
       });
       console.log('items', items);
 
@@ -122,7 +130,7 @@ const Page: React.FC = () => {
   }, []);
   // 初始用来判断执行增不增加
   useEffect(() => {
-    // console.log('useEffect函数执行了', annotation.all);
+    console.log('useEffect函数执行了', annotation.all);
     savefinlyList();
   }, [loading.curr, isLabel]);
   useEffect(() => {
@@ -401,6 +409,7 @@ const Page: React.FC = () => {
             <PPStage
               ref={page}
               scale={scale.curr}
+              scaleChange={scale.change}
               annotations={isLabel == 'label' ? annotation.all : newAnnotation ? newAnnotation : []}
               currentTool={tool.curr}
               labels={label.all}
