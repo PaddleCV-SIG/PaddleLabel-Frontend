@@ -18,6 +18,7 @@ export * from './Project';
 export * from './ProjectOtherSettings';
 export * from './ProjectOtherSettingsLabelMappingInner';
 export * from './ProjectOtherSettingsModelSettingsValue';
+export * from './SetAllRequest';
 export * from './SplitDataset200Response';
 export * from './SplitDatasetRequest';
 export * from './Tag';

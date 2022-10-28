@@ -29,6 +29,7 @@ models/Project.ts
 models/ProjectOtherSettings.ts
 models/ProjectOtherSettingsLabelMappingInner.ts
 models/ProjectOtherSettingsModelSettingsValue.ts
+models/SetAllRequest.ts
 models/SplitDataset200Response.ts
 models/SplitDatasetRequest.ts
 models/Tag.ts

@@ -69,17 +69,17 @@ export const createInfo = {
     id: 4,
     labelFormats: { mask: 'Mask', polygon: 'Polygon' },
   },
-  // keypointDetection: {
-  //   name: 'Keypoint Detection',
-  //   avatar: './pics/keypoint_detection.jpg',
-  //   id: 5,
-  // },
-
-  opticalCharacterRecognition: {
-    name: 'OCR',
+  keypointDetection: {
+    name: 'Keypoint Detection',
     avatar: './pics/keypoint_detection.jpg',
-    id: 7,
+    id: 5,
   },
+
+  // opticalCharacterRecognition: {
+  //   name: 'OCR',
+  //   avatar: './pics/keypoint_detection.jpg',
+  //   id: 7,
+  // },
 };
 
 // TODO: all should default to undefined or []
@@ -258,6 +258,9 @@ export const ProjectUtils = (useState: UseStateType) => {
       serviceUtils.parseError(err, message);
     });
   }
+  function setAllPredicted(predicted: boolean) {
+    projectApi.setAll(curr.projectId, { dataPredicted: predicted });
+  }
   return {
     all,
     getAll,
@@ -269,6 +272,7 @@ export const ProjectUtils = (useState: UseStateType) => {
     finished,
     getFinished,
     predict,
+    setAllPredicted,
   };
 };
 

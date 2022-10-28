@@ -113,7 +113,6 @@ export function TaskToJSON(value?: Task | null): any {
   if (value === null) {
     return null;
   }
-  debugger;
   return {
     project_id: value.projectId,
     data_paths: value.dataPaths,

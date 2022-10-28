@@ -315,7 +315,9 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 style={{
                   fontSize: '1.5rem',
                   display:
-                    labelFormat == 'mask' && props.taskCategory == 'semanticSegmentation'
+                    !projectId &&
+                    labelFormat == 'mask' &&
+                    props.taskCategory == 'semanticSegmentation'
                       ? undefined
                       : 'none',
                 }}

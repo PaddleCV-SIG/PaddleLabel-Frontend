@@ -19,6 +19,48 @@ export default {
   'component.PPCreater.folderStructureSampleDetail':
     'If the dataset to be imported contains annotations, please arrange files in the folder following the above example',
 
+  'component.PPDivideDataModal.train': 'Train',
+  'component.PPDivideDataModal.validation': 'Validation',
+  'component.PPDivideDataModal.test': 'Test',
+  'component.PPDivideDataModal.success': 'Dataset Splited',
+
+  // 'component.PPExportModal.imagenet': 'Imagenet Format',
+  'component.PPExportModal.export': 'Export',
+  'component.PPExportModal.labelFormat': 'Export Format',
+  'component.PPExportModal.title': 'Export Dataset',
+  'component.PPExportModal.path': 'Export Path',
+  'component.PPExportModal.nullPath': 'Export path cannot be empty.',
+  'component.PPExportModal.nullLabelFormat': 'Please choose an export format.',
+  'component.PPExportModal.exportSuccess': 'Export Success',
+
+  'component.PPSplitDataset.title': 'Split Dataset',
+  'component.PPSplitDataset.train': 'Training',
+  'component.PPSplitDataset.validation': 'Validation',
+  'component.PPSplitDataset.test': 'Test',
+  'component.PPSplitDataset.success': 'Dataset is randomly splitted',
+  'component.PPSplitDataset.fail': 'Train, Validation and Test percentage should sum up to 100!',
+
+  'component.PPImportModal.import': 'Import',
+  'component.PPImportModal.title': 'Import Additional Data',
+  'component.PPImportModal.path': 'Data Path',
+  'component.PPImportModal.labelFormat': 'Data Format',
+  'component.PPImportModal.nullPath': 'Import path cannot be null',
+  'component.PPInteractorModal.title': 'Interactor Settings',
+  'component.PPInteractorModal.mlBackendUrl': 'ML Backend URL',
+  'component.PPInteractorModal.modelPath': 'Model File Path',
+  'component.PPInteractorModal.weightPath': 'Weight File Path',
+  'component.PPInteractorModal.pathPh': 'Leave blank for default or fill in absolute path',
+  'component.PPInteractorModal.settingSaved':
+    'Interactor settings configured. Model will take about 1 minute to load.',
+  'component.PPInteractorModal.modelLoaded': 'Model is loaded, you can start using interactor now!',
+  'component.PPInteractorModal.loadFail':
+    'Loading model failed. Please make sure 1. ML backend is up and running 2.You have entered the correct backend url',
+
+  'component.history.noNext': 'No next history',
+  'component.history.noPrev': 'No previous history',
+
+  'component.label.deleteSuccess': 'Successfully deleted label',
+
   'component.PPAddLabelModal.selectColor': 'Select Color',
   'component.PPAddLabelModal.addLabel': 'Add Label',
   'component.PPAddLabelModal.labelName': 'Label Name',
@@ -59,44 +101,4 @@ export default {
   'component.PPSegMode.remoteSensing': 'Remote Sensing',
   'component.PPSegMode.changeDetection': 'Change Detection',
   'component.PPSegMode.ok': 'OK',
-  'component.PPDivideDataModal.train': 'Train',
-  'component.PPDivideDataModal.validation': 'Validation',
-  'component.PPDivideDataModal.test': 'Test',
-  'component.PPDivideDataModal.success': 'Dataset Splited',
-
-  // 'component.PPExportModal.imagenet': 'Imagenet Format',
-  'component.PPExportModal.export': 'Export',
-  'component.PPExportModal.labelFormat': 'Export Format',
-  'component.PPExportModal.title': 'Export Dataset',
-  'component.PPExportModal.path': 'Export Path',
-  'component.PPExportModal.nullPath': 'Export path cannot be empty.',
-  'component.PPExportModal.nullLabelFormat': 'Please choose an export format.',
-  'component.PPExportModal.exportSuccess': 'Export Success',
-
-  'component.PPSplitDataset.title': 'Split Dataset',
-  'component.PPSplitDataset.train': 'Training',
-  'component.PPSplitDataset.validation': 'Validation',
-  'component.PPSplitDataset.test': 'Test',
-  'component.PPSplitDataset.success': 'Dataset is randomly splitted',
-  'component.PPSplitDataset.fail': 'Train, Validation and Test percentage should sum up to 100!',
-
-  'component.PPImportModal.import': 'Import',
-  'component.PPImportModal.title': 'Import Additional Data',
-  'component.PPImportModal.path': 'Data Path',
-
-  'component.PPInteractorModal.title': 'Interactor Settings',
-  'component.PPInteractorModal.mlBackendUrl': 'ML Backend URL',
-  'component.PPInteractorModal.modelPath': 'Model File Path',
-  'component.PPInteractorModal.weightPath': 'Weight File Path',
-  'component.PPInteractorModal.pathPh': 'Leave blank for default or fill in absolute path',
-  'component.PPInteractorModal.settingSaved':
-    'Interactor settings configured. Model will take about 1 minute to load.',
-  'component.PPInteractorModal.modelLoaded': 'Model is loaded, you can start using interactor now!',
-  'component.PPInteractorModal.loadFail':
-    'Loading model failed. Please make sure 1. ML backend is up and running 2.You have entered the correct backend url',
-
-  'component.history.noNext': 'No next history',
-  'component.history.noPrev': 'No previous history',
-
-  'component.label.deleteSuccess': 'Successfully deleted label',
 };

@@ -18,6 +18,13 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
   const [visible, setVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
 
+  const taskCategory = snake2camel(props.project?.taskCategory?.name);
+  const labelFormats =
+    taskCategory && createInfo[taskCategory]?.labelFormats
+      ? Object.keys(createInfo[taskCategory].labelFormats)
+      : [];
+  const [labelFormat, setLabelFormat] = useState<string>();
+
   return (
     <span hidden={props.visible == false}>
       <Button type="primary" onClick={() => setVisible(true)}>
@@ -74,13 +81,41 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
               //   createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
             }}
           >
-            <Radio.Group size="large" style={{ height: '3.13rem' }}>
-              {(props.project && createInfo[props.project?.taskCategory?.name]?.labelFormats
-                ? Object.keys(createInfo[props.project?.taskCategory?.name]?.labelFormats)
-                : []
-              ).map((k) => (
+            <Radio.Group
+              size="large"
+              style={{ height: '3.13rem' }}
+              onChange={() => {
+                setLabelFormat(form.getFieldValue('labelFormat'));
+              }}
+            >
+              {labelFormats.map((k) => (
                 <Radio key={k} value={k}>
                   {intlJsx(snake2camel(k), 'global.labelFormat')}
+                </Radio>
+              ))}
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            name="segMaskType"
+            label={intl('segMaskType', 'component.PPCreater')}
+            labelCol={{
+              span: 6,
+            }}
+            wrapperCol={{
+              span: 16,
+            }}
+            style={{
+              fontSize: '1.5rem',
+              display:
+                labelFormat == 'mask' && taskCategory == 'semanticSegmentation'
+                  ? undefined
+                  : 'none',
+            }}
+          >
+            <Radio.Group size="large" style={{ height: '3.13rem' }}>
+              {['pesudo', 'grayscale'].map((k) => (
+                <Radio key={k} value={k}>
+                  {intlJsx(k, 'global.segMaskType')}
                 </Radio>
               ))}
             </Radio.Group>

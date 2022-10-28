@@ -12,85 +12,104 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  Points2polygonRequest,
-} from '../models';
-import {
-    Points2polygonRequestFromJSON,
-    Points2polygonRequestToJSON,
-} from '../models';
+import type { Points2polygonRequest } from '../models';
+import { Points2polygonRequestFromJSON, Points2polygonRequestToJSON } from '../models';
 
 export interface Points2polygonOperationRequest {
-    points2polygonRequest?: Points2polygonRequest;
+  points2polygonRequest?: Points2polygonRequest;
 }
 
 export interface PrintDebugIdRequest {
-    debugId: string;
+  debugId: string;
 }
 
 /**
- * 
+ *
  */
 export class DefaultApi extends runtime.BaseAPI {
+  /**
+   *
+   */
+  async points2polygonRaw(
+    requestParameters: Points2polygonOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Array<string>>> {
+    const queryParameters: any = {};
 
-    /**
-     * 
-     */
-    async points2polygonRaw(requestParameters: Points2polygonOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<string>>> {
-        const queryParameters: any = {};
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    headerParameters['Content-Type'] = 'application/json';
 
-        headerParameters['Content-Type'] = 'application/json';
+    const response = await this.request(
+      {
+        path: `/rpc/seg/points2polygon`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: Points2polygonRequestToJSON(requestParameters.points2polygonRequest),
+      },
+      initOverrides,
+    );
 
-        const response = await this.request({
-            path: `/rpc/seg/points2polygon`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: Points2polygonRequestToJSON(requestParameters.points2polygonRequest),
-        }, initOverrides);
+    return new runtime.JSONApiResponse<any>(response);
+  }
 
-        return new runtime.JSONApiResponse<any>(response);
+  /**
+   *
+   */
+  async points2polygon(
+    points2polygonRequest?: Points2polygonRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Array<string>> {
+    const response = await this.points2polygonRaw(
+      { points2polygonRequest: points2polygonRequest },
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async printDebugIdRaw(
+    requestParameters: PrintDebugIdRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.debugId === null || requestParameters.debugId === undefined) {
+      throw new runtime.RequiredError(
+        'debugId',
+        'Required parameter requestParameters.debugId was null or undefined when calling printDebugId.',
+      );
     }
 
-    /**
-     * 
-     */
-    async points2polygon(points2polygonRequest?: Points2polygonRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<string>> {
-        const response = await this.points2polygonRaw({ points2polygonRequest: points2polygonRequest }, initOverrides);
-        return await response.value();
-    }
+    const queryParameters: any = {};
 
-    /**
-     * Your GET endpoint
-     */
-    async printDebugIdRaw(requestParameters: PrintDebugIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.debugId === null || requestParameters.debugId === undefined) {
-            throw new runtime.RequiredError('debugId','Required parameter requestParameters.debugId was null or undefined when calling printDebugId.');
-        }
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        const queryParameters: any = {};
+    const response = await this.request(
+      {
+        path: `/debug/printid/{debug_id}`.replace(
+          `{${'debug_id'}}`,
+          encodeURIComponent(String(requestParameters.debugId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    return new runtime.VoidApiResponse(response);
+  }
 
-        const response = await this.request({
-            path: `/debug/printid/{debug_id}`.replace(`{${"debug_id"}}`, encodeURIComponent(String(requestParameters.debugId))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Your GET endpoint
-     */
-    async printDebugId(debugId: string, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.printDebugIdRaw({ debugId: debugId }, initOverrides);
-    }
-
+  /**
+   * Your GET endpoint
+   */
+  async printDebugId(
+    debugId: string,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.printDebugIdRaw({ debugId: debugId }, initOverrides);
+  }
 }

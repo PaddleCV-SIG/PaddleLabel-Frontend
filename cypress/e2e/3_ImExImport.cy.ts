@@ -42,8 +42,8 @@ describe('Test Import Export then Import Back', () => {
           yield {
             name: `Export ${catg} ${impFormat} pj to ${expFormat}`,
             func: () => {
-              detail.changeType(currPjId, expFormat);
-              overview.export(currPjId, exportPath);
+              // detail.changeType(currPjId, expFormat);
+              overview.export(currPjId, exportPath, expFormat);
             },
           };
         }
