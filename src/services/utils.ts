@@ -149,7 +149,7 @@ export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 10]) 
     let s: number = scale;
     if (s < range[0]) {
       s = range[0];
-      message.error(intl('smallestScale') + ': ' + range[0]);
+      // message.error(intl('smallestScale') + ': ' + range[0]);
     }
     if (s > range[1]) {
       s = range[1];
@@ -161,7 +161,7 @@ export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 10]) 
   function change(delta: number) {
     setScale(curr + delta);
   }
-  return { curr, change, setScale };
+  return { curr, change, setScale, setCurr };
 };
 
 export function ToolUtils(

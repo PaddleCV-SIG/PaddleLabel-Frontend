@@ -166,7 +166,7 @@ const Page = () => {
   };
   const onPredicted = (images: HTMLImageElement) => {
     // debugger;
-    console.log('page.current?.image', image, page.current?.image, page.current?.scaleImage);
+    console.log('page.current?.image', image, page.current?.scaleImage);
     const imgBase64 = getBase64Image(images);
     const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
     const line = model.predict('PicoDet', {
@@ -180,12 +180,12 @@ const Page = () => {
           const predictions = res.predictions.map((item) => {
             if (item.score > thresholdRaw) {
               // return item;
-              const results = item.result.split(',').map((items) => {
-                // debugger;
-                const newitems = parseInt(items * page.current?.scaleImage);
-                return newitems;
-              });
-              item.result = results.join(',');
+              // const results = item.result.split(',').map((items) => {
+              //   // debugger;
+              //   const newitems = parseInt(items * page.current?.scaleImage);
+              //   return newitems;
+              // });
+              // item.result = results.join(',');
               // debugger;
               return item;
             }
@@ -456,6 +456,8 @@ const Page = () => {
             <PPStage
               ref={page}
               scale={scale.curr}
+              scaleChange={scale.change}
+              image={image}
               annotations={annotation.all}
               currentTool={tool.curr}
               currentAnnotation={annotation.curr}
@@ -483,6 +485,7 @@ const Page = () => {
               if (!task.prevTask()) {
                 return;
               }
+              scale.setCurr(1);
               setCurrentAnnotation(undefined);
             }}
           />
@@ -493,6 +496,7 @@ const Page = () => {
               if (!task.nextTask()) {
                 return;
               }
+              scale.setCurr(1);
               setCurrentAnnotation(undefined);
             }}
           />
