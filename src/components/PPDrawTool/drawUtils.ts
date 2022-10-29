@@ -26,6 +26,7 @@ export type PPRenderFuncProps = {
     curr: ToolType;
     setCurr: (tool: ToolType) => void;
   };
+  selectFinly?: Annotation;
 };
 
 export type PPDrawToolProps = {

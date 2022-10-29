@@ -291,10 +291,11 @@ const PaddleAi: React.FC = () => {
                     width: '100%',
                   }}
                 >
-                  {model.all &&
+                  {/* {model.all &&
                     model.all?.map((item) => {
                       return <Option value={item.name}>{item.name}</Option>;
-                    })}
+                    })} */}
+                  <Option value="PicoDet">PicoDet</Option>;
                 </Select>
               </div>
             </Form.Item>
@@ -322,7 +323,7 @@ const PaddleAi: React.FC = () => {
               >
                 <div style={{ width: '6rem', marginRight: '2rem' }}>
                   <Button
-                    type="primary"
+                    type={isFlag ? 'primary' : 'default'}
                     block={true}
                     onClick={() => {
                       setisFlag(() => {
@@ -336,6 +337,7 @@ const PaddleAi: React.FC = () => {
                 <div style={{ width: '6rem' }}>
                   <Button
                     block={true}
+                    type={!isFlag ? 'primary' : 'default'}
                     onClick={() => {
                       setisFlag(() => {
                         return false;

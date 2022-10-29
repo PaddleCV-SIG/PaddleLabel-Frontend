@@ -73,7 +73,9 @@ export type PPStageProps = {
 };
 
 const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
-  const [image] = useImage(imgSrc || '', 'anonymous');
+  console.log();
+
+  const [image] = useImage(props.imgSrc);
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   const interactorData = useModel('InteractorData', (x) => x.interactorData);
   const radius = useModel('VisualRadius', (x) => x.radius);
@@ -127,10 +129,12 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     }
   }, []);
   useEffect(() => {
-    if (image?.height && image?.width) {
+    if (canvasRef?.current?.width && canvasRef?.current?.height) {
+      console.log('saveDrawingSurface函数执行了');
+
       saveDrawingSurface();
     }
-  }, [image?.height, image?.width]);
+  }, [canvasRef?.current?.width, canvasRef?.current?.height]);
   useEffect(() => {
     // debugger;
     if (canvasHeight && canvasWidth && image && typeof image !== 'string' && props.scaleChange) {
@@ -182,6 +186,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   };
   function restoreDrawingSurface(drawingSurfaceImageData: any) {
     const ctx = canvasRef.current?.getContext('2d');
+    console.log('drawingSurfaceImageData', drawingSurfaceImageData);
+
     ctx?.putImageData(drawingSurfaceImageData, 0, 0);
   }
   function saveDrawingSurface() {
@@ -228,7 +234,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
             result: results,
           };
           props.onAnnotationModify(anno);
-          // props.tool.setCurr('mover');
           props.setCurrentAnnotation(undefined);
         }
       } else {
@@ -254,8 +259,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
       const ctx = canvasRef.current?.getContext('2d');
       restoreDrawingSurface(DrawingSurfaceImageData);
-      const drawGuidewires = drawTool?.drawGuidewires;
-      drawGuidewires(mouseX, mouseY, ctx);
+      drawTool?.drawGuidewires(mouseX, mouseY, ctx);
+      // drawGuidewires(mouseX, mouseY, ctx);
       const endpos = {
         x: mouseX,
         y: mouseY,
@@ -312,6 +317,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       console.log('PPStage rendering annotations:', props.annotations);
       const ctx = canvasRef.current?.getContext('2d');
       if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      const length = props?.annotations?.length;
       props.annotations.forEach((annotation, index) => {
         // if (!annotation) continue;
         if (annotation) {
@@ -321,6 +327,12 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
             shape = props.drawTool.polygon.drawAnnotation(param);
           } else if (annotation.type == 'rectangle') {
             shape = props.drawTool.polygon.drawAnnotation(param);
+          } else if (annotation.type == 'brush') {
+            const flag = index === length - 1 ? true : false;
+            shape = props.drawTool.brush?.drawAnnotation(param, flag);
+          } else if (annotation.type == 'rubber') {
+            const flag = index === length - 1 ? true : false;
+            shape = props.drawTool.rubber?.drawAnnotation(param, flag);
           }
           console.log('shape', shape);
 
@@ -337,23 +349,27 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   //   const newrefoce = refoce + 1;
   //   setRefoce(newrefoce);
   // }, [dragEndPos]);
-  if (props.annotations && props?.currentTool !== 'rectangle' && props?.currentTool !== 'polygon') {
-    const length = props?.annotations?.length;
-    props.annotations.forEach((annotation, index) => {
-      if (annotation) {
-        param.annotation = annotation;
-        let shape;
-        if (annotation.type == 'brush') {
-          const flag = index === length - 1 ? true : false;
-          shape = props.drawTool.brush?.drawAnnotation(param, flag);
-        } else if (annotation.type == 'rubber') {
-          const flag = index === length - 1 ? true : false;
-          shape = props.drawTool.rubber?.drawAnnotation(param, flag);
-        }
-        console.log('shape', shape);
-      }
-    });
-  }
+  // if (props.annotations && props?.currentTool !== 'rectangle' && props?.currentTool !== 'polygon') {
+  //   const newShapes: React.ReactElement[] = [];
+  //   const length = props?.annotations?.length;
+  //   props.annotations.forEach((annotation, index) => {
+  //     if (annotation) {
+  //       param.annotation = annotation;
+  //       let shape;
+  //       if (annotation.type == 'brush') {
+  //         const flag = index === length - 1 ? true : false;
+  //         shape = props.drawTool.brush?.drawAnnotation(param, flag);
+  //       } else if (annotation.type == 'rubber') {
+  //         const flag = index === length - 1 ? true : false;
+  //         shape = props.drawTool.rubber?.drawAnnotation(param, flag);
+  //       }
+  //       if (shape && shape?.key !== null) {
+  //         newShapes.push(shape);
+  //       }
+  //       console.log('shape', shape);
+  //     }
+  //   });
+  // }
   props.drawTool?.interactor?.drawAnnotation(param);
   // Re-draw layer
   layerRef.current?.batchDraw();

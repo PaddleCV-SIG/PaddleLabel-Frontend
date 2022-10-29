@@ -138,14 +138,18 @@ function getMaxId(annotations?: Annotation[]): any {
 }
 
 export default function (props: PPDrawToolProps): PPDrawToolRet {
-  const startNewPolygon = (mouseX: number, mouseY: number) => {
+  const startNewPolygon = (mouseX: number, mouseY: number, selectFinly: Annotation) => {
     const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY]);
+    // debugger;
     if (!polygon) return;
     console.log(polygon);
     props.onAnnotationAdd({
       dataId: props.dataId,
       type: 'polygon',
-      frontendId: getMaxId(props.annotations) + 1,
+      frontendId:
+        selectFinly?.frontendId !== undefined
+          ? selectFinly?.frontendId
+          : getMaxId(props.annotations) + 1,
       label: props.currentLabel,
       labelId: props.currentLabel?.labelId,
       result: polygon,
@@ -170,7 +174,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     console.log(`currentAnnotation:`, props.currentAnnotation);
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
-      startNewPolygon(mouseX, mouseY);
+      startNewPolygon(mouseX, mouseY, props.selectFinly);
     } else {
       addDotToPolygon(mouseX, mouseY);
     }
