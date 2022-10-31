@@ -359,6 +359,8 @@ const Page = () => {
           imgSrc="./pics/buttons/rectangle.png"
           active={tool.curr == 'rectangle'}
           onClick={() => {
+            console.log('label.curr', label.curr);
+
             if (!label.curr) {
               message.error(tbIntl('chooseCategoryFirst'));
               return;
@@ -442,6 +444,8 @@ const Page = () => {
           onClick={() => {
             annotation.clear();
             annHistory.record({ annos: [] });
+            tool.setCurr(undefined);
+            label.setCurr(undefined);
           }}
         >
           {tbIntl('clearMark')}
@@ -483,7 +487,12 @@ const Page = () => {
                 return;
               }
               // scale.setCurr(1);
+              setInteractorData({ active: false, predictData: [], mousePoints: [] });
               setCurrentAnnotation(undefined);
+              page?.current?.setDragEndPos({
+                x: 0,
+                y: 0,
+              });
             }}
           />
           <div
@@ -494,7 +503,12 @@ const Page = () => {
                 return;
               }
               // scale.setCurr(1);
+              setInteractorData({ active: false, predictData: [], mousePoints: [] });
               setCurrentAnnotation(undefined);
+              page?.current?.setDragEndPos({
+                x: 0,
+                y: 0,
+              });
             }}
           />
         </Spin>

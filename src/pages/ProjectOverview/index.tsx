@@ -157,19 +157,21 @@ const TaskList: React.FC = () => {
           }}
           visible={task.all?.length != 0}
         />
-        <Button
-          type="primary"
-          onClick={() => {
-            console.log('project', project.curr);
-            history.push(
-              `/project_ai?taskCategory=${snake2camel(project.curr.taskCategory.name)}&projectId=${
-                project.curr.projectId
-              }`,
-            );
-          }}
-        >
-          {intl('mlSettings')}
-        </Button>
+        {project?.curr?.labelFormat === 'voc' && (
+          <Button
+            type="primary"
+            onClick={() => {
+              console.log('project', project.curr);
+              history.push(
+                `/project_ai?taskCategory=${snake2camel(
+                  project.curr.taskCategory.name,
+                )}&projectId=${project.curr.projectId}`,
+              );
+            }}
+          >
+            {intl('mlSettings')}
+          </Button>
+        )}
       </PPBlock>
       <PPBlock title={intl('tasks')}>
         {intl('taskCount')}

@@ -232,6 +232,8 @@ const SAMPLE_RESULT = {
   ],
 };
 function getBase64Image(img?: HTMLImageElement) {
+  console.log('getBase64Image', typeof img);
+
   if (!img) return '';
   const canvas = document.createElement('canvas');
   canvas.width = img.width;

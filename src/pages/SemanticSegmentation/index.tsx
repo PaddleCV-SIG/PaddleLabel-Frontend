@@ -7,7 +7,6 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import PPSButtons from '@/components/PPLabelPage/PPButtons';
-
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage, { pageRef } from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
@@ -105,18 +104,8 @@ const Page: React.FC = () => {
           // debugger;
           frontendId.set(anno.frontendId, anno);
         });
-        // for (const anno of annotation.all) {
-        //   console.log('debuggerannos', anno);
-        //   debugger;
-        //   frontendId.set(anno.frontendId, anno);
-        // }
       }
       frontendId.forEach((anno: Annotation) => {
-        // console.log('annos', anno.type);
-
-        // if (anno.type === 'brush') {
-        //   items.push(anno);
-        // }
         items.push(anno);
       });
       console.log('items', items);
@@ -409,7 +398,8 @@ const Page: React.FC = () => {
             <PPStage
               ref={page}
               scale={scale.curr}
-              scaleChange={scale.change}
+              taskIndex={task.currIdx}
+              scaleChange={scale.setScale}
               annotations={isLabel == 'label' ? annotation.all : newAnnotation ? newAnnotation : []}
               currentTool={tool.curr}
               labels={label.all}
@@ -447,7 +437,6 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
               if (!interactorData.active)
                 setInteractorData({ active: false, predictData: [], mousePoints: [] });
-              scale.setScale(1);
               setSelectFinly(null);
               setfinlyList([]);
               page?.current?.setDragEndPos({
@@ -467,7 +456,6 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
               if (!interactorData.active)
                 setInteractorData({ active: false, predictData: [], mousePoints: [] });
-              scale.setScale(1);
               setSelectFinly(null);
               setfinlyList([]);
               page?.current?.setDragEndPos({

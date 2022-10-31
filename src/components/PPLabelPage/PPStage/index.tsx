@@ -74,9 +74,7 @@ export type PPStageProps = {
 };
 
 const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
-  console.log();
-
-  const [image] = useImage(props.imgSrc || '');
+  const [image] = useImage(props.imgSrc || '', 'anonymous');
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   const interactorData = useModel('InteractorData', (x) => x.interactorData);
   const radius = useModel('VisualRadius', (x) => x.radius);
@@ -108,7 +106,36 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Dynamically adjust canvas size, prevent content overflow
-
+  const param: PPRenderFuncProps = useMemo(() => {
+    return {
+      onDrag: props.onAnnotationModify,
+      // onDragEnd: props.onAnnotationModifyComplete,
+      scale: props.scale,
+      currentTool: props.currentTool,
+      onSelect: props.setCurrentAnnotation,
+      stageRef: stageRef,
+      currentAnnotation: props.currentAnnotation,
+      transparency: transparency,
+      threshold: props.threshold,
+      canvasRef: canvasRef,
+      interactorData: interactorData,
+      label: props.currentLabel,
+      radius: radius,
+    };
+  }, [
+    props.onAnnotationModify,
+    props.scale,
+    props.currentTool,
+    props.setCurrentAnnotation,
+    stageRef,
+    props.currentAnnotation,
+    transparency,
+    props.threshold,
+    canvasRef,
+    interactorData,
+    props.currentLabel,
+    radius,
+  ]);
   function handleWindowResize() {
     const parent = document.getElementById('dr');
     if (parent) {
@@ -137,7 +164,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     }
   }, [canvasRef?.current?.width, canvasRef?.current?.height]);
   useEffect(() => {
-    // debugger;
+    if (!stageRef.current) return;
+    stageRef.current.container().style.cursor = getPointer(props.currentTool);
+  }, [props.currentTool]);
+  useEffect(() => {
     if (
       canvasHeight &&
       canvasWidth &&
@@ -146,6 +176,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       props.scaleChange &&
       props.taskIndex !== undefined
     ) {
+      // debugger;
       const imagewidth = image?.width || 0;
       const imageheight = image?.height || 0;
       const W = imagewidth > imageheight ? true : false;
@@ -155,11 +186,42 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       setimageHeight(imageheight);
       setimageWidth(imagewidth);
     }
-  }, [canvasHeight, canvasWidth, image, props.taskIndex, props.scaleChange]);
+  }, [canvasHeight, canvasWidth, image]);
   useEffect(() => {
-    if (!stageRef.current) return;
-    stageRef.current.container().style.cursor = getPointer(props.currentTool);
-  }, [props.currentTool]);
+    const newShapes: React.ReactElement[] = [];
+    if (props.annotations) {
+      console.log('PPStage rendering annotations:', props.annotations);
+      const ctx = canvasRef.current?.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+      // const length = props?.annotations?.length;
+      props.annotations.forEach((annotation, index) => {
+        // if (!annotation) continue;
+        if (annotation) {
+          param.annotation = annotation;
+          let shape;
+          if (annotation.type == 'polygon') {
+            shape = props.drawTool.polygon.drawAnnotation(param);
+          } else if (annotation.type == 'rectangle') {
+            shape = props.drawTool.polygon.drawAnnotation(param);
+          }
+          // else if (annotation.type == 'brush') {
+          //   const flag = index === length - 1 ? true : false;
+          //   shape = props.drawTool.brush?.drawAnnotation(param, flag);
+          // } else if (annotation.type == 'rubber') {
+          //   const flag = index === length - 1 ? true : false;
+          //   shape = props.drawTool.rubber?.drawAnnotation(param, flag);
+          // }
+          console.log('shape', shape);
+
+          if (shape && shape?.key !== null) {
+            newShapes.push(shape);
+          }
+        }
+      });
+      setShapes(newShapes);
+      console.log('shapes', newShapes);
+    }
+  }, [props.annotations, props.currentAnnotation, param]);
   const renderReact = (endPos: any) => {
     const width = Math.abs(startPos.x - endPos.x);
     const height = Math.abs(startPos.y - endPos.y);
@@ -281,96 +343,32 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     e.cancelBubble = true;
     e.evt.preventDefault();
   };
-  const param: PPRenderFuncProps = useMemo(() => {
-    return {
-      onDrag: props.onAnnotationModify,
-      // onDragEnd: props.onAnnotationModifyComplete,
-      scale: props.scale,
-      currentTool: props.currentTool,
-      onSelect: props.setCurrentAnnotation,
-      stageRef: stageRef,
-      currentAnnotation: props.currentAnnotation,
-      transparency: transparency,
-      threshold: props.threshold,
-      canvasRef: canvasRef,
-      interactorData: interactorData,
-      label: props.currentLabel,
-      radius: radius,
-    };
-  }, [
-    props.onAnnotationModify,
-    props.scale,
-    props.currentTool,
-    props.setCurrentAnnotation,
-    stageRef,
-    props.currentAnnotation,
-    transparency,
-    props.threshold,
-    canvasRef,
-    interactorData,
-    props.currentLabel,
-    radius,
-  ]);
   console.log('PPStage rendering currentAnnotation:', props.currentAnnotation, props.currentTool);
-  useEffect(() => {
-    const newShapes: React.ReactElement[] = [];
-    if (props.annotations) {
-      console.log('PPStage rendering annotations:', props.annotations);
-      const ctx = canvasRef.current?.getContext('2d');
-      if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      const length = props?.annotations?.length;
-      props.annotations.forEach((annotation, index) => {
-        // if (!annotation) continue;
-        if (annotation) {
-          param.annotation = annotation;
-          let shape;
-          if (annotation.type == 'polygon') {
-            shape = props.drawTool.polygon.drawAnnotation(param);
-          } else if (annotation.type == 'rectangle') {
-            shape = props.drawTool.polygon.drawAnnotation(param);
-          } else if (annotation.type == 'brush') {
-            const flag = index === length - 1 ? true : false;
-            shape = props.drawTool.brush?.drawAnnotation(param, flag);
-          } else if (annotation.type == 'rubber') {
-            const flag = index === length - 1 ? true : false;
-            shape = props.drawTool.rubber?.drawAnnotation(param, flag);
-          }
-          console.log('shape', shape);
-
-          if (shape && shape?.key !== null) {
-            newShapes.push(shape);
-          }
-        }
-      });
-      setShapes(newShapes);
-      console.log('shapes', newShapes);
-    }
-  }, [props.annotations, props.currentAnnotation, param]);
   // useEffect(() => {
   //   const newrefoce = refoce + 1;
   //   setRefoce(newrefoce);
   // }, [dragEndPos]);
-  // if (props.annotations && props?.currentTool !== 'rectangle' && props?.currentTool !== 'polygon') {
-  //   const newShapes: React.ReactElement[] = [];
-  //   const length = props?.annotations?.length;
-  //   props.annotations.forEach((annotation, index) => {
-  //     if (annotation) {
-  //       param.annotation = annotation;
-  //       let shape;
-  //       if (annotation.type == 'brush') {
-  //         const flag = index === length - 1 ? true : false;
-  //         shape = props.drawTool.brush?.drawAnnotation(param, flag);
-  //       } else if (annotation.type == 'rubber') {
-  //         const flag = index === length - 1 ? true : false;
-  //         shape = props.drawTool.rubber?.drawAnnotation(param, flag);
-  //       }
-  //       if (shape && shape?.key !== null) {
-  //         newShapes.push(shape);
-  //       }
-  //       console.log('shape', shape);
-  //     }
-  //   });
-  // }
+  if (props.annotations) {
+    const newShapes: React.ReactElement[] = [];
+    const length = props?.annotations?.length;
+    props.annotations.forEach((annotation, index) => {
+      if (annotation) {
+        param.annotation = annotation;
+        let shape;
+        if (annotation.type == 'brush') {
+          const flag = index === length - 1 ? true : false;
+          shape = props.drawTool.brush?.drawAnnotation(param, flag);
+        } else if (annotation.type == 'rubber') {
+          const flag = index === length - 1 ? true : false;
+          shape = props.drawTool.rubber?.drawAnnotation(param, flag);
+        }
+        if (shape && shape?.key !== null) {
+          newShapes.push(shape);
+        }
+        console.log('shape', shape);
+      }
+    });
+  }
   props.drawTool?.interactor?.drawAnnotation(param);
   // Re-draw layer
   layerRef.current?.batchDraw();
