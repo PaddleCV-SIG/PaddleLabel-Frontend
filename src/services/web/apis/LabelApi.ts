@@ -19,6 +19,7 @@ import { LabelFromJSON, LabelToJSON } from '../models';
 export interface CreateRequest {
   label: Array<Label>;
   requestId?: string;
+  removeDuplicateByName?: string;
 }
 
 export interface GetRequest {
@@ -62,6 +63,15 @@ export class LabelApi extends runtime.BaseAPI {
       headerParameters['request_id'] = String(requestParameters.requestId);
     }
 
+    if (
+      requestParameters.removeDuplicateByName !== undefined &&
+      requestParameters.removeDuplicateByName !== null
+    ) {
+      headerParameters['remove_duplicate_by_name'] = String(
+        requestParameters.removeDuplicateByName,
+      );
+    }
+
     const response = await this.request(
       {
         path: `/labels`,
@@ -82,9 +92,13 @@ export class LabelApi extends runtime.BaseAPI {
   async create(
     label: Array<Label>,
     requestId?: string,
+    removeDuplicateByName?: string,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Label>> {
-    const response = await this.createRaw({ label: label, requestId: requestId }, initOverrides);
+    const response = await this.createRaw(
+      { label: label, requestId: requestId, removeDuplicateByName: removeDuplicateByName },
+      initOverrides,
+    );
     return await response.value();
   }
 
