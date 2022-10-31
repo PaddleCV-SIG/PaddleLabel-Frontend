@@ -70,12 +70,13 @@ export type PPStageProps = {
     setCurr: (tool: ToolType) => void;
   };
   scaleChange?: (delta: number) => void;
+  taskIndex?: number;
 };
 
 const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
   console.log();
 
-  const [image] = useImage(props.imgSrc);
+  const [image] = useImage(props.imgSrc || '');
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   const interactorData = useModel('InteractorData', (x) => x.interactorData);
   const radius = useModel('VisualRadius', (x) => x.radius);
@@ -137,24 +138,24 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   }, [canvasRef?.current?.width, canvasRef?.current?.height]);
   useEffect(() => {
     // debugger;
-    if (canvasHeight && canvasWidth && image && typeof image !== 'string' && props.scaleChange) {
+    if (
+      canvasHeight &&
+      canvasWidth &&
+      image &&
+      typeof image !== 'string' &&
+      props.scaleChange &&
+      props.taskIndex !== undefined
+    ) {
       const imagewidth = image?.width || 0;
       const imageheight = image?.height || 0;
       const W = imagewidth > imageheight ? true : false;
       const scaleImages = W ? canvasWidth / imagewidth : canvasHeight / imagewidth;
-      const scales = scaleImages - 1;
-      props.scaleChange(scales);
-      // debugger;
+      // const scales = scaleImages - 1;
+      props.scaleChange(scaleImages);
       setimageHeight(imageheight);
       setimageWidth(imagewidth);
-      // const imageWidth1 = W ? canvasWidth : (canvasHeight / imageheight) * imagewidth;
-      // const imageHeight1 = W ? (canvasWidth / imagewidth) * imageheight : canvasHeight;
-      // image?.setAttribute('width', imageWidth1 + 'px');
-      // image?.setAttribute('height', imageHeight1 + 'px');
-      // console.log('imagewidth', imageWidth1);
-      // setscaleImage(scaleImages);
     }
-  }, [canvasHeight, canvasWidth, image]);
+  }, [canvasHeight, canvasWidth, image, props.taskIndex, props.scaleChange]);
   useEffect(() => {
     if (!stageRef.current) return;
     stageRef.current.container().style.cursor = getPointer(props.currentTool);

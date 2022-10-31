@@ -8,6 +8,7 @@ import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage, { pageRef } from '@/components/PPLabelPage/PPStage';
+import useImage from 'use-image';
 import { ectInteractorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
 // import type { Label } from '@/models/';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
@@ -58,6 +59,7 @@ const Page = () => {
       },
     },
   );
+  const [image] = useImage(data.imgSrc || '', 'anonymous');
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
     setFrontendId(0);
@@ -263,11 +265,11 @@ const Page = () => {
     // setInteractorData({ active: true, predictData: [], mousePoints: [] });
   }, [isLoad, project.curr?.otherSettings]);
   useUpdateEffect(() => {
-    const predictflag = !isLoading && page.current?.image && isLoad;
+    const predictflag = !isLoading && image && isLoad;
     if (predictflag) {
-      onPredicted(page.current?.image);
+      onPredicted(image);
     }
-  }, [isLoading, isLoad, page.current?.image]);
+  }, [isLoading, isLoad, image]);
   useUpdateEffect(() => {
     console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
     if (interactorData.predictData.length && otherSetting?.labelMapping && label.all) {
@@ -346,6 +348,10 @@ const Page = () => {
       // debugger;
     }
   }, [label.all, interactorData.predictData, otherSetting]);
+  // const scaleChange = (curr,index)=>{
+  //   scale.change(curr);
+  //   scale.setScales
+  // }
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -446,8 +452,9 @@ const Page = () => {
           <div className="draw">
             <PPStage
               ref={page}
+              taskIndex={task.currIdx}
               scale={scale.curr}
-              scaleChange={scale.change}
+              scaleChange={scale.setScale}
               annotations={annotation.all}
               currentTool={tool.curr}
               currentAnnotation={annotation.curr}
@@ -475,7 +482,7 @@ const Page = () => {
               if (!task.prevTask()) {
                 return;
               }
-              scale.setCurr(1);
+              // scale.setCurr(1);
               setCurrentAnnotation(undefined);
             }}
           />
@@ -486,7 +493,7 @@ const Page = () => {
               if (!task.nextTask()) {
                 return;
               }
-              scale.setCurr(1);
+              // scale.setCurr(1);
               setCurrentAnnotation(undefined);
             }}
           />
@@ -505,7 +512,7 @@ const Page = () => {
           imgSrc="./pics/buttons/intelligent_interaction.png"
           disabled={!otherSetting?.labelMapping}
           onClick={() => {
-            onPredicted(page.current?.image);
+            onPredicted(image);
           }}
         >
           {tbIntl('interactor')}

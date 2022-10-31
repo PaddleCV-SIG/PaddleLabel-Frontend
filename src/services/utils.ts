@@ -143,6 +143,7 @@ export function IntlInit(page: string) {
 // scale image
 export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 10]) => {
   const [curr, setCurr] = useState<number>(1);
+  const [Scales, setScales] = useState<number[]>([]);
   const intl = IntlInit('pages.toolBar.scale');
 
   function setScale(scale: number) {
@@ -161,7 +162,7 @@ export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 10]) 
   function change(delta: number) {
     setScale(curr + delta);
   }
-  return { curr, change, setScale, setCurr };
+  return { curr, change, setScale, setCurr, Scales, setScales };
 };
 
 export function ToolUtils(
