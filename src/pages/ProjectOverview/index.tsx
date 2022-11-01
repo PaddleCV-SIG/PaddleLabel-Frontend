@@ -23,6 +23,7 @@ const TaskList: React.FC = () => {
   const task = TaskUtils(useState);
   const project = ProjectUtils(useState);
   const [updateTable, setUpdateTable] = useState<number>(0);
+  // const [reforce, setReforce] = useState<boolean>(false);
   const sets = { '0': 'train', '1': 'validation', '2': 'test' };
   const baseUrl = localStorage.getItem('basePath');
   const projectId = serviceUtils.getQueryVariable('projectId');
@@ -106,13 +107,17 @@ const TaskList: React.FC = () => {
       console.log('tasks', tasks);
     });
   }, []);
+  // useEffect(() => {
+  //   const flag = project?.curr?.taskCategory?.name === 'detection';
+  //   console.log('flag', flag, project?.curr?.taskCategory?.name);
 
+  //   setReforce(flag);
+  // }, [project?.curr?.taskCategory?.name]);
   // ensure projectid
   if (!projectId) {
     message.error('No valid project id');
     history.push('/');
   }
-  console.log('project.curr.taskCategory.name', project?.curr?.taskCategory?.name);
 
   return (
     <PPContainer>
@@ -157,7 +162,7 @@ const TaskList: React.FC = () => {
           }}
           visible={task.all?.length != 0}
         />
-        {project?.curr?.labelFormat === 'voc' && (
+        {project?.curr?.taskCategory?.name === 'detection' ? (
           <Button
             type="primary"
             onClick={() => {
@@ -171,7 +176,7 @@ const TaskList: React.FC = () => {
           >
             {intl('mlSettings')}
           </Button>
-        )}
+        ) : null}
       </PPBlock>
       <PPBlock title={intl('tasks')}>
         {intl('taskCount')}
