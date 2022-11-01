@@ -30,7 +30,7 @@ const Page = () => {
   const [threshold, setThreshold] = useState(50);
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const [otherSetting, setotherSetting] = useState();
-
+  const [flags, setflags] = useState<boolean>(false);
   const model = ModelUtils(useState, baseUrl);
   const page = useRef<pageRef>(null);
   const tbIntl = IntlInitJsx('pages.toolBar');
@@ -111,7 +111,13 @@ const Page = () => {
     // 鼠标抬起的时候
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     if (!annotation.curr) return;
-    if (!annotation.curr.result || annotation.curr.result.split(',').length != 4) return;
+    console.log(
+      'annotation.curr.result',
+      annotation.curr.result,
+      annotation?.curr?.annotationId,
+      annotation.curr.result.split(',').length,
+    );
+    if (!annotation.curr.result) return;
     if (annotation?.curr?.annotationId == undefined) {
       console.log('finish', data.curr, annotation.curr);
       annotation.create(annotation?.curr);
@@ -207,6 +213,7 @@ const Page = () => {
       label.create(newlabels).then((newLabel) => {
         setCurrentAnnotation(undefined);
         label.setCurr(newLabel);
+        setflags(true);
       });
     }
   };
@@ -262,7 +269,6 @@ const Page = () => {
     } else {
       setotherSetting(project.curr?.otherSettings);
     }
-    // setInteractorData({ active: true, predictData: [], mousePoints: [] });
   }, [isLoad, project.curr?.otherSettings]);
   useUpdateEffect(() => {
     const predictflag = !isLoading && image && isLoad;
@@ -286,7 +292,6 @@ const Page = () => {
             labels.add(labelMap.project);
           }
         }
-        createLabels(labels);
       } else {
         for (const labelItem of interactorData.predictData) {
           console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
@@ -296,58 +301,71 @@ const Page = () => {
         }
         createLabels(labels);
       }
+      if (![...labels].length) {
+        setflags(true);
+      }
     }
   }, [interactorData, otherSetting]);
   useUpdateEffect(() => {
-    if (interactorData.predictData.length && label.all?.length && otherSetting?.labelMapping) {
+    if (
+      interactorData.predictData.length &&
+      project.curr?.projectId !== undefined &&
+      otherSetting?.labelMapping &&
+      flags
+    ) {
       const labels = new Map();
-      for (const labelItem of label.all) {
-        labels.set(labelItem.name, labelItem);
-      }
-      const annos = [];
-      const labelMapping = new Map();
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-      let frontendId = annotation.all?.length ? getMaxFrontendId(annotation.all) + 1 : 1;
-      if (otherSetting?.labelMapping?.length > 0) {
-        for (const labelMaps of otherSetting.labelMapping) {
-          labelMapping.set(labelMaps.model, labelMaps.project);
+      label.getAll(project.curr.projectId).then((labelAll) => {
+        for (const labelItem of labelAll) {
+          labels.set(labelItem.name, labelItem);
         }
-      }
-      interactorData.predictData.map((item) => {
-        console.log('label_name', item);
-        if (item) {
-          let name = '';
-          if (labelMapping.has(item.label_name)) {
-            name = labelMapping.get(item.label_name);
-          } else {
-            name = item.label_name;
+        const annos = [];
+        const labelMapping = new Map();
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        let frontendId = annotation.all?.length ? getMaxFrontendId(annotation.all) + 1 : 1;
+        if (otherSetting?.labelMapping?.length > 0) {
+          for (const labelMaps of otherSetting.labelMapping) {
+            labelMapping.set(labelMaps.model, labelMaps.project);
           }
-          const labelitem = labels.get(name);
-          const result = item.result;
-          const predictedBy = otherSetting.modelName;
-          // debugger;
-          // saveInteractorData(labelitem, item.result);
-          if (interactorData.active) {
-            const anno = ectInteractorToAnnotation(
-              annotation.all,
-              frontendId,
-              result,
-              data.curr?.dataId,
-              labelitem,
-              predictedBy,
-            );
-            if (anno) {
-              annos.push(anno);
-              frontendId++;
+        }
+        console.log('interactorData.predictData', interactorData.predictData);
+
+        interactorData.predictData.map((item) => {
+          console.log('label_name', item);
+          if (item) {
+            let name = '';
+            if (labelMapping.has(item.label_name)) {
+              name = labelMapping.get(item.label_name);
+            } else {
+              name = item.label_name;
+            }
+            const labelitem = labels.get(name);
+            const result = item.result;
+            const predictedBy = otherSetting.modelName;
+            // debugger;
+            // saveInteractorData(labelitem, item.result);
+            if (interactorData.active) {
+              debugger;
+              const anno = ectInteractorToAnnotation(
+                frontendId,
+                result,
+                data.curr?.dataId,
+                labelitem,
+                predictedBy,
+              );
+              if (anno) {
+                annos.push(anno);
+                frontendId++;
+              }
             }
           }
-        }
+        });
+        const deduplicate = true;
+        annotation.create(annos, deduplicate);
+        // debugger;
+        setInteractorData({ active: true, predictData: [], mousePoints: [] });
       });
-      const deduplicate = true;
-      annotation.create(annos, deduplicate);
-      // debugger;
     }
-  }, [label.all, interactorData.predictData, otherSetting]);
+  }, [project?.curr?.projectId, interactorData.predictData, otherSetting, flags]);
   // const scaleChange = (curr,index)=>{
   //   scale.change(curr);
   //   scale.setScales
@@ -489,6 +507,7 @@ const Page = () => {
               // scale.setCurr(1);
               setInteractorData({ active: false, predictData: [], mousePoints: [] });
               setCurrentAnnotation(undefined);
+              setflags(false);
               page?.current?.setDragEndPos({
                 x: 0,
                 y: 0,
@@ -505,6 +524,7 @@ const Page = () => {
               // scale.setCurr(1);
               setInteractorData({ active: false, predictData: [], mousePoints: [] });
               setCurrentAnnotation(undefined);
+              setflags(false);
               page?.current?.setDragEndPos({
                 x: 0,
                 y: 0,

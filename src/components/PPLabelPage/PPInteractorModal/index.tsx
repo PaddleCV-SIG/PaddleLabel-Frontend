@@ -59,8 +59,8 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     model
       .load(
         'EISeg',
-        project.curr.otherSettings.models.EISeg.modelFilePath,
-        project.curr.otherSettings.models.EISeg.paramFilePath,
+        project.curr?.otherSettings?.models?.EISeg?.modelFilePath,
+        project.curr?.otherSettings?.models?.EISeg?.paramFilePath,
       )
       .then(
         () => {

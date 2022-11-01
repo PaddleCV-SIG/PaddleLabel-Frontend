@@ -344,7 +344,6 @@ export function interactorToAnnotation(
   return anno;
 }
 export function ectInteractorToAnnotation(
-  annotations: Annotation[],
   frontendId?: number,
   result?: string,
   dataId?: number,

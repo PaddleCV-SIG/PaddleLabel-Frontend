@@ -475,6 +475,8 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/intelligent_interaction.png"
           active={interactorData.active}
           onClick={async () => {
+            console.log('model.loading', model.loading);
+
             if (model.loading) {
               message.error(tbIntl('modelLoading'));
               return;
@@ -484,19 +486,20 @@ const Page: React.FC = () => {
               setInteractorData({ active: false, predictData: [], mousePoints: [] });
             } else {
               const settings = project.curr.otherSettings ? project.curr.otherSettings : {};
-              if (
-                settings.modelSettings?.EISeg?.modelFilePath &&
-                settings.modelSettings?.EISeg?.paramFilePath
-              ) {
-                try {
-                  await model.load(
-                    'EISeg',
-                    settings.modelSettings.EISeg.modelFilePath,
-                    settings.modelSettings.EISeg.paramFilePath,
-                  );
-                } catch (e) {
-                  return;
-                }
+              console.log(
+                'settings.modelSettings?.EISeg?.modelFilePath',
+                settings?.modelSettings?.EISeg?.modelFilePath,
+                settings?.modelSettings?.EISeg?.paramFilePath,
+              );
+
+              try {
+                await model.load(
+                  'EISeg',
+                  settings?.modelSettings?.EISeg?.modelFilePath,
+                  settings?.modelSettings?.EISeg?.paramFilePath,
+                );
+              } catch (e) {
+                return;
               }
               tool.setCurr('interactor');
               setInteractorData({ active: true, predictData: [], mousePoints: [] });

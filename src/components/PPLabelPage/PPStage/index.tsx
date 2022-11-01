@@ -168,6 +168,16 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     stageRef.current.container().style.cursor = getPointer(props.currentTool);
   }, [props.currentTool]);
   useEffect(() => {
+    console.log(
+      'flags',
+      canvasHeight,
+      canvasWidth,
+      image,
+      typeof image !== 'string',
+      props.scaleChange,
+      props.taskIndex !== undefined,
+    );
+
     if (
       canvasHeight &&
       canvasWidth &&
