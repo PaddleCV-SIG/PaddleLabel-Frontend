@@ -150,7 +150,7 @@ export const ScaleUtils = (useState: UseStateType, range: number[] = [0.1, 10]) 
     let s: number = scale;
     if (s < range[0]) {
       s = range[0];
-      // message.error(intl('smallestScale') + ': ' + range[0]);
+      message.error(intl('smallestScale') + ': ' + range[0]);
     }
     if (s > range[1]) {
       s = range[1];
@@ -253,6 +253,7 @@ export const ProjectUtils = (useState: UseStateType) => {
       return 0;
     }
   }
+
   async function predict(projectId: number, settings: object) {
     projectApi.predict(projectId, settings).catch((err) => {
       console.log('project predict err', err);
@@ -505,13 +506,14 @@ export function AnnotationUtils(
     }
   };
 
-  function clear() {
+  async function clear() {
     if (all.length == 0) return;
-    pushToBackend(all[0].dataId, []);
+    await pushToBackend(all[0].dataId, []);
     setAllRaw([]);
     if (label) {
       label.setActiveIds(new Set());
     }
+    if (project) project.getFinished();
   }
 
   const create = async (annotation: Annotation | Annotation[], deduplicate?: boolean) => {
