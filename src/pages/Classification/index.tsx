@@ -30,12 +30,13 @@ const Page: React.FC = () => {
     if (project.curr?.labelFormat == 'single_class') label.setOneHot(true);
   }
 
-  function selectLabel(selected: Label, activeIds: Set<number>) {
+  async function selectLabel(selected: Label, activeIds: Set<number>) {
     console.log('selectLabel', selected);
     // after toggle active, add ann
     if (activeIds.has(selected.labelId)) {
       // if one hot, remove all current annotations
-      if (label.isOneHot) annotation.clear();
+      if (label.isOneHot) annotation.all.map((ann) => annotation.remove(ann));
+      annotation.setAll([]);
       annotation.create({
         taskId: task.curr.taskId,
         labelId: selected.labelId,
@@ -52,6 +53,7 @@ const Page: React.FC = () => {
     if (!labels || !annotations) return;
     label.initActive(annotations);
     loading.setCurr(false);
+    console.log('post task change');
   }
 
   return (
@@ -151,14 +153,6 @@ const Page: React.FC = () => {
         >
           {tbIntl('projectOverview')}
         </PPToolBarButton>
-        {/* <PPToolBarButton
-          imgSrc="./pics/buttons/data_division.png"
-          onClick={() => {
-            history.push(`/ml?projectId=${project.curr.projectId}`);
-          }}
-        >
-          {'ML Settings'}
-        </PPToolBarButton> */}
       </PPToolBar>
       <div className="rightSideBar">
         <PPLabelList

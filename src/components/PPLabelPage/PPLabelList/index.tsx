@@ -34,7 +34,6 @@ const Component: React.FC<PPLabelListProps> = (props) => {
 
   const [addModalVisible, setAddLabelModalVisible] = useState(false);
 
-  // console.log(`labels:`, props.labels, `activeIds:`, props.activeIds);
   return (
     <>
       <List

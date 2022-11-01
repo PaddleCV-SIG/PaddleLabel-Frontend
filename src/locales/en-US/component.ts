@@ -45,6 +45,8 @@ export default {
   'component.PPImportModal.path': 'Data Path',
   'component.PPImportModal.labelFormat': 'Data Format',
   'component.PPImportModal.nullPath': 'Import path cannot be null',
+  'component.PPImportModal.success': 'Additional data successfully imported',
+
   'component.PPInteractorModal.title': 'Interactor Settings',
   'component.PPInteractorModal.mlBackendUrl': 'ML Backend URL',
   'component.PPInteractorModal.modelPath': 'Model File Path',
