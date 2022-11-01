@@ -92,8 +92,8 @@ export default {
   'component.PPInteractorModal.loadFail':
     '模型加载失败，请检查 1.机器学习后端已经启动 2.机器学习后端网址填写正确',
 
-  'component.history.noPrev': '已是最老的历史记录',
-  'component.history.noNext': '已是最新的历史记录',
+  'component.history.noPrev': '没有更老的操作记录',
+  'component.history.noNext': '没有更新的操作记录',
 
   'component.label.deleteSuccess': '类别删除成功',
 };
