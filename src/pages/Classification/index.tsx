@@ -104,6 +104,8 @@ const Page: React.FC = () => {
             <PPStage
               scale={scale.curr}
               currentTool={tool.curr}
+              scaleChange={scale.setScale}
+              taskIndex={task.currIdx}
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
               onAnnotationModifyComplete={() => {}}
