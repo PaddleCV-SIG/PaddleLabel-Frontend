@@ -312,8 +312,8 @@ export const LabelUtils = (
   }
 
   function onSelect(label: Label) {
-    console.log('on select', label, activeIds, activeIds.has(label.labelId));
-    let activeIdsTemp;
+    console.log('on select', isOneHot, label, activeIds, activeIds.has(label.labelId));
+    let activeIdsTemp = activeIds;
     if (activeIds.has(label.labelId)) {
       activeIds.delete(label.labelId);
       setActiveIds(new Set(activeIds));
@@ -335,9 +335,7 @@ export const LabelUtils = (
 
   function setCurr(label: Label) {
     console.log('label setcurr', label);
-    if (label == undefined) {
-      return unsetCurr();
-    }
+    if (label == undefined) return unsetCurr();
     setCurrRaw(label);
     if (isOneHot) activeIds.clear();
     activeIds.add(label.labelId);
@@ -348,8 +346,10 @@ export const LabelUtils = (
   function initActive(annotations: Annotation[]) {
     activeIds.clear();
     for (const ann of annotations) activeIds.add(ann.labelId);
+    setActiveIds(new Set(activeIds));
     if (isOneHot && activeIds.size > 1)
       message.error('Label list is one hot, but have multiple active labels!');
+    console.log('initActive', activeIds);
   }
 
   async function create(label: Label | Label[]): Promise<Label[] | undefined> {
@@ -486,7 +486,6 @@ export function AnnotationUtils(
   const tbIntl = IntlInitJsx('pages.toolBar');
 
   function setAll(annos: Annotation[]) {
-    console.log('annos函数执行了', annos);
     setAllRaw(annos);
   }
 
@@ -517,7 +516,6 @@ export function AnnotationUtils(
   }
 
   const create = async (annotation: Annotation | Annotation[], deduplicate?: boolean) => {
-    // console.log('create label', annotation.label);
     const prepAnn = (anno: Annotation) => {
       const ann = { ...anno };
       if (ann.label) ann.labelId = ann.label.labelId;
@@ -526,7 +524,6 @@ export function AnnotationUtils(
     };
     try {
       const anns = annotation instanceof Array ? annotation.map(prepAnn) : [prepAnn(annotation)];
-      console.log('asdfasdf', anns);
       if (deduplicate) {
         await annotationApi.create(anns, deduplicate);
       } else {
