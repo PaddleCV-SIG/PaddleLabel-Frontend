@@ -46,16 +46,15 @@ const PPImportModal: React.FC<PPImportProps> = (props) => {
           wrapperCol={{ span: 16 }}
           initialValues={{ remember: false }}
           onFinish={(values) => {
-            const path = values.path;
-            // if (!path) {
-            //   message.error(intl('nullPath'));
-            //   return;
-            // }
             setLoading(true);
-            importDataset(props.project.projectId, path)
+            importDataset(props.project.projectId, values.path, values.labelFormat)
               .then(() => {
+                setLoading(false);
                 setVisible(false);
                 props.onFinish();
+              })
+              .catch(() => {
+                setLoading(false);
               })
               .finally(() => {
                 setLoading(false);

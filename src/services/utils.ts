@@ -710,17 +710,23 @@ export function exportDataset(projectId: number, exportDir: string, exportFormat
       throw err;
     });
 }
-export function importDataset(projectId: number, importDir: string) {
+
+// TODO: use intl for success message, wrap the three functions in a class
+export function importDataset(
+  projectId: number,
+  importDir: string,
+  importFormat: string | undefined,
+) {
   console.log('import dataset', projectId, importDir);
   return projectApi
-    .importDataset(projectId, { importDir: importDir })
+    .importDataset(projectId, { importDir: importDir, importFormat: importFormat })
     .then((res) => {
-      message.success('Additional data imported');
+      message.success('额外数据导入成功');
       console.log(res);
     })
     .catch((err) => {
-      console.log('import error', err);
       serviceUtils.parseError(err, message);
+      throw new Error();
     });
 }
 

@@ -81,6 +81,7 @@ export default {
   'component.PPImportModal.labelFormat': '数据标注格式',
   'component.PPImportModal.import': '导入',
   'component.PPImportModal.nullPath': '额外数据路径不能为空',
+  'component.PPImportModal.success': '额外数据导入成功',
 
   'component.PPInteractorModal.title': '智能标注设置',
   'component.PPInteractorModal.mlBackendUrl': '机器学习后端网址',
