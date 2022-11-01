@@ -172,13 +172,14 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
         predicted_by: null,
         result: `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`,
       };
-      props.onDrag(newAnno);
+      props.onDragUP(newAnno);
     };
     return (
       <Circle
         onMouseDown={() => {
           if (props.currentTool == 'editor') {
             // console.log(`select ${JSON.stringify(annotation)}`);
+            props.OnSelects(annotation);
             props.onSelect(annotation);
           }
         }}

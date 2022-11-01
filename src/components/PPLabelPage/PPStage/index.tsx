@@ -71,10 +71,13 @@ export type PPStageProps = {
   };
   scaleChange?: (delta: number) => void;
   taskIndex?: number;
+  OnSelect?: (anntation: Annotation) => void;
+  onAnnotationModifyUP?: (annotation: Annotation) => void;
 };
 
 const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
   const [image] = useImage(props.imgSrc || '', 'anonymous');
+  // const image = props.image;
   const transparency = props.transparency == undefined ? 0 : props.transparency * 0.01;
   const interactorData = useModel('InteractorData', (x) => x.interactorData);
   const radius = useModel('VisualRadius', (x) => x.radius);
@@ -109,10 +112,12 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const param: PPRenderFuncProps = useMemo(() => {
     return {
       onDrag: props.onAnnotationModify,
+      onDragUP: props.onAnnotationModifyUP,
       // onDragEnd: props.onAnnotationModifyComplete,
       scale: props.scale,
       currentTool: props.currentTool,
       onSelect: props.setCurrentAnnotation,
+      OnSelects: props.OnSelect,
       stageRef: stageRef,
       currentAnnotation: props.currentAnnotation,
       transparency: transparency,
@@ -157,17 +162,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     }
   }, []);
   useEffect(() => {
-    if (canvasRef?.current?.width && canvasRef?.current?.height) {
-      console.log('saveDrawingSurface函数执行了');
-
-      saveDrawingSurface();
-    }
-  }, [canvasRef?.current?.width, canvasRef?.current?.height]);
-  useEffect(() => {
-    if (!stageRef.current) return;
-    stageRef.current.container().style.cursor = getPointer(props.currentTool);
-  }, [props.currentTool]);
-  useEffect(() => {
     console.log(
       'flags',
       canvasHeight,
@@ -190,13 +184,24 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       const imagewidth = image?.width || 0;
       const imageheight = image?.height || 0;
       const W = imagewidth > imageheight ? true : false;
-      const scaleImages = W ? canvasWidth / imagewidth : canvasHeight / imagewidth;
+      const scaleImages = W ? canvasWidth / imagewidth : canvasHeight / imageheight;
       // const scales = scaleImages - 1;
       props.scaleChange(scaleImages);
       setimageHeight(imageheight);
       setimageWidth(imagewidth);
     }
   }, [canvasHeight, canvasWidth, image]);
+  useEffect(() => {
+    if (canvasRef?.current?.width && canvasRef?.current?.height) {
+      console.log('saveDrawingSurface函数执行了');
+
+      saveDrawingSurface();
+    }
+  }, [canvasRef?.current?.width, canvasRef?.current?.height]);
+  useEffect(() => {
+    if (!stageRef.current) return;
+    stageRef.current.container().style.cursor = getPointer(props.currentTool);
+  }, [props.currentTool]);
   useEffect(() => {
     const newShapes: React.ReactElement[] = [];
     if (props.annotations) {
@@ -353,7 +358,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     e.cancelBubble = true;
     e.evt.preventDefault();
   };
-  console.log('PPStage rendering currentAnnotation:', props.currentAnnotation, props.currentTool);
+  console.log('props.scale', props.scale);
   // useEffect(() => {
   //   const newrefoce = refoce + 1;
   //   setRefoce(newrefoce);

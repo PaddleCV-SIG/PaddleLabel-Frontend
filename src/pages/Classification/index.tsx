@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Spin, message } from 'antd';
 import { history } from 'umi';
 import styles from './index.less';
@@ -13,6 +13,7 @@ import type { Label, Annotation } from '@/models';
 import { IntlInitJsx } from '@/components/PPIntl/';
 
 const Page: React.FC = () => {
+  const page = useRef<pageRef>(null);
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,
     useEffect,
@@ -102,6 +103,7 @@ const Page: React.FC = () => {
         <Spin tip={tbIntl('loading', 'global')} spinning={loading.curr}>
           <div className="draw">
             <PPStage
+              ref={page}
               scale={scale.curr}
               currentTool={tool.curr}
               scaleChange={scale.setScale}
@@ -116,8 +118,28 @@ const Page: React.FC = () => {
           <div className="pblock">
             <PPProgress task={task} project={project} />
           </div>
-          <div className="prevTask" onClick={task.prevTask} data-test-id={'prevTask'} />
-          <div className="nextTask" onClick={task.nextTask} data-test-id={'nextTask'} />
+          <div
+            className="prevTask"
+            onClick={() => {
+              task.prevTask();
+              page?.current?.setDragEndPos({
+                x: 0,
+                y: 0,
+              });
+            }}
+            data-test-id={'prevTask'}
+          />
+          <div
+            className="nextTask"
+            onClick={() => {
+              task.nextTask();
+              page?.current?.setDragEndPos({
+                x: 0,
+                y: 0,
+              });
+            }}
+            data-test-id={'nextTask'}
+          />
         </Spin>
       </div>
       <PPToolBar disLoc="right">

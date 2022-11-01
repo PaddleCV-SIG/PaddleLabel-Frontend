@@ -10,10 +10,12 @@ import { InteractorData } from '@/models/InteractorData';
 export type PPRenderFuncProps = {
   annotation: Annotation;
   onDrag: (anntation: Annotation) => void;
+
   onDragEnd: () => void;
   scale: number;
   currentTool: ToolType;
   onSelect: (anntation: Annotation) => void;
+
   stageRef: React.RefObject<StageType>;
   currentAnnotation?: Annotation;
   transparency: number;
@@ -27,6 +29,8 @@ export type PPRenderFuncProps = {
     setCurr: (tool: ToolType) => void;
   };
   selectFinly?: Annotation;
+  SelectAnnotation?: (anntation: Annotation) => void;
+  onDragUP?: (anntation: Annotation) => void;
 };
 
 export type PPDrawToolProps = {

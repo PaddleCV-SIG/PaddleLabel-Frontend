@@ -31,6 +31,8 @@ const Page = () => {
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const [otherSetting, setotherSetting] = useState();
   const [flags, setflags] = useState<boolean>(false);
+  const [onSelect, setOnSelect] = useState<Annotation>();
+
   const model = ModelUtils(useState, baseUrl);
   const page = useRef<pageRef>(null);
   const tbIntl = IntlInitJsx('pages.toolBar');
@@ -101,19 +103,35 @@ const Page = () => {
     setCurrentAnnotation(anno);
     annotation.setAll(newAnnos);
   };
-  function onStartEdit() {
+  const onAnnotationModifyUP = (anno: Annotation) => {
+    const newAnnos = [];
+    for (const item of annotation.all) {
+      console.log('annotation:', item, anno);
+      if (item.frontendId == anno.frontendId) {
+        newAnnos.push(anno);
+      } else {
+        newAnnos.push(item);
+      }
+    }
+    setCurrentAnnotation(anno);
+    annotation.setAll(newAnnos);
+    annotation.update(anno);
+  };
+  const onStartEdit = () => {
     setisClick(true);
-  }
-  function onEndEdit() {
+  };
+  const onEndEdit = () => {
     setisClick(false);
-  }
-  function onFinishEdit() {
+  };
+  const onFinishEdit = () => {
     // 鼠标抬起的时候
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     if (!annotation.curr) return;
+    // debugger;
     console.log(
-      'annotation.curr.result',
-      annotation.curr.result,
+      'annotations.curr',
+      onSelect,
+      annotation.curr,
       annotation?.curr?.annotationId,
       annotation.curr.result.split(',').length,
     );
@@ -126,7 +144,7 @@ const Page = () => {
     }
     message.success(tbIntl('saveSuccess'));
     if (tool.curr == 'rectangle') setCurrentAnnotation(undefined);
-  }
+  };
 
   const drawToolParam = {
     dataId: data.curr?.dataId,
@@ -238,6 +256,7 @@ const Page = () => {
   }, [data.all]);
   useEffect(() => {
     if (!isClick) {
+      // debugger;
       onFinishEdit();
     }
   }, [isClick]);
@@ -492,6 +511,8 @@ const Page = () => {
               }}
               drawTool={drawTool}
               threshold={0}
+              OnSelect={setOnSelect}
+              onAnnotationModifyUP={onAnnotationModifyUP}
             />
           </div>
           <div className="pblock">

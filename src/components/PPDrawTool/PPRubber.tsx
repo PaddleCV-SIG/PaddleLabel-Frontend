@@ -196,6 +196,8 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       props.frontendIdOps.frontendId,
       'maxId:',
       getMaxFrontendId(props.annotations),
+      `tool: `,
+      tool,
     );
     const frontendId =
       props.frontendIdOps.frontendId > 0
@@ -204,14 +206,14 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
     const line = createLine({
       width: props.brushSize || 10,
-      color: props.currentLabel?.color || '',
+      color: tool === 'brush' ? props.currentLabel?.color || '' : '',
       points: [mouseX, mouseY, mouseX, mouseY],
       type: tool,
       frontendId: frontendId,
     });
     // console.log(line);
-    if (!line) return;
     setCurrentTool(tool);
+    if (!line) return;
     if (props.currentTool === 'brush') {
       if (props.currentLabel) {
         const anno: Annotation = {
@@ -240,6 +242,8 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   };
 
   const OnMouseMove = (param: EvtProps) => {
+    console.log('currentTool', currentTool);
+
     if (!currentTool) {
       return;
     }
