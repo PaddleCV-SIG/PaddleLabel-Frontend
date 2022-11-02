@@ -16,7 +16,7 @@ function createLine(param: CanvasLineType): string {
   if (
     !param ||
     !param.width ||
-    !param.color ||
+    param.color == undefined ||
     !param.points ||
     param.points.length < 2 ||
     param.frontendId == undefined
@@ -211,10 +211,12 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       type: tool,
       frontendId: frontendId,
     });
-    // console.log(line);
+    console.log(line);
+
     setCurrentTool(tool);
     if (!line) return;
-    if (props.currentTool === 'brush') {
+    // debugger;
+    if (tool === 'brush') {
       if (props.currentLabel) {
         const anno: Annotation = {
           dataId: props.dataId,
@@ -227,6 +229,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         props.onAnnotationAdd(anno);
       }
     } else {
+      // debugger;
       const anno: Annotation = {
         dataId: props.dataId,
         label: props.currentAnnotation ? props.currentAnnotation?.label : props.labels[0],
