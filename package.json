@@ -79,7 +79,7 @@
     "umi": "^3.5.0",
     "use-image": "^1.0.8",
     "uuid": "^9.0.0",
-    "yarn": "^1.22.18"
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^2.1.0",
