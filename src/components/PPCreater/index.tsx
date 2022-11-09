@@ -148,7 +148,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
 
   return (
     <div className={styles.shadow} style={props.style}>
-      <Spin tip="Import in progress" spinning={loading}>
+      <Spin tip={intlJsx('importInProgress')} spinning={loading}>
         {/* TODO: increase left width and decrease right */}
         <div id="left" className={styles.block_l}>
           <_PPBlock

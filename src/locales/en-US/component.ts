@@ -17,7 +17,8 @@ export default {
   'component.PPCreater.titleContent': 'Click to see more details about project folder structure.',
   'component.PPCreater.folderStructureSample': 'Folder Structure Example',
   'component.PPCreater.folderStructureSampleDetail':
-    'If the dataset to be imported contains annotations, please arrange files in the folder following the above example',
+    'If the dataset to be imported contains annotations, please arrange files in the folder following the above example. Clicking on above files reveals their content.',
+  'component.PPCreater.importInProgress': 'Import in progress',
 
   'component.PPDivideDataModal.train': 'Train',
   'component.PPDivideDataModal.validation': 'Validation',
