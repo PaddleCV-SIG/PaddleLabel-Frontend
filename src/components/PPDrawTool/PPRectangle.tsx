@@ -46,8 +46,8 @@ let isClick = false;
 // };
 function drawGuidewires(x, y, context) {
   context.save();
-  context.strokeStyle = 'rgba(0,0,230,0.4)';
-  context.lineWidth = 0.5;
+  context.strokeStyle = 'rgba(0,0,230,0.9)';
+  context.lineWidth = 0.8;
   drawVerticalLine(x, context);
   drawHorizontalLine(y, context);
   context.restore();
@@ -70,6 +70,10 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
   console.log(`drawRectangle, annotation:`, props.annotation);
   // return;
   // renderReact(props.canvasRef);
+  const lengths = props?.annotation?.result?.split(',').length;
+  if (lengths && lengths < 4) {
+    return <></>;
+  }
   const annotation = props.annotation;
   if (
     !annotation ||
@@ -215,7 +219,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   const startNewRectangle = (mouseX: number, mouseY: number) => {
     const polygon = createRectangle([mouseX, mouseY]);
     if (!polygon || !props.dataId) return;
-    console.log('polygons', polygon);
+    console.log('props.annotations:', props.annotations);
     props.onAnnotationAdd({
       dataId: props.dataId,
       type: 'rectangle',

@@ -72,7 +72,7 @@ export type PPDrawToolRet = {
   onMouseMove: EvtType;
   onMouseUp: EvtType;
   drawAnnotation: (props: PPRenderFuncProps, flag?: boolean) => ReactElement;
-  drawGuidewires?: (x: any, y: any, context: any) => void;
+  drawGuidewires?: (x: number, y: number, context: any, brushSize?: number) => void;
 };
 
 export function getMaxId(annotations?: Annotation[]): any {

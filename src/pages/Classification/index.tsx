@@ -11,9 +11,10 @@ import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { PageInit } from '@/services/utils';
 import type { Label, Annotation } from '@/models';
 import { IntlInitJsx } from '@/components/PPIntl/';
-
+import { IntlInit } from '@/services/utils';
 const Page: React.FC = () => {
   const page = useRef<pageRef>(null);
+  const intl = IntlInit('pages.classification');
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,
     useEffect,
@@ -123,6 +124,9 @@ const Page: React.FC = () => {
           <div
             className="prevTask"
             onClick={() => {
+              if (!label.all?.lenghth) {
+                message.info(intl('preNext'));
+              }
               task.prevTask();
               page?.current?.setDragEndPos({
                 x: 0,
@@ -134,6 +138,9 @@ const Page: React.FC = () => {
           <div
             className="nextTask"
             onClick={() => {
+              if (!label.all?.lenghth) {
+                message.info(intl('preNext'));
+              }
               task.nextTask();
               page?.current?.setDragEndPos({
                 x: 0,

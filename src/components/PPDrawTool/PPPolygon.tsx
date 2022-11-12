@@ -208,6 +208,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
           result: resultss,
         };
         props.modifyAnnoByFrontendId(anno);
+        // props.onMouseMovePolygon(anno);
       }
     }
   };

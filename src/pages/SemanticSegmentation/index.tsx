@@ -88,7 +88,6 @@ const Page: React.FC = () => {
   };
   const savefinlyList = () => {
     if (annotation.all?.length > 0) {
-      console.log('annotation.all', annotation.all);
       const frontendId = new Map();
       const items: Annotation[] = [];
       if (isLabel !== 'label') {
@@ -424,6 +423,7 @@ const Page: React.FC = () => {
               }}
               drawTool={drawTool}
               refresh={refreshVar}
+              brushSize={brushSize}
             />
           </div>
           <div

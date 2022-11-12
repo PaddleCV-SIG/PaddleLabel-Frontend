@@ -425,6 +425,11 @@ const PaddleAi: React.FC = () => {
                           style={{
                             width: '100%',
                           }}
+                          showSearch
+                          optionFilterProp="children"
+                          filterOption={(input, option) =>
+                            (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
+                          }
                         >
                           {labelOption &&
                             labelOption?.map((item) => {

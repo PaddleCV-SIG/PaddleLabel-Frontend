@@ -73,6 +73,7 @@ export type PPStageProps = {
   taskIndex?: number;
   OnSelect?: (anntation: Annotation) => void;
   onAnnotationModifyUP?: (annotation: Annotation) => void;
+  brushSize?: number;
 };
 
 const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
@@ -129,16 +130,16 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     };
   }, [
     props.onAnnotationModify,
+    props.onAnnotationModifyUP,
     props.scale,
     props.currentTool,
     props.setCurrentAnnotation,
-    stageRef,
+    props.OnSelect,
     props.currentAnnotation,
-    transparency,
     props.threshold,
-    canvasRef,
-    interactorData,
     props.currentLabel,
+    transparency,
+    interactorData,
     radius,
   ]);
   function handleWindowResize() {
@@ -208,7 +209,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       console.log('PPStage rendering annotations:', props.annotations);
       const ctx = canvasRef.current?.getContext('2d');
       if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-      // const length = props?.annotations?.length;
+      const length = props?.annotations?.length;
       props.annotations.forEach((annotation, index) => {
         // if (!annotation) continue;
         if (annotation) {
@@ -219,24 +220,28 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           } else if (annotation.type == 'rectangle') {
             shape = props.drawTool.polygon.drawAnnotation(param);
           }
-          // else if (annotation.type == 'brush') {
-          //   const flag = index === length - 1 ? true : false;
-          //   shape = props.drawTool.brush?.drawAnnotation(param, flag);
-          // } else if (annotation.type == 'rubber') {
-          //   const flag = index === length - 1 ? true : false;
-          //   shape = props.drawTool.rubber?.drawAnnotation(param, flag);
-          // }
-          console.log('shape', shape);
-
+          if (annotation.type == 'brush') {
+            const flag = index === length - 1 ? true : false;
+            shape = props.drawTool.brush?.drawAnnotation(param, flag);
+          } else if (annotation.type == 'rubber') {
+            const flag = index === length - 1 ? true : false;
+            shape = props.drawTool.rubber?.drawAnnotation(param, flag);
+          }
           if (shape && shape?.key !== null) {
             newShapes.push(shape);
           }
+          console.log('shape', shape);
         }
       });
+      console.log('newShapes', newShapes);
       setShapes(newShapes);
-      console.log('shapes', newShapes);
     }
-  }, [props.annotations, props.currentAnnotation, param]);
+  }, [props.annotations]);
+  useEffect(() => {
+    console.log('shapes', shapes);
+    // debugger;
+    layerRef.current?.batchDraw();
+  }, [shapes]);
   const renderReact = (endPos: any) => {
     const width = Math.abs(startPos.x - endPos.x);
     const height = Math.abs(startPos.y - endPos.y);
@@ -325,17 +330,64 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         y: mouseY,
       });
       drawTool?.onMouseDown(getEvtParam(e));
+      const ctx = canvasRef.current?.getContext('2d');
+      console.log(
+        'props.currentLabel?.color',
+        props.currentTool,
+        props.currentLabel?.color,
+        props.brushSize,
+        ctx,
+      );
+      if (
+        (props.currentTool != 'brush' && props.currentTool != 'rubber') ||
+        !props.currentLabel?.color ||
+        !props.brushSize ||
+        !ctx
+      )
+        return;
+      ctx.beginPath();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = props.brushSize;
+      ctx.strokeStyle = props.currentLabel?.color;
+      ctx.moveTo(mouseX, mouseY);
+      layerRef.current?.batchDraw();
+    }
+    // isMove.value = true;
+    //  const { canvasRef } = param;
+  };
+  const onMouseMovePolygon = (mouseX: number, mouseY: number, context: any) => {
+    if (props.currentAnnotation) {
+      // console.log('OnMousemoveResult', result);
+      const array = props.currentAnnotation.result?.split(',');
+      // const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+      console.log('arrays', array, mouseX, mouseY);
+
+      if (array && array?.length >= 6) {
+        const ctx = context;
+        if (!ctx) return;
+        ctx.moveTo(mouseX, mouseY);
+        // 到坐标(700,700)为终点画一条直线
+        ctx.lineTo(Number(array[0]), Number(array[1]));
+        ctx.lineTo(Number(array[2]), Number(array[3]));
+        // 线宽为5
+        ctx.lineWidth = 1;
+        // 线的样式颜色
+        ctx.strokeStyle = props.currentAnnotation?.label?.color;
+        // 执行划直线这个操作
+        ctx.stroke();
+        layerRef.current?.batchDraw();
+      }
     }
   };
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
     drawTool?.onMouseMove(getEvtParam(e));
     console.log('props?.tool?.curr', props?.currentTool);
+    const mouseX = (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
+    const mouseY =
+      (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
+    const ctx = canvasRef.current?.getContext('2d');
     if (props?.currentTool == 'rectangle') {
-      const mouseX =
-        (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
-      const mouseY =
-        (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
-      const ctx = canvasRef.current?.getContext('2d');
       restoreDrawingSurface(DrawingSurfaceImageData);
       drawTool?.drawGuidewires(mouseX, mouseY, ctx);
       // drawGuidewires(mouseX, mouseY, ctx);
@@ -348,6 +400,25 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       }
       const newrefoce = refoce + 1;
       setRefoce(newrefoce);
+    }
+    // if (props?.currentTool == 'polygon') {
+    //   // restoreDrawingSurface(DrawingSurfaceImageData);
+    //   onMouseMovePolygon(mouseX, mouseY, ctx);
+    // }
+    if (
+      !props.currentTool ||
+      !props.currentAnnotation ||
+      !props.currentAnnotation.result ||
+      props.currentAnnotation.result.length < 2 ||
+      !props.currentLabel?.color
+    ) {
+      return;
+    }
+    if (isClick) {
+      // drawTool?.drawGuidewires(mouseX, mouseY, ctx, props.brushSize);
+      ctx?.lineTo(mouseX, mouseY);
+      ctx?.stroke();
+      layerRef.current?.batchDraw();
     }
   };
   const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
@@ -363,30 +434,31 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   //   const newrefoce = refoce + 1;
   //   setRefoce(newrefoce);
   // }, [dragEndPos]);
-  if (props.annotations) {
-    const newShapes: React.ReactElement[] = [];
-    const length = props?.annotations?.length;
-    props.annotations.forEach((annotation, index) => {
-      if (annotation) {
-        param.annotation = annotation;
-        let shape;
-        if (annotation.type == 'brush') {
-          const flag = index === length - 1 ? true : false;
-          shape = props.drawTool.brush?.drawAnnotation(param, flag);
-        } else if (annotation.type == 'rubber') {
-          const flag = index === length - 1 ? true : false;
-          shape = props.drawTool.rubber?.drawAnnotation(param, flag);
-        }
-        if (shape && shape?.key !== null) {
-          newShapes.push(shape);
-        }
-        console.log('shape', shape);
-      }
-    });
-  }
+  // if (props.annotations) {
+  //   const newShapes: React.ReactElement[] = [];
+  //   const length = props?.annotations?.length;
+  //   props.annotations.forEach((annotation, index) => {
+  //     if (annotation) {
+  //       console.log('annotation', annotation);
+  //       param.annotation = annotation;
+  //       let shape;
+  //       if (annotation.type == 'brush') {
+  //         const flag = index === length - 1 ? true : false;
+  //         shape = props.drawTool.brush?.drawAnnotation(param, flag);
+  //       } else if (annotation.type == 'rubber') {
+  //         const flag = index === length - 1 ? true : false;
+  //         shape = props.drawTool.rubber?.drawAnnotation(param, flag);
+  //       }
+  //       if (shape && shape?.key !== null) {
+  //         newShapes.push(shape);
+  //       }
+  //       console.log('shape', shape);
+  //     }
+  //   });
+  // }
   props.drawTool?.interactor?.drawAnnotation(param);
   // Re-draw layer
-  layerRef.current?.batchDraw();
+  // 自动重绘制的次数
 
   const draggable = props.currentTool == 'mover';
   useImperativeHandle(ref, () => ({
