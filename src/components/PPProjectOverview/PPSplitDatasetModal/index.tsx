@@ -51,9 +51,9 @@ const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
             );
             setLoading(true);
             splitDataset(props.project.projectId, {
-              train: trainData * 0.01,
-              val: validationData * 0.01,
-              test: testData * 0.01,
+              train: trainData,
+              val: validationData,
+              test: testData,
             })
               .then(() => {
                 message.success(intl('success'));
