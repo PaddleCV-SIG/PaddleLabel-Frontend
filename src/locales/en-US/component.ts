@@ -20,12 +20,6 @@ export default {
     'If the dataset to be imported contains annotations, please arrange files in the folder following the above example. Clicking on above files reveals their content.',
   'component.PPCreater.importInProgress': 'Import in progress',
 
-  'component.PPDivideDataModal.train': 'Train',
-  'component.PPDivideDataModal.validation': 'Validation',
-  'component.PPDivideDataModal.test': 'Test',
-  'component.PPDivideDataModal.success': 'Dataset Splited',
-
-  // 'component.PPExportModal.imagenet': 'Imagenet Format',
   'component.PPExportModal.export': 'Export',
   'component.PPExportModal.labelFormat': 'Export Format',
   'component.PPExportModal.title': 'Export Dataset',
@@ -34,12 +28,14 @@ export default {
   'component.PPExportModal.nullLabelFormat': 'Please choose an export format.',
   'component.PPExportModal.exportSuccess': 'Export Success',
 
-  'component.PPSplitDataset.title': 'Split Dataset',
-  'component.PPSplitDataset.train': 'Training',
-  'component.PPSplitDataset.validation': 'Validation',
-  'component.PPSplitDataset.test': 'Test',
-  'component.PPSplitDataset.success': 'Dataset is randomly splitted',
-  'component.PPSplitDataset.fail': 'Train, Validation and Test percentage should sum up to 100!',
+  'component.PPSplitDatasetModal.title': 'Split Dataset',
+  'component.PPSplitDatasetModal.train': 'Training',
+  'component.PPSplitDatasetModal.validation': 'Validation',
+  'component.PPSplitDatasetModal.test': 'Test',
+  'component.PPSplitDatasetModal.success': 'Dataset is randomly splitted',
+  'component.PPSplitDatasetModal.fail': 'Failed to split dataset due to backend error',
+  'component.PPSplitDatasetModal.not100':
+    'The percentages of the three subsets should sum up to 100',
 
   'component.PPImportModal.import': 'Import',
   'component.PPImportModal.title': 'Import Additional Data',

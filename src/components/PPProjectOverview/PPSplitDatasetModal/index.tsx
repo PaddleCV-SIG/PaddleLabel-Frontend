@@ -2,18 +2,17 @@ import { Col, Form, InputNumber, message, Modal, Row, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.less';
-import { splitDataset } from '@/services/utils';
-import type { Project } from '@/services/models';
+// import type { ProjectUtils } from '@/services/utils';
 import { IntlInitJsx } from '@/components/PPIntl';
 
 type PPSplitDatasetProps = {
-  project: Project;
+  project: any; // ProjectUtils's return
   visible?: boolean;
   onFinish?: () => void;
 };
 
 const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
-  const intl = IntlInitJsx('component.PPSplitDataset');
+  const intl = IntlInitJsx('component.PPSplitDatasetModal');
   const [visible, setVisible] = useState<boolean>(false);
   const [trainData, setTrainData] = useState<number>(60);
   const [validationData, setValidationData] = useState<number>(20);
@@ -29,7 +28,7 @@ const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
       </Button>
       <Modal
         className={styles.modal}
-        // title={divideData}
+        title={intl('title')}
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
@@ -43,20 +42,13 @@ const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
           initialValues={{ remember: false }}
           onFinish={() => {
             if (trainData + validationData + testData != 100) {
-              message.error(intl('fail'));
+              message.error(intl('not100'));
               return;
             }
-            console.log(
-              `x trainData: ${trainData}, validationData: ${validationData}, testData: ${testData}, props.project.curr.projectId: ${props.project.projectId}`,
-            );
             setLoading(true);
-            splitDataset(props.project.projectId, {
-              train: trainData,
-              val: validationData,
-              test: testData,
-            })
+            props.project
+              .splitDataset({ train: trainData, val: validationData, test: testData })
               .then(() => {
-                message.success(intl('success'));
                 setVisible(false);
               })
               .finally(() => {
