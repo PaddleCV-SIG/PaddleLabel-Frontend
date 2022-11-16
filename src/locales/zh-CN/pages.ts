@@ -149,4 +149,5 @@ export default {
   'pages.projectOverview.taskCount': '任务总数',
   'pages.projectOverview.mlSettings': '智能标注设置',
   'pages.classification.preNext': '上一张图片尚未标记',
+  'pages.classification.unhave': '没有相似的标签',
 };

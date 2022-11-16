@@ -190,6 +190,21 @@ const Page = () => {
     }
     return max;
   };
+  const getBase64Image = (img?: HTMLImageElement) => {
+    console.log('getBase64Image', img);
+
+    if (!img) return '';
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    console.log('img.width', img.width);
+    const ctx = canvas.getContext('2d');
+    ctx?.drawImage(img, 0, 0, img.width, img.height);
+    const dataURL = canvas.toDataURL('image/png');
+    console.log('dataURL', dataURL);
+
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
+  };
   const onPredicted = (images: HTMLImageElement) => {
     const imgBase64 = getBase64Image(images);
     const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
@@ -207,7 +222,7 @@ const Page = () => {
             }
           });
           setIsLoad(false);
-          data.updatePredicted(data.all[0].dataId, true);
+          data.updatePredicted(data.all[0]?.dataId, true);
           setInteractorData({
             active: true,
             mousePoints: interactorData.mousePoints,

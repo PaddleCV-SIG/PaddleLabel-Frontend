@@ -197,15 +197,22 @@ const Page: React.FC = () => {
             labels.add(labelMap.project);
           }
         }
-      } else {
-        for (const labelItem of interactorData.predictData) {
+      }
+      for (const labelItem of interactorData.predictData) {
+        if (labelItem.socre > 0.5) {
           console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
           if (labelItem && !oldLabel.has(labelItem?.label_name)) {
             labels.add(labelItem?.label_name);
           }
         }
-        createLabels(labels);
       }
+      const info = interactorData.predictData.some((labelItem) => {
+        return labelItem.socre > 0.5;
+      });
+      if (!info) {
+        message.error(intl('unhave'));
+      }
+      createLabels(labels);
       if (![...labels].length) {
         // setflags(true);
       }

@@ -6,6 +6,8 @@ const serviceUtils = () => {
     msgComponent: MessageApi,
     defaultErrMsg?: string,
   ) => {
+    console.log('errsss', err);
+
     const defaultErrStr = defaultErrMsg
       ? defaultErrMsg
       : 'Something unexpected happened, please try again later.';
