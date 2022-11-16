@@ -10,7 +10,6 @@ import { InteractorData } from '@/models/InteractorData';
 export type PPRenderFuncProps = {
   annotation: Annotation;
   onDrag: (anntation: Annotation) => void;
-
   onDragEnd: () => void;
   scale: number;
   currentTool: ToolType;
@@ -21,6 +20,7 @@ export type PPRenderFuncProps = {
   transparency: number;
   threshold?: number;
   canvasRef: React.RefObject<HTMLCanvasElement>;
+  canvasRef2: React.RefObject<HTMLCanvasElement>;
   interactorData?: InteractorData;
   label?: Label;
   radius?: number;
@@ -71,7 +71,12 @@ export type PPDrawToolRet = {
   onMouseDown: EvtType;
   onMouseMove: EvtType;
   onMouseUp: EvtType;
-  drawAnnotation: (props: PPRenderFuncProps, flag?: boolean) => ReactElement;
+  drawAnnotation: (
+    props: PPRenderFuncProps,
+    flag?: boolean,
+    offsetX?: number,
+    offsetY?: number,
+  ) => ReactElement;
   drawGuidewires?: (x: number, y: number, context: any, brushSize?: number) => void;
 };
 

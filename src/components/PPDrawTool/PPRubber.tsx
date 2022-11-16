@@ -33,8 +33,8 @@ let isClick = false;
 let finlyResult = '';
 function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
   console.log('flag', flag);
-
-  const { canvasRef, annotation } = param;
+  const { canvasRef2, annotation } = param;
+  const canvasRef = canvasRef2;
   const result = annotation.result;
   if (!result) return <></>;
   const ctx = canvasRef.current?.getContext('2d');
@@ -82,17 +82,17 @@ function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
     }
   }
   console.log('annotation param.currentAnnotation rubber', isClick, param.currentTool, flag);
-  if (isClick && param.currentTool === 'rubber' && flag) {
-    ctx.beginPath();
-    const pointss = points.slice(2);
-    const x = pointss.at(-2);
-    const y = pointss.at(-1);
-    console.log('rubbers', x, y);
-    // ctx?.arc(x, y, points[0] / 2, 0, 2 * Math.PI);
-    ctx?.arc(x, y, 10, 0, 2 * Math.PI);
-    ctx.strokeStyle = 'blue'; //将线条颜色设置为蓝色
-    ctx.stroke();
-  }
+  // if (isClick && param.currentTool === 'rubber' && flag) {
+  //   ctx.beginPath();
+  //   const pointss = points.slice(2);
+  //   const x = pointss.at(-2);
+  //   const y = pointss.at(-1);
+  //   console.log('rubbers', x, y);
+  //   // ctx?.arc(x, y, points[0] / 2, 0, 2 * Math.PI);
+  //   ctx?.arc(x, y, 10, 0, 2 * Math.PI);
+  //   ctx.strokeStyle = 'blue'; //将线条颜色设置为蓝色
+  //   ctx.stroke();
+  // }
   return <></>;
 }
 
@@ -137,7 +137,7 @@ function renderBrush(
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.lineWidth = width;
-  if (color) ctx.strokeStyle = color;
+  ctx.strokeStyle = '';
   ctx.globalCompositeOperation = color ? 'source-over' : 'destination-out';
   // ctx.strokeStyle = 'r';
   ctx.stroke();

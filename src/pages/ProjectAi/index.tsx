@@ -295,7 +295,11 @@ const PaddleAi: React.FC = () => {
                     model.all?.map((item) => {
                       return <Option value={item.name}>{item.name}</Option>;
                     })} */}
-                  <Option value="PicoDet">PicoDet</Option>;
+                  {project?.curr?.taskCategory?.name === 'detection' ? (
+                    <Option value="PicoDet">PicoDet</Option>
+                  ) : (
+                    <Option value="PPLCNetV2">PPLCNetV2</Option>
+                  )}
                 </Select>
               </div>
             </Form.Item>

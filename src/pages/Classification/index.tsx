@@ -1,20 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Spin, message } from 'antd';
-import { history } from 'umi';
+import { history, useModel } from 'umi';
 import styles from './index.less';
+import { useUpdateEffect } from 'ahooks';
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
 import PPStage from '@/components/PPLabelPage/PPStage';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
-import { PageInit } from '@/services/utils';
+import { PageInit, ModelUtils } from '@/services/utils';
 import type { Label, Annotation } from '@/models';
 import { IntlInitJsx } from '@/components/PPIntl/';
 import { IntlInit } from '@/services/utils';
+import useImage from 'use-image';
+const port = window.location.port == '8000' ? '1234' : window.location.port;
+const baseUrl = `http://${window.location.hostname}:${port}/`;
 const Page: React.FC = () => {
   const page = useRef<pageRef>(null);
   const intl = IntlInit('pages.classification');
+  const tbIntl = IntlInitJsx('pages.toolBar');
+  const [isLoad, setIsLoad] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [otherSetting, setotherSetting] = useState();
+  // const [flags, setflags] = useState<boolean>(false);
+  const { interactorData, setInteractorData } = useModel('InteractorData');
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,
     useEffect,
@@ -24,13 +34,27 @@ const Page: React.FC = () => {
       effectTrigger: { postTaskChange: postTaskChange, postProjectChanged: postProjectChanged },
     },
   );
-
-  const tbIntl = IntlInitJsx('pages.toolBar');
+  const [image] = useImage(data.imgSrc || '', 'anonymous');
+  const model = ModelUtils(useState, baseUrl);
 
   function postProjectChanged() {
     if (project.curr?.labelFormat == 'single_class') label.setOneHot(true);
   }
+  const getBase64Image = (img?: HTMLImageElement) => {
+    console.log('getBase64Image', img);
 
+    if (!img) return '';
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    console.log('img.width', img.width);
+    const ctx = canvas.getContext('2d');
+    ctx?.drawImage(img, 0, 0, img.width, img.height);
+    const dataURL = canvas.toDataURL('image/png');
+    console.log('dataURL', dataURL);
+
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
+  };
   async function selectLabel(selected: Label, activeIds: Set<number>) {
     console.log('selectLabel', selected);
     // after toggle active, add ann
@@ -56,7 +80,137 @@ const Page: React.FC = () => {
     loading.setCurr(false);
     console.log('post task change');
   }
+  const onPredicted = (images: HTMLImageElement) => {
+    const imgBase64 = getBase64Image(images);
+    // const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
+    const line = model.predict('PPLCNetV2', {
+      format: 'b64',
+      img: imgBase64,
+    });
+    if (!line) return;
+    line.then(
+      (res) => {
+        if (res) {
+          console.log('resss', res);
 
+          // const predictions = res.predictions.map((item) => {
+          //   if (item.score > thresholdRaw) {
+          //     return item;
+          //   }
+          // });
+          const predictions = res?.predictions;
+          setIsLoad(false);
+          data.updatePredicted(data.all[0].dataId, true);
+          setInteractorData({
+            active: true,
+            mousePoints: interactorData.mousePoints,
+            predictData: predictions,
+          });
+        }
+      },
+      (error) => {
+        model.setLoading(false);
+        console.log('line.error', error);
+      },
+    );
+  };
+  const createLabels = (labels) => {
+    const newlabels = [...labels].map((item) => {
+      const addlabel = {
+        name: item,
+        projectId: project.curr.projectId,
+      };
+      return addlabel;
+    });
+    if (newlabels.length > 0) {
+      label.create(newlabels).then((newLabel) => {
+        // setCurrentAnnotation(undefined);
+        label.setCurr(newLabel);
+        // setflags(true);
+      });
+    }
+  };
+  useUpdateEffect(() => {
+    if (data.all.length > 0) {
+      // data.updatePredicted(data.all[0].dataId);
+      if (data.all[0].predicted) {
+        const flag = false;
+        if (flag !== isLoad) {
+          setIsLoad(flag);
+        }
+      } else {
+        const flag = true;
+        if (flag !== isLoad) {
+          setIsLoad(flag);
+        }
+      }
+    }
+  }, [data.all]);
+  useUpdateEffect(() => {
+    // debugger;
+    if (isLoad && project.curr?.otherSettings?.labelMapping) {
+      if (model.loading) {
+        message.error(tbIntl('modelLoading'));
+        return;
+      }
+      const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
+      model.setMlBackendUrl(settings.mlBackendUrl || '');
+      model.setLoading(true);
+      model.load(settings.modelName).then(
+        () => {
+          // message.info(intl('modelLoaded'));
+          model.setLoading(false);
+          if (isLoading) {
+            setIsLoading(false);
+          }
+        },
+        () => {
+          model.setLoading(false);
+          if (!isLoading) {
+            setIsLoading(true);
+          }
+        },
+      );
+    } else {
+      setotherSetting(project.curr?.otherSettings);
+    }
+  }, [isLoad, project.curr?.otherSettings]);
+  useUpdateEffect(() => {
+    const predictflag = !isLoading && image && isLoad;
+    if (predictflag) {
+      onPredicted(image);
+    }
+  }, [isLoading, isLoad, image]);
+  useUpdateEffect(() => {
+    console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
+    if (interactorData.predictData.length && otherSetting?.labelMapping && label.all) {
+      const labels = new Set();
+      const oldLabel = new Map();
+      for (const labelItem of label.all) {
+        if (labelItem.name) {
+          oldLabel.set(labelItem.name, labelItem);
+        }
+      }
+      if (otherSetting?.labelMapping?.length > 0) {
+        for (const labelMap of otherSetting?.labelMapping) {
+          if (!oldLabel.has(labelMap.project)) {
+            labels.add(labelMap.project);
+          }
+        }
+      } else {
+        for (const labelItem of interactorData.predictData) {
+          console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
+          if (labelItem && !oldLabel.has(labelItem?.label_name)) {
+            labels.add(labelItem?.label_name);
+          }
+        }
+        createLabels(labels);
+      }
+      if (![...labels].length) {
+        // setflags(true);
+      }
+    }
+  }, [interactorData, otherSetting]);
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
@@ -159,6 +313,15 @@ const Page: React.FC = () => {
           }}
         >
           {tbIntl('projectOverview')}
+        </PPToolBarButton>
+        <PPToolBarButton
+          imgSrc="./pics/buttons/intelligent_interaction.png"
+          disabled={!otherSetting?.labelMapping}
+          onClick={() => {
+            onPredicted(image);
+          }}
+        >
+          {tbIntl('interactor')}
         </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">

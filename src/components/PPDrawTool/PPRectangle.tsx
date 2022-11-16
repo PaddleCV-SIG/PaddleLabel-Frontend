@@ -84,6 +84,8 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
   )
     return <></>;
   const pointsRaw = annotation.result.split(',');
+  console.log('pointsRaw', pointsRaw);
+
   const points = {
     xmin: parseInt(pointsRaw[0]),
     ymin: parseInt(pointsRaw[1]),
@@ -188,10 +190,9 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
           }
         }}
         draggable={props.currentTool == 'editor'}
-        onDragMove={onDragEvt}
+        // onDragMove={onDragEvt}
         onDragEnd={onDragEvt}
         onMouseOver={() => {
-          // console.log('onMouseOver', props.currentTool);
           if (props.currentTool == 'editor' && props.stageRef?.current)
             props.stageRef.current.container().style.cursor = 'cell';
         }}

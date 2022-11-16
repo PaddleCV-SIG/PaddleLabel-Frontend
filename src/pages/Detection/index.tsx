@@ -75,21 +75,6 @@ const Page = () => {
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
   };
-  const getBase64Image = (img?: HTMLImageElement) => {
-    console.log('getBase64Image', img);
-
-    if (!img) return '';
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    console.log('img.width', img.width);
-    const ctx = canvas.getContext('2d');
-    ctx?.drawImage(img, 0, 0, img.width, img.height);
-    const dataURL = canvas.toDataURL('image/png');
-    console.log('dataURL', dataURL);
-
-    return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
-  };
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
@@ -113,7 +98,7 @@ const Page = () => {
   const onAnnotationModifyUP = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
-      console.log('annotation:', item, anno);
+      console.log('annotationUP:', item, anno);
       if (item.frontendId == anno.frontendId) {
         newAnnos.push(anno);
       } else {

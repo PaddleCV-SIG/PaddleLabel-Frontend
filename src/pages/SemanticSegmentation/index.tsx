@@ -166,6 +166,21 @@ const Page: React.FC = () => {
     setCurrentAnnotation(anno);
     annotation.setAll(annotation.all);
   };
+  const onAnnotationModifyUP = (anno: Annotation) => {
+    const newAnnos = [];
+    for (const item of annotation.all) {
+      console.log('annotationUP:', item, anno);
+      if (item.frontendId == anno.frontendId) {
+        newAnnos.push(anno);
+      } else {
+        newAnnos.push(item);
+      }
+    }
+    setCurrentAnnotation(anno);
+    annotation.setAll(newAnnos);
+    // debugger;
+    annotation.update(anno);
+  };
 
   const modifyAnnoByFrontendId = (anno: Annotation) => {
     console.log('modifyAnnoByFrontendId:', anno);
@@ -407,6 +422,7 @@ const Page: React.FC = () => {
               currentLabel={label.curr}
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={modifyAnnoByFrontendId}
+              onAnnotationModifyUP={onAnnotationModifyUP}
               onAnnotationModifyComplete={() => {
                 // Do not record interactor's history
                 if (interactorData.active) return;
