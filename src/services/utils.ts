@@ -565,7 +565,7 @@ export function AnnotationUtils(
         console.log('anns', anns);
         if (anns.length == 0) project.getFinished();
       }
-      message.info(tbIntl('saveSuccess'));
+      message.success(tbIntl('saveSuccess'));
     } catch (err) {
       console.log('annotation remove err', err);
       return serviceUtils.parseError(err, message);
