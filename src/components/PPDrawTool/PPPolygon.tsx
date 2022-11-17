@@ -4,12 +4,13 @@ import type { ReactElement } from 'react';
 import { Circle, Group, Line } from 'react-konva';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import { hexToRgb } from './drawUtils';
-// let isMove = false;
+let isMove = false;
 function createPolygon(color?: string, points?: number[]): string | undefined {
   if (!color || !points) return undefined;
   return points.join(',');
 }
-function drawPolygon(props: PPRenderFuncProps, flag: boolean): ReactElement {
+
+function drawPolygon(props: PPRenderFuncProps): ReactElement {
   const annotation = props.annotation;
   if (!annotation || !annotation.result || annotation.result.length < 2 || !annotation.label?.color)
     return <></>;
@@ -25,12 +26,8 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean): ReactElement {
   // if (transparency < 0) transparency = 0;
 
   // Create dots
-  // const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>, index: number) => {
-
-  // };
   let x: number | undefined = undefined;
   const pointElements: ReactElement[] = [];
-
   points.forEach((point, index) => {
     if (!x) {
       x = point;
@@ -42,15 +39,9 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean): ReactElement {
           if (props.currentTool == 'editor') props.onSelect(annotation);
         }}
         draggable={props.currentTool == 'editor'}
-        // onMouseDown={() => {
-        //   if (props.currentTool == 'editor') {
-        //     // console.log(`select ${JSON.stringify(annotation)}`);
-        //     props.OnSelects(annotation);
-        //     props.onSelect(annotation);
-        //   }
-        // }}
-        // onDragMove={onDragEvt}
-        onDragEnd={(evt) => {
+        onDragMove={(evt) => {
+          // console.log(`onDragMove, annotation: `, annotation);
+          // console.log(`Circle onDrageMove`);
           evt.cancelBubble = true;
           // start Forbid drage cross image border
           const stage: Stage = props.stageRef?.current;
@@ -78,20 +69,16 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean): ReactElement {
             evt.target.setPosition({ x: newPositionX, y: newPositionY });
           }
           // End cross border control
-          console.log('pointsss', points, index, newPositionX, newPositionY);
-
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
           const newAnno = { ...annotation, result: points.join(',') };
           // console.log(newAnno);
-          props.onDragUP(newAnno);
+          props.onDrag(newAnno);
         }}
         onMouseOver={() => {
           // console.log(`Circle onMouseOver`);
-          console.log('props.stageRef?.current', props.currentTool, props.stageRef?.current);
           if (props.currentTool == 'editor' && props.stageRef?.current)
             props.stageRef.current.container().style.cursor = 'cell';
-          props.layerRef.current?.batchDraw();
         }}
         onMouseOut={() => {
           // console.log(`Circle onMouseOut`);
@@ -126,7 +113,7 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean): ReactElement {
         lineCap="round"
         points={points}
         tension={0}
-        closed={flag}
+        closed={true}
         fill={`rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${transparency})`}
       />
       {pointElements}
@@ -181,8 +168,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   };
 
   const OnMouseDown = (param: EvtProps) => {
-    // && props.currentTool != 'editor'
-    if (props.currentTool != 'polygon') return;
+    if (props.currentTool != 'polygon' && props.currentTool != 'editor') return;
     const mouseX = param.mouseX + param.offsetX;
     const mouseY = param.mouseY + param.offsetY;
     console.log(`currentAnnotation:`, props.currentAnnotation);
@@ -192,41 +178,38 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     } else {
       addDotToPolygon(mouseX, mouseY);
     }
-    // isMove = false;
+    isMove = false;
   };
   const OnMousemove = (param: EvtProps) => {
-    console.log('param:', param);
-
-    // if (props.currentTool != 'polygon' && props.currentTool != 'editor') return;
-    // const mouseX = param.mouseX + param.offsetX;
-    // const mouseY = param.mouseY + param.offsetY;
-    // // console.log(`currentAnnotation:`, props.currentAnnotation);
-    // // No annotation is marking, start new
-    // if (props.currentAnnotation) {
-    //   // console.log('OnMousemoveResult', result);
-    //   const array = props.currentAnnotation.result?.split(',');
-    //   const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
-    //   if (array?.length >= 4 && !isMove) {
-    //     console.log('result1', result);
-    //     const anno = {
-    //       ...props.currentAnnotation,
-    //       result: result,
-    //     };
-    //     props.modifyAnnoByFrontendId(anno);
-    //     isMove = true;
-    //   } else if (array?.length >= 6 && isMove) {
-    //     array.splice(array.length - 2, 2);
-    //     console.log('newArray', array);
-    //     const results = array.join(',');
-    //     const resultss = results + `,${mouseX},${mouseY}`;
-    //     const anno = {
-    //       ...props.currentAnnotation,
-    //       result: resultss,
-    //     };
-    //     props.modifyAnnoByFrontendId(anno);
-    //     // props.onMouseMovePolygon(anno);
-    //   }
-    // }
+    if (props.currentTool != 'polygon' && props.currentTool != 'editor') return;
+    const mouseX = param.mouseX + param.offsetX;
+    const mouseY = param.mouseY + param.offsetY;
+    // console.log(`currentAnnotation:`, props.currentAnnotation);
+    // No annotation is marking, start new
+    if (props.currentAnnotation) {
+      // console.log('OnMousemoveResult', result);
+      const array = props.currentAnnotation.result?.split(',');
+      const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+      if (array?.length >= 4 && !isMove) {
+        console.log('result1', result);
+        const anno = {
+          ...props.currentAnnotation,
+          result: result,
+        };
+        props.modifyAnnoByFrontendId(anno);
+        isMove = true;
+      } else if (array?.length >= 6 && isMove) {
+        array.splice(array.length - 2, 2);
+        console.log('newArray', array);
+        const results = array.join(',');
+        const resultss = results + `,${mouseX},${mouseY}`;
+        const anno = {
+          ...props.currentAnnotation,
+          result: resultss,
+        };
+        props.modifyAnnoByFrontendId(anno);
+      }
+    }
   };
   const OnMouseUp = () => {
     if (props.currentTool != 'polygon') return;

@@ -295,11 +295,7 @@ const PaddleAi: React.FC = () => {
                     model.all?.map((item) => {
                       return <Option value={item.name}>{item.name}</Option>;
                     })} */}
-                  {project?.curr?.taskCategory?.name === 'detection' ? (
-                    <Option value="PicoDet">PicoDet</Option>
-                  ) : (
-                    <Option value="PPLCNetV2">PPLCNetV2</Option>
-                  )}
+                  <Option value="PicoDet">PicoDet</Option>;
                 </Select>
               </div>
             </Form.Item>
@@ -429,11 +425,6 @@ const PaddleAi: React.FC = () => {
                           style={{
                             width: '100%',
                           }}
-                          showSearch
-                          optionFilterProp="children"
-                          filterOption={(input, option) =>
-                            (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
-                          }
                         >
                           {labelOption &&
                             labelOption?.map((item) => {

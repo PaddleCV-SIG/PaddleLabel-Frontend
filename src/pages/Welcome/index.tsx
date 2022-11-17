@@ -38,12 +38,10 @@ const Projects: React.FC = (props) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'projectId',
-      width: '30rem',
     },
     {
       title: 'Project Category',
       key: 'projectId',
-      width: '20rem',
       render: (project) => {
         console.log('pj', project);
         const categoryName = snake2camel(project.taskCategory.name);
@@ -54,6 +52,7 @@ const Projects: React.FC = (props) => {
     {
       title: 'Actions',
       key: 'projectId',
+      width: '15rem',
       align: 'center',
       render: (text, project) => (
         <Space size="middle">

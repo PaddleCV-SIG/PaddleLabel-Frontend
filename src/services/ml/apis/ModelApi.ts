@@ -223,7 +223,7 @@ export class ModelApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<runtime.ApiResponse<void>> {
     if (requestParameters.modelName === null || requestParameters.modelName === undefined) {
-      // debugger;
+      debugger;
       throw new runtime.RequiredError(
         'modelName',
         'Required parameter requestParameters.modelName was null or undefined when calling load.',

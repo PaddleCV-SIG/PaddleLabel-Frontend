@@ -30,11 +30,10 @@ function createLine(param: CanvasLineType): string {
  * Color lines on canvas as label.color
  */
 let isClick = false;
-let finlyResult = '';
 function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
   console.log('flag', flag);
-  const { canvasRef2, annotation } = param;
-  const canvasRef = canvasRef2;
+
+  const { canvasRef, annotation } = param;
   const result = annotation.result;
   if (!result) return <></>;
   const ctx = canvasRef.current?.getContext('2d');
@@ -82,17 +81,16 @@ function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
     }
   }
   console.log('annotation param.currentAnnotation rubber', isClick, param.currentTool, flag);
-  // if (isClick && param.currentTool === 'rubber' && flag) {
-  //   ctx.beginPath();
-  //   const pointss = points.slice(2);
-  //   const x = pointss.at(-2);
-  //   const y = pointss.at(-1);
-  //   console.log('rubbers', x, y);
-  //   // ctx?.arc(x, y, points[0] / 2, 0, 2 * Math.PI);
-  //   ctx?.arc(x, y, 10, 0, 2 * Math.PI);
-  //   ctx.strokeStyle = 'blue'; //将线条颜色设置为蓝色
-  //   ctx.stroke();
-  // }
+  if (isClick && param.currentTool === 'rubber' && flag) {
+    ctx.beginPath();
+    const pointss = points.slice(2);
+    const x = pointss.at(-2);
+    const y = pointss.at(-1);
+    console.log('rubbers', x, y);
+    ctx?.arc(x, y, points[0] / 2, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'blue'; //将线条颜色设置为蓝色
+    ctx.stroke();
+  }
   return <></>;
 }
 
@@ -137,7 +135,7 @@ function renderBrush(
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
   ctx.lineWidth = width;
-  ctx.strokeStyle = '';
+  if (color) ctx.strokeStyle = color;
   ctx.globalCompositeOperation = color ? 'source-over' : 'destination-out';
   // ctx.strokeStyle = 'r';
   ctx.stroke();
@@ -244,7 +242,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       };
       props.onAnnotationAdd(anno);
     }
-    finlyResult = line;
   };
 
   const OnMouseMove = (param: EvtProps) => {
@@ -254,14 +251,13 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       return;
     }
     console.log('props.currentAnnotation', props.currentAnnotation, props.annotations);
-    // const LastAnnotations = props.annotations[props.annotations?.length - 1];
+    const LastAnnotations = props.annotations[props.annotations?.length - 1];
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
     console.log('mouseX', mouseX, mouseY);
     // props.currentAnnotation 最新的一个节点，假设不使用这个的话 可以取Annotation里面的节点来用
-    // const newResult = LastAnnotations.result + `,${mouseX},${mouseY}`;
-    // props.onAnnotationModify({ ...LastAnnotations, result: newResult });
-    finlyResult = finlyResult + `,${mouseX},${mouseY}`;
+    const newResult = LastAnnotations.result + `,${mouseX},${mouseY}`;
+    props.onAnnotationModify({ ...LastAnnotations, result: newResult });
   };
 
   const OnMouseUp = () => {
@@ -270,9 +266,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     // const ctx = param.canvasRef;
     // const width = props.brushSize || 10;
     // renderBrush(ctx, width, pubPointes.slice(2), colors);
-    const LastAnnotations = props.annotations[props.annotations?.length - 1];
-    props.onAnnotationModify({ ...LastAnnotations, result: finlyResult });
-    finlyResult = '';
     isClick = false;
     setCurrentTool(undefined);
     props.onMouseUp();

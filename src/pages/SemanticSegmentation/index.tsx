@@ -88,6 +88,7 @@ const Page: React.FC = () => {
   };
   const savefinlyList = () => {
     if (annotation.all?.length > 0) {
+      console.log('annotation.all', annotation.all);
       const frontendId = new Map();
       const items: Annotation[] = [];
       if (isLabel !== 'label') {
@@ -165,21 +166,6 @@ const Page: React.FC = () => {
     annotation.all.push(anno);
     setCurrentAnnotation(anno);
     annotation.setAll(annotation.all);
-  };
-  const onAnnotationModifyUP = (anno: Annotation) => {
-    const newAnnos = [];
-    for (const item of annotation.all) {
-      console.log('annotationUP:', item, anno);
-      if (item.frontendId == anno.frontendId) {
-        newAnnos.push(anno);
-      } else {
-        newAnnos.push(item);
-      }
-    }
-    setCurrentAnnotation(anno);
-    annotation.setAll(newAnnos);
-    // debugger;
-    annotation.update(anno);
   };
 
   const modifyAnnoByFrontendId = (anno: Annotation) => {
@@ -422,7 +408,6 @@ const Page: React.FC = () => {
               currentLabel={label.curr}
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={modifyAnnoByFrontendId}
-              onAnnotationModifyUP={onAnnotationModifyUP}
               onAnnotationModifyComplete={() => {
                 // Do not record interactor's history
                 if (interactorData.active) return;
@@ -439,7 +424,6 @@ const Page: React.FC = () => {
               }}
               drawTool={drawTool}
               refresh={refreshVar}
-              brushSize={brushSize}
             />
           </div>
           <div

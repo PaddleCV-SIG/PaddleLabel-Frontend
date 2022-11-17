@@ -31,12 +31,10 @@ function createLine(param: CanvasLineType): string {
  * Color lines on canvas as label.color
  */
 let isClick = false;
-let finlyResult = '';
 function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
   console.log('flag', flag);
 
-  const { canvasRef2, annotation } = param;
-  const canvasRef = canvasRef2;
+  const { canvasRef, annotation } = param;
   const result = annotation.result;
   if (!result) return <></>;
   const ctx = canvasRef.current?.getContext('2d');
@@ -84,31 +82,19 @@ function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
     }
   }
   console.log('annotation param.currentAnnotation brush', isClick, param.currentTool, flag);
-  // if (isClick && param.currentTool !== 'rubber' && flag) {
-  //   ctx.beginPath();
-  //   const pointss = points.slice(2);
-  //   const x = pointss.at(-2);
-  //   const y = pointss.at(-1);
-  //   console.log('Brushs', x, y);
-  //   ctx?.arc(x, y, points[0] / 16, 0, 2 * Math.PI);
-  //   ctx.strokeStyle = 'red'; //将线条颜色设置为蓝色
-  //   ctx.stroke();
-  // }
+  if (isClick && param.currentTool !== 'rubber' && flag) {
+    ctx.beginPath();
+    const pointss = points.slice(2);
+    const x = pointss.at(-2);
+    const y = pointss.at(-1);
+    console.log('Brushs', x, y);
+    ctx?.arc(x, y, points[0] / 16, 0, 2 * Math.PI);
+    ctx.strokeStyle = 'red'; //将线条颜色设置为蓝色
+    ctx.stroke();
+  }
   return <></>;
 }
-const drawGuidewires = (x: number, y: number, context: any, brushSize: number) => {
-  context.save();
-  // context.strokeStyle = 'rgba(0,0,230,0.9)';
-  // context.lineWidth = 0.8;
-  // drawVerticalLine(x, context);
-  // drawHorizontalLine(y, context);
-  // context.restore();
-  context.beginPath();
-  console.log('Brushs', x, y);
-  context?.arc(x, y, brushSize / 16, 0, 2 * Math.PI);
-  context.strokeStyle = 'red'; //将线条颜色设置为蓝色
-  context.stroke();
-};
+
 function renderPoints(points: number[], ctx: CanvasRenderingContext2D, annotation: Annotation) {
   // console.log(`renderPoints: `, points, annotation, annotation.label?.color, ctx);
   // Draw shape
@@ -261,15 +247,20 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       };
       props.onAnnotationAdd(anno);
     }
-    finlyResult = line;
-    // const { canvasRef } = param;
-    // const ctx = canvasRef.current?.getContext('2d');
-    // ctx?.beginPath();
-    // ctx?.moveTo(mouseX, mouseY);
-    // isMove.value = true;
   };
 
   const OnMouseMove = (param: EvtProps) => {
+    // if (
+    //   currentTool === 'brush' &&
+    //   (!props.currentAnnotation ||
+    //     !props.currentAnnotation.result ||
+    //     props.currentAnnotation.result.length < 2 ||
+    //     !props.currentLabel?.color)
+    // ) {
+    //   return;
+    // } else if (currentTool === 'rubber') {
+    //   return;
+    // }
     if (
       !currentTool ||
       !props.currentAnnotation ||
@@ -284,13 +275,8 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const mouseY = param.mouseY;
     console.log('mouseX', mouseX, mouseY);
     // props.currentAnnotation 最新的一个节点，假设不使用这个的话 可以取Annotation里面的节点来用
-    // const newResult = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
-    // props.onAnnotationModify({ ...props.currentAnnotation, result: newResult });
-    // const { canvasRef } = param;
-    // const ctx = canvasRef.current?.getContext('2d');
-    // ctx?.lineTo(mouseX, mouseY);
-    // ctx?.stroke();
-    finlyResult = finlyResult + `,${mouseX},${mouseY}`;
+    const newResult = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+    props.onAnnotationModify({ ...props.currentAnnotation, result: newResult });
   };
 
   const OnMouseUp = () => {
@@ -303,9 +289,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     ) {
       return;
     }
-    const LastAnnotations = props.annotations[props.annotations?.length - 1];
-    props.onAnnotationModify({ ...LastAnnotations, result: finlyResult });
-    finlyResult = '';
     isClick = false;
     setCurrentTool(undefined);
     props.onMouseUp();
@@ -314,7 +297,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     onMouseDown: OnMouseDown,
     onMouseMove: OnMouseMove,
     onMouseUp: OnMouseUp,
-    drawGuidewires: drawGuidewires,
     drawAnnotation: drawAnnotation,
   };
 }

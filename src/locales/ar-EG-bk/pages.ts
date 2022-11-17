@@ -120,5 +120,4 @@ export default {
   'pages.Maps.grids': 'قصر',
   'pages.ProjectDetail.taskNot': 'لا توجد فئة مهمة في رابط',
   'pages.ProjectDetail.taskCtg': 'صحيح نوع المهمة :',
-  'pages.classification.preNext': 'صحيح نوع المهمة :',
 };

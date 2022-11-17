@@ -531,7 +531,7 @@ export function AnnotationUtils(
       }
       let annRes: Annotation[] = [];
       // sync anns from backend
-      if (anns[0]?.dataId) annRes = await getAll(anns[0]?.dataId);
+      if (anns[0].dataId) annRes = await getAll(anns[0].dataId);
       // if currently 1 ann -> this is the first ann -> update progress
       if (project && annRes.length == 1) project.getFinished();
     } catch (err) {
