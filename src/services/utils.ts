@@ -361,8 +361,7 @@ export const LabelUtils = (
     activeIds.clear();
     for (const ann of annotations) activeIds.add(ann.labelId);
     setActiveIds(new Set(activeIds));
-    if (isOneHot && activeIds.size > 1)
-      message.error('Label list is one hot, but have multiple active labels!');
+    if (isOneHot && activeIds.size > 1) message.error(intlJsx('ontHotMultiple'));
     console.log('initActive', activeIds);
   }
 
