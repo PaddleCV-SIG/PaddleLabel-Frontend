@@ -532,6 +532,11 @@ const PaddleAi: React.FC = () => {
             }}
           >
             <div style={{ width: '6rem', marginRight: '2rem' }}>
+              <Button block={true} type="primary" onClick={saveProject}>
+                {intl('confirm')}
+              </Button>
+            </div>
+            <div style={{ width: '6rem' }}>
               <Button
                 block={true}
                 onClick={() => {
@@ -541,14 +546,14 @@ const PaddleAi: React.FC = () => {
                   history.push(`/project_overview?projectId=${projectId}`);
                 }}
               >
-                {intl('reback')}
+                {intl('goback')}
               </Button>
             </div>
-            <div style={{ width: '6rem' }}>
+            {/* <div style={{ width: '6rem' }}>
               <Button type="primary" block={true} onClick={saveProject}>
                 {intl('determine')}
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </PPBlock>

@@ -107,6 +107,8 @@ export default {
   'pages.toolBar.projectOverview': '项目总览',
   'pages.toolBar.clearMark': '清空标注',
   'pages.toolBar.interactor': '智能标注',
+  'pages.toolBar.autoInference': '自动推理',
+  'pages.toolBar.autoInferenceThreshold': '推理阈值',
   'pages.toolBar.segmentThreshold': '分割阈值',
   'pages.toolBar.transparency': '透明度',
   'pages.toolBar.visualRadius': '可视化半径',
@@ -153,6 +155,6 @@ export default {
   'pages.ProjectAi.title': '自动推理设置',
   'pages.ProjectAi.add': '添加',
   'pages.ProjectAi.delete': '删除',
-  'pages.ProjectAi.determine': '确定',
-  'pages.ProjectAi.reback': '返回',
+  'pages.ProjectAi.confirm': '确定',
+  'pages.ProjectAi.goback': '返回',
 };

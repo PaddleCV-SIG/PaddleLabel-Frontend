@@ -17,7 +17,7 @@ export default {
   'component.PPCreater.polygonMode': '多边形标注',
   'component.PPCreater.update': '更新',
   'component.PPCreater.create': '创建',
-  'component.PPCreater.cancel': '取消',
+  'component.PPCreater.cancel': '返回',
   'component.PPCreater.creationFail': '项目创建失败',
   'component.PPCreater.project': '项目',
   'component.PPCreater.sampleProject': '样例项目',
