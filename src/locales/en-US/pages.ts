@@ -110,6 +110,7 @@ export default {
   'pages.toolBar.edit': 'Edit',
   'pages.toolBar.clearMark': 'ClearMark',
   'pages.toolBar.interactor': 'Interactor',
+  'pages.toolBar.autoInference': 'Auto Inference',
   'pages.toolBar.segmentThreshold': 'Segment Threshold',
   'pages.toolBar.transparency': 'Transparency',
   'pages.toolBar.visualRadius': 'VisualRadius',
@@ -157,6 +158,6 @@ export default {
   'pages.ProjectAi.title': 'Automatic inference settings',
   'pages.ProjectAi.add': 'add',
   'pages.ProjectAi.delete': 'delete',
-  'pages.ProjectAi.determine': 'determine',
-  'pages.ProjectAi.reback': 'return',
+  'pages.ProjectAi.confirm': 'Save',
+  'pages.ProjectAi.cancel': 'Cancel',
 };

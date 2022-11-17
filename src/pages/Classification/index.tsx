@@ -333,7 +333,7 @@ const Page: React.FC = () => {
             onPredicted(image);
           }}
         >
-          {tbIntl('interactor')}
+          {tbIntl('autoInference')}
         </PPToolBarButton>
       </PPToolBar>
       <div className="rightSideBar">
