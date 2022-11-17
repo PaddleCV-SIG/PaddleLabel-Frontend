@@ -201,11 +201,14 @@ const PaddleAi: React.FC = () => {
     });
     project.setAllPredicted(false, projectId);
   };
-  useEffect(() => {
-    if (modelUrl) {
-      model.setMlBackendUrl(modelUrl);
-    }
-  }, [modelUrl, model.setMlBackendUrl]);
+  // useEffect(() => {
+  //   if (modelUrl) {
+  // model.setMlBackendUrl(modelUrl);
+  //   }
+  // }, [modelUrl, model.setMlBackendUrl]);
+  const blurChange = () => {
+    model.setMlBackendUrl(modelUrl);
+  };
   useEffect(() => {
     model.getAll();
   }, [model.backendUrl]);
@@ -279,6 +282,7 @@ const PaddleAi: React.FC = () => {
                 defaultValue={DEFAULT_ML_URL}
                 value={modelUrl}
                 onChange={handleUrlChange}
+                onBlur={blurChange}
                 style={{ height: '3.13rem' }}
               />
             </Form.Item>
