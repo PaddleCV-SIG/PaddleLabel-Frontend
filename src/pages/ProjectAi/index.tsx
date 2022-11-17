@@ -542,7 +542,7 @@ const PaddleAi: React.FC = () => {
                   history.push(`/project_overview?projectId=${projectId}`);
                 }}
               >
-                {intl('cancel')}
+                {intl('goback')}
               </Button>
             </div>
           </div>

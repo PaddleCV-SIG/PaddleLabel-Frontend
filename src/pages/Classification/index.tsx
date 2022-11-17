@@ -14,6 +14,8 @@ import type { Label, Annotation } from '@/models';
 import { IntlInitJsx } from '@/components/PPIntl/';
 import { IntlInit } from '@/services/utils';
 import useImage from 'use-image';
+import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
+
 const port = window.location.port == '8000' ? '1234' : window.location.port;
 const baseUrl = `http://${window.location.hostname}:${port}/`;
 const Page: React.FC = () => {
@@ -25,6 +27,8 @@ const Page: React.FC = () => {
   const [otherSetting, setotherSetting] = useState();
   // const [flags, setflags] = useState<boolean>(false);
   const { interactorData, setInteractorData } = useModel('InteractorData');
+  const [threshold, setThreshold] = useState(50);
+
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,
     useEffect,
@@ -34,6 +38,7 @@ const Page: React.FC = () => {
       effectTrigger: { postTaskChange: postTaskChange, postProjectChanged: postProjectChanged },
     },
   );
+
   const [image] = useImage(data.imgSrc || '', 'anonymous');
   const model = ModelUtils(useState, baseUrl);
 
@@ -201,8 +206,9 @@ const Page: React.FC = () => {
           }
         }
       }
+      const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
       for (const labelItem of interactorData.predictData) {
-        if (labelItem?.score > 0.5) {
+        if (labelItem?.score > thresholdRaw) {
           console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
           if (labelItem && !oldLabel.has(labelItem?.label_name)) {
             labels.add(labelItem?.label_name);
@@ -210,7 +216,7 @@ const Page: React.FC = () => {
         }
       }
       const info = interactorData.predictData.some((labelItem) => {
-        return labelItem.score > 0.5;
+        return labelItem.score > thresholdRaw;
       });
       if (!info) {
         message.error(intl('noHighScoreResult'));
@@ -335,6 +341,20 @@ const Page: React.FC = () => {
         >
           {tbIntl('autoInference')}
         </PPToolBarButton>
+        <PPSetButton
+          disabled={!interactorData.active}
+          imgSrc="./pics/buttons/threshold.png"
+          disLoc="left"
+          size={threshold}
+          maxSize={100}
+          minSize={10}
+          step={10}
+          onChange={(newSize) => {
+            setThreshold(newSize);
+          }}
+        >
+          {tbIntl('autoInferenceThreshold')}
+        </PPSetButton>
       </PPToolBar>
       <div className="rightSideBar">
         <PPLabelList

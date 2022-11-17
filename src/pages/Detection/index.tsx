@@ -589,7 +589,7 @@ const Page = () => {
             onPredicted(image);
           }}
         >
-          {tbIntl('interactor')}
+          {tbIntl('autoInference')}
         </PPToolBarButton>
         <PPSetButton
           disabled={!interactorData.active}
@@ -603,7 +603,7 @@ const Page = () => {
             setThreshold(newSize);
           }}
         >
-          {tbIntl('segmentThreshold')}
+          {tbIntl('autoInferenceThreshold')}
         </PPSetButton>
         {/* <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"

@@ -111,6 +111,7 @@ export default {
   'pages.toolBar.clearMark': 'ClearMark',
   'pages.toolBar.interactor': 'Interactor',
   'pages.toolBar.autoInference': 'Auto Inference',
+  'pages.toolBar.autoInferenceThreshold': 'Inference Threshold',
   'pages.toolBar.segmentThreshold': 'Segment Threshold',
   'pages.toolBar.transparency': 'Transparency',
   'pages.toolBar.visualRadius': 'VisualRadius',
@@ -159,5 +160,5 @@ export default {
   'pages.ProjectAi.add': 'add',
   'pages.ProjectAi.delete': 'delete',
   'pages.ProjectAi.confirm': 'Save',
-  'pages.ProjectAi.cancel': 'Cancel',
+  'pages.ProjectAi.goback': 'Return',
 };
