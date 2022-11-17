@@ -192,19 +192,6 @@ export const ProjectUtils = (useState: UseStateType) => {
   const [all, setAll] = useState<Project[]>();
   const [curr, setCurr] = useState<Project>();
   const [finished, setFinished] = useState<number>();
-  const splitIntl = IntlInitJsx('component.PPSplitDatasetModal');
-
-  async function splitDataset(props: { train: number; val: number; test: number }) {
-    return projectApi
-      .splitDataset(curr.projectId, props)
-      .then((res) => {
-        message.success(splitIntl('success'));
-      })
-      .catch((err) => {
-        message.error(splitIntl('fail'));
-        serviceUtils.parseError(err, message);
-      });
-  }
 
   async function getAll() {
     try {
@@ -288,7 +275,6 @@ export const ProjectUtils = (useState: UseStateType) => {
     getFinished,
     predict,
     setAllPredicted,
-    splitDataset,
   };
 };
 
@@ -565,7 +551,7 @@ export function AnnotationUtils(
         console.log('anns', anns);
         if (anns.length == 0) project.getFinished();
       }
-      message.success(tbIntl('saveSuccess'));
+      message.info(tbIntl('saveSuccess'));
     } catch (err) {
       console.log('annotation remove err', err);
       return serviceUtils.parseError(err, message);
@@ -728,6 +714,7 @@ export function importDataset(
   importDir: string,
   importFormat: string | undefined,
 ) {
+  console.log('import dataset', projectId, importDir);
   return projectApi
     .importDataset(projectId, { importDir: importDir, importFormat: importFormat })
     .then((res) => {
@@ -737,6 +724,23 @@ export function importDataset(
     .catch((err) => {
       serviceUtils.parseError(err, message);
       throw new Error();
+    });
+}
+
+export async function splitDataset(
+  projectId: number,
+  props: { train: number; val: number; test: number },
+) {
+  console.log('split param', props);
+
+  return projectApi
+    .splitDataset(projectId, props)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log('split error', err);
+      serviceUtils.parseError(err, message);
     });
 }
 

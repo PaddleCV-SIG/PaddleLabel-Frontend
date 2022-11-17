@@ -2,17 +2,18 @@ import { Col, Form, InputNumber, message, Modal, Row, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useState } from 'react';
 import styles from './index.less';
-// import type { ProjectUtils } from '@/services/utils';
+import { splitDataset } from '@/services/utils';
+import type { Project } from '@/services/models';
 import { IntlInitJsx } from '@/components/PPIntl';
 
 type PPSplitDatasetProps = {
-  project: any; // ProjectUtils's return
+  project: Project;
   visible?: boolean;
   onFinish?: () => void;
 };
 
 const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
-  const intl = IntlInitJsx('component.PPSplitDatasetModal');
+  const intl = IntlInitJsx('component.PPSplitDataset');
   const [visible, setVisible] = useState<boolean>(false);
   const [trainData, setTrainData] = useState<number>(60);
   const [validationData, setValidationData] = useState<number>(20);
@@ -28,7 +29,7 @@ const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
       </Button>
       <Modal
         className={styles.modal}
-        title={intl('title')}
+        // title={divideData}
         visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
@@ -42,13 +43,20 @@ const PPSplitDatasetModal: React.FC<PPSplitDatasetProps> = (props) => {
           initialValues={{ remember: false }}
           onFinish={() => {
             if (trainData + validationData + testData != 100) {
-              message.error(intl('not100'));
+              message.error(intl('fail'));
               return;
             }
+            console.log(
+              `x trainData: ${trainData}, validationData: ${validationData}, testData: ${testData}, props.project.curr.projectId: ${props.project.projectId}`,
+            );
             setLoading(true);
-            props.project
-              .splitDataset({ train: trainData, val: validationData, test: testData })
+            splitDataset(props.project.projectId, {
+              train: trainData * 0.01,
+              val: validationData * 0.01,
+              test: testData * 0.01,
+            })
               .then(() => {
+                message.success(intl('success'));
                 setVisible(false);
               })
               .finally(() => {

@@ -132,7 +132,6 @@ export default {
   'pages.toolBar.modelLoading':
     'Model is still loading, please wait till model loading is finished popup and then use interactor tool',
   'pages.toolBar.noModel': 'No model found, please configure model setting first',
-  'pages.toolBar.colorMode': 'Color Mode',
 
   'pages.Maps.finished': 'Finished',
   'pages.Maps.removeLastVertex': 'Remove Last Vertex',

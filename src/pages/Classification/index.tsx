@@ -56,18 +56,17 @@ const Page: React.FC = () => {
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
   };
   async function selectLabel(selected: Label, activeIds: Set<number>) {
+    console.log('selectLabel', selected);
     // after toggle active, add ann
     if (activeIds.has(selected.labelId)) {
       // if one hot, remove all current annotations
       if (label.isOneHot) annotation.all.map((ann) => annotation.remove(ann));
       annotation.setAll([]);
-      annotation
-        .create({
-          taskId: task.curr.taskId,
-          labelId: selected.labelId,
-          dataId: data.curr.dataId,
-        })
-        .then(() => message.success(tbIntl('saveSuccess')));
+      annotation.create({
+        taskId: task.curr.taskId,
+        labelId: selected.labelId,
+        dataId: data.curr.dataId,
+      });
     } else {
       const anns = annotation.all.filter((a: Annotation) => a.labelId == selected.labelId);
       for (const ann of anns) annotation.remove(ann.annotationId);
