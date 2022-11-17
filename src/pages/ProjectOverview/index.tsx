@@ -162,7 +162,8 @@ const TaskList: React.FC = () => {
           }}
           visible={task.all?.length != 0}
         />
-        {project?.curr?.taskCategory?.name === 'detection' ? (
+        {project?.curr?.taskCategory?.name === 'detection' ||
+        project?.curr?.taskCategory?.name === 'classification' ? (
           <Button
             type="primary"
             onClick={() => {

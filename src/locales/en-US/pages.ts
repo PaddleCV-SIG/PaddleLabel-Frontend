@@ -150,4 +150,6 @@ export default {
   'pages.projectOverview.label': 'Label',
   'pages.projectOverview.projectSettings': 'Project Settings',
   'pages.projectOverview.mlSettings': 'ML Settings',
+  'pages.classification.preNext': 'The previous picture has not been marked',
+  'pages.classification.unhave': 'No similar tags',
 };

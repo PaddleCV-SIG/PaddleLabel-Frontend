@@ -75,38 +75,30 @@ const Page = () => {
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
   };
-  const getBase64Image = (img?: HTMLImageElement) => {
-    console.log('getBase64Image', img);
-
-    if (!img) return '';
-    const canvas = document.createElement('canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    console.log('img.width', img.width);
-    const ctx = canvas.getContext('2d');
-    ctx?.drawImage(img, 0, 0, img.width, img.height);
-    const dataURL = canvas.toDataURL('image/png');
-    console.log('dataURL', dataURL);
-
-    return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
-  };
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
-      console.log('annotation:', item, anno);
+      console.log('annotationfrontendId:', item.frontendId, anno.frontendId, annotation.all);
       if (item.frontendId == anno.frontendId) {
-        newAnnos.push(anno);
+        const result = anno?.result?.split(',').map((items: string) => {
+          return Number(items);
+        }) as number[];
+        const area = (result[2] - result[0]) * (result[3] - result[1]);
+        if (Math.abs(area) > 10) {
+          newAnnos.push(anno);
+          setCurrentAnnotation(anno);
+        }
       } else {
         newAnnos.push(item);
       }
     }
-    setCurrentAnnotation(anno);
+    console.log('annotationfinlly:', newAnnos, anno);
     annotation.setAll(newAnnos);
   };
   const onAnnotationModifyUP = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
-      console.log('annotation:', item, anno);
+      console.log('annotationUP:', item, anno);
       if (item.frontendId == anno.frontendId) {
         newAnnos.push(anno);
       } else {
@@ -126,8 +118,9 @@ const Page = () => {
   const onFinishEdit = () => {
     // 鼠标抬起的时候
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+    console.log('annos: annotation.all', annotation.all);
+
     if (!annotation.curr) return;
-    // debugger;
     console.log(
       'annotations.curr',
       onSelect,
@@ -136,6 +129,14 @@ const Page = () => {
       annotation.curr.result.split(',').length,
     );
     if (!annotation.curr.result) return;
+    const lengths = annotation.all.length - 1;
+    const ErrAnno = annotation.all[lengths];
+    // debugger;
+    if (ErrAnno && ErrAnno?.result?.split(',').length === 2) {
+      const newResult = ErrAnno?.result.split(',').concat(annotation?.curr?.result.split(','));
+      annotation.curr.result = newResult.join(',');
+    }
+    if (annotation?.curr?.result.split(',').length < 3) return;
     if (annotation?.curr?.annotationId == undefined) {
       console.log('finish', data.curr, annotation.curr);
       annotation.create(annotation?.curr);
@@ -155,6 +156,7 @@ const Page = () => {
     currentAnnotation: annotation.curr,
     onAnnotationAdd: (anno: Annotation) => {
       const newAnnos = annotation.all.concat([anno]);
+      // debugger;
       annotation.setAll(newAnnos);
       setCurrentAnnotation(anno);
     },
@@ -188,6 +190,21 @@ const Page = () => {
     }
     return max;
   };
+  const getBase64Image = (img?: HTMLImageElement) => {
+    console.log('getBase64Image', img);
+
+    if (!img) return '';
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    console.log('img.width', img.width);
+    const ctx = canvas.getContext('2d');
+    ctx?.drawImage(img, 0, 0, img.width, img.height);
+    const dataURL = canvas.toDataURL('image/png');
+    console.log('dataURL', dataURL);
+
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
+  };
   const onPredicted = (images: HTMLImageElement) => {
     const imgBase64 = getBase64Image(images);
     const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
@@ -205,7 +222,7 @@ const Page = () => {
             }
           });
           setIsLoad(false);
-          data.updatePredicted(data.all[0].dataId, true);
+          data.updatePredicted(data.all[0]?.dataId, true);
           setInteractorData({
             active: true,
             mousePoints: interactorData.mousePoints,
@@ -363,7 +380,7 @@ const Page = () => {
             // debugger;
             // saveInteractorData(labelitem, item.result);
             if (interactorData.active) {
-              debugger;
+              // debugger;
               const anno = ectInteractorToAnnotation(
                 frontendId,
                 result,
@@ -389,6 +406,8 @@ const Page = () => {
   //   scale.change(curr);
   //   scale.setScales
   // }
+  console.log('annitonsss', annotation.all);
+
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -612,7 +631,8 @@ const Page = () => {
           activeIds={label.activeIds}
           onLabelSelect={label.onSelect}
           onLabelDelete={label.remove}
-          disabled={otherSetting?.labelMapping?.length > 0}
+          // disabled={otherSetting?.labelMapping?.length > 0}
+          disabled={false}
           onLabelAdd={(lab) => {
             label.create({ ...lab, projectId: project.curr.projectId }).then((newLabel) => {
               setCurrentAnnotation(undefined);
