@@ -114,7 +114,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const { DirectoryTree } = Tree;
   const onTreeSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
     console.log('Trigger Select', keys, info, info.node.isLeaf != undefined);
-    const isLeaf = info.node.isLeaf != undefined;
+    const isLeaf = info.node.isLeaf == true;
     if (isLeaf) {
       console.log('url', encodeURIComponent(info.node.key));
       window.open('/api/samples/file?path=' + encodeURIComponent(info.node.key));
