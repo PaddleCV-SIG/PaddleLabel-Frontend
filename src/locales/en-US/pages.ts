@@ -152,7 +152,8 @@ export default {
   'pages.projectOverview.projectSettings': 'Project Settings',
   'pages.projectOverview.mlSettings': 'ML Settings',
   'pages.classification.preNext': 'The previous picture has not been marked',
-  'pages.classification.unhave': 'No similar tags',
+  'pages.classification.noHighScoreResult':
+    "Auto inference didn't find result with high confidence",
   'pages.ProjectAi.title': 'Automatic inference settings',
   'pages.ProjectAi.add': 'add',
   'pages.ProjectAi.delete': 'delete',

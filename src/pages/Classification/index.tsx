@@ -57,10 +57,12 @@ const Page: React.FC = () => {
   };
   async function selectLabel(selected: Label, activeIds: Set<number>) {
     // after toggle active, add ann
+    console.log('+_+_+', selected, activeIds, activeIds.has(selected.labelId));
     if (activeIds.has(selected.labelId)) {
+      console.log('+_+_+_', 'here');
       // if one hot, remove all current annotations
       if (label.isOneHot) annotation.all.map((ann) => annotation.remove(ann));
-      annotation.setAll([]);
+      // annotation.setAll([]);
       annotation
         .create({
           taskId: task.curr.taskId,
@@ -124,10 +126,10 @@ const Page: React.FC = () => {
       return addlabel;
     });
     if (newlabels.length > 0) {
-      label.create(newlabels).then((newLabel) => {
-        // setCurrentAnnotation(undefined);
-        label.setCurr(newLabel);
-        // setflags(true);
+      label.create(newlabels).then((newLabels) => {
+        newLabels?.forEach((newLabel) => {
+          label.onSelect(newLabel);
+        });
       });
     }
   };
@@ -211,7 +213,7 @@ const Page: React.FC = () => {
         return labelItem.score > 0.5;
       });
       if (!info) {
-        message.error(intl('unhave'));
+        message.error(intl('noHighScoreResult'));
       }
       createLabels(labels);
       if (![...labels].length) {

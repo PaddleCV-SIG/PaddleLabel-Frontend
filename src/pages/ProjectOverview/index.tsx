@@ -175,7 +175,7 @@ const TaskList: React.FC = () => {
               );
             }}
           >
-            {intl('mlSettings')}
+            {intl('autoInferenceSettings')}
           </Button>
         ) : null}
       </PPBlock>
