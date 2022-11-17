@@ -1,3 +1,4 @@
+import { IntlInitJsx } from '@/components/PPIntl';
 import { Col, Popover, Row, Select } from 'antd';
 import { TooltipPlacement } from 'antd/lib/tooltip';
 import React, { useEffect, useState } from 'react';
@@ -22,6 +23,7 @@ type Props = {
 };
 const { Option } = Select;
 const Component: React.FC<Props> = (props) => {
+  const intl = IntlInitJsx('pages.toolBar.colorMode');
   const [size, setSizeRaw] = useState(formatSize(props.size));
   function setSize(destSize: number | undefined) {
     setSizeRaw(formatSize(destSize));
@@ -65,8 +67,8 @@ const Component: React.FC<Props> = (props) => {
               }}
             >
               <Select defaultValue="label" style={{ width: 120 }} onChange={props.onChange}>
-                <Option value="label">label</Option>
-                <Option value="inStance">object</Option>
+                <Option value="label">{intl('label')}</Option>
+                <Option value="inStance">{intl('object')}</Option>
               </Select>
             </div>
           </Col>

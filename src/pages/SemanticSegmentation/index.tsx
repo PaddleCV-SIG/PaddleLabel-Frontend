@@ -487,6 +487,14 @@ const Page: React.FC = () => {
       </div>
 
       <PPToolBar disLoc="right">
+        <PPToolBarButton
+          imgSrc="./pics/buttons/data_division.png"
+          onClick={() => {
+            history.push(`/project_overview?projectId=${project.curr.projectId}`);
+          }}
+        >
+          {tbIntl('projectOverview')}
+        </PPToolBarButton>
         <PPAIButton
           imgSrc="./pics/buttons/intelligent_interaction.png"
           active={interactorData.active}
@@ -566,14 +574,7 @@ const Page: React.FC = () => {
         >
           {tbIntl('transparency')}
         </PPSetButton>
-        <PPToolBarButton
-          imgSrc="./pics/buttons/data_division.png"
-          onClick={() => {
-            history.push(`/project_overview?projectId=${project.curr.projectId}`);
-          }}
-        >
-          {tbIntl('projectOverview')}
-        </PPToolBarButton>
+
         {history?.location?.pathname === '/instance_segmentation' && (
           <PPSButtons
             imgSrc="./pics/buttons/alpha.png"
