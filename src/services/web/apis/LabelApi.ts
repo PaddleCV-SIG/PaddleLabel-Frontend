@@ -19,7 +19,7 @@ import { LabelFromJSON, LabelToJSON } from '../models';
 export interface CreateRequest {
   label: Array<Label>;
   requestId?: number;
-  removeDuplicateByName?: string;
+  removeDuplicateByName?: boolean;
 }
 
 export interface GetRequest {
@@ -92,7 +92,7 @@ export class LabelApi extends runtime.BaseAPI {
   async create(
     label: Array<Label>,
     requestId?: number,
-    removeDuplicateByName?: string,
+    removeDuplicateByName?: boolean,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Label>> {
     const response = await this.createRaw(
