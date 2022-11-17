@@ -15,41 +15,41 @@ import { history } from 'umi';
 const { Option } = Select;
 const { TextArea } = Input;
 // let index = 0;
-const generatedColorList: string[] = [
-  '#FF0000',
-  '#008000',
-  '#0000FF',
-  '#FFFF00',
-  '#FFA500',
-  '#00FFFF',
-  '#8B00FF',
-  '#FFC0CB',
-  '#7CFC00',
-  '#007FFF',
-  '#800080',
-  '#36BF36',
-  '#DAA520',
-  '#800000',
-  '#008B8B',
-  '#B22222',
-  '#E6D933',
-  '#000080',
-  '#FF00FF',
-  '#FFFF99',
-  '#87CEEB',
-  '#5C50E6',
-  '#CD5C5C',
-  '#20B2AA',
-  '#E680FF',
-  '#4D1F00',
-  '#006374',
-  '#B399FF',
-  '#8B4513',
-  '#BA55D3',
-  '#C0C0C0',
-  '#808080',
-  '#000000',
-];
+// const generatedColorList: string[] = [
+//   '#FF0000',
+//   '#008000',
+//   '#0000FF',
+//   '#FFFF00',
+//   '#FFA500',
+//   '#00FFFF',
+//   '#8B00FF',
+//   '#FFC0CB',
+//   '#7CFC00',
+//   '#007FFF',
+//   '#800080',
+//   '#36BF36',
+//   '#DAA520',
+//   '#800000',
+//   '#008B8B',
+//   '#B22222',
+//   '#E6D933',
+//   '#000080',
+//   '#FF00FF',
+//   '#FFFF99',
+//   '#87CEEB',
+//   '#5C50E6',
+//   '#CD5C5C',
+//   '#20B2AA',
+//   '#E680FF',
+//   '#4D1F00',
+//   '#006374',
+//   '#B399FF',
+//   '#8B4513',
+//   '#BA55D3',
+//   '#C0C0C0',
+//   '#808080',
+//   '#000000',
+// ];
 const PaddleAi: React.FC = () => {
   const DEFAULT_ML_URL = 'http://127.0.0.1:1234';
   const intl = IntlInit('pages.ProjectAi');
@@ -167,7 +167,7 @@ const PaddleAi: React.FC = () => {
     e.preventDefault();
     const lab = {
       name: name2,
-      color: generatedColorList[items2.length || 0],
+      // color: generatedColorList[items2.length || 0],
     };
     const labelIdMap = new Map();
     items2.forEach((labelItems) => {
@@ -541,12 +541,12 @@ const PaddleAi: React.FC = () => {
                   history.push(`/project_overview?projectId=${projectId}`);
                 }}
               >
-                {intl('determine')}
+                {intl('reback')}
               </Button>
             </div>
             <div style={{ width: '6rem' }}>
               <Button type="primary" block={true} onClick={saveProject}>
-                {intl('reback')}
+                {intl('determine')}
               </Button>
             </div>
           </div>

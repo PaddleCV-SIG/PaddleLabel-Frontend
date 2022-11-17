@@ -1,10 +1,16 @@
 export default {
   'component.PPCreater.projectName': '项目名称',
+  'component.PPCreater.requireProjectName': '请填写项目名称',
   'component.PPCreater.datasePath': '数据集路径',
+  'component.PPCreater.requireDatasePath': '请填写数据集路径',
   'component.PPCreater.description': '项目描述',
   'component.PPCreater.labelFormat': '导入标注格式',
+  'component.PPCreater.clasSubCags': '分类项目类型',
+  'component.PPCreater.chooseClasSubcatg': '请选择分类项目类型',
   'component.PPCreater.labelFormatDetail':
     '如果要导入的数据集没有任何标注信息，这里不需要选择。如果有标注信息，请选择标注信息的格式。',
+  'component.PPCreater.classificationSubCatgDetail':
+    '单分类项目中一张图片只能有一个类别，多分类项目中一张图片可以有多个类别',
   'component.PPCreater.maxPoints': '最大点数',
   'component.PPCreater.annotationMode': '标注模式',
   'component.PPCreater.pixelMode': '像素级标注',
@@ -19,7 +25,8 @@ export default {
   'component.PPCreater.titleContent': '点此查看有关项目文件结构更多细节',
   'component.PPCreater.folderStructureSample': '数据集文件结构示例',
   'component.PPCreater.folderStructureSampleDetail':
-    '如果希望导入数据集中的标注信息，请参考如上文件结构组织文件夹下的文件',
+    '如果希望导入数据集中的标注信息，请参考如上文件结构组织文件夹下的文件。点击上方文件可查看文件内容示例。',
+  'component.PPCreater.importInProgress': '导入中，请稍候',
 
   'component.PPAddLabelModal.selectColor': '选择色彩',
   'component.PPAddLabelModal.addLabel': '创建标签',
@@ -61,12 +68,13 @@ export default {
   'component.PPSegMode.changeDetection': '遥感变化检测',
   'component.PPSegMode.ok': '确定',
 
-  'component.PPSplitDataset.title': '划分数据集',
-  'component.PPSplitDataset.train': '训练集比例',
-  'component.PPSplitDataset.validation': '验证集比例',
-  'component.PPSplitDataset.test': '测试集比例',
-  'component.PPSplitDataset.success': '数据集划分成功',
-  'component.PPSplitDataset.fail': '训练，验证和测试集百分比和应为100',
+  'component.PPSplitDatasetModal.title': '划分数据集',
+  'component.PPSplitDatasetModal.train': '训练集比例',
+  'component.PPSplitDatasetModal.validation': '验证集比例',
+  'component.PPSplitDatasetModal.test': '测试集比例',
+  'component.PPSplitDatasetModal.success': '数据集划分成功',
+  'component.PPSplitDatasetModal.fail': '数据集划分失败',
+  'component.PPSplitDatasetModal.not100': '训练，验证和测试集百分比和应为100',
 
   'component.PPExportModal.title': '导出数据集',
   'component.PPExportModal.path': '导出路径',

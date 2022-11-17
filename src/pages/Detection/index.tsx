@@ -317,6 +317,7 @@ const Page = () => {
     if (interactorData.predictData.length && otherSetting?.labelMapping && label.all) {
       const labels = new Set();
       const oldLabel = new Map();
+      // const labelmaps: any = {};
       for (const labelItem of label.all) {
         if (labelItem.name) {
           oldLabel.set(labelItem.name, labelItem);
@@ -324,6 +325,7 @@ const Page = () => {
       }
       if (otherSetting?.labelMapping?.length > 0) {
         for (const labelMap of otherSetting?.labelMapping) {
+          // labelmaps[labelMap.model] = labelMap.project;
           if (!oldLabel.has(labelMap.project)) {
             labels.add(labelMap.project);
           }

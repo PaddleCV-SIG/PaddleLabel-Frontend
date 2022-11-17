@@ -1,6 +1,8 @@
 export default {
   'component.PPCreater.projectName': 'Project Name',
+  'component.PPCreater.requireProjectName': 'Please input a project name',
   'component.PPCreater.datasePath': 'Dataset Path',
+  'component.PPCreater.requireDatasePath': 'Please input a dataset path',
   'component.PPCreater.description': 'Description',
   'component.PPCreater.maxPoints': 'Max Points',
   'component.PPCreater.annotationMode': 'Annotation Mode',
@@ -10,6 +12,10 @@ export default {
   'component.PPCreater.create': 'Create',
   'component.PPCreater.cancel': 'Cancel',
   'component.PPCreater.labelFormat': 'Import Label Format',
+  'component.PPCreater.clasSubCags': 'Classification type',
+  'component.PPCreater.chooseClasSubcatg': 'Please choose a classfication project type',
+  'component.PPCreater.classificationSubCatgDetail':
+    'An image in single class classification can only have one category, while in multi class classification it can have more than one.',
   'component.PPCreater.project': ' Project',
   'component.PPCreater.sampleProject': 'Demo Project',
   'component.PPCreater.segMaskType': 'Mask Type',
@@ -17,14 +23,9 @@ export default {
   'component.PPCreater.titleContent': 'Click to see more details about project folder structure.',
   'component.PPCreater.folderStructureSample': 'Folder Structure Example',
   'component.PPCreater.folderStructureSampleDetail':
-    'If the dataset to be imported contains annotations, please arrange files in the folder following the above example',
+    'If the dataset to be imported contains annotations, please arrange files in the folder following the above example. Clicking on above files reveals their content.',
+  'component.PPCreater.importInProgress': 'Import in progress',
 
-  'component.PPDivideDataModal.train': 'Train',
-  'component.PPDivideDataModal.validation': 'Validation',
-  'component.PPDivideDataModal.test': 'Test',
-  'component.PPDivideDataModal.success': 'Dataset Splited',
-
-  // 'component.PPExportModal.imagenet': 'Imagenet Format',
   'component.PPExportModal.export': 'Export',
   'component.PPExportModal.labelFormat': 'Export Format',
   'component.PPExportModal.title': 'Export Dataset',
@@ -33,12 +34,14 @@ export default {
   'component.PPExportModal.nullLabelFormat': 'Please choose an export format.',
   'component.PPExportModal.exportSuccess': 'Export Success',
 
-  'component.PPSplitDataset.title': 'Split Dataset',
-  'component.PPSplitDataset.train': 'Training',
-  'component.PPSplitDataset.validation': 'Validation',
-  'component.PPSplitDataset.test': 'Test',
-  'component.PPSplitDataset.success': 'Dataset is randomly splitted',
-  'component.PPSplitDataset.fail': 'Train, Validation and Test percentage should sum up to 100!',
+  'component.PPSplitDatasetModal.title': 'Split Dataset',
+  'component.PPSplitDatasetModal.train': 'Training',
+  'component.PPSplitDatasetModal.validation': 'Validation',
+  'component.PPSplitDatasetModal.test': 'Test',
+  'component.PPSplitDatasetModal.success': 'Dataset is randomly splitted',
+  'component.PPSplitDatasetModal.fail': 'Failed to split dataset due to backend error',
+  'component.PPSplitDatasetModal.not100':
+    'The percentages of the three subsets should sum up to 100',
 
   'component.PPImportModal.import': 'Import',
   'component.PPImportModal.title': 'Import Additional Data',

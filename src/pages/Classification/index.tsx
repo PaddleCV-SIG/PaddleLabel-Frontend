@@ -56,17 +56,20 @@ const Page: React.FC = () => {
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
   };
   async function selectLabel(selected: Label, activeIds: Set<number>) {
-    console.log('selectLabel', selected);
     // after toggle active, add ann
+    console.log('+_+_+', selected, activeIds, activeIds.has(selected.labelId));
     if (activeIds.has(selected.labelId)) {
+      console.log('+_+_+_', 'here');
       // if one hot, remove all current annotations
       if (label.isOneHot) annotation.all.map((ann) => annotation.remove(ann));
-      annotation.setAll([]);
-      annotation.create({
-        taskId: task.curr.taskId,
-        labelId: selected.labelId,
-        dataId: data.curr.dataId,
-      });
+      // annotation.setAll([]);
+      annotation
+        .create({
+          taskId: task.curr.taskId,
+          labelId: selected.labelId,
+          dataId: data.curr.dataId,
+        })
+        .then(() => message.success(tbIntl('saveSuccess')));
     } else {
       const anns = annotation.all.filter((a: Annotation) => a.labelId == selected.labelId);
       for (const ann of anns) annotation.remove(ann.annotationId);
@@ -123,10 +126,10 @@ const Page: React.FC = () => {
       return addlabel;
     });
     if (newlabels.length > 0) {
-      label.create(newlabels).then((newLabel) => {
-        // setCurrentAnnotation(undefined);
-        label.setCurr(newLabel);
-        // setflags(true);
+      label.create(newlabels).then((newLabels) => {
+        newLabels?.forEach((newLabel) => {
+          label.onSelect(newLabel);
+        });
       });
     }
   };
@@ -186,13 +189,16 @@ const Page: React.FC = () => {
     if (interactorData.predictData.length && otherSetting?.labelMapping && label.all) {
       const labels = new Set();
       const oldLabel = new Map();
+      const labelmaps: any = {};
       for (const labelItem of label.all) {
         if (labelItem.name) {
           oldLabel.set(labelItem.name, labelItem);
         }
       }
+
       if (otherSetting?.labelMapping?.length > 0) {
         for (const labelMap of otherSetting?.labelMapping) {
+          labelmaps[labelMap.model] = labelMap.project;
           if (!oldLabel.has(labelMap.project)) {
             labels.add(labelMap.project);
           }
@@ -201,7 +207,11 @@ const Page: React.FC = () => {
       for (const labelItem of interactorData.predictData) {
         if (labelItem?.score > 0.5) {
           console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
-          if (labelItem && !oldLabel.has(labelItem?.label_name)) {
+          if (
+            labelItem &&
+            !oldLabel.has(labelItem?.label_name) &&
+            !labelmaps[labelItem?.label_name]
+          ) {
             labels.add(labelItem?.label_name);
           }
         }
@@ -210,7 +220,7 @@ const Page: React.FC = () => {
         return labelItem.score > 0.5;
       });
       if (!info) {
-        message.error(intl('unhave'));
+        message.error(intl('noHighScoreResult'));
       }
       createLabels(labels);
       if (![...labels].length) {
