@@ -2,7 +2,6 @@
 /* eslint-disable */
 export * from './AnnotationApi';
 export * from './DataApi';
-export * from './DefaultApi';
 export * from './LabelApi';
 export * from './ManageApi';
 export * from './ProjectApi';

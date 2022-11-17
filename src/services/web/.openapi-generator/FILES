@@ -1,6 +1,5 @@
 apis/AnnotationApi.ts
 apis/DataApi.ts
-apis/DefaultApi.ts
 apis/LabelApi.ts
 apis/ManageApi.ts
 apis/ProjectApi.ts
