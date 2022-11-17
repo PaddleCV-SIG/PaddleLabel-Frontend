@@ -150,4 +150,9 @@ export default {
   'pages.projectOverview.mlSettings': '智能标注设置',
   'pages.classification.preNext': '上一张图片尚未标记',
   'pages.classification.unhave': '没有相似的标签',
+  'pages.ProjectAi.title': '自动推理设置',
+  'pages.ProjectAi.add': '添加',
+  'pages.ProjectAi.delete': '删除',
+  'pages.ProjectAi.determine': '确定',
+  'pages.ProjectAi.reback': '返回',
 };

@@ -396,7 +396,7 @@ const Page = () => {
           }
         });
         const deduplicate = true;
-        annotation.create(annos, deduplicate);
+        annotation.create(annos, '', deduplicate);
         // debugger;
         setInteractorData({ active: true, predictData: [], mousePoints: [] });
       });

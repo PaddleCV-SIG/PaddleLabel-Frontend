@@ -19,7 +19,7 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean): ReactElement {
   if (!rgb) return <></>;
 
   // const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
-  const transparency = 0.3; // Polygon fixed 0.3
+  const transparency = 1; // Polygon fixed 0.3
   // let transparency = selected ? props.transparency * 0.01 + 0.02 : props.transparency * 0.01;
   // if (transparency > 1) transparency = 1;
   // if (transparency < 0) transparency = 0;

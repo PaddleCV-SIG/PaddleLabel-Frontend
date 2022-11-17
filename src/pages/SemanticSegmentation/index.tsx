@@ -296,7 +296,7 @@ const Page: React.FC = () => {
         <PPSetButton
           size={brushSize}
           active={tool.curr == 'rubber'}
-          disabled={pathNames && interactorData.active}
+          disabled={(pathNames && interactorData.active) || !annotation.all?.length}
           onClick={() => {
             if (tool.curr != 'rubber' && tool.curr != 'brush') {
               setCurrentAnnotation(undefined);
@@ -574,16 +574,18 @@ const Page: React.FC = () => {
         >
           {tbIntl('projectOverview')}
         </PPToolBarButton>
-        <PPSButtons
-          imgSrc="./pics/buttons/alpha.png"
-          disLoc="left"
-          size={transparency}
-          maxSize={100}
-          minSize={0}
-          onChange={handleChange}
-        >
-          {tbIntl('colorMode')}
-        </PPSButtons>
+        {history?.location?.pathname === '/instance_segmentation' && (
+          <PPSButtons
+            imgSrc="./pics/buttons/alpha.png"
+            disLoc="left"
+            size={transparency}
+            maxSize={100}
+            minSize={0}
+            onChange={handleChange}
+          >
+            {tbIntl('colorMode')}
+          </PPSButtons>
+        )}
       </PPToolBar>
       <div className="rightSideBar">
         <div className="determinOutline">

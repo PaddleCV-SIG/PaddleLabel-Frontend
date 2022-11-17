@@ -883,7 +883,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   const [backendUrl, setBackendUrl] = useState<string>(mlBackendUrl);
   const [loading, setLoading] = useState<boolean>(false);
   const intl = IntlInit('component.PPInteractorModal');
-
+  // let modelApi = new ModelApi(new Configuration({ basePath: backendUrl }));
   let modelApi = new ModelApi(new Configuration({ basePath: backendUrl }));
 
   async function getAll() {
@@ -893,7 +893,11 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
       setAll(models);
       return models;
     } catch (err) {
-      serviceUtils.parseError(err, message, 'ML backend unavaliable!');
+      serviceUtils.parseError(
+        err,
+        message,
+        'The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.',
+      );
       return;
     }
   }
@@ -959,5 +963,6 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     loading,
     setLoading,
     checkAPI,
+    backendUrl,
   };
 }

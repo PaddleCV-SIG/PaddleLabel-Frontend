@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Input, Button, Select, Divider, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import Title from 'antd/lib/typography/Title';
 import type { InputRef } from 'antd';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
-import { ProjectUtils, ModelUtils, LabelUtils } from '@/services/utils';
+import { ProjectUtils, ModelUtils, LabelUtils, IntlInit } from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
 import styles from './index.less';
 import { v4 as uuid } from 'uuid';
@@ -51,7 +52,7 @@ const generatedColorList: string[] = [
 ];
 const PaddleAi: React.FC = () => {
   const DEFAULT_ML_URL = 'http://127.0.0.1:1234';
-  //   const intl = IntlInit('component.PPCreater');
+  const intl = IntlInit('pages.ProjectAi');
   const [frontendId, setFrontendId] = useState<number>(0);
   const [form] = Form.useForm();
   const [modelUrl, setModelUrl] = useState(DEFAULT_ML_URL);
@@ -68,9 +69,12 @@ const PaddleAi: React.FC = () => {
   // const inputRef = useRef<InputRef>(null);
   const inputRef2 = useRef<InputRef>(null);
   const project = ProjectUtils(useState);
-  const port = window.location.port == '8000' ? '1234' : window.location.port;
-  const baseUrl = `http://${window.location.hostname}:${port}/`;
-  const model = ModelUtils(useState, baseUrl);
+  // const port = window.location.port == '8000' ? '1234' : window.location.port;
+  // const port = 17995;
+  // const baseUrl = `http://${window.location.hostname}:${port}/`;
+  // const baseUrl = modelUrl;
+
+  const model = ModelUtils(useState, modelUrl);
   const projectId = serviceUtils.getQueryVariable('projectId');
   console.log('FrontendId', frontendId);
 
@@ -198,6 +202,14 @@ const PaddleAi: React.FC = () => {
     project.setAllPredicted(false, projectId);
   };
   useEffect(() => {
+    if (modelUrl) {
+      model.setMlBackendUrl(modelUrl);
+    }
+  }, [modelUrl, model.setMlBackendUrl]);
+  useEffect(() => {
+    model.getAll();
+  }, [model.backendUrl]);
+  useEffect(() => {
     if (projectId) {
       project.getCurr(projectId);
       model.getAll();
@@ -225,6 +237,15 @@ const PaddleAi: React.FC = () => {
   return (
     <PPContainer>
       <PPBlock style={{ height: '100%' }}>
+        {/* <div
+          style={{
+            textAlign: 'left',
+          }}
+        >
+          
+        </div> */}
+        {/* <div className={styles.DirectoryTitle}>{intl('title')}</div> */}
+        <Title className={styles.title}>{intl('title')}</Title>
         <div>
           <Form
             form={form}
@@ -398,14 +419,16 @@ const PaddleAi: React.FC = () => {
                           <div className={styles.Corresponding_label2}>
                             <div className={styles.label}>{item.project}</div>
                           </div>
-                          <div
-                            className={styles.Corresponding_button}
+                          <Button
+                            size={'small'}
+                            type="primary"
+                            danger
                             onClick={() => {
                               deleteItems(item.id, item.model);
                             }}
                           >
-                            删除
-                          </div>
+                            {intl('delete')}
+                          </Button>
                         </div>
                       </div>
                     );
@@ -414,6 +437,7 @@ const PaddleAi: React.FC = () => {
                     className={styles.Corresponding_select_content}
                     style={{
                       display: 'flex',
+                      alignItems: 'center',
                     }}
                   >
                     <div className={styles.Corresponding_select}>
@@ -489,9 +513,9 @@ const PaddleAi: React.FC = () => {
                         </Select>
                       </div>
                     </div>
-                    <div className={styles.Corresponding_button} onClick={addLabel}>
-                      添加
-                    </div>
+                    <Button size={'small'} type="primary" danger onClick={addLabel}>
+                      {intl('add')}
+                    </Button>
                   </div>
                 </div>
               )}
@@ -513,12 +537,12 @@ const PaddleAi: React.FC = () => {
                   history.push(`/project_overview?projectId=${projectId}`);
                 }}
               >
-                {'返回'}
+                {intl('determine')}
               </Button>
             </div>
             <div style={{ width: '6rem' }}>
               <Button type="primary" block={true} onClick={saveProject}>
-                {'确定'}
+                {intl('reback')}
               </Button>
             </div>
           </div>
