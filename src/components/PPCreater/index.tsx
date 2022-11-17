@@ -59,7 +59,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const projectId = serviceUtils.getQueryVariable('projectId');
   const [loading, setLoading] = useState<boolean>(false);
   const [sampleFiles, setSampleFiles] = useState<TreeDataNode[]>([]);
-  const [labelFormat, setLabelFormat] = useState<string>();
+  // const [labelFormat, setLabelFormat] = useState<string>();
 
   const intlJsx = IntlInitJsx('component.PPCreater');
   const intl = IntlInit('component.PPCreater');
@@ -106,7 +106,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       };
       console.log('values', values);
       console.log('othersettings', project?.otherSettings);
-      if (project?.labelFormat) setLabelFormat(project.labelFormat);
+      // if (project?.labelFormat) setLabelFormat(project.labelFormat);
       form.setFieldsValue(values);
     });
   }, []);
@@ -180,7 +180,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: 'Please input project name!',
+                    message: intlJsx('requireProjectName'),
                   },
                 ]}
                 style={{ fontSize: '1.5rem' }}
@@ -204,7 +204,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 rules={[
                   {
                     required: true,
-                    message: 'Please input dataset path!',
+                    message: intlJsx('requireDatasePath'),
                   },
                 ]}
                 style={{ fontSize: '1.5rem' }}
@@ -244,13 +244,17 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 name="labelFormat"
                 label={
                   <p>
-                    {intlJsx('labelFormat')}{' '}
+                    {props.taskCategory == 'classification'
+                      ? intlJsx('clasSubCags')
+                      : intlJsx('labelFormat')}{' '}
                     <QuestionCircleOutlined
                       style={{ fontSize: '12px' }}
                       onClick={() =>
                         message.info({
-                          content: intlJsx('labelFormatDetail'),
-                          // onClick: () => window.open(),
+                          content:
+                            props.taskCategory == 'classification'
+                              ? intlJsx('classificationSubCatgDetail')
+                              : intlJsx('labelFormatDetail'),
                         })
                       }
                     />
@@ -262,14 +266,12 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 wrapperCol={{
                   span: 16,
                 }}
-                rules={
-                  [
-                    // {
-                    //   required: createInfo[props.taskCategory].labelFormats != undefined,
-                    //   message: 'Please choose a label import/export format',
-                    // },
-                  ]
-                }
+                rules={[
+                  {
+                    required: props.taskCategory == 'classification',
+                    message: intlJsx('chooseClasSubcatg'),
+                  },
+                ]}
                 style={{
                   fontSize: '1.5rem',
                   display:
@@ -282,7 +284,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                   size="large"
                   style={{ height: '3.13rem' }}
                   onChange={() => {
-                    setLabelFormat(form.getFieldValue('labelFormat'));
+                    // setLabelFormat(form.getFieldValue('labelFormat'));
                     sampleApi
                       .getStructure(
                         // samplePath[props.taskCategory][form.getFieldValue('labelFormat')],
@@ -303,7 +305,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 </Radio.Group>
               </Form.Item>
 
-              <Form.Item
+              {/* <Form.Item
                 name="segMaskType"
                 label={intl('segMaskType')}
                 labelCol={{
@@ -329,7 +331,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                     </Radio>
                   ))}
                 </Radio.Group>
-              </Form.Item>
+              </Form.Item> */}
 
               {/* <Form.Item
                 name="maxPoints"

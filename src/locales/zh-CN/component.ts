@@ -1,10 +1,16 @@
 export default {
   'component.PPCreater.projectName': '项目名称',
+  'component.PPCreater.requireProjectName': '请填写项目名称',
   'component.PPCreater.datasePath': '数据集路径',
+  'component.PPCreater.requireDatasePath': '请填写数据集路径',
   'component.PPCreater.description': '项目描述',
   'component.PPCreater.labelFormat': '导入标注格式',
+  'component.PPCreater.clasSubCags': '分类项目类型',
+  'component.PPCreater.chooseClasSubcatg': '请选择分类项目类型',
   'component.PPCreater.labelFormatDetail':
     '如果要导入的数据集没有任何标注信息，这里不需要选择。如果有标注信息，请选择标注信息的格式。',
+  'component.PPCreater.classificationSubCatgDetail':
+    '单分类项目中一张图片只能有一个类别，多分类项目中一张图片可以有多个类别',
   'component.PPCreater.maxPoints': '最大点数',
   'component.PPCreater.annotationMode': '标注模式',
   'component.PPCreater.pixelMode': '像素级标注',
