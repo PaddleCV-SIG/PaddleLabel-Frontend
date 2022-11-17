@@ -149,7 +149,7 @@ const TaskList: React.FC = () => {
         </Button>
 
         <PPSplitDatasetModal
-          project={project.curr}
+          project={project}
           visible={task.all?.length != 0}
           onFinish={() => task.getAll(project.curr.projectId)}
         />
