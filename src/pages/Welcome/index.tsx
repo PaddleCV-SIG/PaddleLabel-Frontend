@@ -33,6 +33,7 @@ const Projects: React.FC = (props) => {
       width: '4.5rem',
       align: 'center',
       render: (text: string) => <>{text}</>,
+      sorter: (a, b) => a.projectId - b.projectId,
     },
     {
       title: 'Name',
@@ -45,10 +46,8 @@ const Projects: React.FC = (props) => {
       key: 'projectId',
       width: '20rem',
       render: (project) => {
-        console.log('pj', project);
         const categoryName = snake2camel(project.taskCategory.name);
-        console.log('categoryName', categoryName);
-        return createInfo[categoryName].name;
+        return intl(categoryName, 'global');
       },
     },
     {
