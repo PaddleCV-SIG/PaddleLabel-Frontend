@@ -22,10 +22,10 @@ import type {
   PredictRequest,
   Project,
   SetAllRequest,
-  SplitDataset200Response,
   SplitDatasetRequest,
   Tag,
   Task,
+  ToEasydataRequest,
 } from '../models';
 import {
   AnnotationFromJSON,
@@ -44,50 +44,50 @@ import {
   ProjectToJSON,
   SetAllRequestFromJSON,
   SetAllRequestToJSON,
-  SplitDataset200ResponseFromJSON,
-  SplitDataset200ResponseToJSON,
   SplitDatasetRequestFromJSON,
   SplitDatasetRequestToJSON,
   TagFromJSON,
   TagToJSON,
   TaskFromJSON,
   TaskToJSON,
+  ToEasydataRequestFromJSON,
+  ToEasydataRequestToJSON,
 } from '../models';
 
 export interface CreateRequest {
   project: Project;
-  requestId?: string;
+  requestId?: number;
 }
 
 export interface ExportDatasetOperationRequest {
-  projectId: string;
+  projectId: number;
   exportDatasetRequest?: ExportDatasetRequest;
 }
 
 export interface GetRequest {
-  projectId: string;
-  requestId?: string;
+  projectId: number;
+  requestId?: number;
 }
 
 export interface GetAllRequest {
-  requestId?: string;
+  requestId?: number;
   orderBy?: string;
 }
 
 export interface GetAnnotationsRequest {
-  projectId: string;
+  projectId: number;
 }
 
 export interface GetLabelsRequest {
-  projectId: string;
+  projectId: number;
 }
 
 export interface GetProgressRequest {
-  projectId: string;
+  projectId: number;
 }
 
 export interface GetTagsRequest {
-  projectId: string;
+  projectId: number;
 }
 
 export interface GetTasksRequest {
@@ -96,22 +96,22 @@ export interface GetTasksRequest {
 }
 
 export interface ImportDatasetOperationRequest {
-  projectId: string;
+  projectId: number;
   importDatasetRequest?: ImportDatasetRequest;
 }
 
 export interface PredictOperationRequest {
-  projectId: string;
+  projectId: number;
   predictRequest?: PredictRequest;
 }
 
 export interface RemoveRequest {
-  projectId: string;
-  requestId?: string;
+  projectId: number;
+  requestId?: number;
 }
 
 export interface RemoveLabelsRequest {
-  projectId: string;
+  projectId: number;
 }
 
 export interface SetAllOperationRequest {
@@ -120,19 +120,24 @@ export interface SetAllOperationRequest {
 }
 
 export interface SetLabelsRequest {
-  projectId: string;
+  projectId: number;
   label?: Array<Label>;
 }
 
 export interface SplitDatasetOperationRequest {
-  projectId: string;
+  projectId: number;
   splitDatasetRequest?: SplitDatasetRequest;
 }
 
+export interface ToEasydataOperationRequest {
+  projectId: number;
+  toEasydataRequest?: ToEasydataRequest;
+}
+
 export interface UpdateRequest {
-  projectId: string;
+  projectId: number;
   project: Project;
-  requestId?: string;
+  requestId?: number;
 }
 
 /**
@@ -184,7 +189,7 @@ export class ProjectApi extends runtime.BaseAPI {
    */
   async create(
     project: Project,
-    requestId?: string,
+    requestId?: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Project> {
     const response = await this.createRaw(
@@ -237,7 +242,7 @@ export class ProjectApi extends runtime.BaseAPI {
    * Export dataset to specified directory
    */
   async exportDataset(
-    projectId: string,
+    projectId: number,
     exportDatasetRequest?: ExportDatasetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
@@ -291,8 +296,8 @@ export class ProjectApi extends runtime.BaseAPI {
    * Get info of a specific project
    */
   async get(
-    projectId: string,
-    requestId?: string,
+    projectId: number,
+    requestId?: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Project> {
     const response = await this.getRaw(
@@ -338,7 +343,7 @@ export class ProjectApi extends runtime.BaseAPI {
    * Read all projects, sort by last modify date
    */
   async getAll(
-    requestId?: string,
+    requestId?: number,
     orderBy?: string,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Project>> {
@@ -389,7 +394,7 @@ export class ProjectApi extends runtime.BaseAPI {
    * Get all annotations under a project
    */
   async getAnnotations(
-    projectId: string,
+    projectId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Annotation>> {
     const response = await this.getAnnotationsRaw({ projectId: projectId }, initOverrides);
@@ -436,7 +441,7 @@ export class ProjectApi extends runtime.BaseAPI {
    * Get all labels under a project
    */
   async getLabels(
-    projectId: string,
+    projectId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Label>> {
     const response = await this.getLabelsRaw({ projectId: projectId }, initOverrides);
@@ -485,7 +490,7 @@ export class ProjectApi extends runtime.BaseAPI {
    * Get project progress
    */
   async getProgress(
-    projectId: string,
+    projectId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<GetProgress200Response> {
     const response = await this.getProgressRaw({ projectId: projectId }, initOverrides);
@@ -532,7 +537,7 @@ export class ProjectApi extends runtime.BaseAPI {
    * Get all tags under a project
    */
   async getTags(
-    projectId: string,
+    projectId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Tag>> {
     const response = await this.getTagsRaw({ projectId: projectId }, initOverrides);
@@ -635,7 +640,7 @@ export class ProjectApi extends runtime.BaseAPI {
    *
    */
   async importDataset(
-    projectId: string,
+    projectId: number,
     importDatasetRequest?: ImportDatasetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
@@ -688,7 +693,7 @@ export class ProjectApi extends runtime.BaseAPI {
    * Run prediction on all data in the dataset
    */
   async predict(
-    projectId: string,
+    projectId: number,
     predictRequest?: PredictRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
@@ -739,8 +744,8 @@ export class ProjectApi extends runtime.BaseAPI {
    * Delete a project record and ALL TASKS RECORDS under the project.
    */
   async remove(
-    projectId: string,
-    requestId?: string,
+    projectId: number,
+    requestId?: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.removeRaw({ projectId: projectId, requestId: requestId }, initOverrides);
@@ -786,7 +791,7 @@ export class ProjectApi extends runtime.BaseAPI {
    * Delete all labels under a project
    */
   async removeLabels(
-    projectId: string,
+    projectId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.removeLabelsRaw({ projectId: projectId }, initOverrides);
@@ -883,7 +888,7 @@ export class ProjectApi extends runtime.BaseAPI {
    * Set all labels under a project, will delete previous labels
    */
   async setLabels(
-    projectId: string,
+    projectId: number,
     label?: Array<Label>,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Label>> {
@@ -898,7 +903,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async splitDatasetRaw(
     requestParameters: SplitDatasetOperationRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<SplitDataset200Response>> {
+  ): Promise<runtime.ApiResponse<SplitDatasetRequest>> {
     if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
       throw new runtime.RequiredError(
         'projectId',
@@ -927,7 +932,7 @@ export class ProjectApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      SplitDataset200ResponseFromJSON(jsonValue),
+      SplitDatasetRequestFromJSON(jsonValue),
     );
   }
 
@@ -936,15 +941,66 @@ export class ProjectApi extends runtime.BaseAPI {
    * Split this project\'s data into train, validation and test dataset.
    */
   async splitDataset(
-    projectId: string,
+    projectId: number,
     splitDatasetRequest?: SplitDatasetRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<SplitDataset200Response> {
+  ): Promise<SplitDatasetRequest> {
     const response = await this.splitDatasetRaw(
       { projectId: projectId, splitDatasetRequest: splitDatasetRequest },
       initOverrides,
     );
     return await response.value();
+  }
+
+  /**
+   *
+   */
+  async toEasydataRaw(
+    requestParameters: ToEasydataOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.projectId === null || requestParameters.projectId === undefined) {
+      throw new runtime.RequiredError(
+        'projectId',
+        'Required parameter requestParameters.projectId was null or undefined when calling toEasydata.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/projects/{project_id}/toEasydata`.replace(
+          `{${'project_id'}}`,
+          encodeURIComponent(String(requestParameters.projectId)),
+        ),
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: ToEasydataRequestToJSON(requestParameters.toEasydataRequest),
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   *
+   */
+  async toEasydata(
+    projectId: number,
+    toEasydataRequest?: ToEasydataRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.toEasydataRaw(
+      { projectId: projectId, toEasydataRequest: toEasydataRequest },
+      initOverrides,
+    );
   }
 
   /**
@@ -1001,9 +1057,9 @@ export class ProjectApi extends runtime.BaseAPI {
    * Edit multiple project properties
    */
   async update(
-    projectId: string,
+    projectId: number,
     project: Project,
-    requestId?: string,
+    requestId?: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Project> {
     const response = await this.updateRaw(

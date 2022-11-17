@@ -18,20 +18,20 @@ import { LabelFromJSON, LabelToJSON } from '../models';
 
 export interface CreateRequest {
   label: Array<Label>;
-  requestId?: string;
+  requestId?: number;
   removeDuplicateByName?: string;
 }
 
 export interface GetRequest {
-  labelId: string;
+  labelId: number;
 }
 
 export interface RemoveRequest {
-  labelId: string;
+  labelId: number;
 }
 
 export interface UpdateRequest {
-  labelId: string;
+  labelId: number;
   label: Label;
 }
 
@@ -40,7 +40,7 @@ export interface UpdateRequest {
  */
 export class LabelApi extends runtime.BaseAPI {
   /**
-   * Create a new label
+   * Create new labels
    */
   async createRaw(
     requestParameters: CreateRequest,
@@ -87,11 +87,11 @@ export class LabelApi extends runtime.BaseAPI {
   }
 
   /**
-   * Create a new label
+   * Create new labels
    */
   async create(
     label: Array<Label>,
-    requestId?: string,
+    requestId?: number,
     removeDuplicateByName?: string,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Label>> {
@@ -140,7 +140,7 @@ export class LabelApi extends runtime.BaseAPI {
    * Get info about a specific label
    */
   async get(
-    labelId: string,
+    labelId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Label> {
     const response = await this.getRaw({ labelId: labelId }, initOverrides);
@@ -218,7 +218,7 @@ export class LabelApi extends runtime.BaseAPI {
    * Delete a label
    */
   async remove(
-    labelId: string,
+    labelId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.removeRaw({ labelId: labelId }, initOverrides);
@@ -274,7 +274,7 @@ export class LabelApi extends runtime.BaseAPI {
    * Edit label info
    */
   async update(
-    labelId: string,
+    labelId: number,
     label: Label,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Label> {

@@ -24,7 +24,7 @@ import { IntlInitJsx } from '@/components/PPIntl';
 const Page: React.FC = () => {
   const tbIntl = IntlInitJsx('pages.toolBar');
   const [frontendId, setFrontendId] = useState<number>(0);
-  const [pathNames] = useState(history?.location?.pathname !== '/instance_segmentation');
+  const [pathNames] = useState(!history?.location?.pathname.includes('/instance_segmentation'));
   const [finlyList, setfinlyList] = useState<Annotation[]>([]);
   const [selectFinly, setSelectFinly] = useState<Annotation>();
   const [isLabel, setisLabel] = useState<string>('label');
@@ -575,7 +575,8 @@ const Page: React.FC = () => {
           {tbIntl('transparency')}
         </PPSetButton>
 
-        {history?.location?.pathname === '/instance_segmentation' && (
+        {/* {history?.location?.pathname === '/instance_segmentation' && ( */}
+        {!pathNames && (
           <PPSButtons
             imgSrc="./pics/buttons/alpha.png"
             disLoc="left"
@@ -589,20 +590,23 @@ const Page: React.FC = () => {
         )}
       </PPToolBar>
       <div className="rightSideBar">
-        <div className="determinOutline">
-          <Button
-            disabled={pathNames}
-            style={{ height: 40, fontSize: '0.75rem' }}
-            type="primary"
-            block
-            onClick={() => {
-              // saveInteractorData();
-              savefinlyList();
-            }}
-          >
-            {tbIntl('determineOutline')}
-          </Button>
-        </div>
+        {!pathNames && (
+          <div className="determinOutline">
+            <Button
+              disabled={pathNames}
+              style={{ height: 40, fontSize: '0.75rem' }}
+              type="primary"
+              block
+              onClick={() => {
+                // saveInteractorData();
+                savefinlyList();
+              }}
+            >
+              {tbIntl('determineOutline')}
+            </Button>
+          </div>
+        )}
+
         <PPLabelList
           hideColorPicker={false}
           labels={label.all}
