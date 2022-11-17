@@ -200,7 +200,7 @@ const Page: React.FC = () => {
         }
       }
       for (const labelItem of interactorData.predictData) {
-        if (labelItem.socre > 0.5) {
+        if (labelItem?.score > 0.5) {
           console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
           if (labelItem && !oldLabel.has(labelItem?.label_name)) {
             labels.add(labelItem?.label_name);
@@ -208,7 +208,7 @@ const Page: React.FC = () => {
         }
       }
       const info = interactorData.predictData.some((labelItem) => {
-        return labelItem.socre > 0.5;
+        return labelItem.score > 0.5;
       });
       if (!info) {
         message.error(intl('unhave'));
@@ -219,6 +219,8 @@ const Page: React.FC = () => {
       }
     }
   }, [interactorData, otherSetting]);
+  console.log('label.activeIds', label.activeIds.size);
+
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
@@ -286,7 +288,7 @@ const Page: React.FC = () => {
           <div
             className="prevTask"
             onClick={() => {
-              if (!label.all?.lenghth) {
+              if (!label.activeIds.size) {
                 message.info(intl('preNext'));
               }
               task.prevTask();
@@ -300,7 +302,7 @@ const Page: React.FC = () => {
           <div
             className="nextTask"
             onClick={() => {
-              if (!label.all?.lenghth) {
+              if (!label.activeIds.size) {
                 message.info(intl('preNext'));
               }
               task.nextTask();

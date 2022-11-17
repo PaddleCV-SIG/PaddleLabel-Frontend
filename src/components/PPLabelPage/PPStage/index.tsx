@@ -105,6 +105,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const [pointArr, setpointArr] = useState([]); //存放坐标的数组
   const [isClick, setisClick] = useState(false);
   const [flags, setflags] = useState(true);
+  const [frist, setfrist] = useState(true);
+
   const [refoce, setRefoce] = useState(0);
   const [DrawingSurfaceImageData, setDrawingSurfaceImageData] = useState<ImageData>();
   const stageRef = useRef<StageType>(null);
@@ -156,7 +158,51 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       setCanvasHeight(parent.clientHeight);
     }
   }
+  const renderShape = () => {
+    const newShapes: React.ReactElement[] = [];
+    props.annotations.forEach((annotation, index) => {
+      // if (!annotation) continue;
+      if (annotation) {
+        param.annotation = annotation;
+        let shape;
+        if (annotation.type == 'polygon') {
+          // const flag = index === length - 1 ? true : false;
+          console.log('CurrentAnnotation', props.currentAnnotation, annotation);
 
+          const flag = flags || props.currentAnnotation?.result !== annotation.result;
+
+          shape = props.drawTool.polygon.drawAnnotation(param, flag);
+        } else if (annotation.type == 'rectangle') {
+          shape = props.drawTool.polygon.drawAnnotation(param);
+        }
+        if (annotation.type == 'brush') {
+          // const flag = index === length - 1 ? true : false;
+          shape = props.drawTool.brush?.drawAnnotation(
+            param,
+            // flag,
+            // -imageWidth / 2,
+            // -imageHeight / 2,
+          );
+          layerRef.current?.batchDraw();
+        } else if (annotation.type == 'rubber') {
+          // const flag = index === length - 1 ? true : false;
+          shape = props.drawTool.rubber?.drawAnnotation(
+            param,
+            // flag,
+            // -imageWidth / 2,
+            // -imageHeight / 2,
+          );
+          layerRef.current?.batchDraw();
+        }
+        if (shape && shape?.key !== null) {
+          newShapes.push(shape);
+        }
+        console.log('shape', shape);
+      }
+    });
+    console.log('newShapes', newShapes);
+    setShapes(newShapes);
+  };
   useEffect(() => {
     // Listen to window resize event
     window.removeEventListener('resize', handleWindowResize);
@@ -199,8 +245,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       if (zoomlevel > 1 && zoomlevel2 > 1) {
         // 图片需要放大
         if (zoomlevel > zoomlevel2) {
-          // scaleImages2 = zoomlevel;
-          // scaleImages2 = canvasWidth / imagewidth;
           scaleImages2 = canvasHeight / imageheight;
           // 需要放大;
         } else {
@@ -210,21 +254,11 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       } else {
         // 图片需要缩小
         if (zoomlevel > zoomlevel2) {
-          // scaleImages2 = zoomlevel2;
-          // scaleImages2 = canvasWidth / imagewidth;
           scaleImages2 = canvasHeight / imageheight;
           // 需要放大;
         } else {
-          // scaleImages2 = zoomlevel;
-          // scaleImages2 = canvasHeight / imageheight;
           scaleImages2 = canvasWidth / imagewidth;
         }
-        // if (imageheight > canvasHeight) {
-        //   // scaleImages2 = canvasWidth / imagewidth;
-        //   scaleImages2 = canvasHeight / imageheight;
-        // } else {
-        //   scaleImages2 = canvasWidth / imagewidth;
-        // }
       }
       // const scales = scaleImages - 1;
       props.scaleChange(scaleImages2);
@@ -279,50 +313,25 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     setisClick(false);
   }, [props.currentTool]);
   useEffect(() => {
-    const newShapes: React.ReactElement[] = [];
     if (props.annotations) {
       console.log('PPStage rendering annotations:', props.annotations);
       const ctx = canvasRef.current?.getContext('2d');
       const ctx2 = canvasRef2.current?.getContext('2d');
+      const ctx3 = canvasRef2.current?.getContext('2d');
+
       if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       if (ctx2) ctx2.clearRect(0, 0, ctx2.canvas.width, ctx2.canvas.height);
-      const length = props?.annotations?.length;
-      props.annotations.forEach((annotation, index) => {
-        // if (!annotation) continue;
-        if (annotation) {
-          param.annotation = annotation;
-          let shape;
-          if (annotation.type == 'polygon') {
-            // const flag = index === length - 1 ? true : false;
-            shape = props.drawTool.polygon.drawAnnotation(param, flags);
-          } else if (annotation.type == 'rectangle') {
-            shape = props.drawTool.polygon.drawAnnotation(param);
-          }
-          if (annotation.type == 'brush') {
-            const flag = index === length - 1 ? true : false;
-            shape = props.drawTool.brush?.drawAnnotation(
-              param,
-              flag,
-              -imageWidth / 2,
-              -imageHeight / 2,
-            );
-          } else if (annotation.type == 'rubber') {
-            const flag = index === length - 1 ? true : false;
-            shape = props.drawTool.rubber?.drawAnnotation(
-              param,
-              flag,
-              -imageWidth / 2,
-              -imageHeight / 2,
-            );
-          }
-          if (shape && shape?.key !== null) {
-            newShapes.push(shape);
-          }
-          console.log('shape', shape);
-        }
-      });
-      console.log('newShapes', newShapes);
-      setShapes(newShapes);
+      if (ctx3) ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height);
+      // debugger;
+      // const length = props?.annotations?.length;
+      if (frist) {
+        setTimeout(() => {
+          renderShape();
+          setfrist(false);
+        }, 500);
+      } else {
+        renderShape();
+      }
     }
   }, [props.annotations, props.currentAnnotation, flags, props.currentTool]);
   useEffect(() => {
@@ -417,8 +426,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         setflags(false);
         ctx.strokeStyle = props.currentLabel?.color; //线条颜色
         ctx.lineWidth = 4; //线条粗细
-        // let oIndex = -1;
-        makearc(ctx, mouseX, mouseY, GetRandomNum(2, 2), 0, 180, props.currentLabel?.color);
+        // makearc(ctx, mouseX, mouseY, GetRandomNum(2, 2), 0, 180, props.currentLabel?.color);
         setpointArr([...pointArr, { x: mouseX, y: mouseY }]);
         drawTool?.onMouseDown(getEvtParam(e));
       }
@@ -438,9 +446,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.lineWidth = props.brushSize;
-      ctx.strokeStyle = props.currentTool === 'brush' ? props.currentLabel?.color : '';
-      ctx.globalCompositeOperation =
-        props.currentTool === 'brush' ? 'source-over' : 'destination-out';
+      ctx.strokeStyle = props.currentTool === 'brush' ? props.currentLabel?.color : 'rgba(0,0,0,0)';
+      // ctx.globalCompositeOperation =
+      //   props.currentTool === 'brush' ? 'source-over' : 'destination-out';
       ctx.moveTo(mouseX, mouseY);
       layerRef.current?.batchDraw();
     }
@@ -462,35 +470,34 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         x: mouseX,
         y: mouseY,
       };
-      console.log('isClick', isClick);
 
       if (isClick) {
         renderReact(endpos);
       }
       const newrefoce = refoce + 1;
       setRefoce(newrefoce);
-    } else if (props?.currentTool == 'polygon' && ctx) {
-      ctx.strokeStyle = props.currentLabel?.color; //线条颜色
-      ctx.lineWidth = 4; //线条粗细
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); //清空画布
+    } else if (props?.currentTool == 'polygon' && ctx3 && !flags) {
+      ctx3.strokeStyle = props.currentLabel?.color; //线条颜色
+      ctx3.lineWidth = 4; //线条粗细
+      ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
       // const piX = 0;
       // const piY = 0;
-      makearc(ctx, mouseX, mouseY, GetRandomNum(4, 4), 0, 180, props.currentLabel?.color);
+      makearc(ctx3, mouseX, mouseY, GetRandomNum(4, 4), 0, 180, props.currentLabel?.color);
       console.log('pointArr', pointArr);
 
       if (pointArr.length > 0) {
-        ctx.beginPath();
-        ctx.moveTo(pointArr[0].x, pointArr[0].y);
+        ctx3.beginPath();
+        ctx3.moveTo(pointArr[0].x, pointArr[0].y);
         if (pointArr.length > 1) {
           for (let i = 1; i < pointArr.length; i++) {
-            ctx.lineTo(pointArr[i].x, pointArr[i].y);
+            ctx3.lineTo(pointArr[i].x, pointArr[i].y);
           }
         }
 
-        ctx.lineTo(mouseX, mouseY);
-        ctx.fillStyle = props.currentLabel?.color; //填充颜色
-        ctx.fill(); //填充
-        ctx.stroke(); //绘制
+        ctx3.lineTo(mouseX, mouseY);
+        ctx3.fillStyle = props.currentLabel?.color; //填充颜色
+        ctx3.fill(); //填充
+        ctx3.stroke(); //绘制
         layerRef.current?.batchDraw();
       }
     } else if (props?.currentTool == 'rubber' || props?.currentTool == 'brush') {
@@ -503,9 +510,12 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       ) {
         return;
       }
-      if (isClick) {
+      if (isClick && ctx) {
         // drawTool?.drawGuidewires(mouseX, mouseY, ctx, props.brushSize);
-        ctx?.lineTo(mouseX, mouseY);
+        ctx.lineTo(mouseX, mouseY);
+        ctx.strokeStyle =
+          props.currentTool === 'brush' ? props.currentLabel?.color : 'rgba(0,0,0,0)';
+        // ctx?.fill(); //填充
         ctx?.stroke();
         makearc(ctx3, mouseX, mouseY, props.brushSize / 2, 0, 180, 'white');
         layerRef.current?.batchDraw();
