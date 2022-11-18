@@ -1,6 +1,5 @@
 apis/AnnotationApi.ts
 apis/DataApi.ts
-apis/DefaultApi.ts
 apis/LabelApi.ts
 apis/ManageApi.ts
 apis/ProjectApi.ts
@@ -30,11 +29,11 @@ models/ProjectOtherSettings.ts
 models/ProjectOtherSettingsLabelMappingInner.ts
 models/ProjectOtherSettingsModelSettingsValue.ts
 models/SetAllRequest.ts
-models/SplitDataset200Response.ts
 models/SplitDatasetRequest.ts
 models/Tag.ts
 models/TagTask.ts
 models/Task.ts
+models/ToEasydataRequest.ts
 models/User.ts
 models/index.ts
 runtime.ts

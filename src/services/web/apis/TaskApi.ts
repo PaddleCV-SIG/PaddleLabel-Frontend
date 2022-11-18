@@ -28,13 +28,13 @@ import {
 } from '../models';
 
 export interface AddTagOperationRequest {
-  taskId: string;
-  requestId?: string;
+  taskId: number;
+  requestId?: number;
   addTagRequest?: AddTagRequest;
 }
 
 export interface GetRequest {
-  taskId: string;
+  taskId: number;
 }
 
 export interface GetAllRequest {
@@ -42,23 +42,23 @@ export interface GetAllRequest {
 }
 
 export interface GetAnnotationsRequest {
-  taskId: string;
+  taskId: number;
 }
 
 export interface GetDatasRequest {
-  taskId: string;
+  taskId: number;
 }
 
 export interface GetTagsRequest {
-  taskId: string;
+  taskId: number;
 }
 
 export interface RemoveRequest {
-  taskId: string;
+  taskId: number;
 }
 
 export interface UpdateRequest {
-  taskId: string;
+  taskId: number;
   task: Task;
 }
 
@@ -113,8 +113,8 @@ export class TaskApi extends runtime.BaseAPI {
    * Add a new tag to the task
    */
   async addTag(
-    taskId: string,
-    requestId?: string,
+    taskId: number,
+    requestId?: number,
     addTagRequest?: AddTagRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Tag>> {
@@ -194,7 +194,7 @@ export class TaskApi extends runtime.BaseAPI {
    * Get info of a specific task
    */
   async get(
-    taskId: string,
+    taskId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Task> {
     const response = await this.getRaw({ taskId: taskId }, initOverrides);
@@ -280,7 +280,7 @@ export class TaskApi extends runtime.BaseAPI {
    * Get all annotations of a task
    */
   async getAnnotations(
-    taskId: string,
+    taskId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Annotation>> {
     const response = await this.getAnnotationsRaw({ taskId: taskId }, initOverrides);
@@ -327,7 +327,7 @@ export class TaskApi extends runtime.BaseAPI {
    * Get all datas of a task
    */
   async getDatas(
-    taskId: string,
+    taskId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Data>> {
     const response = await this.getDatasRaw({ taskId: taskId }, initOverrides);
@@ -374,7 +374,7 @@ export class TaskApi extends runtime.BaseAPI {
    * Get all tags of the task
    */
   async getTags(
-    taskId: string,
+    taskId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Tag>> {
     const response = await this.getTagsRaw({ taskId: taskId }, initOverrides);
@@ -421,7 +421,7 @@ export class TaskApi extends runtime.BaseAPI {
    * Delete a task and ALL DATA and ANNOTATIONS under the task.
    */
   async remove(
-    taskId: string,
+    taskId: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<void> {
     await this.removeRaw({ taskId: taskId }, initOverrides);
@@ -477,7 +477,7 @@ export class TaskApi extends runtime.BaseAPI {
    * Edit task info
    */
   async update(
-    taskId: string,
+    taskId: number,
     task: Task,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Task> {

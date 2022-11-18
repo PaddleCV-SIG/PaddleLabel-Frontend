@@ -129,6 +129,8 @@ export default {
   'pages.toolBar.modelLoading': '模型仍在加载，请在看到模型加载成功弹框后再点击进入智能标注模式',
   'pages.toolBar.noModel': '未找到模型，请先进行智能标注设置',
   'pages.toolBar.colorMode': '颜色模式',
+  'pages.toolBar.colorMode.label': '根据类别',
+  'pages.toolBar.colorMode.object': '根据实例',
 
   'pages.Maps.finished': '完成',
   'pages.Maps.removeLastVertex': '删除最后一个顶点',

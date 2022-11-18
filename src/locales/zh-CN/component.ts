@@ -35,6 +35,7 @@ export default {
   'component.PPAnnotationList.addAnnotation': '添加标注',
   'component.PPLabelList.labelList': '标签列表',
   'component.PPLabelList.addLabel': '添加标签',
+
   'component.PPMedical.windowWidth': '窗宽',
   'component.PPMedical.windowLevel': '窗位',
   'component.tagSelect.expand': '展开',
@@ -106,4 +107,5 @@ export default {
   'component.history.noNext': '没有更新的操作记录',
 
   'component.label.deleteSuccess': '类别删除成功',
+  'component.label.ontHotMultiple': '本项目为单分类，但标签列表中有多个标签',
 };

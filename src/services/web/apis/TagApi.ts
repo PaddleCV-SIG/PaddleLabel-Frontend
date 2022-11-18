@@ -12,202 +12,261 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  Tag,
-} from '../models';
-import {
-    TagFromJSON,
-    TagToJSON,
-} from '../models';
+import type { Tag } from '../models';
+import { TagFromJSON, TagToJSON } from '../models';
 
 export interface CreateRequest {
-    tag: Tag;
-    requestId?: string;
+  tag: Tag;
+  requestId?: number;
 }
 
 export interface GetRequest {
-    tagId: string;
+  tagId: number;
 }
 
 export interface RemoveRequest {
-    tagId: string;
+  tagId: number;
 }
 
 export interface UpdateRequest {
-    tagId: string;
-    tag: Tag;
+  tagId: number;
+  tag: Tag;
 }
 
 /**
- * 
+ *
  */
 export class TagApi extends runtime.BaseAPI {
-
-    /**
-     * 
-     * Create a new tag
-     */
-    async createRaw(requestParameters: CreateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Tag>> {
-        if (requestParameters.tag === null || requestParameters.tag === undefined) {
-            throw new runtime.RequiredError('tag','Required parameter requestParameters.tag was null or undefined when calling create.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
-            headerParameters['request_id'] = String(requestParameters.requestId);
-        }
-
-        const response = await this.request({
-            path: `/tags`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: TagToJSON(requestParameters.tag),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TagFromJSON(jsonValue));
+  /**
+   *
+   * Create a new tag
+   */
+  async createRaw(
+    requestParameters: CreateRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Tag>> {
+    if (requestParameters.tag === null || requestParameters.tag === undefined) {
+      throw new runtime.RequiredError(
+        'tag',
+        'Required parameter requestParameters.tag was null or undefined when calling create.',
+      );
     }
 
-    /**
-     * 
-     * Create a new tag
-     */
-    async create(tag: Tag, requestId?: string, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Tag> {
-        const response = await this.createRaw({ tag: tag, requestId: requestId }, initOverrides);
-        return await response.value();
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+      headerParameters['request_id'] = String(requestParameters.requestId);
     }
 
-    /**
-     * Get info of a specific tag
-     */
-    async getRaw(requestParameters: GetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Tag>> {
-        if (requestParameters.tagId === null || requestParameters.tagId === undefined) {
-            throw new runtime.RequiredError('tagId','Required parameter requestParameters.tagId was null or undefined when calling get.');
-        }
+    const response = await this.request(
+      {
+        path: `/tags`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: TagToJSON(requestParameters.tag),
+      },
+      initOverrides,
+    );
 
-        const queryParameters: any = {};
+    return new runtime.JSONApiResponse(response, (jsonValue) => TagFromJSON(jsonValue));
+  }
 
-        const headerParameters: runtime.HTTPHeaders = {};
+  /**
+   *
+   * Create a new tag
+   */
+  async create(
+    tag: Tag,
+    requestId?: number,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Tag> {
+    const response = await this.createRaw({ tag: tag, requestId: requestId }, initOverrides);
+    return await response.value();
+  }
 
-        const response = await this.request({
-            path: `/tags/{tag_id}`.replace(`{${"tag_id"}}`, encodeURIComponent(String(requestParameters.tagId))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TagFromJSON(jsonValue));
+  /**
+   * Get info of a specific tag
+   */
+  async getRaw(
+    requestParameters: GetRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Tag>> {
+    if (requestParameters.tagId === null || requestParameters.tagId === undefined) {
+      throw new runtime.RequiredError(
+        'tagId',
+        'Required parameter requestParameters.tagId was null or undefined when calling get.',
+      );
     }
 
-    /**
-     * Get info of a specific tag
-     */
-    async get(tagId: string, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Tag> {
-        const response = await this.getRaw({ tagId: tagId }, initOverrides);
-        return await response.value();
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/tags/{tag_id}`.replace(
+          `{${'tag_id'}}`,
+          encodeURIComponent(String(requestParameters.tagId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => TagFromJSON(jsonValue));
+  }
+
+  /**
+   * Get info of a specific tag
+   */
+  async get(
+    tagId: number,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Tag> {
+    const response = await this.getRaw({ tagId: tagId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Get all tags, sort by last modify date
+   */
+  async getAllRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Array<Tag>>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/tags`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
+  }
+
+  /**
+   * Get all tags, sort by last modify date
+   */
+  async getAll(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Tag>> {
+    const response = await this.getAllRaw(initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Delete a tag and ALL TAGGING RECORDS under this tag.
+   * Delete a tag and ALL TAGGING RECORDS under this tag.
+   */
+  async removeRaw(
+    requestParameters: RemoveRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.tagId === null || requestParameters.tagId === undefined) {
+      throw new runtime.RequiredError(
+        'tagId',
+        'Required parameter requestParameters.tagId was null or undefined when calling remove.',
+      );
     }
 
-    /**
-     * Get all tags, sort by last modify date
-     */
-    async getAllRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Tag>>> {
-        const queryParameters: any = {};
+    const queryParameters: any = {};
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        const response = await this.request({
-            path: `/tags`,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+    const response = await this.request(
+      {
+        path: `/tags/{tag_id}`.replace(
+          `{${'tag_id'}}`,
+          encodeURIComponent(String(requestParameters.tagId)),
+        ),
+        method: 'DELETE',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TagFromJSON));
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   * Delete a tag and ALL TAGGING RECORDS under this tag.
+   * Delete a tag and ALL TAGGING RECORDS under this tag.
+   */
+  async remove(
+    tagId: number,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.removeRaw({ tagId: tagId }, initOverrides);
+  }
+
+  /**
+   * Edit tag properties. Empty strings will be set. Properties not in request body won\'t be changed
+   * Edit tag properties
+   */
+  async updateRaw(
+    requestParameters: UpdateRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Tag>> {
+    if (requestParameters.tagId === null || requestParameters.tagId === undefined) {
+      throw new runtime.RequiredError(
+        'tagId',
+        'Required parameter requestParameters.tagId was null or undefined when calling update.',
+      );
     }
 
-    /**
-     * Get all tags, sort by last modify date
-     */
-    async getAll(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Tag>> {
-        const response = await this.getAllRaw(initOverrides);
-        return await response.value();
+    if (requestParameters.tag === null || requestParameters.tag === undefined) {
+      throw new runtime.RequiredError(
+        'tag',
+        'Required parameter requestParameters.tag was null or undefined when calling update.',
+      );
     }
 
-    /**
-     * Delete a tag and ALL TAGGING RECORDS under this tag.
-     * Delete a tag and ALL TAGGING RECORDS under this tag.
-     */
-    async removeRaw(requestParameters: RemoveRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        if (requestParameters.tagId === null || requestParameters.tagId === undefined) {
-            throw new runtime.RequiredError('tagId','Required parameter requestParameters.tagId was null or undefined when calling remove.');
-        }
+    const queryParameters: any = {};
 
-        const queryParameters: any = {};
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    headerParameters['Content-Type'] = 'application/json';
 
-        const response = await this.request({
-            path: `/tags/{tag_id}`.replace(`{${"tag_id"}}`, encodeURIComponent(String(requestParameters.tagId))),
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
+    const response = await this.request(
+      {
+        path: `/tags/{tag_id}`.replace(
+          `{${'tag_id'}}`,
+          encodeURIComponent(String(requestParameters.tagId)),
+        ),
+        method: 'PUT',
+        headers: headerParameters,
+        query: queryParameters,
+        body: TagToJSON(requestParameters.tag),
+      },
+      initOverrides,
+    );
 
-        return new runtime.VoidApiResponse(response);
-    }
+    return new runtime.JSONApiResponse(response, (jsonValue) => TagFromJSON(jsonValue));
+  }
 
-    /**
-     * Delete a tag and ALL TAGGING RECORDS under this tag.
-     * Delete a tag and ALL TAGGING RECORDS under this tag.
-     */
-    async remove(tagId: string, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.removeRaw({ tagId: tagId }, initOverrides);
-    }
-
-    /**
-     * Edit tag properties. Empty strings will be set. Properties not in request body won\'t be changed
-     * Edit tag properties
-     */
-    async updateRaw(requestParameters: UpdateRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Tag>> {
-        if (requestParameters.tagId === null || requestParameters.tagId === undefined) {
-            throw new runtime.RequiredError('tagId','Required parameter requestParameters.tagId was null or undefined when calling update.');
-        }
-
-        if (requestParameters.tag === null || requestParameters.tag === undefined) {
-            throw new runtime.RequiredError('tag','Required parameter requestParameters.tag was null or undefined when calling update.');
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/tags/{tag_id}`.replace(`{${"tag_id"}}`, encodeURIComponent(String(requestParameters.tagId))),
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: TagToJSON(requestParameters.tag),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TagFromJSON(jsonValue));
-    }
-
-    /**
-     * Edit tag properties. Empty strings will be set. Properties not in request body won\'t be changed
-     * Edit tag properties
-     */
-    async update(tagId: string, tag: Tag, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Tag> {
-        const response = await this.updateRaw({ tagId: tagId, tag: tag }, initOverrides);
-        return await response.value();
-    }
-
+  /**
+   * Edit tag properties. Empty strings will be set. Properties not in request body won\'t be changed
+   * Edit tag properties
+   */
+  async update(
+    tagId: number,
+    tag: Tag,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Tag> {
+    const response = await this.updateRaw({ tagId: tagId, tag: tag }, initOverrides);
+    return await response.value();
+  }
 }

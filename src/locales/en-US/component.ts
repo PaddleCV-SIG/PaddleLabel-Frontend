@@ -64,8 +64,6 @@ export default {
   'component.history.noNext': 'No next history',
   'component.history.noPrev': 'No previous history',
 
-  'component.label.deleteSuccess': 'Successfully deleted label',
-
   'component.PPAddLabelModal.selectColor': 'Select Color',
   'component.PPAddLabelModal.addLabel': 'Add Label',
   'component.PPAddLabelModal.labelName': 'Label Name',
@@ -106,4 +104,8 @@ export default {
   'component.PPSegMode.remoteSensing': 'Remote Sensing',
   'component.PPSegMode.changeDetection': 'Change Detection',
   'component.PPSegMode.ok': 'OK',
+
+  'component.label.deleteSuccess': 'Successfully deleted label',
+  'component.label.ontHotMultiple':
+    'This is a single class classification project, but this task has multiple active labels!',
 };

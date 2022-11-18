@@ -12,87 +12,197 @@
  * Do not edit the class manually.
  */
 
-
 import * as runtime from '../runtime';
-import type {
-  GetFoldersRequest,
-  Polygon2pointsRequest,
-} from '../models';
+import type { GetFoldersRequest, Points2polygonRequest, Polygon2pointsRequest } from '../models';
 import {
-    GetFoldersRequestFromJSON,
-    GetFoldersRequestToJSON,
-    Polygon2pointsRequestFromJSON,
-    Polygon2pointsRequestToJSON,
+  GetFoldersRequestFromJSON,
+  GetFoldersRequestToJSON,
+  Points2polygonRequestFromJSON,
+  Points2polygonRequestToJSON,
+  Polygon2pointsRequestFromJSON,
+  Polygon2pointsRequestToJSON,
 } from '../models';
 
 export interface GetFoldersOperationRequest {
-    getFoldersRequest?: GetFoldersRequest;
+  getFoldersRequest?: GetFoldersRequest;
+}
+
+export interface Points2polygonOperationRequest {
+  points2polygonRequest?: Points2polygonRequest;
 }
 
 export interface Polygon2pointsOperationRequest {
-    polygon2pointsRequest?: Polygon2pointsRequest;
+  polygon2pointsRequest?: Polygon2pointsRequest;
+}
+
+export interface PrintDebugIdRequest {
+  debugId: string;
 }
 
 /**
- * 
+ *
  */
 export class RpcApi extends runtime.BaseAPI {
+  /**
+   *
+   */
+  async getFoldersRaw(
+    requestParameters: GetFoldersOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    const queryParameters: any = {};
 
-    /**
-     * 
-     */
-    async getFoldersRaw(requestParameters: GetFoldersOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        const queryParameters: any = {};
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    headerParameters['Content-Type'] = 'application/json';
 
-        headerParameters['Content-Type'] = 'application/json';
+    const response = await this.request(
+      {
+        path: `/rpc/folders`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: GetFoldersRequestToJSON(requestParameters.getFoldersRequest),
+      },
+      initOverrides,
+    );
 
-        const response = await this.request({
-            path: `/rpc/folders`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: GetFoldersRequestToJSON(requestParameters.getFoldersRequest),
-        }, initOverrides);
+    return new runtime.VoidApiResponse(response);
+  }
 
-        return new runtime.VoidApiResponse(response);
+  /**
+   *
+   */
+  async getFolders(
+    getFoldersRequest?: GetFoldersRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.getFoldersRaw({ getFoldersRequest: getFoldersRequest }, initOverrides);
+  }
+
+  /**
+   *
+   */
+  async points2polygonRaw(
+    requestParameters: Points2polygonOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Array<string>>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/rpc/seg/points2polygon`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: Points2polygonRequestToJSON(requestParameters.points2polygonRequest),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse<any>(response);
+  }
+
+  /**
+   *
+   */
+  async points2polygon(
+    points2polygonRequest?: Points2polygonRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Array<string>> {
+    const response = await this.points2polygonRaw(
+      { points2polygonRequest: points2polygonRequest },
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   *
+   */
+  async polygon2pointsRaw(
+    requestParameters: Polygon2pointsOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<string>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/rpc/seg/polygon2points`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: Polygon2pointsRequestToJSON(requestParameters.polygon2pointsRequest),
+      },
+      initOverrides,
+    );
+
+    return new runtime.TextApiResponse(response) as any;
+  }
+
+  /**
+   *
+   */
+  async polygon2points(
+    polygon2pointsRequest?: Polygon2pointsRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<string> {
+    const response = await this.polygon2pointsRaw(
+      { polygon2pointsRequest: polygon2pointsRequest },
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async printDebugIdRaw(
+    requestParameters: PrintDebugIdRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    if (requestParameters.debugId === null || requestParameters.debugId === undefined) {
+      throw new runtime.RequiredError(
+        'debugId',
+        'Required parameter requestParameters.debugId was null or undefined when calling printDebugId.',
+      );
     }
 
-    /**
-     * 
-     */
-    async getFolders(getFoldersRequest?: GetFoldersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.getFoldersRaw({ getFoldersRequest: getFoldersRequest }, initOverrides);
-    }
+    const queryParameters: any = {};
 
-    /**
-     * 
-     */
-    async polygon2pointsRaw(requestParameters: Polygon2pointsOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
-        const queryParameters: any = {};
+    const headerParameters: runtime.HTTPHeaders = {};
 
-        const headerParameters: runtime.HTTPHeaders = {};
+    const response = await this.request(
+      {
+        path: `/debug/printid/{debug_id}`.replace(
+          `{${'debug_id'}}`,
+          encodeURIComponent(String(requestParameters.debugId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
 
-        headerParameters['Content-Type'] = 'application/json';
+    return new runtime.VoidApiResponse(response);
+  }
 
-        const response = await this.request({
-            path: `/rpc/seg/polygon2points`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: Polygon2pointsRequestToJSON(requestParameters.polygon2pointsRequest),
-        }, initOverrides);
-
-        return new runtime.TextApiResponse(response) as any;
-    }
-
-    /**
-     * 
-     */
-    async polygon2points(polygon2pointsRequest?: Polygon2pointsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
-        const response = await this.polygon2pointsRaw({ polygon2pointsRequest: polygon2pointsRequest }, initOverrides);
-        return await response.value();
-    }
-
+  /**
+   * Your GET endpoint
+   */
+  async printDebugId(
+    debugId: string,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<void> {
+    await this.printDebugIdRaw({ debugId: debugId }, initOverrides);
+  }
 }

@@ -18,7 +18,7 @@ import { AnnotationFromJSON, AnnotationToJSON } from '../models';
 
 export interface CreateRequest {
   annotation: Array<Annotation>;
-  requestId?: string;
+  requestId?: number;
   deduplicate?: boolean;
 }
 
@@ -86,8 +86,8 @@ export class AnnotationApi extends runtime.BaseAPI {
    */
   async create(
     annotation: Array<Annotation>,
+    requestId?: number,
     deduplicate?: boolean,
-    requestId?: string,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Annotation>> {
     const response = await this.createRaw(
