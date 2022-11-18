@@ -111,6 +111,9 @@ const Page: React.FC = () => {
 
       setfinlyList(items);
       setSelectFinly(null);
+    } else {
+      setfinlyList([]);
+      setSelectFinly(null);
     }
   };
   useEffect(() => {

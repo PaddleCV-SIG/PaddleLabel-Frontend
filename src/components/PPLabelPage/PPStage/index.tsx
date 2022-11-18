@@ -456,7 +456,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     //  const { canvasRef } = param;
   };
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    drawTool?.onMouseMove(getEvtParam(e));
+    console.log('props?.currentTool', props?.currentTool);
+
     const mouseX = (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
     const mouseY =
       (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
@@ -500,7 +501,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         ctx3.stroke(); //绘制
         layerRef.current?.batchDraw();
       }
-    } else if (props?.currentTool == 'rubber' || props?.currentTool == 'brush') {
+    } else if (props?.currentTool == 'brush' || props?.currentTool == 'rubber') {
       if (
         !props.currentTool ||
         !props.currentAnnotation ||
@@ -513,14 +514,23 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       if (isClick && ctx) {
         // drawTool?.drawGuidewires(mouseX, mouseY, ctx, props.brushSize);
         ctx.lineTo(mouseX, mouseY);
-        ctx.strokeStyle =
-          props.currentTool === 'brush' ? props.currentLabel?.color : 'rgba(0,0,0,0)';
+        ctx.strokeStyle = props.currentTool === 'brush' ? props.currentLabel?.color : '#ccc';
         // ctx?.fill(); //填充
         ctx?.stroke();
         makearc(ctx3, mouseX, mouseY, props.brushSize / 2, 0, 180, 'white');
         layerRef.current?.batchDraw();
       }
     }
+    //  else if (props?.currentTool == 'rubber' && ctx && isClick) {
+    //   // debugger;
+
+    //   if (ctx) {
+    //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    //     console.log('rubbersss');
+    //   }
+    //   layerRef.current?.batchDraw();
+    // }
+    drawTool?.onMouseMove(getEvtParam(e));
     // if (props?.currentTool == 'polygon') {
     //   // restoreDrawingSurface(DrawingSurfaceImageData);
     //   onMouseMovePolygon(mouseX, mouseY, ctx);
