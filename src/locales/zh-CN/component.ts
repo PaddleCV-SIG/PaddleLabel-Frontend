@@ -28,13 +28,52 @@ export default {
     '如果希望导入数据集中的标注信息，请参考如上文件结构组织文件夹下的文件。点击上方文件可查看文件内容示例。',
   'component.PPCreater.importInProgress': '导入中，请稍候',
 
-  'component.PPAddLabelModal.selectColor': '选择色彩',
+  'component.PPAddLabelModal.selectColor': '选择颜色',
   'component.PPAddLabelModal.addLabel': '创建标签',
   'component.PPAddLabelModal.labelName': '标签名',
   'component.PPAnnotationList.annotationList': '标注列表',
   'component.PPAnnotationList.addAnnotation': '添加标注',
   'component.PPLabelList.labelList': '标签列表',
   'component.PPLabelList.addLabel': '添加标签',
+
+  'component.PPSplitDatasetModal.title': '划分数据集',
+  'component.PPSplitDatasetModal.train': '训练集比例',
+  'component.PPSplitDatasetModal.validation': '验证集比例',
+  'component.PPSplitDatasetModal.test': '测试集比例',
+  'component.PPSplitDatasetModal.success': '数据集划分成功',
+  'component.PPSplitDatasetModal.fail': '数据集划分失败',
+  'component.PPSplitDatasetModal.not100': '训练，验证和测试集百分比和应为100',
+
+  'component.PPExportModal.title': '导出数据集',
+  'component.PPExportModal.path': '导出路径',
+  'component.PPExportModal.labelFormat': '导出格式',
+  'component.PPExportModal.exportSuccess': '数据集导出成功',
+  'component.PPExportModal.export': '导出',
+  'component.PPExportModal.nullPath': '导出路径不能为空',
+  'component.PPExportModal.nullLabelFormat': '请选择一个导出数据集格式',
+
+  'component.PPImportModal.title': '导入额外数据',
+  'component.PPImportModal.path': '额外数据路径',
+  'component.PPImportModal.labelFormat': '数据标注格式',
+  'component.PPImportModal.import': '导入',
+  'component.PPImportModal.nullPath': '额外数据路径不能为空',
+  'component.PPImportModal.success': '额外数据导入成功',
+
+  'component.PPInteractorModal.title': '智能标注设置',
+  'component.PPInteractorModal.mlBackendUrl': '机器学习后端网址',
+  'component.PPInteractorModal.modelPath': '模型文件路径',
+  'component.PPInteractorModal.weightPath': '权重文件路径',
+  'component.PPInteractorModal.pathPh': '留空使用内置路径，或填写绝对路径',
+  'component.PPInteractorModal.settingSaved': '智能标注配置完成，模型需要约1分钟加载',
+  'component.PPInteractorModal.modelLoaded': '模型加载完成，您可以开始使用智能标注工具了',
+  'component.PPInteractorModal.loadFail':
+    '模型加载失败，请检查 1.机器学习后端已经启动 2.机器学习后端网址填写正确',
+
+  'component.history.noPrev': '没有更老的操作记录',
+  'component.history.noNext': '没有更新的操作记录',
+
+  'component.label.deleteSuccess': '类别删除成功',
+  'component.label.ontHotMultiple': '本项目为单分类，但标签列表中有多个标签',
 
   'component.PPMedical.windowWidth': '窗宽',
   'component.PPMedical.windowLevel': '窗位',
@@ -68,44 +107,4 @@ export default {
   'component.PPSegMode.remoteSensing': '遥感数据分割',
   'component.PPSegMode.changeDetection': '遥感变化检测',
   'component.PPSegMode.ok': '确定',
-
-  'component.PPSplitDatasetModal.title': '划分数据集',
-  'component.PPSplitDatasetModal.train': '训练集比例',
-  'component.PPSplitDatasetModal.validation': '验证集比例',
-  'component.PPSplitDatasetModal.test': '测试集比例',
-  'component.PPSplitDatasetModal.success': '数据集划分成功',
-  'component.PPSplitDatasetModal.fail': '数据集划分失败',
-  'component.PPSplitDatasetModal.not100': '训练，验证和测试集百分比和应为100',
-
-  'component.PPExportModal.title': '导出数据集',
-  'component.PPExportModal.path': '导出路径',
-  'component.PPExportModal.labelFormat': '导出格式',
-  'component.PPExportModal.exportSuccess': '数据集导出成功',
-  'component.PPExportModal.export': '导出',
-  'component.PPExportModal.nullPath': '导出路径不能为空',
-  'component.PPExportModal.nullLabelFormat': '请选择一个导出数据集格式',
-
-  'component.PPImportModal.title': '导入额外数据',
-  'component.PPImportModal.path': '额外数据路径',
-  'component.PPImportModal.labelFormat': '数据标注格式',
-  'component.PPImportModal.import': '导入',
-  'component.PPImportModal.nullPath': '额外数据路径不能为空',
-  'component.PPImportModal.success': '额外数据导入成功',
-
-  'component.PPInteractorModal.title': '智能标注设置',
-  'component.PPInteractorModal.mlBackendUrl': '机器学习后端网址',
-  'component.PPInteractorModal.modelPath': '模型文件路径',
-  'component.PPInteractorModal.weightPath': '权重文件路径',
-  'component.PPInteractorModal.pathPh': '留空使用内置路径，或填写绝对路径',
-  'component.PPInteractorModal.settingSaved': '智能标注配置完成，模型需要约1分钟加载',
-  'component.PPInteractorModal.modelLoaded': '模型加载完成，您可以开始使用智能标注工具了',
-
-  'component.PPInteractorModal.loadFail':
-    '模型加载失败，请检查 1.机器学习后端已经启动 2.机器学习后端网址填写正确',
-
-  'component.history.noPrev': '没有更老的操作记录',
-  'component.history.noNext': '没有更新的操作记录',
-
-  'component.label.deleteSuccess': '类别删除成功',
-  'component.label.ontHotMultiple': '本项目为单分类，但标签列表中有多个标签',
 };

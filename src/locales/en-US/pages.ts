@@ -153,6 +153,7 @@ export default {
   'pages.projectOverview.split': 'Data Split',
   'pages.projectOverview.image': 'Image',
   'pages.projectOverview.label': 'Label',
+  'pages.projectOverview.autoInferenceSettings': 'Auto Inference Settings',
   'pages.projectOverview.projectSettings': 'Project Settings',
   'pages.projectOverview.mlSettings': 'ML Settings',
   'pages.classification.preNext': 'The previous picture has not been marked',
