@@ -237,6 +237,7 @@ const Page = () => {
     );
   };
   const createLabels = (labels) => {
+    // debugger;
     const newlabels = [...labels].map((item) => {
       const addlabel = {
         name: item,
@@ -246,8 +247,10 @@ const Page = () => {
     });
     if (newlabels.length > 0) {
       label.create(newlabels).then((newLabel) => {
+        // debugger;
         setCurrentAnnotation(undefined);
         label.setCurr(newLabel);
+
         setflags(true);
       });
     }
@@ -332,7 +335,7 @@ const Page = () => {
         }
       } else {
         for (const labelItem of interactorData.predictData) {
-          console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
+          console.log('!oldLabel.has(labelItem?.label_name)', oldLabel, labelItem?.label_name);
           if (labelItem && !oldLabel.has(labelItem?.label_name)) {
             labels.add(labelItem?.label_name);
           }
@@ -353,6 +356,7 @@ const Page = () => {
     ) {
       const labels = new Map();
       label.getAll(project.curr.projectId).then((labelAll) => {
+        // debugger;
         for (const labelItem of labelAll) {
           labels.set(labelItem.name, labelItem);
         }
