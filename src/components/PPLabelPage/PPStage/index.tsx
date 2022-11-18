@@ -74,6 +74,7 @@ export type PPStageProps = {
   OnSelect?: (anntation: Annotation) => void;
   onAnnotationModifyUP?: (annotation: Annotation) => void;
   brushSize?: number;
+  annotationDelete?: (anntation: Annotation[]) => void;
 };
 
 const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
@@ -419,6 +420,30 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
     if (props?.tool?.curr == 'polygon' && ctx) {
       if (e.evt.button === 2) {
+        // for (const item of props.annotations) {
+        //   if (item.result === props.currentAnnotation?.result) {
+        //     annoID = item.annotationId;
+        //   }
+        // }
+        console.log(
+          'props.currentAnnotation?.result',
+          props.currentAnnotation?.result,
+          props.currentAnnotation?.result?.split(',').length,
+        );
+
+        if (
+          props.currentAnnotation?.result &&
+          props.annotationDelete &&
+          props.currentAnnotation?.result?.split(',').length < 5
+        ) {
+          const newAnnotaions = props.annotations?.filter((item) => {
+            if (item.result !== props.currentAnnotation?.result) {
+              return item;
+            }
+          });
+          props.annotationDelete(newAnnotaions);
+        }
+
         props.setCurrentAnnotation(undefined);
         setpointArr([]);
         setflags(true);

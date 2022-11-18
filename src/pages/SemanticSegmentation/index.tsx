@@ -198,7 +198,10 @@ const Page: React.FC = () => {
     setCurrentAnnotation(anno);
     annotation.setAll(newAnnos);
   };
-
+  const annotationDelete = (newAnnos: Annotation[]) => {
+    annotation.setAll(newAnnos);
+    annotation.pushToBackend(data.curr?.dataId, newAnnos);
+  };
   const drawToolParam = {
     dataId: data.curr?.dataId,
     currentLabel: label.curr,
@@ -431,6 +434,7 @@ const Page: React.FC = () => {
                 if (interactorData.active) return;
                 annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
               }}
+              annotationDelete={annotationDelete}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
               imgSrc={data.imgSrc}
               transparency={transparency}
