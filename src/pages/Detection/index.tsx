@@ -407,7 +407,7 @@ const Page = () => {
         const deduplicate = true;
         annotation.create(annos, '', deduplicate);
         // debugger;
-        setInteractorData({ active: true, predictData: [], mousePoints: [] });
+        setInteractorData({ active: false, predictData: [], mousePoints: [] });
         setflags(false);
       });
     }
@@ -602,7 +602,7 @@ const Page = () => {
           {tbIntl('autoInference')}
         </PPToolBarButton>
         <PPSetButton
-          disabled={!interactorData.active}
+          disabled={interactorData.active}
           imgSrc="./pics/buttons/threshold.png"
           disLoc="left"
           size={threshold}
