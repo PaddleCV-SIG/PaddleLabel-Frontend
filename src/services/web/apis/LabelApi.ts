@@ -82,7 +82,7 @@ export class LabelApi extends runtime.BaseAPI {
       },
       initOverrides,
     );
-    debugger;
+    // debugger;
     return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LabelFromJSON));
   }
 
@@ -99,7 +99,7 @@ export class LabelApi extends runtime.BaseAPI {
       { label: label, requestId: requestId, removeDuplicateByName: removeDuplicateByName },
       initOverrides,
     );
-    debugger;
+    // debugger;
     return await response.value();
   }
 

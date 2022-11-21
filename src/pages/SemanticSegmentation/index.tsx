@@ -501,6 +501,7 @@ const Page: React.FC = () => {
           }}
         >
           {tbIntl('projectOverview')}
+          {/* 项目总览 */}
         </PPToolBarButton>
         <PPAIButton
           imgSrc="./pics/buttons/intelligent_interaction.png"
@@ -540,9 +541,10 @@ const Page: React.FC = () => {
           project={project}
         >
           {tbIntl('interactor')}
+          {/* 智能标注 */}
         </PPAIButton>
         <PPSetButton
-          disabled={!interactorData.active}
+          disabled={interactorData.active}
           imgSrc="./pics/buttons/threshold.png"
           disLoc="left"
           size={threshold}
@@ -554,9 +556,10 @@ const Page: React.FC = () => {
           }}
         >
           {tbIntl('segmentThreshold')}
+          {/* 分割阈值 */}
         </PPSetButton>
         <PPSetButton
-          disabled={!interactorData.active}
+          disabled={interactorData.active}
           imgSrc="./pics/buttons/radius.png"
           disLoc="left"
           size={radius}
@@ -568,6 +571,7 @@ const Page: React.FC = () => {
           }}
         >
           {tbIntl('visualRadius')}
+          {/* 可视化半径 */}
         </PPSetButton>
         <PPSetButton
           imgSrc="./pics/buttons/alpha.png"

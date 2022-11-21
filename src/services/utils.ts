@@ -368,7 +368,7 @@ export const LabelUtils = (
   async function create(label: Label | Label[]): Promise<Label[] | undefined> {
     console.log('create label', label);
     try {
-      debugger;
+      // debugger;
       const newLabels = await labelApi.create(
         label instanceof Array ? label : [label],
         undefined,

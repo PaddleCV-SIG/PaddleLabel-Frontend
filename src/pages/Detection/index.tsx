@@ -316,8 +316,9 @@ const Page = () => {
     }
   }, [isLoading, isLoad, image]);
   useUpdateEffect(() => {
-    console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
+    // console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
     if (interactorData.predictData.length && otherSetting?.labelMapping && label.all) {
+      console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
       const labels = new Set();
       const oldLabel = new Map();
       // const labelmaps: any = {};
@@ -340,7 +341,9 @@ const Page = () => {
             labels.add(labelItem?.label_name);
           }
         }
-        createLabels(labels);
+        if ([...labels].length) {
+          createLabels(labels);
+        }
       }
       if (![...labels].length) {
         setflags(true);
@@ -405,6 +408,7 @@ const Page = () => {
         annotation.create(annos, '', deduplicate);
         // debugger;
         setInteractorData({ active: true, predictData: [], mousePoints: [] });
+        setflags(false);
       });
     }
   }, [project?.curr?.projectId, interactorData.predictData, otherSetting, flags]);
