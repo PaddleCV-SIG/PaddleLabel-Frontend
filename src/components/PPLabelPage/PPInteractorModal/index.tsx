@@ -149,6 +149,14 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           </Space>
         </Form.Item>
       </Form>
+      <div
+        style={{
+          fontSize: '16px',
+          color: 'red',
+        }}
+      >
+        {intl('Warintoast')}
+      </div>
     </Modal>
   );
 };

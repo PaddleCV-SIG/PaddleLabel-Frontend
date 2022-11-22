@@ -433,7 +433,7 @@ const Page: React.FC = () => {
               onAnnotationModifyComplete={() => {
                 // Do not record interactor's history
                 if (interactorData.active) return;
-                annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+                // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
               }}
               annotationDelete={annotationDelete}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}

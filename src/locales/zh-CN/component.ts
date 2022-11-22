@@ -68,7 +68,8 @@ export default {
   'component.PPInteractorModal.modelLoaded': '模型加载完成，您可以开始使用智能标注工具了',
   'component.PPInteractorModal.loadFail':
     '模型加载失败，请检查 1.机器学习后端已经启动 2.机器学习后端网址填写正确',
-
+  'component.PPInteractorModal.Warintoast':
+    '注意：完成当前目标标注后，请按下鼠标中键结束当前目标的交互输入，否则会影响交互式标注效果。',
   'component.history.noPrev': '没有更老的操作记录',
   'component.history.noNext': '没有更新的操作记录',
 
