@@ -256,12 +256,12 @@ function drawAnnotation(param: PPRenderFuncProps) {
   if (!ctx) return <></>;
   console.log(`PPInteractor.drawAnnotation`, param.interactorData);
   renderPoints(filterPoints(result, param.threshold), ctx, param.label.color);
-  renderMousePoints(param.interactorData.mousePoints, ctx, param.radius || 10);
+  // renderMousePoints(param.interactorData.mousePoints, ctx, param.radius || 10);
   return <></>;
 }
 
 function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D, radius: number) {
-  if (!mousePoints) return;
+  if (!mousePoints.length) return;
   for (const [x, y, positive] of mousePoints) {
     ctx.beginPath();
     if (positive) ctx.fillStyle = '#008000';
@@ -331,7 +331,10 @@ export function interactorToAnnotation(
   // } else {
   //   frontendId = getMaxFrontendId(finlyList) + 1;
   // }
-  console.log('frontendIds', frontendId);
+  if (!points.length) {
+    return null;
+  }
+  console.log('pointsss', points);
   const result = `${width},${frontendId},` + points.join(',');
   const anno = {
     dataId: dataId,
@@ -402,10 +405,32 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   /**
    * Record +- points, send API for latest mark, render on Canvas.
    */
+  const OnPredicted = async (param: EvtProps) => {
+    const imgBase64 = getBase64Image(param.img);
+
+    const line = await model.predict('EISeg', {
+      format: 'b64',
+      img: imgBase64,
+      other: { clicks: interactorData.mousePoints },
+    });
+    if (!line) return;
+    console.log('line.result', line.predictions);
+
+    setInteractorData({
+      active: true,
+      mousePoints: [],
+      predictData: line.predictions,
+    });
+  };
   const OnMouseDown = async (param: EvtProps) => {
+    console.log('param.e.evt.button', param.e.evt.button);
     if (props.currentTool != 'interactor') return;
     if (!props.currentLabel?.color) {
       message.error(tbIntl('chooseCategoryFirst'));
+      return;
+    }
+    if (param.e.evt.button === 1) {
+      OnPredicted(param);
       return;
     }
     const mouseX = Math.round(param.mouseX);
@@ -421,22 +446,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       return;
     }
     console.log('param.img', param);
-
-    const imgBase64 = getBase64Image(param.img);
-
-    const line = await model.predict('EISeg', {
-      format: 'b64',
-      img: imgBase64,
-      other: { clicks: interactorData.mousePoints },
-    });
-    if (!line) return;
-    console.log('line.result', line.predictions);
-
-    setInteractorData({
-      active: true,
-      mousePoints: interactorData.mousePoints,
-      predictData: line.predictions,
-    });
   };
 
   const OnMouseMove = () => {};
@@ -451,5 +460,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     onMouseMove: OnMouseMove,
     onMouseUp: OnMouseUp,
     drawAnnotation: drawAnnotation,
+    renderMousePoints: renderMousePoints,
+    interactorData: interactorData,
   };
 }

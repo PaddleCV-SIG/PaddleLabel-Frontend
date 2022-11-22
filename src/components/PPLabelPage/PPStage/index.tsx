@@ -340,6 +340,20 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     // debugger;
     layerRef.current?.batchDraw();
   }, [shapes]);
+  useEffect(() => {
+    props.drawTool?.interactor?.drawAnnotation(param);
+    const ctxs = canvasRef.current?.getContext('2d');
+    console.log('props.drawTool?.interactor', props.drawTool?.interactor);
+
+    if (ctxs && props.drawTool?.interactor?.interactorData.mousePoints) {
+      props.drawTool?.interactor?.renderMousePoints(
+        interactorData.mousePoints,
+        ctxs,
+        param.radius || 10,
+      );
+    }
+    layerRef.current?.batchDraw();
+  });
   const renderReact = (endPos: any) => {
     const width = Math.abs(startPos.x - endPos.x);
     const height = Math.abs(startPos.y - endPos.y);
@@ -604,7 +618,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   //     }
   //   });
   // }
-  props.drawTool?.interactor?.drawAnnotation(param);
   // Re-draw layer
   // 自动重绘制的次数
 

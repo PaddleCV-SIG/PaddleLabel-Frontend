@@ -82,6 +82,7 @@ const Page: React.FC = () => {
         setCurrentAnnotation(anno);
         annotation.pushToBackend(data.curr?.dataId, newAnnos);
       }
+      tool.setCurr(undefined);
       setInteractorData({ active: false, predictData: [], mousePoints: [] });
       // setCurrentAnnotation(undefined);
     }
@@ -534,6 +535,7 @@ const Page: React.FC = () => {
                 return;
               }
               tool.setCurr('interactor');
+              // tool.setCurr(undefined);
               setInteractorData({ active: true, predictData: [], mousePoints: [] });
             }
           }}
