@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useUpdateEffect } from 'ahooks';
 import { Spin, message } from 'antd';
 import { history, useModel } from 'umi';
@@ -43,8 +43,7 @@ const Page = () => {
     {
       effectTrigger: {
         postTaskChange: (allLabels, allAnns) => {
-          annHistory.init();
-          annHistory.record({ annos: allAnns });
+          annHistory.init({ annos: allAnns });
         },
       },
       label: {
@@ -75,6 +74,7 @@ const Page = () => {
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
   };
+
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
@@ -92,7 +92,8 @@ const Page = () => {
         newAnnos.push(item);
       }
     }
-    console.log('annotationfinlly:', newAnnos, anno);
+    console.log('onAnnotationModify:', newAnnos, anno);
+    // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     annotation.setAll(newAnnos);
   };
   const onAnnotationModifyUP = (anno: Annotation) => {
@@ -106,6 +107,8 @@ const Page = () => {
       }
     }
     setCurrentAnnotation(anno);
+    console.log('onAnnotationModifyUP:');
+
     annotation.setAll(newAnnos);
     annotation.update(anno);
   };
@@ -117,8 +120,8 @@ const Page = () => {
   };
   const onFinishEdit = () => {
     // 鼠标抬起的时候
+    // console.log('here');
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
-    console.log('annos: annotation.all', annotation.all);
 
     if (!annotation.curr) return;
     console.log(
@@ -131,7 +134,6 @@ const Page = () => {
     if (!annotation.curr.result) return;
     const lengths = annotation.all.length - 1;
     const ErrAnno = annotation.all[lengths];
-    // debugger;
     if (ErrAnno && ErrAnno?.result?.split(',').length === 2) {
       const newResult = ErrAnno?.result.split(',').concat(annotation?.curr?.result.split(','));
       annotation.curr.result = newResult.join(',');
@@ -182,6 +184,7 @@ const Page = () => {
       annotation.setAll(items);
     }
   };
+
   const getMaxFrontendId = (annotations?: Annotation[]) => {
     if (!annotations || annotations.length == 0) return 0;
     let max = 0;
@@ -255,9 +258,9 @@ const Page = () => {
       });
     }
   };
-  useEffect(() => {
-    annHistory.init();
-  }, []);
+  // useEffect(() => {
+  //   annHistory.init({});
+  // }, []);
   useUpdateEffect(() => {
     if (data.all.length > 0) {
       // data.updatePredicted(data.all[0].dataId);
@@ -276,10 +279,10 @@ const Page = () => {
   }, [data.all]);
   useEffect(() => {
     if (!isClick) {
-      // debugger;
       onFinishEdit();
     }
   }, [isClick]);
+
   useUpdateEffect(() => {
     // debugger;
     if (isLoad && project.curr?.otherSettings?.labelMapping) {
@@ -482,13 +485,13 @@ const Page = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
-            const res = annHistory.backward();
-            // const res2 = annHistory.backward();
-            if (res) {
-              annotation.setAll(res.annos);
-              setCurrentAnnotation(res.currAnno);
-              annotation.pushToBackend(data.curr?.dataId, res.annos);
-            }
+            annHistory.backward().then((res) => {
+              if (res) {
+                annotation.setAll(res.annos);
+                setCurrentAnnotation(res.currAnno);
+                annotation.pushToBackend(data.curr?.dataId, res.annos);
+              }
+            });
           }}
         >
           {tbIntl('unDo')}
@@ -496,11 +499,12 @@ const Page = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
           onClick={() => {
-            const res = annHistory.forward();
-            if (res) {
-              annotation.pushToBackend(data.curr?.dataId, res.annos);
-              setCurrentAnnotation(res.currAnno);
-            }
+            annHistory.forward().then((res) => {
+              if (res) {
+                annotation.pushToBackend(data.curr?.dataId, res.annos);
+                setCurrentAnnotation(res.currAnno);
+              }
+            });
           }}
         >
           {tbIntl('reDo')}

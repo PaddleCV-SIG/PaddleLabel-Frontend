@@ -12,6 +12,8 @@ apis/index.ts
 index.ts
 models/AddTagRequest.ts
 models/Annotation.ts
+models/CreateCache200Response.ts
+models/CreateCacheRequest.ts
 models/Data.ts
 models/ExportDatasetRequest.ts
 models/GetFoldersRequest.ts

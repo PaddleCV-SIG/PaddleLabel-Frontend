@@ -13,8 +13,18 @@
  */
 
 import * as runtime from '../runtime';
-import type { GetFoldersRequest, Points2polygonRequest, Polygon2pointsRequest } from '../models';
+import type {
+  CreateCache200Response,
+  CreateCacheRequest,
+  GetFoldersRequest,
+  Points2polygonRequest,
+  Polygon2pointsRequest,
+} from '../models';
 import {
+  CreateCache200ResponseFromJSON,
+  CreateCache200ResponseToJSON,
+  CreateCacheRequestFromJSON,
+  CreateCacheRequestToJSON,
   GetFoldersRequestFromJSON,
   GetFoldersRequestToJSON,
   Points2polygonRequestFromJSON,
@@ -22,6 +32,14 @@ import {
   Polygon2pointsRequestFromJSON,
   Polygon2pointsRequestToJSON,
 } from '../models';
+
+export interface CreateCacheOperationRequest {
+  createCacheRequest?: CreateCacheRequest;
+}
+
+export interface GetCacheRequest {
+  cacheId: string;
+}
 
 export interface GetFoldersOperationRequest {
   getFoldersRequest?: GetFoldersRequest;
@@ -43,6 +61,96 @@ export interface PrintDebugIdRequest {
  *
  */
 export class RpcApi extends runtime.BaseAPI {
+  /**
+   *
+   */
+  async createCacheRaw(
+    requestParameters: CreateCacheOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<CreateCache200Response>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request(
+      {
+        path: `/rpc/cache`,
+        method: 'POST',
+        headers: headerParameters,
+        query: queryParameters,
+        body: CreateCacheRequestToJSON(requestParameters.createCacheRequest),
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      CreateCache200ResponseFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   *
+   */
+  async createCache(
+    createCacheRequest?: CreateCacheRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<CreateCache200Response> {
+    const response = await this.createCacheRaw(
+      { createCacheRequest: createCacheRequest },
+      initOverrides,
+    );
+    return await response.value();
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getCacheRaw(
+    requestParameters: GetCacheRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<CreateCacheRequest>> {
+    if (requestParameters.cacheId === null || requestParameters.cacheId === undefined) {
+      throw new runtime.RequiredError(
+        'cacheId',
+        'Required parameter requestParameters.cacheId was null or undefined when calling getCache.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/rpc/cache/{cache_id}`.replace(
+          `{${'cache_id'}}`,
+          encodeURIComponent(String(requestParameters.cacheId)),
+        ),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      CreateCacheRequestFromJSON(jsonValue),
+    );
+  }
+
+  /**
+   * Your GET endpoint
+   */
+  async getCache(
+    cacheId: string,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<CreateCacheRequest> {
+    const response = await this.getCacheRaw({ cacheId: cacheId }, initOverrides);
+    return await response.value();
+  }
+
   /**
    *
    */

@@ -1,69 +1,94 @@
 import { message } from 'antd';
 import { IntlInit } from '@/services/utils';
+import { getDiff, applyDiff } from 'recursive-diff';
+import type { rdiffResult } from 'recursive-diff';
+import type { Dispatch, SetStateAction } from 'react';
 
 export const MOST_HISTORY_STEPS = 40;
-
 export type HistoryType = {
-  index: number; // Current index in items[]
-  items: any[]; // Objects to store in history
+  undos: (rdiffResult[] | string)[];
+  redos: (rdiffResult[] | string)[];
 };
 
-export const HistoryUtils = () => {
+export type UseStateType = <S>(initialState?: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
+
+export function HistoryUtils(useState: UseStateType, rpcApi) {
   const intl = IntlInit('component.history');
+  const [prevState, setPrev] = useState<any>([]);
 
-  function record(newItem: any) {
+  async function parseDiff(diff: rdiffResult[][] | string): Promise<rdiffResult[]> {
+    console.log('history parsediff', diff);
+    const diffContent =
+      typeof diff == 'string' ? JSON.parse((await rpcApi.getCache(diff)).content) : diff;
+    return diffContent;
+  }
+
+  async function recDiff(diff: rdiffResult[]): Promise<rdiffResult[] | string> {
+    const diffStr = JSON.stringify(diff);
+    if (diffStr.length > 1000) return (await rpcApi.createCache({ content: diffStr })).cacheId;
+    else return diff;
+  }
+
+  async function init(curr: any) {
+    localStorage.removeItem('history');
+    setPrev(curr);
+    const history = { undos: [], redos: [] };
+    localStorage.setItem('history', JSON.stringify(history));
+    console.log('history init', history);
+  }
+
+  async function record(currState: any) {
+    const diff: rdiffResult[] = getDiff(currState, prevState);
+    if (diff.length == 0) return;
+    setPrev(currState);
     const historyStr = localStorage.getItem('history');
-    const history: HistoryType = historyStr ? JSON.parse(historyStr) : { index: -1, items: [] };
-    if (JSON.stringify(history.items[history.index]) == JSON.stringify(newItem)) {
-      console.log('历史函数返回了');
+    const history: HistoryType = historyStr ? JSON.parse(historyStr) : { undos: [], redos: [] };
+    history.redos = [];
+    history.undos.push(await recDiff(diff));
+    console.log('history', history);
 
-      return;
-    }
-    const earliestIndex =
-      history.index > MOST_HISTORY_STEPS ? history.index - MOST_HISTORY_STEPS : 0;
-    const itemsToKeep = history.items.splice(
-      earliestIndex,
-      history.index == 0 ? 1 : history.index + 1,
-    );
-    history.items = itemsToKeep.concat([newItem]);
-    if (history.index <= MOST_HISTORY_STEPS) history.index++;
-    else history.index = MOST_HISTORY_STEPS + 1;
     localStorage.setItem('history', JSON.stringify(history));
   }
 
-  function init() {
-    localStorage.removeItem('history');
-    record([]);
-  }
-
-  function forward() {
+  async function forward() {
     const historyStr = localStorage.getItem('history');
-    if (!historyStr) return;
-
+    if (!historyStr) {
+      message.error('history string not saved');
+      return;
+    }
     const history: HistoryType = JSON.parse(historyStr);
-    if (!history) return;
-
-    if (history.index >= history.items.length - 1) {
+    if (!history || history.redos.length == 0) {
       message.error(intl('noNext'));
       return;
     }
-    history.index++;
+    const diff = await parseDiff(history.redos.pop());
+    console.log('history redo', diff);
+    const curr = applyDiff(JSON.parse(JSON.stringify(prevState)), diff);
+    history.undos.push(await recDiff(getDiff(curr, prevState)));
+    setPrev(curr);
     localStorage.setItem('history', JSON.stringify(history));
-    return history.items[history.index];
+    return curr;
   }
 
-  function backward() {
+  async function backward() {
     const historyStr = localStorage.getItem('history');
-    if (!historyStr) return;
+    if (!historyStr) {
+      message.error('history string not found');
+      return;
+    }
     const history: HistoryType = JSON.parse(historyStr);
-    console.log('history', history);
-    if (!history || !history.index || history.index <= 1) {
+    if (!history || history.undos.length == 0) {
       message.error(intl('noPrev'));
       return;
     }
-    history.index--;
+    console.log('here');
+    const diff = await parseDiff(history.undos.pop());
+    console.log('history undo', diff);
+    const curr = applyDiff(JSON.parse(JSON.stringify(prevState)), diff);
+    history.redos.push(await recDiff(getDiff(curr, prevState)));
+    setPrev(curr);
     localStorage.setItem('history', JSON.stringify(history));
-    return history.items[history.index];
+    return curr;
   }
 
   return {
@@ -72,4 +97,4 @@ export const HistoryUtils = () => {
     forward,
     backward,
   };
-};
+}

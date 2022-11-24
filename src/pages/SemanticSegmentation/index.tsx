@@ -8,7 +8,7 @@ import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import PPSButtons from '@/components/PPLabelPage/PPButtons';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
-import PPStage, { pageRef } from '@/components/PPLabelPage/PPStage';
+import PPStage from '@/components/PPLabelPage/PPStage';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import PPBrush from '@/components/PPDrawTool/PPBrush';
 import PPRubber from '@/components/PPDrawTool/PPRubber';
@@ -17,6 +17,7 @@ import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { ModelUtils, PageInit } from '@/services/utils';
 import { ColorMaker } from '@/services/ColorMaker';
 
+import type { pageRef } from '@/components/PPLabelPage/PPStage';
 import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 import PPInteractor, { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
@@ -44,8 +45,7 @@ const Page: React.FC = () => {
     PageInit(useState, useEffect, {
       effectTrigger: {
         postTaskChange: (allLabels, allAnns) => {
-          annHistory.init();
-          annHistory.record({ annos: allAnns });
+          annHistory.init({ annos: allAnns });
         },
       },
       label: {
@@ -124,9 +124,9 @@ const Page: React.FC = () => {
       setSelectFinly(null);
     }
   };
-  useEffect(() => {
-    annHistory.init();
-  }, []);
+  // useEffect(() => {
+  //   annHistory.init();
+  // }, []);
   // 初始用来判断执行增不增加
   useEffect(() => {
     console.log('useEffect函数执行了', annotation.all);
@@ -169,16 +169,6 @@ const Page: React.FC = () => {
     console.log('newAnnotation', newAnnotation);
     setNewAnnotation(newAnnotation);
   }, [isLabel, annotation.all, loading.curr]);
-  // Auto save every 20s
-  // useEffect(() => {
-  //   const int = setInterval(() => {
-  //     console.log('triggered!', data);
-  //     annotation.pushToBackend(data.curr?.dataId);
-  //   }, 20000);
-  //   return () => {
-  //     clearInterval(int);
-  //   };
-  // }, [annotation, data, data.curr]);
 
   const onAnnotationModify = (anno: Annotation) => {
     if (!anno) return;
@@ -188,6 +178,7 @@ const Page: React.FC = () => {
     setCurrentAnnotation(anno);
     annotation.setAll(annotation.all);
   };
+
   const onAnnotationModifyUP = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
@@ -386,12 +377,13 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
-            const res = annHistory.backward();
-            if (res) {
-              annotation.setAll(res.annos);
-              setCurrentAnnotation(res.currAnno);
-              annotation.pushToBackend(data.curr?.dataId, res.annos);
-            }
+            annHistory.backward().then((res) => {
+              if (res) {
+                annotation.setAll(res.annos);
+                setCurrentAnnotation(res.currAnno);
+                annotation.pushToBackend(data.curr?.dataId, res.annos);
+              }
+            });
           }}
           disabled={interactorData.active}
         >
@@ -402,11 +394,12 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
           onClick={() => {
-            const res = annHistory.forward();
-            if (res) {
-              annotation.pushToBackend(data.curr?.dataId, res.annos);
-              setCurrentAnnotation(res.currAnno);
-            }
+            annHistory.forward().then((res) => {
+              if (res) {
+                annotation.pushToBackend(data.curr?.dataId, res.annos);
+                setCurrentAnnotation(res.currAnno);
+              }
+            });
           }}
           disabled={interactorData.active}
         >
