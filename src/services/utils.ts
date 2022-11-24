@@ -14,16 +14,18 @@ import {
   ManageApi,
   Configuration,
   SampleApi,
+  RpcApi,
 } from '@/services/web';
+import { HistoryUtils } from '@/services/history';
+import { IntlInitJsx } from '@/components/PPIntl';
 import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi } from '@/services/ml';
 import type { InlineObject1, Model } from '@/services/ml/models';
-import { HistoryUtils } from '@/services/history';
-import { IntlInitJsx } from '@/components/PPIntl';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
 
+const rpcApi = new RpcApi(config);
 const projectApi = new ProjectApi(config);
 const taskApi = new TaskApi(config);
 const dataApi = new DataApi(config);
@@ -778,7 +780,7 @@ export function PageInit(
   const data = DataUtils(useState);
   const project = ProjectUtils(useState);
   const label = LabelUtils(useState, props.label ? props.label : {});
-  const annHistory = HistoryUtils(useState);
+  const annHistory = HistoryUtils(useState, rpcApi);
   const annotation = AnnotationUtils(useState, {
     ...props.annotation,
     label: label,
