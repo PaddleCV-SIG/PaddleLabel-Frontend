@@ -16,15 +16,17 @@ export function HistoryUtils(useState: UseStateType, rpcApi) {
   const intl = IntlInit('component.history');
   const [prevState, setPrev] = useState<any>([]);
 
-  async function parseDiff(diff: rdiffResult[][] | string): Promise<rdiffResult[][]> {
+  async function parseDiff(diff: rdiffResult[][] | string): Promise<rdiffResult[]> {
     console.log('history parsediff', diff);
     const diffContent =
       typeof diff == 'string' ? JSON.parse((await rpcApi.getCache(diff)).content) : diff;
     return diffContent;
   }
 
-  async function recDiff(diff: rdiffResult[][]): Promise<rdiffResult[][] | string> {
-    return (await rpcApi.createCache({ content: JSON.stringify(diff) })).cacheId;
+  async function recDiff(diff: rdiffResult[]): Promise<rdiffResult[] | string> {
+    const diffStr = JSON.stringify(diff);
+    if (diffStr.length > 1000) return (await rpcApi.createCache({ content: diffStr })).cacheId;
+    else return diff;
   }
 
   async function init(curr: any) {
@@ -60,8 +62,8 @@ export function HistoryUtils(useState: UseStateType, rpcApi) {
       return;
     }
     const diff = await parseDiff(history.redos.pop());
-    const curr = applyDiff(JSON.parse(JSON.stringify(prevState)), diff);
     console.log('history redo', diff);
+    const curr = applyDiff(JSON.parse(JSON.stringify(prevState)), diff);
     history.undos.push(await recDiff(getDiff(curr, prevState)));
     setPrev(curr);
     localStorage.setItem('history', JSON.stringify(history));

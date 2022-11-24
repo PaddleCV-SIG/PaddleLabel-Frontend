@@ -1,248 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="theme-color" content="#1890ff" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="keywords"
-      content="PP-Label, labeling, AI, Deep learning, Machine learning, Marking, PaddlePaddle, PaddleX, Semantic Segmentation, Object Detection"
-    />
-    <meta name="description" content="" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
-    />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src *; script-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * data:; connect-src *;  child-src *;"
-    />
-    <title>PP-Label</title>
-    <link rel="icon" href="<%= context.config.publicPath +'favicon.ico'%>" type="image/x-icon" />
-    <!-- <link rel="stylesheet" href="<%= context.config.publicPath +'assets/leaflet.css'%>" /> -->
-  </head>
-  <body>
-    <noscript>
-      <div class="noscript-container">
-        Hi there! Please
-        <div class="noscript-enableJS">
-          <a href="https://www.enablejavascript.io/en" target="_blank" rel="noopener noreferrer">
-            <b>enable Javascript</b>
-          </a>
-        </div>
-        in your browser to use PP-Label!
-      </div>
-    </noscript>
-    <div id="root">
-      <style>
-        html,
-        body,
-        #root {
-          height: 100%;
-          margin: 0;
-          padding: 0;
-        }
-        #root {
-          background-repeat: no-repeat;
-          background-size: 100% auto;
-        }
-        .noscript-container {
-          display: flex;
-          align-content: center;
-          justify-content: center;
-          margin-top: 5.625rem;
-          font-size: 1.25rem;
-          font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode',
-            Geneva, Verdana, sans-serif;
-        }
-        .noscript-enableJS {
-          padding-right: 0.188rem;
-          padding-left: 0.188rem;
-        }
-        .page-loading-warp {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 6.125rem;
-        }
-        .ant-spin {
-          position: absolute;
-          display: none;
-          -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-          color: rgba(0, 0, 0, 0.65);
-          color: #1890ff;
-          font-size: 0.875rem;
-          font-variant: tabular-nums;
-          line-height: 1.5;
-          text-align: center;
-          list-style: none;
-          opacity: 0;
-          -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-          transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-          transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-          transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
-            -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
-          -webkit-font-feature-settings: 'tnum';
-          font-feature-settings: 'tnum';
-        }
 
-        .ant-spin-spinning {
-          position: static;
-          display: inline-block;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#1890ff" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="keywords"
+    content="PP-Label, labeling, AI, Deep learning, Machine learning, Marking, PaddlePaddle, PaddleX, Semantic Segmentation, Object Detection" />
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src *; script-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * data:; connect-src *;  child-src *;" />
+  <title>PaddleLabel</title>
+  <link rel="icon" href="<%= context.config.publicPath +'favicon.ico'%>" type="image/x-icon" />
+  <!-- <link rel="stylesheet" href="<%= context.config.publicPath +'assets/leaflet.css'%>" /> -->
+</head>
+
+<body>
+  <noscript>
+    <div class="noscript-container">
+      Hi there! Please
+      <div class="noscript-enableJS">
+        <a href="https://www.enablejavascript.io/en" target="_blank" rel="noopener noreferrer">
+          <b>enable Javascript</b>
+        </a>
+      </div>
+      in your browser to use PP-Label!
+    </div>
+  </noscript>
+  <div id="root">
+    <style>
+      html,
+      body,
+      #root {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #root {
+        background-repeat: no-repeat;
+        background-size: 100% auto;
+      }
+
+      .noscript-container {
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        margin-top: 5.625rem;
+        font-size: 1.25rem;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode',
+          Geneva, Verdana, sans-serif;
+      }
+
+      .noscript-enableJS {
+        padding-right: 0.188rem;
+        padding-left: 0.188rem;
+      }
+
+      .page-loading-warp {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6.125rem;
+      }
+
+      .ant-spin {
+        position: absolute;
+        display: none;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        color: rgba(0, 0, 0, 0.65);
+        color: #1890ff;
+        font-size: 0.875rem;
+        font-variant: tabular-nums;
+        line-height: 1.5;
+        text-align: center;
+        list-style: none;
+        opacity: 0;
+        -webkit-transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+        transition: -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+        transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+        transition: transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86),
+          -webkit-transform 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
+        -webkit-font-feature-settings: 'tnum';
+        font-feature-settings: 'tnum';
+      }
+
+      .ant-spin-spinning {
+        position: static;
+        display: inline-block;
+        opacity: 1;
+      }
+
+      .ant-spin-dot {
+        position: relative;
+        display: inline-block;
+        width: 1.25rem;
+        height: 1.25rem;
+        font-size: 1.25rem;
+      }
+
+      .ant-spin-dot-item {
+        position: absolute;
+        display: block;
+        width: 0.563rem;
+        height: 0.563rem;
+        background-color: #1890ff;
+        border-radius: 100%;
+        -webkit-transform: scale(0.75);
+        -ms-transform: scale(0.75);
+        transform: scale(0.75);
+        -webkit-transform-origin: 50% 50%;
+        -ms-transform-origin: 50% 50%;
+        transform-origin: 50% 50%;
+        opacity: 0.3;
+        -webkit-animation: antspinmove 1s infinite linear alternate;
+        animation: antSpinMove 1s infinite linear alternate;
+      }
+
+      .ant-spin-dot-item:nth-child(1) {
+        top: 0;
+        left: 0;
+      }
+
+      .ant-spin-dot-item:nth-child(2) {
+        top: 0;
+        right: 0;
+        -webkit-animation-delay: 0.4s;
+        animation-delay: 0.4s;
+      }
+
+      .ant-spin-dot-item:nth-child(3) {
+        right: 0;
+        bottom: 0;
+        -webkit-animation-delay: 0.8s;
+        animation-delay: 0.8s;
+      }
+
+      .ant-spin-dot-item:nth-child(4) {
+        bottom: 0;
+        left: 0;
+        -webkit-animation-delay: 1.2s;
+        animation-delay: 1.2s;
+      }
+
+      .ant-spin-dot-spin {
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+        -webkit-animation: antrotate 1.2s infinite linear;
+        animation: antRotate 1.2s infinite linear;
+      }
+
+      .ant-spin-lg .ant-spin-dot {
+        width: 2rem;
+        height: 2rem;
+        font-size: 2rem;
+      }
+
+      .ant-spin-lg .ant-spin-dot i {
+        width: 0.875rem;
+        height: 0.875rem;
+      }
+
+      @media all and (-ms-high-contrast: none),
+      (-ms-high-contrast: active) {
+        .ant-spin-blur {
+          background: #fff;
+          opacity: 0.5;
+        }
+      }
+
+      @-webkit-keyframes antSpinMove {
+        to {
           opacity: 1;
         }
+      }
 
-        .ant-spin-dot {
-          position: relative;
-          display: inline-block;
-          width: 1.25rem;
-          height: 1.25rem;
-          font-size: 1.25rem;
+      @keyframes antSpinMove {
+        to {
+          opacity: 1;
         }
+      }
 
-        .ant-spin-dot-item {
-          position: absolute;
-          display: block;
-          width: 0.563rem;
-          height: 0.563rem;
-          background-color: #1890ff;
-          border-radius: 100%;
-          -webkit-transform: scale(0.75);
-          -ms-transform: scale(0.75);
-          transform: scale(0.75);
-          -webkit-transform-origin: 50% 50%;
-          -ms-transform-origin: 50% 50%;
-          transform-origin: 50% 50%;
-          opacity: 0.3;
-          -webkit-animation: antspinmove 1s infinite linear alternate;
-          animation: antSpinMove 1s infinite linear alternate;
+      @-webkit-keyframes antRotate {
+        to {
+          -webkit-transform: rotate(405deg);
+          transform: rotate(405deg);
         }
+      }
 
-        .ant-spin-dot-item:nth-child(1) {
-          top: 0;
-          left: 0;
+      @keyframes antRotate {
+        to {
+          -webkit-transform: rotate(405deg);
+          transform: rotate(405deg);
         }
-
-        .ant-spin-dot-item:nth-child(2) {
-          top: 0;
-          right: 0;
-          -webkit-animation-delay: 0.4s;
-          animation-delay: 0.4s;
-        }
-
-        .ant-spin-dot-item:nth-child(3) {
-          right: 0;
-          bottom: 0;
-          -webkit-animation-delay: 0.8s;
-          animation-delay: 0.8s;
-        }
-
-        .ant-spin-dot-item:nth-child(4) {
-          bottom: 0;
-          left: 0;
-          -webkit-animation-delay: 1.2s;
-          animation-delay: 1.2s;
-        }
-
-        .ant-spin-dot-spin {
-          -webkit-transform: rotate(45deg);
-          -ms-transform: rotate(45deg);
-          transform: rotate(45deg);
-          -webkit-animation: antrotate 1.2s infinite linear;
-          animation: antRotate 1.2s infinite linear;
-        }
-
-        .ant-spin-lg .ant-spin-dot {
-          width: 2rem;
-          height: 2rem;
-          font-size: 2rem;
-        }
-
-        .ant-spin-lg .ant-spin-dot i {
-          width: 0.875rem;
-          height: 0.875rem;
-        }
-
-        @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-          .ant-spin-blur {
-            background: #fff;
-            opacity: 0.5;
-          }
-        }
-
-        @-webkit-keyframes antSpinMove {
-          to {
-            opacity: 1;
-          }
-        }
-
-        @keyframes antSpinMove {
-          to {
-            opacity: 1;
-          }
-        }
-
-        @-webkit-keyframes antRotate {
-          to {
-            -webkit-transform: rotate(405deg);
-            transform: rotate(405deg);
-          }
-        }
-
-        @keyframes antRotate {
-          to {
-            -webkit-transform: rotate(405deg);
-            transform: rotate(405deg);
-          }
-        }
-      </style>
-      <div
-        style="
+      }
+    </style>
+    <div style="
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           height: 100%;
           min-height: 41.25rem;
-        "
-      >
-        <img src="<%= context.config.publicPath +'logo.png'%>" alt="logo" width="256" />
-        <div class="page-loading-warp">
-          <div class="ant-spin ant-spin-lg ant-spin-spinning">
-            <span class="ant-spin-dot ant-spin-dot-spin"
-              ><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i
-              ><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i
-            ></span>
-          </div>
+        ">
+      <img src="<%= context.config.publicPath +'logo.png'%>" alt="logo" width="256" />
+      <div class="page-loading-warp">
+        <div class="ant-spin ant-spin-lg ant-spin-spinning">
+          <span class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i
+              class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>
         </div>
       </div>
     </div>
-    <script>
-      // Prevent use from scaling this page.
-      window.addEventListener(
-        'keydown',
-        function (e) {
-          if (
-            (e.ctrlKey || e.metaKey) &&
-            (e.which === 61 ||
-              e.which === 107 ||
-              e.which === 173 ||
-              e.which === 109 ||
-              e.which === 187 ||
-              e.which === 189)
-          ) {
-            e.preventDefault();
-          }
-        },
-        false,
-      );
-      const handleWheel = function (e) {
-        if (e.ctrlKey || e.metaKey) e.preventDefault();
-      };
-      window.addEventListener('wheel', handleWheel, { passive: false });
-    </script>
-  </body>
+  </div>
+  <script>
+    // Prevent use from scaling this page.
+    window.addEventListener(
+      'keydown',
+      function (e) {
+        if (
+          (e.ctrlKey || e.metaKey) &&
+          (e.which === 61 ||
+            e.which === 107 ||
+            e.which === 173 ||
+            e.which === 109 ||
+            e.which === 187 ||
+            e.which === 189)
+        ) {
+          e.preventDefault();
+        }
+      },
+      false,
+    );
+    const handleWheel = function (e) {
+      if (e.ctrlKey || e.metaKey) e.preventDefault();
+    };
+    window.addEventListener('wheel', handleWheel, { passive: false });
+  </script>
+</body>
+
 </html>
