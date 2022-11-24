@@ -75,6 +75,8 @@ export type PPStageProps = {
   onAnnotationModifyUP?: (annotation: Annotation) => void;
   brushSize?: number;
   annotationDelete?: (anntation: Annotation[]) => void;
+  onMousepoint?: () => void;
+  onMousepoint2?: () => void;
 };
 
 const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
@@ -117,40 +119,25 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const canvasRef3 = useRef<HTMLCanvasElement>(null);
 
   // Dynamically adjust canvas size, prevent content overflow
-  const param: PPRenderFuncProps = useMemo(() => {
-    return {
-      onDrag: props.onAnnotationModify,
-      onDragUP: props.onAnnotationModifyUP,
-      // onDragEnd: props.onAnnotationModifyComplete,
-      scale: props.scale,
-      currentTool: props.currentTool,
-      onSelect: props.setCurrentAnnotation,
-      OnSelects: props.OnSelect,
-      stageRef: stageRef,
-      layerRef: layerRef,
-      currentAnnotation: props.currentAnnotation,
-      transparency: transparency,
-      threshold: props.threshold,
-      canvasRef: canvasRef,
-      canvasRef2: canvasRef2,
-      interactorData: interactorData,
-      label: props.currentLabel,
-      radius: radius,
-    };
-  }, [
-    props.onAnnotationModify,
-    props.onAnnotationModifyUP,
-    props.scale,
-    props.currentTool,
-    props.setCurrentAnnotation,
-    props.OnSelect,
-    props.currentAnnotation,
-    props.threshold,
-    props.currentLabel,
-    transparency,
-    interactorData,
-    radius,
-  ]);
+  const param: PPRenderFuncProps = {
+    onDrag: props.onAnnotationModify,
+    onDragUP: props.onAnnotationModifyUP,
+    // onDragEnd: props.onAnnotationModifyComplete,
+    scale: props.scale,
+    currentTool: props.currentTool,
+    onSelect: props.setCurrentAnnotation,
+    OnSelects: props.OnSelect,
+    stageRef: stageRef,
+    layerRef: layerRef,
+    currentAnnotation: props.currentAnnotation,
+    transparency: transparency,
+    threshold: props.threshold,
+    canvasRef: canvasRef,
+    canvasRef2: canvasRef2,
+    interactorData: interactorData,
+    label: props.currentLabel,
+    radius: radius,
+  };
   function handleWindowResize() {
     const parent = document.getElementById('dr');
     if (parent) {
@@ -341,19 +328,11 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     layerRef.current?.batchDraw();
   }, [shapes]);
   useEffect(() => {
+    const ctx = canvasRef.current?.getContext('2d');
+    if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     props.drawTool?.interactor?.drawAnnotation(param);
-    const ctxs = canvasRef.current?.getContext('2d');
-    console.log('props.drawTool?.interactor', props.drawTool?.interactor);
-
-    if (ctxs && props.drawTool?.interactor?.interactorData.mousePoints) {
-      props.drawTool?.interactor?.renderMousePoints(
-        interactorData.mousePoints,
-        ctxs,
-        param.radius || 10,
-      );
-    }
     layerRef.current?.batchDraw();
-  });
+  }, [interactorData, props.threshold]);
   const renderReact = (endPos: any) => {
     const width = Math.abs(startPos.x - endPos.x);
     const height = Math.abs(startPos.y - endPos.y);
@@ -425,7 +404,21 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     return Min + Math.round(Rand * Range);
   };
   // Handle layer events
+  const onMousepoint2 = () => {
+    if (props.onMousepoint2) {
+      props.onMousepoint2();
+    }
+  };
+  const onMousepoint = () => {
+    if (props.onMousepoint) {
+      props.onMousepoint();
+    }
+  };
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (e.evt.button === 1) {
+      onMousepoint();
+      return;
+    }
     setisClick(true);
     console.log('props?.tool?.curr', props?.tool?.curr);
     const ctx = canvasRef.current?.getContext('2d');
@@ -475,6 +468,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         y: mouseY,
       });
       drawTool?.onMouseDown(getEvtParam(e));
+      if (e.evt.button === 2) {
+        onMousepoint2();
+      }
       if (
         (props.currentTool != 'brush' && props.currentTool != 'rubber') ||
         !props.brushSize ||

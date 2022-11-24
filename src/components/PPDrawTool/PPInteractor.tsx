@@ -256,12 +256,12 @@ function drawAnnotation(param: PPRenderFuncProps) {
   if (!ctx) return <></>;
   console.log(`PPInteractor.drawAnnotation`, param.interactorData);
   renderPoints(filterPoints(result, param.threshold), ctx, param.label.color);
-  // renderMousePoints(param.interactorData.mousePoints, ctx, param.radius || 10);
+  renderMousePoints(param.interactorData.mousePoints, ctx, param.radius || 10);
   return <></>;
 }
 
 function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D, radius: number) {
-  if (!mousePoints.length) return;
+  // if (!mousePoints.length) return;
   for (const [x, y, positive] of mousePoints) {
     ctx.beginPath();
     if (positive) ctx.fillStyle = '#008000';
@@ -331,9 +331,9 @@ export function interactorToAnnotation(
   // } else {
   //   frontendId = getMaxFrontendId(finlyList) + 1;
   // }
-  if (!points.length) {
-    return null;
-  }
+  // if (!points.length) {
+  //   return null;
+  // }
   console.log('pointsss', points);
   const result = `${width},${frontendId},` + points.join(',');
   const anno = {
@@ -377,7 +377,7 @@ function renderPoints(points: number[], ctx: CanvasRenderingContext2D, color: st
   renderPixel(ctx, points.slice(2), color);
 }
 function renderPixel(ctx: CanvasRenderingContext2D, points: number[], color: string | undefined) {
-  // console.log(`renderPixel: `, points, color, ctx);
+  console.log(`renderPixel: `, points, color, ctx);
   ctx.globalCompositeOperation = color ? 'source-over' : 'destination-out';
   if (color) ctx.fillStyle = color;
   for (let i = 0; i <= points.length / 2 - 1; i++) {
@@ -402,26 +402,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   const model = props.model;
   const tbIntl = IntlInit('pages.toolBar');
 
-  /**
-   * Record +- points, send API for latest mark, render on Canvas.
-   */
-  const OnPredicted = async (param: EvtProps) => {
-    const imgBase64 = getBase64Image(param.img);
-
-    const line = await model.predict('EISeg', {
-      format: 'b64',
-      img: imgBase64,
-      other: { clicks: interactorData.mousePoints },
-    });
-    if (!line) return;
-    console.log('line.result', line.predictions);
-
-    setInteractorData({
-      active: true,
-      mousePoints: [],
-      predictData: line.predictions,
-    });
-  };
   const OnMouseDown = async (param: EvtProps) => {
     console.log('param.e.evt.button', param.e.evt.button);
     if (props.currentTool != 'interactor') return;
@@ -430,7 +410,8 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       return;
     }
     if (param.e.evt.button === 1) {
-      OnPredicted(param);
+      // OnPredicted(param);
+      // setInteractorData({ active: false, predictData: [], mousePoints: [] });
       return;
     }
     const mouseX = Math.round(param.mouseX);
@@ -440,12 +421,29 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         ? props.frontendIdOps.frontendId
         : getMaxFrontendId(props.annotations) + 1;
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
+    console.log('interactorData.mousePoints', interactorData.mousePoints);
+
     interactorData.mousePoints.push(new Array(mouseX, mouseY, param.e.evt.button != 2));
     // Predict from ML Backend
     if (!interactorData.mousePoints.length || !param.stageRef.current || frontendId == undefined) {
       return;
     }
-    console.log('param.img', param);
+    // OnPredicted(param);
+    const imgBase64 = getBase64Image(param.img);
+    const line = await model.predict('EISeg', {
+      format: 'b64',
+      img: imgBase64,
+      other: { clicks: interactorData.mousePoints },
+    });
+    if (!line) return;
+    console.log('line.result', line.predictions);
+
+    setInteractorData({
+      mousePoints: interactorData.mousePoints,
+      active: true,
+      predictData: line.predictions,
+    });
+    console.log('param.img', line.result);
   };
 
   const OnMouseMove = () => {};
@@ -460,7 +458,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     onMouseMove: OnMouseMove,
     onMouseUp: OnMouseUp,
     drawAnnotation: drawAnnotation,
-    renderMousePoints: renderMousePoints,
+    // renderMousePoints: renderMousePoints,
     interactorData: interactorData,
   };
 }

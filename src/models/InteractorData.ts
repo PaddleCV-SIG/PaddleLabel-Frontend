@@ -4,6 +4,7 @@ export type InteractorData = {
   active: boolean;
   predictData: number[][];
   mousePoints: any[][];
+  force?: boolean;
 };
 
 export default () => {
@@ -11,6 +12,7 @@ export default () => {
     active: false,
     predictData: [],
     mousePoints: [],
+    force: true,
   });
   return { interactorData, setInteractorData };
 };

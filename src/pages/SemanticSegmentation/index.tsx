@@ -34,6 +34,10 @@ const Page: React.FC = () => {
   const [transparency, setTransparency] = useState(60);
   const { radius, setRadius } = useModel('VisualRadius');
   const { interactorData, setInteractorData } = useModel('InteractorData');
+  const [saveFlag, setsaveFlag] = useState(false);
+  const [mousepoint, setMousepoint] = useState(false);
+  const [mousepoint2, setMousepoint2] = useState(false);
+
   const model = ModelUtils(useState);
   const page = useRef<pageRef>(null);
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar, annHistory } =
@@ -66,7 +70,6 @@ const Page: React.FC = () => {
   };
   const saveInteractorData = () => {
     if (interactorData.active) {
-      console.log('label.curr', label.curr);
       const anno = interactorToAnnotation(
         threshold,
         annotation.all,
@@ -76,15 +79,19 @@ const Page: React.FC = () => {
         selectFinly,
         label.curr,
       );
+      console.log('label.anno', anno);
       if (anno) {
         const newAnnos = annotation.all.concat([anno]);
         annotation.setAll(newAnnos);
         setCurrentAnnotation(anno);
         annotation.pushToBackend(data.curr?.dataId, newAnnos);
       }
-      tool.setCurr(undefined);
-      setInteractorData({ active: false, predictData: [], mousePoints: [] });
+      // tool.setCurr(undefined);
+      console.log('...interactorData', { ...interactorData, active: true, predictData: [] });
+
+      setInteractorData({ mousePoints: [], active: true, predictData: [] });
       // setCurrentAnnotation(undefined);
+      setsaveFlag(true);
     }
   };
   const savefinlyList = () => {
@@ -124,13 +131,24 @@ const Page: React.FC = () => {
   useEffect(() => {
     console.log('useEffect函数执行了', annotation.all);
     savefinlyList();
-  }, [loading.curr, isLabel]);
+  }, [loading.curr, isLabel, saveFlag]);
   useEffect(() => {
-    if (interactorData.predictData.length) {
+    if (interactorData.active && interactorData.predictData.length) {
       console.log('interactorData', interactorData);
       saveInteractorData();
     }
-  }, [interactorData]);
+  }, [mousepoint]);
+  // useEffect(() => {
+  //   if (interactorData.active) {
+  //     console.log('interactorData2', interactorData);
+  //     setInteractorData({ ...interactorData, force: !interactorData.force });
+  //   }
+  // }, [mousepoint2]);
+  // useEffect(()=>{
+  //   if (annotation.all.length) {
+
+  //   }
+  // },[saveFlag])
   useEffect(() => {
     if (loading.curr) return;
     if (isLabel === 'label') return;
@@ -251,7 +269,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/polygon.png"
           active={tool.curr == 'polygon'}
-          disabled={pathNames && interactorData.active}
+          disabled={interactorData.active}
           onClick={() => {
             if (!label.curr) {
               message.error(tbIntl('chooseCategoryFirst'));
@@ -266,7 +284,7 @@ const Page: React.FC = () => {
         {/* 编辑 */}
         <PPToolBarButton
           active={tool.curr == 'editor'}
-          disabled={pathNames && interactorData.active}
+          disabled={interactorData.active}
           imgSrc="./pics/buttons/edit.png"
           onClick={() => {
             tool.setCurr('editor');
@@ -280,7 +298,7 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/brush.png"
           size={brushSize}
           active={tool.curr == 'brush'}
-          disabled={pathNames && interactorData.active}
+          disabled={interactorData.active}
           onClick={() => {
             if (!label.curr) {
               message.error(tbIntl('chooseCategoryFirst'));
@@ -341,7 +359,7 @@ const Page: React.FC = () => {
           onClick={() => {
             annotation.pushToBackend(data.curr?.dataId);
           }}
-          disabled={pathNames && interactorData.active}
+          disabled={interactorData.active}
         >
           {tbIntl('save')}
         </PPToolBarButton>
@@ -375,7 +393,7 @@ const Page: React.FC = () => {
               annotation.pushToBackend(data.curr?.dataId, res.annos);
             }
           }}
-          disabled={pathNames && interactorData.active}
+          disabled={interactorData.active}
         >
           {tbIntl('unDo')}
         </PPToolBarButton>
@@ -390,7 +408,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(res.currAnno);
             }
           }}
-          disabled={pathNames && interactorData.active}
+          disabled={interactorData.active}
         >
           {tbIntl('reDo')}
         </PPToolBarButton>
@@ -407,7 +425,7 @@ const Page: React.FC = () => {
             tool.setCurr(undefined);
             label.setCurr(undefined);
           }}
-          disabled={pathNames && interactorData.active}
+          disabled={interactorData.active}
         >
           {tbIntl('clearMark')}
         </PPToolBarButton>
@@ -435,6 +453,12 @@ const Page: React.FC = () => {
                 if (interactorData.active) return;
                 // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
               }}
+              onMousepoint={() => {
+                setMousepoint(!mousepoint);
+              }}
+              onMousepoint2={() => {
+                setMousepoint2(!mousepoint2);
+              }}
               annotationDelete={annotationDelete}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
               imgSrc={data.imgSrc}
@@ -454,13 +478,13 @@ const Page: React.FC = () => {
             className="prevTask"
             data-test-id="prevTask"
             onClick={() => {
-              if (interactorData.active) saveInteractorData();
+              // if (interactorData.active) saveInteractorData();
               if (!task.prevTask()) {
                 return;
               }
               setCurrentAnnotation(undefined);
-              if (!interactorData.active)
-                setInteractorData({ active: false, predictData: [], mousePoints: [] });
+              // if (interactorData.active)
+              //   setInteractorData({ active: false, predictData: [], mousePoints: [] });
               setSelectFinly(null);
               setfinlyList([]);
               page?.current?.setDragEndPos({
@@ -473,13 +497,13 @@ const Page: React.FC = () => {
             className="nextTask"
             data-test-id="nextTask"
             onClick={() => {
-              if (interactorData.active) saveInteractorData();
+              // if (interactorData.active) saveInteractorData();
               if (!task.nextTask()) {
                 return;
               }
               setCurrentAnnotation(undefined);
-              if (!interactorData.active)
-                setInteractorData({ active: false, predictData: [], mousePoints: [] });
+              // if (interactorData.active)
+              //   setInteractorData({ active: false, predictData: [], mousePoints: [] });
               setSelectFinly(null);
               setfinlyList([]);
               page?.current?.setDragEndPos({
@@ -497,6 +521,7 @@ const Page: React.FC = () => {
       <PPToolBar disLoc="right">
         <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"
+          disabled={interactorData.active}
           onClick={() => {
             history.push(`/project_overview?projectId=${project.curr.projectId}`);
           }}
@@ -546,7 +571,7 @@ const Page: React.FC = () => {
           {/* 智能标注 */}
         </PPAIButton>
         <PPSetButton
-          disabled={interactorData.active}
+          disabled={!interactorData.active}
           imgSrc="./pics/buttons/threshold.png"
           disLoc="left"
           size={threshold}
@@ -561,7 +586,7 @@ const Page: React.FC = () => {
           {/* 分割阈值 */}
         </PPSetButton>
         <PPSetButton
-          disabled={interactorData.active}
+          disabled={!interactorData.active}
           imgSrc="./pics/buttons/radius.png"
           disLoc="left"
           size={radius}
@@ -581,6 +606,7 @@ const Page: React.FC = () => {
           size={transparency}
           maxSize={100}
           minSize={0}
+          disabled={interactorData.active}
           onChange={(newSize) => {
             setTransparency(newSize);
           }}
@@ -596,6 +622,7 @@ const Page: React.FC = () => {
             size={transparency}
             maxSize={100}
             minSize={0}
+            disabled={interactorData.active}
             onChange={handleChange}
           >
             {tbIntl('colorMode')}

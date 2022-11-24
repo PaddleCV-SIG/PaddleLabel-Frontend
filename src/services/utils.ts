@@ -535,7 +535,11 @@ export function AnnotationUtils(
     if (project) project.getFinished();
   }
 
-  const create = async (annotation: Annotation | Annotation[], deduplicate?: boolean) => {
+  const create = async (
+    annotation: Annotation | Annotation[],
+    requestId?: string,
+    deduplicate?: boolean,
+  ) => {
     const prepAnn = (anno: Annotation) => {
       const ann = { ...anno };
       if (ann.label) ann.labelId = ann.label.labelId;
@@ -545,7 +549,7 @@ export function AnnotationUtils(
     try {
       const anns = annotation instanceof Array ? annotation.map(prepAnn) : [prepAnn(annotation)];
       if (deduplicate) {
-        await annotationApi.create(anns, deduplicate);
+        await annotationApi.create(anns, null, deduplicate);
       } else {
         await annotationApi.create(anns);
       }
