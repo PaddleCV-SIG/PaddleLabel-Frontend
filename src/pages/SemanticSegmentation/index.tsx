@@ -40,8 +40,8 @@ const Page: React.FC = () => {
     PageInit(useState, useEffect, {
       effectTrigger: {
         postTaskChange: (allLabels, allAnns) => {
-          annHistory.init();
-          annHistory.record({ annos: allAnns });
+          // annHistory.init();
+          annHistory.init({ annos: allAnns });
         },
       },
       label: {
@@ -117,9 +117,9 @@ const Page: React.FC = () => {
       setSelectFinly(null);
     }
   };
-  useEffect(() => {
-    annHistory.init();
-  }, []);
+  // useEffect(() => {
+  //   annHistory.init();
+  // }, []);
   // 初始用来判断执行增不增加
   useEffect(() => {
     console.log('useEffect函数执行了', annotation.all);
@@ -368,12 +368,13 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
-            const res = annHistory.backward();
-            if (res) {
-              annotation.setAll(res.annos);
-              setCurrentAnnotation(res.currAnno);
-              annotation.pushToBackend(data.curr?.dataId, res.annos);
-            }
+            annHistory.backward().then((res) => {
+              if (res) {
+                annotation.setAll(res.annos);
+                setCurrentAnnotation(res.currAnno);
+                annotation.pushToBackend(data.curr?.dataId, res.annos);
+              }
+            });
           }}
           disabled={pathNames && interactorData.active}
         >
@@ -384,11 +385,12 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/next.png"
           onClick={() => {
-            const res = annHistory.forward();
-            if (res) {
-              annotation.pushToBackend(data.curr?.dataId, res.annos);
-              setCurrentAnnotation(res.currAnno);
-            }
+            annHistory.forward().then((res) => {
+              if (res) {
+                annotation.pushToBackend(data.curr?.dataId, res.annos);
+                setCurrentAnnotation(res.currAnno);
+              }
+            });
           }}
           disabled={pathNames && interactorData.active}
         >

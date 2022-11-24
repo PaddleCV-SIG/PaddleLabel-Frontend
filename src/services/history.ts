@@ -32,6 +32,7 @@ export function HistoryUtils(useState: UseStateType, rpcApi) {
     setPrev(curr);
     const history = { undos: [], redos: [] };
     localStorage.setItem('history', JSON.stringify(history));
+    console.log('history init', history);
   }
 
   async function record(currState: any) {
