@@ -2,6 +2,8 @@
 /* eslint-disable */
 export * from './AddTagRequest';
 export * from './Annotation';
+export * from './CreateCache200Response';
+export * from './CreateCacheRequest';
 export * from './Data';
 export * from './ExportDatasetRequest';
 export * from './GetFoldersRequest';

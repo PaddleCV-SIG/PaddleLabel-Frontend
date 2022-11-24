@@ -16,14 +16,14 @@ export function HistoryUtils(useState: UseStateType) {
   const intl = IntlInit('component.history');
   const [prevState, setPrev] = useState<any>([]);
 
-  function init(curr: any) {
+  async function init(curr: any) {
     localStorage.removeItem('history');
     setPrev(curr);
     const history = { undos: [], redos: [] };
     localStorage.setItem('history', JSON.stringify(history));
   }
 
-  function record(currState: any) {
+  async function record(currState: any) {
     const diff: rdiffResult[] = getDiff(currState, prevState);
     if (diff.length == 0) return;
     setPrev(currState);
@@ -32,10 +32,9 @@ export function HistoryUtils(useState: UseStateType) {
     history.redos = [];
     history.undos.push(diff);
     localStorage.setItem('history', JSON.stringify(history));
-    console.log('history record', history);
   }
 
-  function forward() {
+  async function forward() {
     const historyStr = localStorage.getItem('history');
     if (!historyStr) {
       message.error('history string not saved');
@@ -50,13 +49,12 @@ export function HistoryUtils(useState: UseStateType) {
     const diff = history.redos.pop();
     const curr = applyDiff(JSON.parse(JSON.stringify(prevState)), diff);
     history.undos.push(getDiff(curr, prevState));
-    console.log('history redo', history);
     setPrev(curr);
     localStorage.setItem('history', JSON.stringify(history));
     return curr;
   }
 
-  function backward() {
+  async function backward() {
     const historyStr = localStorage.getItem('history');
     if (!historyStr) {
       message.error('history string not found');
@@ -72,7 +70,6 @@ export function HistoryUtils(useState: UseStateType) {
     history.redos.push(getDiff(curr, prevState));
     setPrev(curr);
     localStorage.setItem('history', JSON.stringify(history));
-    console.log('history undo', history);
     return curr;
   }
 
