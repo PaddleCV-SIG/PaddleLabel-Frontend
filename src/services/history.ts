@@ -24,19 +24,7 @@ export function HistoryUtils(useState: UseStateType) {
   }
 
   function record(currState: any) {
-    console.log('history before diff', 'prev', prevState, 'curr', currState);
     const diff: rdiffResult[] = getDiff(currState, prevState);
-    console.log(
-      'history after diff',
-      'prev',
-      prevState,
-      'curr',
-      currState,
-      'diff',
-      diff,
-      'applyDiff',
-      applyDiff(currState, diff),
-    );
     if (diff.length == 0) return;
     setPrev(currState);
     const historyStr = localStorage.getItem('history');
@@ -44,7 +32,7 @@ export function HistoryUtils(useState: UseStateType) {
     history.redos = [];
     history.undos.push(diff);
     localStorage.setItem('history', JSON.stringify(history));
-    console.log('history history', history);
+    console.log('history record', history);
   }
 
   function forward() {
@@ -58,12 +46,11 @@ export function HistoryUtils(useState: UseStateType) {
       message.error(intl('noNext'));
       return;
     }
-
     localStorage.setItem('history', JSON.stringify(history));
     const diff = history.redos.pop();
-    const curr = applyDiff(prevState, diff);
+    const curr = applyDiff(JSON.parse(JSON.stringify(prevState)), diff);
     history.undos.push(getDiff(curr, prevState));
-    console.log('history redo', prevState, curr, getDiff(curr, prevState), history);
+    console.log('history redo', history);
     setPrev(curr);
     localStorage.setItem('history', JSON.stringify(history));
     return curr;
@@ -76,17 +63,16 @@ export function HistoryUtils(useState: UseStateType) {
       return;
     }
     const history: HistoryType = JSON.parse(historyStr);
-    console.log('history', history);
     if (!history || history.undos.length == 0) {
       message.error(intl('noPrev'));
       return;
     }
     const diff = history.undos.pop();
-    const curr = applyDiff(prevState, diff);
+    const curr = applyDiff(JSON.parse(JSON.stringify(prevState)), diff);
     history.redos.push(getDiff(curr, prevState));
-    console.log('history undo', prevState, curr, getDiff(curr, prevState), history);
     setPrev(curr);
     localStorage.setItem('history', JSON.stringify(history));
+    console.log('history undo', history);
     return curr;
   }
 
