@@ -778,7 +778,7 @@ export function PageInit(
   const data = DataUtils(useState);
   const project = ProjectUtils(useState);
   const label = LabelUtils(useState, props.label ? props.label : {});
-  const annHistory = HistoryUtils();
+  const annHistory = HistoryUtils(useState);
   const annotation = AnnotationUtils(useState, {
     ...props.annotation,
     label: label,
