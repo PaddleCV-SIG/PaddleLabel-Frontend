@@ -63,13 +63,13 @@ export const createInfo = {
     name: 'Semantic Segmentation',
     avatar: './pics/semantic_segmentation.jpg',
     id: 3,
-    labelFormats: { mask: 'Mask', polygon: 'Polygon' },
+    labelFormats: { mask: 'Mask', coco: 'Polygon' },
   },
   instanceSegmentation: {
     name: 'Instance Segmentation',
     avatar: './pics/instance_segmentation.jpg',
     id: 4,
-    labelFormats: { mask: 'Mask', polygon: 'Polygon' },
+    labelFormats: { mask: 'Mask', coco: 'Polygon' },
   },
   keypointDetection: {
     name: 'Keypoint Detection',

@@ -1,8 +1,8 @@
 {
   "name": "PaddleLabel-Frontend",
-  "version": "0.2.0",
+  "version": "0.5.1",
   "private": true,
-  "description": "An out-of-box UI solution for enterprise applications",
+  "description": " An effective and flexible tool for data annotation",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider umi build",
@@ -27,9 +27,8 @@
     "start:no-ui": "cross-env UMI_UI=none UMI_ENV=dev umi dev",
     "start:pre": "cross-env REACT_APP_ENV=pre UMI_ENV=dev umi dev",
     "start:test": "cross-env REACT_APP_ENV=test MOCK=none UMI_ENV=dev umi dev",
-    "test": "umi test",
-    "test:component": "umi test ./src/components",
-    "test:e2e": "npx cypress open",
+    "test:open": "npx cypress open",
+    "test:run": "npx cypress run",
     "tsc": "tsc --noEmit"
   },
   "lint-staged": {
