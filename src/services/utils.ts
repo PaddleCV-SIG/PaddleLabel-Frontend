@@ -46,6 +46,8 @@ export const getRandomColor = () => {
   return '#' + rgb.join('');
 };
 
+// TODO: values in labelFormats dick isn't used
+
 export const createInfo = {
   classification: {
     name: 'Classification',
@@ -63,13 +65,13 @@ export const createInfo = {
     name: 'Semantic Segmentation',
     avatar: './pics/semantic_segmentation.jpg',
     id: 3,
-    labelFormats: { mask: 'Mask', coco: 'Polygon' },
+    labelFormats: { mask: 'Mask', coco: 'Polygon', eiseg: '' },
   },
   instanceSegmentation: {
     name: 'Instance Segmentation',
     avatar: './pics/instance_segmentation.jpg',
     id: 4,
-    labelFormats: { mask: 'Mask', coco: 'Polygon' },
+    labelFormats: { mask: 'Mask', coco: 'Polygon', eiseg: '' },
   },
   keypointDetection: {
     name: 'Keypoint Detection',
