@@ -1,0 +1,80 @@
+name: Build PaddleLabel frontend
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['19.x']
+
+    steps:
+      - name: Check out frontend project
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Get npm cache directory
+        id: npm-cache-dir
+        shell: bash
+        run: |
+          echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+          echo "dir=$(npm config get cache)"
+
+      - name: Get yarn cache directory
+        id: yarn-cache-dir
+        run: |
+          echo "dir=$(yarn cache dir)" >> ${GITHUB_OUTPUT}
+
+      - name: Cache yarn npm cache
+        uses: actions/cache@v3
+        id: cache-yarn-npm-cache
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir.outputs.dir }}
+            ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-yarn-npm-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-npm-
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v3
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-${{ matrix.node-version }}-node_modules-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node-version }}-node_modules-
+
+      - name: Install yarn
+        run: |
+          npm i --global yarn
+          echo "$GITHUB_WORKSPACE/node_modules/.bin" >> $GITHUB_PATH- uses: actions/checkout@v3
+
+      - name: Install node modules
+        if: |
+          steps.cache-yarn-npm-cache.outputs.cache-hit != 'true' ||
+          steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: |
+          yarn --prefer-offline
+
+      - name: Build frontend
+        run: |
+          npm run build
+
+      # - name: Save built package
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: PaddleLabel_built_package
+      #     path: |
+      #       dist
