@@ -29,7 +29,6 @@ jobs:
         shell: bash
         run: |
           echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
-          echo "dir=$(npm config get cache)"
 
       - name: Get yarn cache directory
         id: yarn-cache-dir
