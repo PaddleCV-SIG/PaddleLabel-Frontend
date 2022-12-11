@@ -72,6 +72,10 @@ jobs:
         run: |
           npm run build
 
+      - name: Write frontend commit hash to package
+        run: |
+          echo frontend $(git rev-parse --short HEAD) >> ./dist/git_versions.html
+
       - name: Save built frontend
         uses: actions/upload-artifact@v3
         with:
