@@ -72,9 +72,9 @@ jobs:
         run: |
           npm run build
 
-      # - name: Save built package
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: PaddleLabel_built_package
-      #     path: |
-      #       dist
+      - name: Save built frontend
+        uses: actions/upload-artifact@v3
+        with:
+          name: PaddleLabel_built_frontend
+          path: |
+            dist
