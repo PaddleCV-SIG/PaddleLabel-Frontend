@@ -73,17 +73,16 @@ export const createInfo = {
     id: 4,
     labelFormats: { mask: 'Mask', coco: 'Polygon', eiseg: '' },
   },
-  keypointDetection: {
-    name: 'Keypoint Detection',
-    avatar: './pics/keypoint_detection.jpg',
-    id: 5,
-  },
-
-  // opticalCharacterRecognition: {
-  //   name: 'OCR',
+  // keypointDetection: {
+  //   name: 'Keypoint Detection',
   //   avatar: './pics/keypoint_detection.jpg',
-  //   id: 7,
+  //   id: 5,
   // },
+  opticalCharacterRecognition: {
+    name: 'OCR',
+    avatar: './pics/keypoint_detection.jpg',
+    id: 7,
+  },
 };
 
 // TODO: all should default to undefined or []
