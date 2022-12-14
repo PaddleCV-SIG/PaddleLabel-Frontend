@@ -90,9 +90,10 @@ const TaskList: React.FC = () => {
           type="primary"
           onClick={() => {
             localStorage.setItem('currTaskId', taskId);
-            history.push(
-              `/${camel2snake(project.curr.taskCategory.name)}?projectId=${project.curr.projectId}`,
-            );
+            // history.push(
+            //   `/${camel2snake(project.curr.taskCategory.name)}?projectId=${project.curr.projectId}`,
+            // );
+            history.push(`/Ocr?projectId=${project.curr.projectId}`);
           }}
         >
           {intl('label')}
@@ -118,6 +119,7 @@ const TaskList: React.FC = () => {
     message.error('No valid project id');
     history.push('/');
   }
+  console.log('project.curr.taskCategory.name', project?.curr?.taskCategory?.name);
 
   return (
     <PPContainer>
@@ -128,6 +130,7 @@ const TaskList: React.FC = () => {
             history.push(
               `/${camel2snake(project.curr.taskCategory.name)}?projectId=${project.curr.projectId}`,
             );
+            // history.push(`/Ocr?projectId=${project.curr.projectId}`);
           }}
           hidden={task.all?.length == 0}
         >
@@ -167,7 +170,7 @@ const TaskList: React.FC = () => {
           <Button
             type="primary"
             onClick={() => {
-              console.log('project', project.curr);
+              console.log('project.curr.taskCategory.name', project.curr.taskCategory.name);
               history.push(
                 `/project_ai?taskCategory=${snake2camel(
                   project.curr.taskCategory.name,

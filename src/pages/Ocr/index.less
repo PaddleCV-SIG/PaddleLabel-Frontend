@@ -1,0 +1,68 @@
+@import (reference) '~antd/es/style/themes/index';
+
+.det {
+  position: relative;
+  display: flex;
+  background-color: #fafafa;
+
+  .mainStage {
+    width: 100%;
+    background-color: gray;
+
+    .draw {
+      height: 100% - 4.85rem;
+      // overflow-x: scroll;
+    }
+
+    .pblock {
+      height: 2.55rem;
+      background-color: white;
+
+      .progress {
+        width: 15rem;
+        margin: 0 auto;
+        // margin-top: 0.5rem;
+      }
+    }
+  }
+
+  .rightSideBar {
+    width: 330px;
+    border-left: 4px solid #ddd;
+
+    .determinOutline {
+      padding: 20px 15px;
+    }
+
+    .titles {
+      padding: 20px;
+      color: white;
+      text-align: center;
+      background: #096dd9;
+    }
+
+    .tableConent {
+      width: 100%;
+      overflow-x: auto;
+
+      .ant-table-wrapper {
+        width: auto;
+        min-width: 100%;
+
+        // .ant-table-tbody>tr>td {
+        //   white-space: nowrap;
+        // }
+
+        // .ant-spin-nested-loading {
+        //   .ant-spin-container {
+        //     .ant-table-container {
+        //       .ant-table-content {
+
+        //       }
+        //     }
+        //   }
+        // }
+      }
+    }
+  }
+}

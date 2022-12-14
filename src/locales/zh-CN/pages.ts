@@ -75,6 +75,7 @@ export default {
   'pages.welcome.sampleProject': '项目样例',
   'pages.welcome.imageClassification': '图像分类',
   'pages.welcome.objectDetection': '目标检测',
+  'pages.welcome.objectOcr': '传图识字',
   'pages.welcome.instanceSegmentation': '实例分割',
   'pages.welcome.semanticSegmentation': '语义分割',
   'pages.welcome.keypointDetection': '关键点检测',

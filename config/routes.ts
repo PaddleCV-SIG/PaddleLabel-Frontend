@@ -64,6 +64,10 @@ export default [
     path: '/detection',
     component: './Detection',
   },
+  {
+    path: '/ocr',
+    component: './Ocr',
+  },
   // {
   //   path: '/keypoint_detection',
   //   // name: 'keypoint_detection',

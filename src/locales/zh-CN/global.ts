@@ -1,6 +1,7 @@
 export default {
   'global.classification': '分类',
   'global.detection': '目标检测',
+  'global.Ocr': '传图识字',
   'global.semanticSegmentation': '语义分割',
   'global.instanceSegmentation': '实例分割',
   'global.keypointDetection': '关键点检测',
