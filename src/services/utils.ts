@@ -73,12 +73,12 @@ export const createInfo = {
     id: 4,
     labelFormats: { mask: 'Mask', coco: 'Polygon', eiseg: '' },
   },
-  Ocr: {
-    name: 'Detection',
-    avatar: './pics/keypoint_detection.jpg',
-    id: 2,
-    labelFormats: { coco: 'COCO', voc: 'VOC', yolo: 'YOLO' },
-  },
+  // Ocr: {
+  //   name: 'Detection',
+  //   avatar: './pics/keypoint_detection.jpg',
+  //   id: 2,
+  //   labelFormats: { coco: 'COCO', voc: 'VOC', yolo: 'YOLO' },
+  // },
   // keypointDetection: {
   //   name: 'Keypoint Detection',
   //   avatar: './pics/keypoint_detection.jpg',
@@ -87,9 +87,16 @@ export const createInfo = {
 
   // opticalCharacterRecognition: {
   //   name: 'OCR',
+  // keypointDetection: {
+  //   name: 'Keypoint Detection',
   //   avatar: './pics/keypoint_detection.jpg',
-  //   id: 7,
+  //   id: 5,
   // },
+  opticalCharacterRecognition: {
+    name: 'OCR',
+    avatar: './pics/keypoint_detection.jpg',
+    id: 7,
+  },
 };
 
 // TODO: all should default to undefined or []
@@ -327,6 +334,9 @@ export const LabelUtils = (
     try {
       const labels: Label[] = await projectApi.getLabels(projectId);
       setAll(labels);
+      if (labels.length === 1) {
+        setCurr(labels[0]);
+      }
       return labels;
     } catch (err) {
       console.log('label getall err ', err);
@@ -342,8 +352,10 @@ export const LabelUtils = (
       activeIds.delete(label.labelId);
       setActiveIds(new Set(activeIds));
       activeIdsTemp = activeIds;
+      // debugger;
       if (curr?.labelId == label.labelId) unsetCurr();
     } else {
+      // debugger;
       activeIdsTemp = setCurr(label);
     }
     if (postSelect) postSelect(label, activeIdsTemp);
@@ -352,6 +364,7 @@ export const LabelUtils = (
   function unsetCurr() {
     activeIds.delete(curr?.labelId);
     setActiveIds(new Set(activeIds));
+    // debugger;
     if (preUnsetCurr) preUnsetCurr();
     setCurrRaw(undefined);
     return activeIds;
@@ -359,6 +372,7 @@ export const LabelUtils = (
 
   function setCurr(label: Label) {
     console.log('label setcurr', label);
+    // debugger;
     if (label == undefined) return unsetCurr();
     setCurrRaw(label);
     if (isOneHot) activeIds.clear();
@@ -397,6 +411,7 @@ export const LabelUtils = (
 
   async function remove(label: Label): Promise<Label[]> {
     console.log('to delete', label);
+    // debugger;
     try {
       await labelApi.remove(label.labelId);
       if (activeIds.has(label.labelId)) {

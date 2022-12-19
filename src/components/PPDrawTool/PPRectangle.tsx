@@ -66,7 +66,7 @@ function drawVerticalLine(x, context) {
   context.lineTo(x + 0.5, context.canvas.height);
   context.stroke();
 }
-function drawRectangle(props: PPRenderFuncProps): ReactElement {
+function drawRectangle(props: PPRenderFuncProps, address?: string): ReactElement {
   console.log(`drawRectangle, annotation:`, props.annotation);
   // return;
   // renderReact(props.canvasRef);
@@ -173,10 +173,22 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
         points.xmax = newPositionX;
         points.ymax = newPositionY;
       }
+      let result = '';
+      console.log('props', props);
+
+      if (props.pathName === '/optical_character_recognition') {
+        // debugger;
+        const data = `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`;
+        const strings = address ? `||${address}|0|` : '||待识别|0|';
+        const newdata = data + strings;
+        result = newdata;
+      } else {
+        result = `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`;
+      }
       const newAnno = {
         ...annotation,
         predicted_by: null,
-        result: `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`,
+        result: result,
       };
       props.onDragUP(newAnno);
     };
@@ -217,24 +229,45 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
 }
 
 export default function (props: PPDrawToolProps): PPDrawToolRet {
-  const startNewRectangle = (mouseX: number, mouseY: number) => {
+  const startNewRectangle = (mouseX: number, mouseY: number, pathName: string) => {
     const polygon = createRectangle([mouseX, mouseY]);
     if (!polygon || !props.dataId) return;
     console.log('props.annotations:', props.annotations);
-    props.onAnnotationAdd({
+    const anno: any = {
       dataId: props.dataId,
       type: 'rectangle',
       frontendId: getMaxId(props.annotations) + 1,
       label: props.currentLabel,
       labelId: props.currentLabel?.labelId,
-      result: polygon,
-    });
+      // result: polygon,
+    };
+    // debugger;
+    if (pathName === '/optical_character_recognition') {
+      const data = polygon.split(',').join('|');
+      const newdata = data + '||待识别|0|';
+      anno.result = newdata;
+      anno.type = 'ocr_rectangle';
+    } else {
+      anno.result = polygon;
+    }
+    props.onAnnotationAdd(anno);
   };
 
-  const addDotToRectangle = (mouseX: number, mouseY: number) => {
+  const addDotToRectangle = (mouseX: number, mouseY: number, pathName: string) => {
     if (!props.currentAnnotation || !props.currentAnnotation.result || !props.currentLabel?.color)
       return;
-    const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+    // debugger;
+    let result = '';
+    console.log('props.currentAnnotation.result', props.currentAnnotation.result);
+    if (pathName === '/optical_character_recognition') {
+      const data = props.currentAnnotation.result?.split('||');
+      const results2 = data[0] + `,${mouseX},${mouseY}`;
+
+      result = results2 + '||' + data[1];
+      // debugger;
+    } else {
+      result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+    }
     const anno = {
       ...props.currentAnnotation,
       result: result,
@@ -262,7 +295,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       param.offsetX,
       param.offsetY,
     );
-    startNewRectangle(mouseX, mouseY);
+    startNewRectangle(mouseX, mouseY, param.pathName);
     // if (!props.currentAnnotation) {
     //   startNewRectangle(mouseX, mouseY);
     // } else {
@@ -288,12 +321,13 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     // drawGuidewires(param.mouseX, param.mouseY, ctx);
   };
   const OnMouseUp = (param: EvtProps) => {
+    // debugger;
     if (props.currentTool != 'rectangle' && props.currentTool != 'editor' && isClick) return;
     isClick = false;
     console.log(`OnMouseUp`);
     const mouseX = param.mouseX + param.offsetX;
     const mouseY = param.mouseY + param.offsetY;
-    addDotToRectangle(mouseX, mouseY);
+    addDotToRectangle(mouseX, mouseY, param?.pathName);
     if (props.onMouseUp) props.onMouseUp();
   };
   return {

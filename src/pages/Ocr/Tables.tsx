@@ -1,7 +1,15 @@
 import type { InputRef } from 'antd';
 import { Form, Input, Popconfirm, Table } from 'antd';
 import type { FormInstance } from 'antd/es/form';
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  ForwardRefRenderFunction,
+  useImperativeHandle,
+  forwardRef,
+} from 'react';
 import styles from './Tables.less';
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
@@ -98,7 +106,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 };
 
 type EditableTableProps = Parameters<typeof Table>[0];
-
+import type { Annotation } from '@/models/Annotation';
 interface DataType {
   key: React.Key;
   name: string;
@@ -107,63 +115,50 @@ interface DataType {
 }
 
 type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+export type TablesProps = {
+  onAnnotationModify: (annotation: Annotation) => void;
+  onAnnotationDelete: (annotation: Annotation) => void;
+  updataAnno: (annotation: Annotation) => void;
+  currentAnnotation: Annotation | undefined;
+  annotations?: Annotation[];
+  selectAnnotation: (annotation: Annotation) => void;
+};
+export type pageRef = {};
+const App: ForwardRefRenderFunction<pageRef, TablesProps> = (props, ref) => {
+  const [dataSource, setDataSource] = useState<DataType[]>([]);
+  const [selectedKeys, setSelectedKeys] = useState([]);
 
-const App: React.FC = () => {
-  const [dataSource, setDataSource] = useState<DataType[]>([
-    {
-      key: '0',
-      name: 'Edward King 0',
-      age: '32',
-      address: 'London, Park Lane no. 0',
-    },
-    {
-      key: '1',
-      name: 'Edward King 1',
-      age: '32',
-      address: 'London, Park Lane no. 1',
-    },
-    {
-      key: '2',
-      name: 'Edward King 1',
-      age: '32',
-      address: 'London, Park Lane no. 1',
-    },
-    {
-      key: '3',
-      name: 'Edward King 1',
-      age: '32',
-      address: 'London, Park Lane no. 1',
-    },
-    {
-      key: '4',
-      name: 'Edward King 1',
-      age: '32',
-      address: 'London, Park Lane no. 1',
-    },
-  ]);
-
+  useEffect(() => {
+    if (!props.annotations) {
+      return;
+    }
+    // debugger;
+    const newData = props.annotations.map((annotation) => {
+      const data = annotation.result && annotation.result?.split('||');
+      const results2 = data && data[1].split('|')[0];
+      return {
+        key: annotation?.annotationId,
+        address: results2,
+        ...annotation,
+      };
+    });
+    setDataSource(newData);
+  }, [props.annotations]);
+  useEffect(() => {
+    if (props.currentAnnotation && props.currentAnnotation?.annotationId) {
+      setSelectedKeys([props.currentAnnotation?.annotationId]);
+    }
+  }, [props.currentAnnotation]);
   // const [count, setCount] = useState(2);
 
   const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item) => item.key !== key);
-    setDataSource(newData);
+    const annos = dataSource[dataSource.findIndex((item) => item.key === key)];
+    props.onAnnotationDelete(annos);
+    // const newData = dataSource.filter((item) => item.key !== key);
+    // setDataSource(newData);
   };
 
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
-    {
-      title: 'name',
-      dataIndex: 'name',
-      render: (text: string) => (
-        <div
-          style={{
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {text}
-        </div>
-      ),
-      width: 'auto',
-    },
     {
       title: 'address',
       dataIndex: 'address',
@@ -202,6 +197,17 @@ const App: React.FC = () => {
   // };
 
   const handleSave = (row: DataType) => {
+    console.log('row111', row);
+    const data = row?.result?.split('||')[0];
+    const results = data + '||' + row.address + '|0|';
+    const anno = {
+      ...row,
+      result: results,
+    };
+    delete anno['address'];
+    delete anno['key'];
+    props.onAnnotationModify(anno);
+    props.updataAnno(anno);
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
     const item = newData[index];
@@ -221,6 +227,10 @@ const App: React.FC = () => {
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      const anno = selectedRows[0];
+      // delete anno.address;
+      // delete anno.key;
+      props.selectAnnotation(anno);
     },
     getCheckboxProps: (record: DataType) => ({
       disabled: record.name === 'Disabled User', // Column configuration not to be checked
@@ -242,7 +252,7 @@ const App: React.FC = () => {
       }),
     };
   });
-
+  useImperativeHandle(ref, () => ({}));
   return (
     <div
       className={styles.conTent}
@@ -260,6 +270,7 @@ const App: React.FC = () => {
         rowSelection={{
           type: 'radio',
           ...rowSelection,
+          selectedRowKeys: selectedKeys,
         }}
         pagination={false}
         components={components}
@@ -272,4 +283,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default forwardRef(App);

@@ -65,7 +65,7 @@ export default [
     component: './Detection',
   },
   {
-    path: '/ocr',
+    path: '/optical_character_recognition',
     component: './Ocr',
   },
   // {

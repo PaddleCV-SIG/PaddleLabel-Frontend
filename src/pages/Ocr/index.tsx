@@ -15,13 +15,20 @@ import { ectInteractorToAnnotation } from '@/components/PPDrawTool/PPInteractor'
 // import type { Label } from '@/models/';
 // import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import { PageInit, ModelUtils } from '@/services/utils';
+import { PPDrawToolRet } from '@/components/PPDrawTool/drawUtils';
 import type { Annotation } from '@/models/Annotation';
 import PPRectangle from '@/components/PPDrawTool/PPRectangle';
+import PPPolygon from '@/components/PPDrawTool/PPPolygon';
+
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { IntlInitJsx } from '@/components/PPIntl';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 const port = window.location.port == '8000' ? '1234' : window.location.port;
 const baseUrl = `http://${window.location.hostname}:${port}/`;
+export type DrawToolType = {
+  polygon: PPDrawToolRet;
+  brush: undefined;
+};
 const Page = () => {
   // todo: change to use annotation
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -34,7 +41,7 @@ const Page = () => {
   const [otherSetting, setotherSetting] = useState();
   const [flags, setflags] = useState<boolean>(false);
   const [onSelect, setOnSelect] = useState<Annotation>();
-
+  // const [drawTool, setDrawTool] = useState<DrawToolType>();
   const model = ModelUtils(useState, baseUrl);
   const page = useRef<pageRef>(null);
   const tbIntl = IntlInitJsx('pages.toolBar');
@@ -79,10 +86,18 @@ const Page = () => {
 
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
+    console.log('annotationfronsss', anno);
+
     for (const item of annotation.all) {
       console.log('annotationfrontendId:', item.frontendId, anno.frontendId, annotation.all);
+      let areasResult: any = '';
       if (item.frontendId == anno.frontendId) {
-        const result = anno?.result?.split(',').map((items: string) => {
+        if (history?.location?.pathname === '/optical_character_recognition') {
+          areasResult = anno?.result?.split('||')[0].split('|').join(',');
+        } else {
+          areasResult = anno?.result;
+        }
+        const result = areasResult?.split(',').map((items: string) => {
           return Number(items);
         }) as number[];
         const area = (result[2] - result[0]) * (result[3] - result[1]);
@@ -120,11 +135,10 @@ const Page = () => {
   const onEndEdit = () => {
     setisClick(false);
   };
-  const onFinishEdit = () => {
+  const onFinishEdit = async () => {
     // 鼠标抬起的时候
     // console.log('here');
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
-
     if (!annotation.curr) return;
     console.log(
       'annotations.curr',
@@ -136,14 +150,23 @@ const Page = () => {
     if (!annotation.curr.result) return;
     const lengths = annotation.all.length - 1;
     const ErrAnno = annotation.all[lengths];
-    if (ErrAnno && ErrAnno?.result?.split(',').length === 2) {
-      const newResult = ErrAnno?.result.split(',').concat(annotation?.curr?.result.split(','));
-      annotation.curr.result = newResult.join(',');
+    const datas = ErrAnno?.result.split('||')[0] as string;
+    if (ErrAnno && datas?.split(',').length === 2) {
+      const newResult = datas.split(',').concat(annotation?.curr?.result.split(','));
+      const newResults = newResult.join(',') + ErrAnno?.result.split('||')[1];
+      annotation.curr.result = newResults;
     }
-    if (annotation?.curr?.result.split(',').length < 3) return;
+    const strings = annotation?.curr?.result.split('||')[0];
+    if (strings.length < 3) return;
     if (annotation?.curr?.annotationId == undefined) {
       console.log('finish', data.curr, annotation.curr);
-      annotation.create(annotation?.curr);
+      await annotation.create(annotation?.curr);
+      // setCurrentAnnotation(annotation.all[annotation.all.length -1]);
+      if (tool.curr === 'polygon') {
+        // debugger;
+        const currs = await annotation.getAll(annotation?.curr.dataId);
+        setCurrentAnnotation(currs[currs.length - 1]);
+      }
     } else {
       annotation.update(annotation?.curr);
     }
@@ -169,11 +192,9 @@ const Page = () => {
     onMouseUp: onEndEdit,
     onMouseDown: onStartEdit,
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
+    pathName: history?.location?.pathname,
   };
 
-  const rectagle = PPRectangle(drawToolParam);
-
-  const drawTool = { polygon: rectagle, brush: undefined };
   // const setAnnotation = (select: Annotation) => {
   //   const items = annotation.all;
   //   const id = select.annotationId;
@@ -263,6 +284,32 @@ const Page = () => {
   // useEffect(() => {
   //   annHistory.init({});
   // }, []);
+  // useUpdateEffect(() => {
+  //   if (tool.curr === 'rectangle') {
+  //     // debugger;
+  //     const rectagle = PPRectangle(drawToolParam);
+  //     const drawTools = { polygon: rectagle, brush: undefined };
+  //     setDrawTool(drawTools);
+  //   } else if (tool.curr === 'polygon') {
+  //     debugger;
+  //     const polygon = PPPolygon(drawToolParam);
+  //     const drawTools = { polygon: polygon, brush: undefined };
+  //     setDrawTool(drawTools);
+  //   }
+  // }, [tool.curr]);
+  // const rectagle = PPRectangle(drawToolParam);
+  // const polygon = PPPolygon(drawToolParam);
+  // const drawTool =
+  //   tool.curr === 'polygon'
+  //     ? { polygon: polygon, brush: undefined }
+  //     : { polygon: rectagle, brush: undefined };
+  const drawTool = {
+    polygon: PPPolygon(drawToolParam),
+    rectangle: PPRectangle(drawToolParam),
+    // brush: PPBrush(drawToolParam),
+    // interactor: PPInteractor(drawToolParam),
+    // rubber: PPRubber(drawToolParam),
+  };
   useUpdateEffect(() => {
     if (data.all.length > 0) {
       // data.updatePredicted(data.all[0].dataId);
@@ -347,6 +394,7 @@ const Page = () => {
           }
         }
         if ([...labels].length) {
+          // debugger;
           createLabels(labels);
         }
       }
@@ -422,7 +470,13 @@ const Page = () => {
   //   scale.setScales
   // }
   console.log('annitonsss', annotation.all);
-
+  const deletes = async (anno: Annotation) => {
+    const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
+    annHistory.record({ annos: newAll });
+    annotation.setAll(newAll);
+    setCurrentAnnotation(undefined);
+    await annotation.pushToBackend(data.curr?.dataId, newAll);
+  };
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -432,10 +486,11 @@ const Page = () => {
           active={tool.curr == 'polygon'}
           disabled={interactorData.active}
           onClick={() => {
-            if (!label.curr) {
+            if (!label.curr && history?.location?.pathname !== '/optical_character_recognition') {
               message.error(tbIntl('chooseCategoryFirst'));
               return;
             }
+            // debugger;
             tool.setCurr('polygon');
             setCurrentAnnotation(undefined);
           }}
@@ -448,7 +503,7 @@ const Page = () => {
           onClick={() => {
             console.log('label.curr', label.curr);
 
-            if (!label.curr) {
+            if (!label.curr && history?.location?.pathname !== '/optical_character_recognition') {
               message.error(tbIntl('chooseCategoryFirst'));
               return;
             }
@@ -533,7 +588,9 @@ const Page = () => {
             annotation.clear();
             annHistory.record({ annos: [] });
             tool.setCurr(undefined);
-            label.setCurr(undefined);
+            if (history?.location?.pathname !== '/optical_character_recognition') {
+              label.setCurr(undefined);
+            }
           }}
         >
           {tbIntl('clearMark')}
@@ -560,6 +617,7 @@ const Page = () => {
                 const newAnnos = annotation.all.concat([anno]);
                 annotation.setAll(newAnnos);
               }}
+              tool={tool}
               drawTool={drawTool}
               threshold={0}
               OnSelect={setOnSelect}
@@ -680,7 +738,14 @@ const Page = () => {
             border: '3px solid',
           }}
         >
-          <Tables></Tables>
+          <Tables
+            onAnnotationDelete={deletes}
+            onAnnotationModify={onAnnotationModify}
+            updataAnno={annotation.update}
+            annotations={annotation.all}
+            currentAnnotation={annotation.curr}
+            selectAnnotation={annotation.setCurr}
+          ></Tables>
         </div>
         <div
           style={{

@@ -5,11 +5,18 @@ import { Circle, Group, Line } from 'react-konva';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import { hexToRgb } from './drawUtils';
 // let isMove = false;
-function createPolygon(color?: string, points?: number[]): string | undefined {
+function createPolygon(color: string, points: number[], pathName: string): string | undefined {
+  // debugger;
   if (!color || !points) return undefined;
-  return points.join(',');
+  if (pathName === '/optical_character_recognition') {
+    const data = points.join('|');
+    const newdata = data + '||待识别|0|';
+    return newdata;
+  } else {
+    return points.join(',');
+  }
 }
-function drawPolygon(props: PPRenderFuncProps, flag: boolean): ReactElement {
+function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string): ReactElement {
   const annotation = props.annotation;
   if (!annotation || !annotation.result || annotation.result.length < 2 || !annotation.label?.color)
     return <></>;
@@ -82,7 +89,10 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean): ReactElement {
 
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
-          const newAnno = { ...annotation, result: points.join(',') };
+          const strings = address ? `||${address}|0|` : '||待识别|0|';
+          const newdata = points.join(',') + strings;
+          // result = newdata;
+          const newAnno = { ...annotation, result: newdata };
           // console.log(newAnno);
           props.onDragUP(newAnno);
         }}
@@ -151,14 +161,17 @@ function getMaxId(annotations?: Annotation[]): any {
 }
 
 export default function (props: PPDrawToolProps): PPDrawToolRet {
-  const startNewPolygon = (mouseX: number, mouseY: number, selectFinly: Annotation) => {
-    const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY]);
-    // debugger;
+  const startNewPolygon = (
+    mouseX: number,
+    mouseY: number,
+    selectFinly: Annotation,
+    pathName: string,
+  ) => {
+    const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY], pathName);
     if (!polygon) return;
     console.log(polygon);
-    props.onAnnotationAdd({
+    const anno = {
       dataId: props.dataId,
-      type: 'polygon',
       frontendId:
         selectFinly?.frontendId !== undefined
           ? selectFinly?.frontendId
@@ -166,13 +179,30 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       label: props.currentLabel,
       labelId: props.currentLabel?.labelId,
       result: polygon,
-    });
+      type: '',
+    };
+    if (pathName === '/optical_character_recognition') {
+      anno.type = 'ocr_polygon';
+    } else {
+      anno.type = 'polygon';
+    }
+    props.onAnnotationAdd(anno);
   };
 
-  const addDotToPolygon = (mouseX: number, mouseY: number) => {
+  const addDotToPolygon = (mouseX: number, mouseY: number, pathName: string) => {
     if (!props.currentAnnotation || !props.currentAnnotation.result || !props.currentLabel?.color)
       return;
-    const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+    let result = '';
+    console.log('props.currentAnnotation.result', props.currentAnnotation.result);
+    // const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+    if (pathName === '/optical_character_recognition') {
+      const data = props.currentAnnotation.result?.split('||');
+      const results2 = data[0] + `,${mouseX},${mouseY}`;
+      result = results2 + '||' + data[1];
+      // debugger;
+    } else {
+      result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+    }
     const anno = {
       ...props.currentAnnotation,
       result: result,
@@ -188,10 +218,11 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     console.log(`currentAnnotation:`, props.currentAnnotation);
     // No annotation is marking, start new
     if (!props.currentAnnotation) {
-      startNewPolygon(mouseX, mouseY, props.selectFinly);
+      startNewPolygon(mouseX, mouseY, props.selectFinly, param.pathName);
     } else {
-      addDotToPolygon(mouseX, mouseY);
+      addDotToPolygon(mouseX, mouseY, param.pathName);
     }
+    if (props.onMouseDown) props.onMouseDown();
     // isMove = false;
   };
   const OnMousemove = (param: EvtProps) => {

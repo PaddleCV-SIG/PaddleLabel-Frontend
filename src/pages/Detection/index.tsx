@@ -167,11 +167,12 @@ const Page = () => {
     onMouseUp: onEndEdit,
     onMouseDown: onStartEdit,
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
+    pathName: history?.location?.pathname,
   };
 
   const rectagle = PPRectangle(drawToolParam);
 
-  const drawTool = { polygon: rectagle, brush: undefined };
+  const drawTool = { rectangle: rectagle, brush: undefined };
   const setAnnotation = (select: Annotation) => {
     const items = annotation.all;
     const id = select.annotationId;

@@ -240,6 +240,7 @@ const Page: React.FC = () => {
     finlyList: finlyList,
     selectFinly: selectFinly,
     isLabel: isLabel,
+    pathName: history?.location?.pathname,
   };
 
   const drawTool = {

@@ -90,10 +90,10 @@ const TaskList: React.FC = () => {
           type="primary"
           onClick={() => {
             localStorage.setItem('currTaskId', taskId);
-            // history.push(
-            //   `/${camel2snake(project.curr.taskCategory.name)}?projectId=${project.curr.projectId}`,
-            // );
-            history.push(`/Ocr?projectId=${project.curr.projectId}`);
+            history.push(
+              `/${camel2snake(project.curr.taskCategory.name)}?projectId=${project.curr.projectId}`,
+            );
+            // history.push(`/Ocr?projectId=${project.curr.projectId}`);
           }}
         >
           {intl('label')}

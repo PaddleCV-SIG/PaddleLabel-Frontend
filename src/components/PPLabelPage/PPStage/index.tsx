@@ -2,6 +2,7 @@
 import type { Annotation } from '@/models/Annotation';
 import type { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
+import { history } from 'umi';
 import { useDeepCompareEffect } from 'ahooks';
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Layer as LayerType } from 'konva/lib/Layer';
@@ -20,6 +21,7 @@ import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/d
 import { Threshold } from 'konva/lib/filters/Threshold';
 import { useModel } from 'umi';
 import { Label } from '@/models';
+import { result } from 'lodash';
 
 // Mock Data
 // const imgSrc = './pics/32_23.jpg';
@@ -86,16 +88,16 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const interactorData = useModel('InteractorData', (x) => x.interactorData);
   const radius = useModel('VisualRadius', (x) => x.radius);
   let drawToolTemp = undefined;
-  if (
-    props.currentTool == 'polygon' ||
-    props.currentTool == 'rectangle' ||
-    props.currentTool == 'editor'
-  )
-    drawToolTemp = props.drawTool.polygon;
-  else if (props.currentTool == 'brush') drawToolTemp = props.drawTool.brush;
+  console.log('props.currentTool', props?.currentTool);
+  if (props.currentTool == 'polygon' || props.currentTool == 'editor') {
+    // debugger;
+    drawToolTemp = props.drawTool?.polygon;
+  } else if (props.currentTool == 'rectangle') {
+    drawToolTemp = props.drawTool?.rectangle;
+  } else if (props.currentTool == 'brush') drawToolTemp = props.drawTool?.brush;
   else if (props.currentTool == 'rubber') {
-    drawToolTemp = props.drawTool.rubber;
-  } else if (props.currentTool == 'interactor') drawToolTemp = props.drawTool.interactor;
+    drawToolTemp = props.drawTool?.rubber;
+  } else if (props.currentTool == 'interactor') drawToolTemp = props.drawTool?.interactor;
   const drawTool = drawToolTemp;
   console.log('drawToolTemp', drawToolTemp);
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
@@ -137,6 +139,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     interactorData: interactorData,
     label: props.currentLabel,
     radius: radius,
+    pathName: history?.location?.pathname,
   };
   function handleWindowResize() {
     const parent = document.getElementById('dr');
@@ -158,14 +161,37 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           console.log('CurrentAnnotation', props.currentAnnotation, annotation);
 
           const flag = flags || props.currentAnnotation?.result !== annotation.result;
-
-          shape = props.drawTool.polygon.drawAnnotation(param, flag);
+          shape = props.drawTool?.polygon.drawAnnotation(param, flag);
         } else if (annotation.type == 'rectangle') {
-          shape = props.drawTool.polygon.drawAnnotation(param);
+          shape = props.drawTool?.rectangle.drawAnnotation(param);
+        } else if (annotation.type == 'ocr_rectangle') {
+          const data = annotation.result?.split('||')[0];
+          const address = annotation.result?.split('||')[1].split('|')[0];
+          const results2 = data && data.split('|').join(',');
+          // debugger;
+          param.annotation = {
+            ...annotation,
+            result: results2,
+          };
+          // debugger;
+          console.log('param.annotation', param.annotation);
+
+          shape = props.drawTool?.rectangle.drawAnnotation(param, address);
+        } else if (annotation.type == 'ocr_polygon') {
+          const data = annotation.result?.split('||')[0];
+          const address = annotation.result?.split('||')[1].split('|')[0];
+          const results2 = data && data.split('|').join(',');
+          // debugger;
+          param.annotation = {
+            ...annotation,
+            result: results2,
+          };
+          const flag = flags || props.currentAnnotation?.result !== annotation.result;
+          shape = props.drawTool?.polygon.drawAnnotation(param, flag, address);
         }
         if (annotation.type == 'brush') {
           // const flag = index === length - 1 ? true : false;
-          shape = props.drawTool.brush?.drawAnnotation(
+          shape = props.drawTool?.brush?.drawAnnotation(
             param,
             // flag,
             // -imageWidth / 2,
@@ -174,7 +200,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           layerRef.current?.batchDraw();
         } else if (annotation.type == 'rubber') {
           // const flag = index === length - 1 ? true : false;
-          shape = props.drawTool.rubber?.drawAnnotation(
+          shape = props.drawTool?.rubber?.drawAnnotation(
             param,
             // flag,
             // -imageWidth / 2,
@@ -191,6 +217,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     console.log('newShapes', newShapes);
     setShapes(newShapes);
   };
+  useEffect(() => {
+    layerRef?.current?.batchDraw();
+  }, [props.drawTool, layerRef]);
   useEffect(() => {
     // Listen to window resize event
     window.removeEventListener('resize', handleWindowResize);
@@ -387,6 +416,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       canvasRef: canvasRef,
       stageRef: stageRef,
       img: image,
+      pathName: history?.location?.pathname,
     };
   };
   // 多边形画点
@@ -415,6 +445,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     }
   };
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    // debugger;
     if (e.evt.button === 1) {
       onMousepoint();
       return;
@@ -426,6 +457,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     const mouseY =
       (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
     if (props?.tool?.curr == 'polygon' && ctx) {
+      // debugger;
       if (e.evt.button === 2) {
         // for (const item of props.annotations) {
         //   if (item.result === props.currentAnnotation?.result) {
@@ -437,11 +469,17 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           props.currentAnnotation?.result,
           props.currentAnnotation?.result?.split(',').length,
         );
-
+        let results = '';
+        if (history?.location?.pathname === '/optical_character_recognition') {
+          const data: string = props.currentAnnotation?.result?.split('||')[0] as string;
+          results = data;
+        } else {
+          results = props.currentAnnotation?.result as string;
+        }
         if (
           props.currentAnnotation?.result &&
           props.annotationDelete &&
-          props.currentAnnotation?.result?.split(',').length < 5
+          results.split(',').length < 5
         ) {
           const newAnnotaions = props.annotations?.filter((item) => {
             if (item.result !== props.currentAnnotation?.result) {
@@ -455,11 +493,13 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         setpointArr([]);
         setflags(true);
       } else {
+        // debugger;
         setflags(false);
         ctx.strokeStyle = props.currentLabel?.color; //线条颜色
         ctx.lineWidth = 4; //线条粗细
         // makearc(ctx, mouseX, mouseY, GetRandomNum(2, 2), 0, 180, props.currentLabel?.color);
         setpointArr([...pointArr, { x: mouseX, y: mouseY }]);
+        // debugger;
         drawTool?.onMouseDown(getEvtParam(e));
       }
     } else {
