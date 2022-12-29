@@ -1,10 +1,6 @@
 name: Build PaddleLabel frontend
 
-on:
-  push:
-    # branches:
-    #   - develop
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 
 jobs:
   build:
@@ -16,8 +12,6 @@ jobs:
     steps:
       - name: Check out frontend project
         uses: actions/checkout@v3
-        with:
-          ref: develop
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
