@@ -41,6 +41,7 @@ const Page = () => {
   const [otherSetting, setotherSetting] = useState();
   const [flags, setflags] = useState<boolean>(false);
   const [onSelect, setOnSelect] = useState<Annotation>();
+  const [transparency, setTransparency] = useState(60);
   // const [drawTool, setDrawTool] = useState<DrawToolType>();
   const model = ModelUtils(useState, baseUrl);
   const page = useRef<pageRef>(null);
@@ -612,7 +613,7 @@ const Page = () => {
               onAnnotationModifyComplete={() => {}}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
               imgSrc={data.imgSrc}
-              transparency={60}
+              transparency={transparency}
               onAnnotationAdd={(anno) => {
                 const newAnnos = annotation.all.concat([anno]);
                 annotation.setAll(newAnnos);
@@ -694,6 +695,19 @@ const Page = () => {
           }}
         >
           {tbIntl('autoInferenceThreshold')}
+        </PPSetButton>
+        <PPSetButton
+          imgSrc="./pics/buttons/alpha.png"
+          disLoc="left"
+          size={transparency}
+          maxSize={100}
+          minSize={0}
+          disabled={interactorData.active}
+          onChange={(newSize) => {
+            setTransparency(newSize);
+          }}
+        >
+          {tbIntl('transparency')}
         </PPSetButton>
         {/* <PPToolBarButton
           imgSrc="./pics/buttons/data_division.png"

@@ -102,7 +102,7 @@ function drawRectangle(props: PPRenderFuncProps, address?: string): ReactElement
     annotation?.frontendId,
   );
   const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
-  const transparency = selected ? 0.5 : 0.1;
+  const transparency = selected ? 0.5 : 0.2;
   // renderReact(param);
   const rect =
     points.xmax != undefined && points.ymax != undefined ? (

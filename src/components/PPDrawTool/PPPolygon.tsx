@@ -26,11 +26,12 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
   if (!rgb) return <></>;
 
   // const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
-  const transparency = 1; // Polygon fixed 0.3
+  // const transparency = 1; // Polygon fixed 0.3
   // let transparency = selected ? props.transparency * 0.01 + 0.02 : props.transparency * 0.01;
   // if (transparency > 1) transparency = 1;
   // if (transparency < 0) transparency = 0;
-
+  const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
+  const transparency = selected ? 0.5 : 0.2;
   // Create dots
   // const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>, index: number) => {
 
