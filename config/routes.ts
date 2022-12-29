@@ -45,6 +45,10 @@ export default [
     component: './ProjectAi',
   },
   {
+    path: '/project_ocr_ai',
+    component: './ProjectOcrAi',
+  },
+  {
     path: '/classification',
     component: './Classification',
   },

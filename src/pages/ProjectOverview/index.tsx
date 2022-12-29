@@ -166,15 +166,20 @@ const TaskList: React.FC = () => {
           visible={task.all?.length != 0}
         />
         {project?.curr?.taskCategory?.name === 'detection' ||
-        project?.curr?.taskCategory?.name === 'classification' ? (
+        project?.curr?.taskCategory?.name === 'classification' ||
+        project?.curr?.taskCategory?.name === 'optical_character_recognition' ? (
           <Button
             type="primary"
             onClick={() => {
               console.log('project.curr.taskCategory.name', project.curr.taskCategory.name);
+              let path = '/project_ai';
+              if (project?.curr?.taskCategory?.name === 'optical_character_recognition') {
+                path = '/project_ocr_ai';
+              }
               history.push(
-                `/project_ai?taskCategory=${snake2camel(
-                  project.curr.taskCategory.name,
-                )}&projectId=${project.curr.projectId}`,
+                `${path}?taskCategory=${snake2camel(project.curr.taskCategory.name)}&projectId=${
+                  project.curr.projectId
+                }`,
               );
             }}
           >

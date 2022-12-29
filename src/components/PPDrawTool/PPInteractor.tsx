@@ -360,7 +360,7 @@ export function ectInteractorToAnnotation(
     labelId: label.labelId,
     frontendId: frontendId,
     result: result,
-    type: 'rectangle',
+    type: 'ocr_polygon',
     predictedBy: predictedBy,
   };
 

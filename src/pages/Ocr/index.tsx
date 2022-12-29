@@ -234,7 +234,7 @@ const Page = () => {
   const onPredicted = (images: HTMLImageElement) => {
     const imgBase64 = getBase64Image(images);
     const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
-    const line = model.predict('PicoDet', {
+    const line = model.predict('PaddleOCR', {
       format: 'b64',
       img: imgBase64,
     });
@@ -247,6 +247,8 @@ const Page = () => {
               return item;
             }
           });
+          // const predictions = res.predictions;
+          // debugger;
           setIsLoad(false);
           data.updatePredicted(data.all[0]?.dataId, true);
           setInteractorData({
@@ -262,25 +264,25 @@ const Page = () => {
       },
     );
   };
-  const createLabels = (labels) => {
-    // debugger;
-    const newlabels = [...labels].map((item) => {
-      const addlabel = {
-        name: item,
-        projectId: project.curr.projectId,
-      };
-      return addlabel;
-    });
-    if (newlabels.length > 0) {
-      label.create(newlabels).then((newLabel) => {
-        // debugger;
-        setCurrentAnnotation(undefined);
-        label.setCurr(newLabel);
+  // const createLabels = (labels) => {
+  //   // debugger;
+  //   const newlabels = [...labels].map((item) => {
+  //     const addlabel = {
+  //       name: item,
+  //       projectId: project.curr.projectId,
+  //     };
+  //     return addlabel;
+  //   });
+  //   if (newlabels.length > 0) {
+  //     label.create(newlabels).then((newLabel) => {
+  //       // debugger;
+  //       setCurrentAnnotation(undefined);
+  //       label.setCurr(newLabel);
 
-        setflags(true);
-      });
-    }
-  };
+  //       setflags(true);
+  //     });
+  //   }
+  // };
   // useEffect(() => {
   //   annHistory.init({});
   // }, []);
@@ -334,7 +336,7 @@ const Page = () => {
 
   useUpdateEffect(() => {
     // debugger;
-    if (isLoad && project.curr?.otherSettings?.labelMapping) {
+    if (isLoad) {
       if (model.loading) {
         message.error(tbIntl('modelLoading'));
         return;
@@ -367,78 +369,75 @@ const Page = () => {
       onPredicted(image);
     }
   }, [isLoading, isLoad, image]);
+  // useUpdateEffect(() => {
+  //   // console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
+  //   if (interactorData.predictData.length && label.all) {
+  //     console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
+  //     const labels = new Set();
+  //     const oldLabel = new Map();
+  //     // const labelmaps: any = {};
+  //     for (const labelItem of label.all) {
+  //       if (labelItem.name) {
+  //         oldLabel.set(labelItem.name, labelItem);
+  //       }
+  //     }
+  //     if (otherSetting?.labelMapping?.length > 0) {
+  //       for (const labelMap of otherSetting?.labelMapping) {
+  //         // labelmaps[labelMap.model] = labelMap.project;
+  //         if (!oldLabel.has(labelMap.project)) {
+  //           labels.add(labelMap.project);
+  //         }
+  //       }
+  //     } else {
+  //       for (const labelItem of interactorData.predictData) {
+  //         console.log('!oldLabel.has(labelItem?.label_name)', oldLabel, labelItem?.label_name);
+  //         if (labelItem && !oldLabel.has(labelItem?.label_name)) {
+  //           labels.add(labelItem?.label_name);
+  //         }
+  //       }
+  //       if ([...labels].length) {
+  //         // debugger;
+  //         createLabels(labels);
+  //       }
+  //     }
+  //     if (![...labels].length) {
+  //       setflags(true);
+  //     }
+  //   }
+  // }, [interactorData, otherSetting]);
   useUpdateEffect(() => {
-    // console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
-    if (interactorData.predictData.length && otherSetting?.labelMapping && label.all) {
-      console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
-      const labels = new Set();
-      const oldLabel = new Map();
-      // const labelmaps: any = {};
-      for (const labelItem of label.all) {
-        if (labelItem.name) {
-          oldLabel.set(labelItem.name, labelItem);
-        }
-      }
-      if (otherSetting?.labelMapping?.length > 0) {
-        for (const labelMap of otherSetting?.labelMapping) {
-          // labelmaps[labelMap.model] = labelMap.project;
-          if (!oldLabel.has(labelMap.project)) {
-            labels.add(labelMap.project);
-          }
-        }
-      } else {
-        for (const labelItem of interactorData.predictData) {
-          console.log('!oldLabel.has(labelItem?.label_name)', oldLabel, labelItem?.label_name);
-          if (labelItem && !oldLabel.has(labelItem?.label_name)) {
-            labels.add(labelItem?.label_name);
-          }
-        }
-        if ([...labels].length) {
-          // debugger;
-          createLabels(labels);
-        }
-      }
-      if (![...labels].length) {
-        setflags(true);
-      }
-    }
-  }, [interactorData, otherSetting]);
-  useUpdateEffect(() => {
-    if (
-      interactorData.predictData.length &&
-      project.curr?.projectId !== undefined &&
-      otherSetting?.labelMapping &&
-      flags
-    ) {
-      const labels = new Map();
+    if (interactorData.predictData.length && project.curr?.projectId !== undefined) {
+      // debugger;
+      // const labels = new Map();
       label.getAll(project.curr.projectId).then((labelAll) => {
         // debugger;
-        for (const labelItem of labelAll) {
-          labels.set(labelItem.name, labelItem);
-        }
+        // for (const labelItem of labelAll) {
+        //   labels.set(labelItem.name, labelItem);
+        // }
         const annos = [];
-        const labelMapping = new Map();
+        // const labelMapping = new Map();
         // eslint-disable-next-line @typescript-eslint/no-shadow
         let frontendId = annotation.all?.length ? getMaxFrontendId(annotation.all) + 1 : 1;
-        if (otherSetting?.labelMapping?.length > 0) {
-          for (const labelMaps of otherSetting.labelMapping) {
-            labelMapping.set(labelMaps.model, labelMaps.project);
-          }
-        }
-        console.log('interactorData.predictData', interactorData.predictData);
+        // if (otherSetting?.labelMapping?.length > 0) {
+        //   for (const labelMaps of otherSetting.labelMapping) {
+        //     labelMapping.set(labelMaps.model, labelMaps.project);
+        //   }
+        // }
+        // console.log('interactorData.predictData', interactorData.predictData);
 
         interactorData.predictData.map((item) => {
           console.log('label_name', item);
           if (item) {
-            let name = '';
-            if (labelMapping.has(item.label_name)) {
-              name = labelMapping.get(item.label_name);
-            } else {
-              name = item.label_name;
-            }
-            const labelitem = labels.get(name);
+            // const name = labelItem.name;
+            // // if (labelMapping.has(item.label_name)) {
+            // //   name = labelMapping.get(item.label_name);
+            // // } else {
+            // //   name = item.label_name;
+            // // }
+            // const labelitem = labels.get(name);
             const result = item.result;
             const predictedBy = otherSetting.modelName;
+            const labelitem = labelAll[0];
             // debugger;
             // saveInteractorData(labelitem, item.result);
             if (interactorData.active) {
@@ -458,6 +457,7 @@ const Page = () => {
           }
         });
         const deduplicate = true;
+        // debugger;
         annotation.create(annos, '', deduplicate);
         // debugger;
         setInteractorData({ active: false, predictData: [], mousePoints: [] });
@@ -612,7 +612,7 @@ const Page = () => {
               onAnnotationModifyComplete={() => {}}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
               imgSrc={data.imgSrc}
-              transparency={100}
+              transparency={60}
               onAnnotationAdd={(anno) => {
                 const newAnnos = annotation.all.concat([anno]);
                 annotation.setAll(newAnnos);
@@ -674,7 +674,7 @@ const Page = () => {
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/intelligent_interaction.png"
-          disabled={!otherSetting?.labelMapping}
+          // disabled={!otherSetting?.labelMapping}
           onClick={() => {
             onPredicted(image);
           }}
