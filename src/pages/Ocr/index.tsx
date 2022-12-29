@@ -176,7 +176,7 @@ const Page = () => {
 
   const drawToolParam = {
     dataId: data.curr?.dataId,
-    currentLabel: label.curr,
+    currentLabel: label.all && label.all[0],
     scale: scale.curr,
     currentTool: tool.curr,
     annotations: annotation.all,
