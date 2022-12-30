@@ -6,8 +6,9 @@ export const config = {
 
     classification: { singleClass: 0, multiClass: 0 },
     detection: { coco: 0, voc: 0, yolo: 0 },
-    semanticSegmentation: { mask: 0, polygon: 0 },
-    instanceSegmentation: { mask: 0, polygon: 0 },
+    semanticSegmentation: { mask: 0, coco: 0 },
+    instanceSegmentation: { mask: 0, coco: 0 },
+    opticalCharacterRecognition: { text: 0 },
   },
 };
 

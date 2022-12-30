@@ -7,7 +7,8 @@ import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer'
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 import PPLabelList from '@/components/PPLabelPage/PPLabelList';
-import PPStage, { pageRef } from '@/components/PPLabelPage/PPStage';
+import type { pageRef } from '@/components/PPLabelPage/PPStage';
+import PPStage from '@/components/PPLabelPage/PPStage';
 import useImage from 'use-image';
 import { ectInteractorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
 // import type { Label } from '@/models/';

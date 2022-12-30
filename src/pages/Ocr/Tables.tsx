@@ -1,12 +1,12 @@
 import type { InputRef } from 'antd';
 import { Form, Input, Popconfirm, Table } from 'antd';
 import type { FormInstance } from 'antd/es/form';
+import type { ForwardRefRenderFunction } from 'react';
 import React, {
   useContext,
   useEffect,
   useRef,
   useState,
-  ForwardRefRenderFunction,
   useImperativeHandle,
   forwardRef,
 } from 'react';
@@ -204,8 +204,8 @@ const App: ForwardRefRenderFunction<pageRef, TablesProps> = (props, ref) => {
       ...row,
       result: results,
     };
-    delete anno['address'];
-    delete anno['key'];
+    delete anno.address;
+    delete anno.key;
     props.onAnnotationModify(anno);
     props.updataAnno(anno);
     const newData = [...dataSource];

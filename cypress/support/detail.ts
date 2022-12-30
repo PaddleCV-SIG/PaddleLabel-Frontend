@@ -49,8 +49,8 @@ export const detail = {
     cy.get('#dataDir').type(dpath);
     cy.get('#description').type(name);
     cy.g(`global.labelFormat.${labelFormat}`).click();
-    if (projectType == 'semanticSegmentation' && labelFormat == 'mask')
-      cy.g('global.segMaskType.pesudo').should('be.visible');
+    // if (projectType == 'semanticSegmentation' && labelFormat == 'mask')
+    //   cy.g('global.segMaskType.pesudo').should('be.visible');
     cy.g('component.PPCreater.create')
       .click()
       .wait(2000)

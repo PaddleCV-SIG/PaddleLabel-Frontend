@@ -277,7 +277,7 @@ const Page: React.FC = () => {
               onShapeEdit={dr.onShapeEdit}
             />
           </div>
-          <div className={styles.interval}></div>
+          <div className={styles.interval} />
           <div className={styles.halfMap}>
             <PPMapTrial
               leafletMapRef={leafletMapRef}

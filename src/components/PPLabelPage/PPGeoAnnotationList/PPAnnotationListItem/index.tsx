@@ -2,7 +2,7 @@ import { List, Space } from 'antd';
 import React from 'react';
 import styles from './index.less';
 import PPColorBall from '../../PPColorBall';
-import { GeojsonFeatureObject } from '@/pages/RemoteSensing';
+import type { GeojsonFeatureObject } from '@/pages/RemoteSensing';
 
 export type PPAnnotationListItemProps = {
   active?: boolean;

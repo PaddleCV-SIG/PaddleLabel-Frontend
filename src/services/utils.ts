@@ -20,7 +20,7 @@ import { HistoryUtils } from '@/services/history';
 import { IntlInitJsx } from '@/components/PPIntl';
 import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi } from '@/services/ml';
-import type { InlineObject1, Model } from '@/services/ml/models';
+import type { Model } from '@/services/ml/models';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -82,6 +82,7 @@ export const createInfo = {
     name: 'OCR',
     avatar: './pics/keypoint_detection.jpg',
     id: 7,
+    labelFormats: { txt: 'txt' },
   },
 };
 
@@ -723,10 +724,13 @@ export const DataUtils = (useState: UseStateType) => {
   };
 };
 
-export function exportDataset(projectId: number, exportDir: string, exportFormat: string) {
-  console.log('format', { exportDir: exportDir, exportFormat: exportFormat });
+export function exportDataset(
+  projectId: number,
+  params: { exportDir: string; exportFormat: string; segMaskType: string },
+) {
+  console.log('export params', params);
   return projectApi
-    .exportDataset(projectId, { exportDir: exportDir, exportFormat: exportFormat })
+    .exportDataset(projectId, params)
     .then((res) => {})
     .catch((err) => {
       console.log('export error', err);
@@ -926,7 +930,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     }
   }
 
-  async function predict(model: string, data: InlineObject1) {
+  async function predict(model: string, data) {
     try {
       checkAPI();
       return await modelApi.predict(model, data);

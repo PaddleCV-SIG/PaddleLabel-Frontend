@@ -73,7 +73,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       projects
         .create({
           ...values,
-          taskCategoryId: createInfo[props.taskCategory]['id'],
+          taskCategoryId: createInfo[props.taskCategory].id,
           otherSettings: otherSettings,
         })
         .catch((err) => {
@@ -293,6 +293,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                         )}/`,
                       )
                       .then((res) => {
+                        console.log('asdfasdf', res);
                         setSampleFiles(res);
                       });
                   }}

@@ -8,7 +8,7 @@ import PPImportModal from '@/components/PPProjectOverview/PPImportModal';
 import PPSplitDatasetModal from '@/components/PPProjectOverview/PPSplitDatasetModal';
 import { toDict, TaskUtils, ProjectUtils, snake2camel, camel2snake } from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
-import type { Task } from '@/services';
+import type { Task } from '@/services/web/models';
 import type { ColumnsType } from 'antd/es/table';
 import { IntlInitJsx } from '@/components/PPIntl';
 

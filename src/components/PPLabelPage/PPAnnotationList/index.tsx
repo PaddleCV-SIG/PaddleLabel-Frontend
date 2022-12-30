@@ -2,7 +2,7 @@ import { List, Spin } from 'antd';
 import { Button } from 'antd';
 import React from 'react';
 import styles from './index.less';
-import { Annotation } from '@/models/annotation';
+import type { Annotation } from '@/models/annotation';
 import { history } from 'umi';
 import PPAnnotationListItem from './PPAnnotationListItem';
 import { useIntl } from 'umi';
@@ -101,7 +101,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
                 </Button>
               </div>
             );
-          else return <div></div>;
+          else return <div />;
         }}
       />
     </Spin>

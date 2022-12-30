@@ -57,7 +57,7 @@ const PaddleAi: React.FC = () => {
   const [form] = Form.useForm();
   const [modelUrl, setModelUrl] = useState(DEFAULT_ML_URL);
   const [modelSelected, setModelSelected] = useState();
-  const [isFlag, setisFlag] = useState<Boolean>(true);
+  const [isFlag, setisFlag] = useState<boolean>(true);
   // const [items, setItems] = useState([]);
   const [items2, setItems2] = useState([]);
   // const [name, setName] = useState('');
