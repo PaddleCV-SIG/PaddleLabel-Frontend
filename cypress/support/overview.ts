@@ -86,7 +86,8 @@ export const overview = {
     // choose format
     cy.g('global.labelFormat.' + exportFormat).click();
 
-    if (exportFormat == 'mask') cy.g('global.segMaskType.grayscale').click();
+    if (exportPath.includes('semanticSegmentation') && exportFormat == 'mask')
+      cy.g('global.segMaskType.grayscale').click();
 
     cy.g('component.PPExportModal.export').click();
     cy.g('component.PPExportModal.exportSuccess').should('be.visible'); // should show success message
