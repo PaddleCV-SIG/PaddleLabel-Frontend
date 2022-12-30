@@ -80,6 +80,7 @@ const TaskList: React.FC = () => {
           }}
         />
       ),
+      sorter: (a, b) => a.dataPaths[0].split('sault')[0] > b.dataPaths[0].split('sault')[0],
     },
     {
       dataIndex: 'taskId',
@@ -93,7 +94,6 @@ const TaskList: React.FC = () => {
             history.push(
               `/${camel2snake(project.curr.taskCategory.name)}?projectId=${project.curr.projectId}`,
             );
-            // history.push(`/Ocr?projectId=${project.curr.projectId}`);
           }}
         >
           {intl('label')}
@@ -108,19 +108,14 @@ const TaskList: React.FC = () => {
       console.log('tasks', tasks);
     });
   }, []);
-  // useEffect(() => {
-  //   const flag = project?.curr?.taskCategory?.name === 'detection';
-  //   console.log('flag', flag, project?.curr?.taskCategory?.name);
 
-  //   setReforce(flag);
-  // }, [project?.curr?.taskCategory?.name]);
   // ensure projectid
   if (!projectId) {
     message.error('No valid project id');
     history.push('/');
   }
   console.log('project.curr.taskCategory.name', project?.curr?.taskCategory?.name);
-
+  console.log('tasks', [...toDict(task.all)]);
   return (
     <PPContainer>
       <PPBlock>
