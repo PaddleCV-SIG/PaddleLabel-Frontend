@@ -3,7 +3,7 @@ import { config } from './config';
 import { overview } from './overview';
 import { label } from './label';
 import { runId } from './config';
-import { notGithub404 } from './util';
+import { notLocal404 } from './util';
 
 export const detail = {
   on: () => {
@@ -114,8 +114,7 @@ export const detailIt = {
           cy.g('component.PPCreater.titleContent')
             .click()
             .then(() => {
-              // notGithub404(url);
-              cy.get('This site uses Just the Docs, a documentation theme for Jekyll.');
+              notLocal404(url);
             });
         },
       };

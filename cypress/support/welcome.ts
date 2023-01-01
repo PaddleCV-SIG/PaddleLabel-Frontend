@@ -1,5 +1,5 @@
 import { detail } from './detail';
-import { notGithub404 } from './util';
+import { notGithub404, notLocal404 } from './util';
 
 export const welcome = {
   on: () => {
@@ -27,7 +27,7 @@ export const welcome = {
       .click()
       .wait(500)
       .then(() => {
-        notGithub404(url);
+        notLocal404(url);
       });
   },
 };

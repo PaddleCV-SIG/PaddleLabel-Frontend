@@ -184,7 +184,7 @@ const Welcome: React.FC = () => {
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 onClick={() => {
-                  window.open('/static/doc/CN/training/PdLabel_PdSeg.md');
+                  window.open('/static/doc/CN/training/PdLabel_PdSeg.html');
                 }}
                 block
               >
@@ -194,7 +194,7 @@ const Welcome: React.FC = () => {
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 onClick={() => {
-                  window.open('/static/doc/CN/training/PdLabel_PdX.md');
+                  window.open('/static/doc/CN/training/PdLabel_PdX.html');
                 }}
                 block
               >
