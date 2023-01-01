@@ -46,7 +46,7 @@ export const welcomeIt = {
           },
         });
         welcome.on();
-        cy.get("[class='anticon anticon-question-circle']")
+        cy.get("[class='anticon anticon-github']")
           .click()
           .wait(500)
           .then(() => {

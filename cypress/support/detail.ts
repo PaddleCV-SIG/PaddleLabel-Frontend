@@ -114,7 +114,8 @@ export const detailIt = {
           cy.g('component.PPCreater.titleContent')
             .click()
             .then(() => {
-              notGithub404(url);
+              // notGithub404(url);
+              cy.get('This site uses Just the Docs, a documentation theme for Jekyll.');
             });
         },
       };
