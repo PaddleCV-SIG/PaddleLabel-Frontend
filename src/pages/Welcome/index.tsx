@@ -111,6 +111,8 @@ const Projects: React.FC = (props) => {
 
 const Welcome: React.FC = () => {
   const intlJsx = IntlInitJsx('pages.welcome');
+  const basePath = `${window.location.protocol}://${window.location.hostname}:${window.location.port}`;
+  console.log('basePath', basePath);
 
   const [deleting, setDeleting] = useState<boolean>(false);
   function createButtons() {
@@ -164,9 +166,7 @@ const Welcome: React.FC = () => {
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 onClick={() => {
-                  window.open(
-                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdClas.md',
-                  );
+                  window.open(`${basePath}/static/doc/CN/training/PdLabel_PdClas.html`);
                 }}
                 block
               >
@@ -176,9 +176,7 @@ const Welcome: React.FC = () => {
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 onClick={() => {
-                  window.open(
-                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdDet.md',
-                  );
+                  window.open('/static/doc/CN/training/PdLabel_PdDet.html');
                 }}
                 block
               >
