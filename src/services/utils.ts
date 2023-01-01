@@ -224,10 +224,22 @@ export const ProjectUtils = (useState: UseStateType) => {
 
   async function getCurr(projectId: string) {
     if (projectId == undefined) return undefined;
-    const project: Project = await projectApi.get(projectId);
-    //
-    setCurr(project);
-    return project;
+    projectApi
+      .get(projectId)
+      .then((project) => {
+        setCurr(project);
+        return project;
+      })
+      .catch((err) => {
+        console.log('asdf', err);
+        err.response.json().then((res) => {
+          console.log('detail', res.detail);
+          message.error(res.detail);
+          history.push('/');
+        });
+      });
+
+    // return project;
   }
 
   async function remove(project: Project | number | string) {

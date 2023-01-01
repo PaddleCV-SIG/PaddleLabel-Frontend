@@ -114,8 +114,8 @@ const TaskList: React.FC = () => {
     message.error('No valid project id');
     history.push('/');
   }
-  console.log('project.curr.taskCategory.name', project?.curr?.taskCategory?.name);
-  console.log('tasks', [...toDict(task.all)]);
+  // console.log('project.curr.taskCategory.name', project?.curr?.taskCategory?.name);
+  // console.log('tasks', [...toDict(task.all)]);
   return (
     <PPContainer>
       <PPBlock>
