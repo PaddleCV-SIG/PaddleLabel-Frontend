@@ -224,6 +224,7 @@ export const ProjectUtils = (useState: UseStateType) => {
 
   async function getCurr(projectId: string) {
     if (projectId == undefined) return undefined;
+    console.log('here');
     projectApi
       .get(projectId)
       .then((project) => {
@@ -231,19 +232,15 @@ export const ProjectUtils = (useState: UseStateType) => {
         return project;
       })
       .catch((err) => {
-        console.log('asdf', err);
         err.response.json().then((res) => {
           console.log('detail', res.detail);
           message.error(res.detail);
           history.push('/');
         });
       });
-
-    // return project;
   }
 
   async function remove(project: Project | number | string) {
-    console.log('remove project', project);
     const projectId: number = typeof project == 'object' ? project.projectId : +project;
     await projectApi.remove(projectId);
     getAll();
