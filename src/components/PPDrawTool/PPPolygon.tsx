@@ -213,12 +213,15 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
 
   const OnMouseDown = (param: EvtProps) => {
     // && props.currentTool != 'editor'
+    // debugger;
     if (props.currentTool != 'polygon') return;
     const mouseX = param.mouseX + param.offsetX;
     const mouseY = param.mouseY + param.offsetY;
     console.log(`currentAnnotation:`, props.currentAnnotation);
     // No annotation is marking, start new
-    if (!props.currentAnnotation) {
+    console.log('param.flag', param.flags);
+
+    if (!props.currentAnnotation && param.flags) {
       startNewPolygon(mouseX, mouseY, props.selectFinly, param.pathName);
     } else {
       addDotToPolygon(mouseX, mouseY, param.pathName);

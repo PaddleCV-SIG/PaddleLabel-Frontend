@@ -88,26 +88,33 @@ const Page = () => {
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
     console.log('annotationfronsss', anno);
-
-    for (const item of annotation.all) {
-      console.log('annotationfrontendId:', item.frontendId, anno.frontendId, annotation.all);
-      let areasResult: any = '';
-      if (item.frontendId == anno.frontendId) {
-        if (history?.location?.pathname === '/optical_character_recognition') {
-          areasResult = anno?.result?.split('||')[0].split('|').join(',');
+    if (anno.type === 'ocr_polygon') {
+      console.log('onAnnotationModify', anno);
+      annotation.all.pop();
+      annotation.all.push(anno);
+      setCurrentAnnotation(anno);
+      annotation.setAll(annotation.all);
+    } else {
+      for (const item of annotation.all) {
+        console.log('annotationfrontendId:', item.frontendId, anno.frontendId, annotation.all);
+        let areasResult: any = '';
+        if (item.frontendId == anno.frontendId) {
+          if (history?.location?.pathname === '/optical_character_recognition') {
+            areasResult = anno?.result?.split('||')[0].split('|').join(',');
+          } else {
+            areasResult = anno?.result;
+          }
+          const result = areasResult?.split(',').map((items: string) => {
+            return Number(items);
+          }) as number[];
+          const area = (result[2] - result[0]) * (result[3] - result[1]);
+          if (Math.abs(area) > 10) {
+            item.result = anno?.result;
+            setCurrentAnnotation(anno);
+          }
         } else {
-          areasResult = anno?.result;
+          newAnnos.push(item);
         }
-        const result = areasResult?.split(',').map((items: string) => {
-          return Number(items);
-        }) as number[];
-        const area = (result[2] - result[0]) * (result[3] - result[1]);
-        if (Math.abs(area) > 10) {
-          newAnnos.push(anno);
-          setCurrentAnnotation(anno);
-        }
-      } else {
-        newAnnos.push(item);
       }
     }
     console.log('onAnnotationModify:', newAnnos, anno);
@@ -183,10 +190,10 @@ const Page = () => {
     annotations: annotation.all,
     currentAnnotation: annotation.curr,
     onAnnotationAdd: (anno: Annotation) => {
+      setCurrentAnnotation(anno);
       const newAnnos = annotation.all.concat([anno]);
       // debugger;
       annotation.setAll(newAnnos);
-      setCurrentAnnotation(anno);
     },
     onAnnotationModify: onAnnotationModify,
     modifyAnnoByFrontendId: onAnnotationModify,

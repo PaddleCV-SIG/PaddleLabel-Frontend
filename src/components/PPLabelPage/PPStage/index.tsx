@@ -3,6 +3,7 @@ import type { Annotation } from '@/models/Annotation';
 import type { ToolType } from '@/models/ToolType';
 import type Konva from 'konva';
 import { history } from 'umi';
+import { throttle } from 'lodash';
 import { useDeepCompareEffect } from 'ahooks';
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Layer as LayerType } from 'konva/lib/Layer';
@@ -417,6 +418,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       stageRef: stageRef,
       img: image,
       pathName: history?.location?.pathname,
+      currentAnnotation: props?.currentAnnotation,
+      flags: flags,
     };
   };
   // 多边形画点
@@ -459,16 +462,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     if (props?.tool?.curr == 'polygon' && ctx) {
       // debugger;
       if (e.evt.button === 2) {
-        // for (const item of props.annotations) {
-        //   if (item.result === props.currentAnnotation?.result) {
-        //     annoID = item.annotationId;
-        //   }
-        // }
-        console.log(
-          'props.currentAnnotation?.result',
-          props.currentAnnotation?.result,
-          props.currentAnnotation?.result?.split(',').length,
-        );
         let results = '';
         if (history?.location?.pathname === '/optical_character_recognition') {
           const data: string = props.currentAnnotation?.result?.split('||')[0] as string;
@@ -494,13 +487,13 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         setflags(true);
       } else {
         // debugger;
-        setflags(false);
         ctx.strokeStyle = props.currentLabel?.color; //线条颜色
         ctx.lineWidth = 4; //线条粗细
+        drawTool?.onMouseDown(getEvtParam(e));
         // makearc(ctx, mouseX, mouseY, GetRandomNum(2, 2), 0, 180, props.currentLabel?.color);
         setpointArr([...pointArr, { x: mouseX, y: mouseY }]);
         // debugger;
-        drawTool?.onMouseDown(getEvtParam(e));
+        setflags(false);
       }
     } else {
       setStartPos({
