@@ -7,12 +7,12 @@ import { throttle } from 'lodash';
 import { useDeepCompareEffect } from 'ahooks';
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Layer as LayerType } from 'konva/lib/Layer';
+import type { ForwardRefRenderFunction } from 'react';
 import React, {
   useEffect,
   useRef,
   useState,
   useMemo,
-  ForwardRefRenderFunction,
   useImperativeHandle,
   forwardRef,
 } from 'react';
@@ -21,7 +21,7 @@ import useImage from 'use-image';
 import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/drawUtils';
 import { Threshold } from 'konva/lib/filters/Threshold';
 import { useModel } from 'umi';
-import { Label } from '@/models';
+import type { Label } from '@/models';
 import { result } from 'lodash';
 
 // Mock Data

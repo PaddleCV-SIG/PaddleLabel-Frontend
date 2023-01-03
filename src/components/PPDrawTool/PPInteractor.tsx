@@ -3,7 +3,7 @@ import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Annotation } from '@/models/Annotation';
 import { useModel } from 'umi';
-import { Label } from '@/models';
+import type { Label } from '@/models';
 import { message } from 'antd';
 import { IntlInit } from '@/services/utils';
 

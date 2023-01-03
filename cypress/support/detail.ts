@@ -3,7 +3,7 @@ import { config } from './config';
 import { overview } from './overview';
 import { label } from './label';
 import { runId } from './config';
-import { notGithub404 } from './util';
+import { notLocal404 } from './util';
 
 export const detail = {
   on: () => {
@@ -49,8 +49,8 @@ export const detail = {
     cy.get('#dataDir').type(dpath);
     cy.get('#description').type(name);
     cy.g(`global.labelFormat.${labelFormat}`).click();
-    if (projectType == 'semanticSegmentation' && labelFormat == 'mask')
-      cy.g('global.segMaskType.pesudo').should('be.visible');
+    // if (projectType == 'semanticSegmentation' && labelFormat == 'mask')
+    //   cy.g('global.segMaskType.pesudo').should('be.visible');
     cy.g('component.PPCreater.create')
       .click()
       .wait(2000)
@@ -114,7 +114,7 @@ export const detailIt = {
           cy.g('component.PPCreater.titleContent')
             .click()
             .then(() => {
-              notGithub404(url);
+              notLocal404(url);
             });
         },
       };

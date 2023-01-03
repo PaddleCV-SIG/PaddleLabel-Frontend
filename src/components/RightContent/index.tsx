@@ -1,5 +1,5 @@
 import { Space } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { GithubOutlined } from '@ant-design/icons';
 import React from 'react';
 import { useModel, SelectLang } from 'umi';
 // import Avatar from './AvatarDropdown';
@@ -52,7 +52,8 @@ const GlobalHeaderRight: React.FC = () => {
           window.open('https://github.com/PaddleCV-SIG/PaddleLabel');
         }}
       >
-        <QuestionCircleOutlined />
+        {/* <QuestionCircleOutlined /> */}
+        <GithubOutlined />
       </span>
       {/* <Avatar /> */}
       <SelectLang className={styles.action} />

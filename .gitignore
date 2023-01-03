@@ -1,9 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # Project Specific
-cypress/screenshots
-cypress/videos
-cypress/log
+cypress/cypress
 
 # dependencies
 **/node_modules

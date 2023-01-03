@@ -73,7 +73,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       projects
         .create({
           ...values,
-          taskCategoryId: createInfo[props.taskCategory]['id'],
+          taskCategoryId: createInfo[props.taskCategory].id,
           otherSettings: otherSettings,
         })
         .catch((err) => {
@@ -154,9 +154,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
           <_PPBlock
             title={intl(props.taskCategory, 'global') + intl('project')}
             content={intlJsx('titleContent')}
-            docUrl={`https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/project/${camel2snake(
-              props.taskCategory,
-            )}.md`}
+            docUrl={`/static/doc/CN/project/${camel2snake(props.taskCategory)}.html`}
             style={{ height: 760, padding: '1.25rem 0' }}
           >
             <Form
@@ -293,6 +291,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                         )}/`,
                       )
                       .then((res) => {
+                        console.log('asdfasdf', res);
                         setSampleFiles(res);
                       });
                   }}

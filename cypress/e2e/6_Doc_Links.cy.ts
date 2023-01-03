@@ -10,9 +10,6 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
     cy.spyAllApiCalls();
   });
 
-  var pjId = 2;
-  var catgInfo = { ...config.catgInfo };
-
   const tasks = [welcomeIt.toReadme(), welcomeIt.toTrainKnoleget(), detailIt.toDoc()];
 
   runTasks(tasks);

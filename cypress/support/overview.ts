@@ -1,4 +1,5 @@
 import { over } from 'lodash';
+import { symbol } from 'prop-types';
 import { detail } from './detail';
 import { label } from './label';
 
@@ -76,7 +77,7 @@ export const overview = {
     cy.g('component.PPExportModal.export').should('be.visible'); // modal shouldn't close
 
     // input correct path
-    cy.get('#basic_path').clear().type(exportPath);
+    cy.get('#basic_exportDir').clear().type(exportPath);
 
     // omit choosing export format
     cy.g('component.PPExportModal.nullLabelFormat').should('be.visible');
@@ -84,6 +85,9 @@ export const overview = {
 
     // choose format
     cy.g('global.labelFormat.' + exportFormat).click();
+
+    if (exportPath.includes('semanticSegmentation') && exportFormat == 'mask')
+      cy.g('global.segMaskType.grayscale').click();
 
     cy.g('component.PPExportModal.export').click();
     cy.g('component.PPExportModal.exportSuccess').should('be.visible'); // should show success message

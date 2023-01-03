@@ -10,12 +10,13 @@ import PPSampleButton from '@/components/PPSampleButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { toDict, ProjectUtils, getVersion, snake2camel } from '@/services/utils';
 import { IntlInitJsx } from '@/components/PPIntl';
-import { createInfo } from '@/services/utils';
+import { createInfo, IntlInit } from '@/services/utils';
 import type { ColumnsType } from 'antd/es/table';
 import type { Project } from '@/services/web/models';
 
 const Projects: React.FC = (props) => {
-  const intl = IntlInitJsx('pages.welcome');
+  const intlJsx = IntlInitJsx('pages.welcome');
+  const intl = IntlInit('pages.welcome');
 
   console.log('render projects');
   const projects = ProjectUtils(useState);
@@ -64,7 +65,7 @@ const Projects: React.FC = (props) => {
               history.push(`/project_overview?projectId=${project.projectId}`);
             }}
           >
-            {intl('overview')}
+            {intlJsx('overview')}
           </PPButton>
           <PPButton
             width="4.375rem"
@@ -74,7 +75,7 @@ const Projects: React.FC = (props) => {
               history.push(`/${project.taskCategory.name}?projectId=${project.projectId}`);
             }}
           >
-            {intl('label')}
+            {intlJsx('label')}
           </PPButton>
           <PPButton
             width="4.375rem"
@@ -85,7 +86,7 @@ const Projects: React.FC = (props) => {
               projects.remove(project).then(() => props.setDeleting(false));
             }}
           >
-            {intl('remove')}
+            {intlJsx('remove')}
           </PPButton>
         </Space>
       ),
@@ -100,7 +101,7 @@ const Projects: React.FC = (props) => {
   return (
     <Row style={{ marginTop: 20 }}>
       <Col span={24}>
-        <PPBlock title={intl('myProjects')}>
+        <PPBlock title={intlJsx('myProjects')}>
           <PPTable columns={columns} dataSource={toDict(projects.all)} showHeader={false} />
         </PPBlock>
       </Col>
@@ -109,7 +110,7 @@ const Projects: React.FC = (props) => {
 };
 
 const Welcome: React.FC = () => {
-  const intl = IntlInitJsx('pages.welcome');
+  const intlJsx = IntlInitJsx('pages.welcome');
 
   const [deleting, setDeleting] = useState<boolean>(false);
   function createButtons() {
@@ -124,11 +125,11 @@ const Welcome: React.FC = () => {
               taskCategory != 'keypointDetection'
                 ? undefined
                 : () => {
-                    message.info(intl('underDevelopment', 'global'));
+                    message.info(intlJsx('underDevelopment', 'global'));
                   }
             }
           >
-            {intl(taskCategory, 'global')}
+            {intlJsx(taskCategory, 'global')}
           </PPCard>
         </PPOverlapCol>,
       );
@@ -146,66 +147,58 @@ const Welcome: React.FC = () => {
             }}
           >
             {/* <Intl id={'sampleProject'} /> */}
-            {intl('sampleProject')}
+            {intlJsx('sampleProject')}
           </PPSampleButton>
         </Col>
       </Row>
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>
         <Col span={17}>
-          <PPBlock title={intl('createProject')} style={{ height: 430 }}>
+          <PPBlock title={intlJsx('createProject')} style={{ height: 430 }}>
             <Row>{createButtons()}</Row>
           </PPBlock>
         </Col>
         <Col span={7}>
-          <PPBlock title={intl('trainingKnowledge')} style={{ height: 430 }}>
+          <PPBlock title={intlJsx('trainingKnowledge')} style={{ height: 430 }}>
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
               <Button
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 onClick={() => {
-                  window.open(
-                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdClas.md',
-                  );
+                  window.open(`/static/doc/CN/training/PdLabel_PdClas.html`);
                 }}
                 block
               >
-                {intl('paddleClas')}
+                {intlJsx('paddleClas')}
               </Button>
               <Button
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 onClick={() => {
-                  window.open(
-                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdDet.md',
-                  );
+                  window.open('/static/doc/CN/training/PdLabel_PdDet.html');
                 }}
                 block
               >
-                {intl('paddleDet')}
+                {intlJsx('paddleDet')}
               </Button>
               <Button
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 onClick={() => {
-                  window.open(
-                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdSeg.md',
-                  );
+                  window.open('/static/doc/CN/training/PdLabel_PdSeg.html');
                 }}
                 block
               >
-                {intl('paddleSeg')}
+                {intlJsx('paddleSeg')}
               </Button>
               <Button
                 type="primary"
                 style={{ height: '3.125rem', lineHeight: '3.125rem' }}
                 onClick={() => {
-                  window.open(
-                    'https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/training/PdLabel_PdX.md',
-                  );
+                  window.open('/static/doc/CN/training/PdLabel_PdX.html');
                 }}
                 block
               >
-                {intl('paddleX')}
+                {intlJsx('paddleX')}
               </Button>
             </Space>
           </PPBlock>

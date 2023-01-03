@@ -8,6 +8,11 @@ export function notGithub404(url) {
   cy.request(url);
 }
 
+export function notLocal404(url) {
+  cy.wrap(url).should('not.be.undefined');
+  cy.request(url).its('body').should('not.include', '404');
+}
+
 export function runTasks(tasks) {
   var flat = [];
 

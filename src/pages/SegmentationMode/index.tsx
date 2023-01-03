@@ -5,7 +5,7 @@ import PPContainer from '@/components/PPContainer';
 const Project: React.FC = () => {
   return (
     <PPContainer>
-      <PPSegMode title="Semantic Segmentation" imgSrc="./pics/illustration.jpg"></PPSegMode>
+      <PPSegMode title="Semantic Segmentation" imgSrc="./pics/illustration.jpg" />
     </PPContainer>
   );
 };

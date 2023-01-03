@@ -13,6 +13,7 @@ describe('Test Import Samples', () => {
     'detection',
     'semanticSegmentation',
     'instanceSegmentation',
+    'opticalCharacterRecognition',
   ];
 
   const tasks = [

@@ -20,7 +20,7 @@ import { HistoryUtils } from '@/services/history';
 import { IntlInitJsx } from '@/components/PPIntl';
 import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi } from '@/services/ml';
-import type { InlineObject1, Model } from '@/services/ml/models';
+import type { Model } from '@/services/ml/models';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -82,6 +82,7 @@ export const createInfo = {
     name: 'OCR',
     avatar: './pics/keypoint_detection.jpg',
     id: 7,
+    labelFormats: { txt: 'txt' },
   },
 };
 
@@ -223,14 +224,23 @@ export const ProjectUtils = (useState: UseStateType) => {
 
   async function getCurr(projectId: string) {
     if (projectId == undefined) return undefined;
-    const project: Project = await projectApi.get(projectId);
-    //
-    setCurr(project);
-    return project;
+    console.log('here');
+    projectApi
+      .get(projectId)
+      .then((project) => {
+        setCurr(project);
+        return project;
+      })
+      .catch((err) => {
+        err.response.json().then((res) => {
+          console.log('detail', res.detail);
+          message.error(res.detail);
+          history.push('/');
+        });
+      });
   }
 
   async function remove(project: Project | number | string) {
-    console.log('remove project', project);
     const projectId: number = typeof project == 'object' ? project.projectId : +project;
     await projectApi.remove(projectId);
     getAll();
@@ -723,10 +733,13 @@ export const DataUtils = (useState: UseStateType) => {
   };
 };
 
-export function exportDataset(projectId: number, exportDir: string, exportFormat: string) {
-  console.log('format', { exportDir: exportDir, exportFormat: exportFormat });
+export function exportDataset(
+  projectId: number,
+  params: { exportDir: string; exportFormat: string; segMaskType: string },
+) {
+  console.log('export params', params);
   return projectApi
-    .exportDataset(projectId, { exportDir: exportDir, exportFormat: exportFormat })
+    .exportDataset(projectId, params)
     .then((res) => {})
     .catch((err) => {
       console.log('export error', err);
@@ -926,7 +939,7 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     }
   }
 
-  async function predict(model: string, data: InlineObject1) {
+  async function predict(model: string, data) {
     try {
       checkAPI();
       return await modelApi.predict(model, data);

@@ -9,13 +9,14 @@ import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer'
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
 // import PPLabelList from '@/components/PPLabelPage/PPLabelList';
-import PPStage, { pageRef } from '@/components/PPLabelPage/PPStage';
+import type { pageRef } from '@/components/PPLabelPage/PPStage';
+import PPStage from '@/components/PPLabelPage/PPStage';
 import useImage from 'use-image';
 import { ectInteractorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
 // import type { Label } from '@/models/';
 // import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import { PageInit, ModelUtils } from '@/services/utils';
-import { PPDrawToolRet } from '@/components/PPDrawTool/drawUtils';
+import type { PPDrawToolRet } from '@/components/PPDrawTool/drawUtils';
 import type { Annotation } from '@/models/Annotation';
 import PPRectangle from '@/components/PPDrawTool/PPRectangle';
 import PPPolygon from '@/components/PPDrawTool/PPPolygon';
@@ -766,7 +767,7 @@ const Page = () => {
             annotations={annotation.all}
             currentAnnotation={annotation.curr}
             selectAnnotation={annotation.setCurr}
-          ></Tables>
+          />
         </div>
         <div
           style={{

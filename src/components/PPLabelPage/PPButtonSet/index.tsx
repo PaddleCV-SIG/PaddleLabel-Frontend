@@ -1,5 +1,5 @@
 import { Col, InputNumber, Popover, Row, Slider } from 'antd';
-import { TooltipPlacement } from 'antd/lib/tooltip';
+import type { TooltipPlacement } from 'antd/lib/tooltip';
 import React, { useEffect, useState } from 'react';
 import PPToolBarButton from '../PPToolBarButton';
 import styles from './index.less';

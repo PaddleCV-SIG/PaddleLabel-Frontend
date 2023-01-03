@@ -33,7 +33,7 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
       <Modal
         className={styles.modal}
         title={intlJsx('title')}
-        visible={visible}
+        open={visible}
         onCancel={() => setVisible(false)}
         footer={null}
       >
@@ -46,7 +46,9 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
           onFinish={(values) => {
             console.log('values', values);
             setLoading(true);
-            exportDataset(props.project.projectId, values.path, values.labelFormat)
+            // exportDataset(props.project.projectId, values.path, values.labelFormat)
+            console.log('export values', values);
+            exportDataset(props.project.projectId, values)
               .then(() => {
                 message.success(intlJsx('exportSuccess'));
                 setVisible(false);
@@ -62,7 +64,7 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
         >
           <Form.Item
             label={intl('path')}
-            name="path"
+            name="exportDir"
             rules={[{ required: true, message: intlJsx('nullPath') }]}
           >
             <Input />
@@ -70,26 +72,22 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
           </Form.Item>
 
           <Form.Item
-            name="labelFormat"
+            name="exportFormat"
             label={<p>{intlJsx('labelFormat')} </p>}
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 16 }}
             rules={[{ required: true, message: intlJsx('nullLabelFormat') }]}
-            style={{
-              fontSize: '1.5rem',
-              // display:
-              //   createInfo[props.taskCategory].labelFormats != undefined ? undefined : 'none',
-            }}
+            style={{ fontSize: '1.5rem' }}
           >
             <Radio.Group
               size="large"
               style={{ height: '3.13rem' }}
               onChange={() => {
-                setLabelFormat(form.getFieldValue('labelFormat'));
+                setLabelFormat(form.getFieldValue('exportFormat'));
               }}
             >
               {labelFormats.map((k) => (
-                <Radio key={k} value={k}>
+                <Radio key={k} value={k} disabled={k == 'eiseg'}>
                   {intlJsx(snake2camel(k), 'global.labelFormat')}
                 </Radio>
               ))}
@@ -98,12 +96,8 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
           <Form.Item
             name="segMaskType"
             label={intl('segMaskType', 'component.PPCreater')}
-            labelCol={{
-              span: 6,
-            }}
-            wrapperCol={{
-              span: 16,
-            }}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 16 }}
             style={{
               fontSize: '1.5rem',
               display:
