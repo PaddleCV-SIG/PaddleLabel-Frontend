@@ -164,4 +164,11 @@ export default {
   'pages.ProjectAi.delete': 'delete',
   'pages.ProjectAi.confirm': 'Save',
   'pages.ProjectAi.goback': 'Return',
+
+  'pages.ProjectAi.mlBackendUrl': 'ML backend url',
+  'pages.ProjectAi.modelSelection': 'Model selection',
+  'pages.ProjectAi.usePretrainedModelLabels': 'Use pretrained model labels',
+  'pages.ProjectAi.labelMapping': 'Label Mapping',
+  'pages.ProjectAi.labelMappingHint':
+    "If choosing to use pretrained model labels, if labels that aren't present in the current project are detected, it will be added automatically to the project.",
 };

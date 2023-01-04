@@ -109,4 +109,17 @@ export default {
   'component.label.deleteSuccess': 'Successfully deleted label',
   'component.label.ontHotMultiple':
     'This is a single class classification project, but this task has multiple active labels!',
+
+  'component.PaddleOCR.ch': 'Chinese and English',
+  'component.PaddleOCR.en': 'English',
+  'component.PaddleOCR.korean': 'Korean',
+  'component.PaddleOCR.japan': 'Japanese',
+  'component.PaddleOCR.chinese_cht': 'Traditional Chinese',
+  'component.PaddleOCR.ta': 'Tamil',
+  'component.PaddleOCR.te': 'Telugu',
+  'component.PaddleOCR.ka': '卡纳达文',
+  'component.PaddleOCR.latin': 'Serbian(latin)',
+  'component.PaddleOCR.arabic': 'Arabic',
+  'component.PaddleOCR.cyrillic': 'Serbian(cyrillic) 	',
+  'component.PaddleOCR.devanagari': 'Devanagari',
 };

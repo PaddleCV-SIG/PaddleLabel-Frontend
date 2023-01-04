@@ -108,4 +108,17 @@ export default {
   'component.PPSegMode.remoteSensing': '遥感数据分割',
   'component.PPSegMode.changeDetection': '遥感变化检测',
   'component.PPSegMode.ok': '确定',
+
+  'component.PaddleOCR.ch': '中英文',
+  'component.PaddleOCR.en': '英文',
+  'component.PaddleOCR.korean': '韩文',
+  'component.PaddleOCR.japan': '日文',
+  'component.PaddleOCR.chinese_cht': '中文繁体',
+  'component.PaddleOCR.ta': '泰米尔文',
+  'component.PaddleOCR.te': '泰卢固文',
+  'component.PaddleOCR.ka': '卡纳达文',
+  'component.PaddleOCR.latin': '塞尔维亚文（latin)',
+  'component.PaddleOCR.arabic': '阿拉伯文',
+  'component.PaddleOCR.cyrillic': '塞尔维亚文（cyrillic)',
+  'component.PaddleOCR.devanagari': '梵文',
 };

@@ -80,7 +80,7 @@ export const createInfo = {
   // },
   opticalCharacterRecognition: {
     name: 'OCR',
-    avatar: './pics/keypoint_detection.jpg',
+    avatar: './pics/ocr.png',
     id: 7,
     labelFormats: { txt: 'txt' },
   },

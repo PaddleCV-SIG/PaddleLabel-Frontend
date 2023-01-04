@@ -330,7 +330,7 @@ const PaddleAi: React.FC = () => {
                 >
                   {languages &&
                     languages?.map((item) => {
-                      return <Option value={item}>{item}</Option>;
+                      return <Option value={item}>{intl(item, 'component.PaddleOCR')}</Option>;
                     })}
                   {/* {project?.curr?.taskCategory?.name === 'detection' ? (
                     <Option value="PicoDet">PicoDet</Option>
