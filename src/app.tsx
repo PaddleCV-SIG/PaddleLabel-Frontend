@@ -13,11 +13,12 @@ const loginPath = '/user/login';
 export const initialStateConfig = {
   loading: <PageLoading />,
 };
+const { UMI_ENV } = process.env;
 
 if (window.location.hostname == 'paddlecv-sig.github.io') {
   localStorage.setItem('basePath', 'https://pplabel.herokuapp.com/api');
 } else {
-  const port = window.location.port == '8000' ? '17995' : window.location.port;
+  const port = UMI_ENV == 'dev' ? '17995' : window.location.port;
   localStorage.setItem('basePath', `http://${window.location.hostname}:${port}/api`);
   // localStorage.setItem('basePath', `http://172.18.178.89:17995/api`);
 }
