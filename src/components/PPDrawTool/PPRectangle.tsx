@@ -1,5 +1,5 @@
-import type Konva from 'konva';
-import type { Stage } from 'konva/lib/Stage';
+// import type Konva from 'konva';
+// import type { Stage } from 'konva/lib/Stage';
 import type { ReactElement } from 'react';
 import { Circle, Group, Rect } from 'react-konva';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
@@ -67,7 +67,7 @@ function drawVerticalLine(x, context) {
   context.stroke();
 }
 function drawRectangle(props: PPRenderFuncProps, address?: string): ReactElement {
-  console.log(`drawRectangle, annotation:`, props.annotation);
+  console.log(`drawRectangle, annotation:`, props.annotation, address);
   // return;
   // renderReact(props.canvasRef);
   const lengths = props?.annotation?.result?.split(',').length;
@@ -138,60 +138,60 @@ function drawRectangle(props: PPRenderFuncProps, address?: string): ReactElement
   function createDot(isMin: boolean) {
     if (!isMin && (points.xmax == undefined || points.ymax == undefined)) return <></>;
 
-    const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>) => {
-      if (props.currentTool != 'editor') return;
-      // start Forbid drage cross image border
-      const stage: Stage = props.stageRef?.current;
-      const baseImage = stage.findOne('.baseImage');
-      let reachBorder = false;
-      let newPositionX = evt.target.x();
-      if (newPositionX > baseImage.width() / 2) {
-        newPositionX = baseImage.width() / 2;
-        reachBorder = true;
-      }
-      if (newPositionX < -baseImage.width() / 2) {
-        newPositionX = -baseImage.width() / 2;
-        reachBorder = true;
-      }
-      let newPositionY = evt.target.y();
-      if (newPositionY > baseImage.height() / 2) {
-        newPositionY = baseImage.height() / 2;
-        reachBorder = true;
-      }
-      if (newPositionY < -baseImage.height() / 2) {
-        newPositionY = -baseImage.height() / 2;
-        reachBorder = true;
-      }
-      if (reachBorder) {
-        evt.target.setPosition({ x: newPositionX, y: newPositionY });
-      }
-      // End cross border control
-      if (isMin) {
-        points.xmin = newPositionX;
-        points.ymin = newPositionY;
-      } else {
-        points.xmax = newPositionX;
-        points.ymax = newPositionY;
-      }
-      let result = '';
-      console.log('props', props);
+    // const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>) => {
+    //   if (props.currentTool != 'editor') return;
+    //   // start Forbid drage cross image border
+    //   const stage: Stage = props.stageRef?.current;
+    //   const baseImage = stage.findOne('.baseImage');
+    //   let reachBorder = false;
+    //   let newPositionX = evt.target.x();
+    //   if (newPositionX > baseImage.width() / 2) {
+    //     newPositionX = baseImage.width() / 2;
+    //     reachBorder = true;
+    //   }
+    //   if (newPositionX < -baseImage.width() / 2) {
+    //     newPositionX = -baseImage.width() / 2;
+    //     reachBorder = true;
+    //   }
+    //   let newPositionY = evt.target.y();
+    //   if (newPositionY > baseImage.height() / 2) {
+    //     newPositionY = baseImage.height() / 2;
+    //     reachBorder = true;
+    //   }
+    //   if (newPositionY < -baseImage.height() / 2) {
+    //     newPositionY = -baseImage.height() / 2;
+    //     reachBorder = true;
+    //   }
+    //   if (reachBorder) {
+    //     evt.target.setPosition({ x: newPositionX, y: newPositionY });
+    //   }
+    //   // End cross border control
+    //   if (isMin) {
+    //     points.xmin = newPositionX;
+    //     points.ymin = newPositionY;
+    //   } else {
+    //     points.xmax = newPositionX;
+    //     points.ymax = newPositionY;
+    //   }
+    //   let result = '';
+    //   console.log('props', props);
 
-      if (props.pathName === '/optical_character_recognition') {
-        // debugger;
-        const data = `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`;
-        const strings = address ? `||${address}|0|` : '||待识别|0|';
-        const newdata = data + strings;
-        result = newdata;
-      } else {
-        result = `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`;
-      }
-      const newAnno = {
-        ...annotation,
-        predicted_by: null,
-        result: result,
-      };
-      props.onDragUP(newAnno);
-    };
+    //   if (props.pathName === '/optical_character_recognition') {
+    //     // debugger;
+    //     const data = `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`;
+    //     const strings = address ? `||${address}|0|` : '||待识别|0|';
+    //     const newdata = data + strings;
+    //     result = newdata;
+    //   } else {
+    //     result = `${points.xmin},${points.ymin},${points.xmax},${points.ymax}`;
+    //   }
+    //   const newAnno = {
+    //     ...annotation,
+    //     predicted_by: null,
+    //     result: result,
+    //   };
+    //   props.onDragUP(newAnno);
+    // };
     return (
       <Circle
         onMouseDown={() => {
@@ -201,9 +201,9 @@ function drawRectangle(props: PPRenderFuncProps, address?: string): ReactElement
             props.onSelect(annotation);
           }
         }}
-        draggable={props.currentTool == 'editor'}
+        // draggable={props.currentTool == 'editor'}
         // onDragMove={onDragEvt}
-        onDragEnd={onDragEvt}
+        // onDragEnd={onDragEvt}
         onMouseOver={() => {
           if (props.currentTool == 'editor' && props.stageRef?.current)
             props.stageRef.current.container().style.cursor = 'cell';
@@ -266,7 +266,14 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       result = results2 + '||' + data[1];
       // debugger;
     } else {
-      result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+      if (props.currentAnnotation.result.length < 4) {
+        result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
+      } else {
+        const results = props.currentAnnotation.result.split(',');
+        results[2] = mouseX + '';
+        results[3] = mouseY + '';
+        result = results.join(',');
+      }
     }
     const anno = {
       ...props.currentAnnotation,
@@ -275,6 +282,8 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     console.log('addDotToRectangle', anno);
 
     props.modifyAnnoByFrontendId(anno);
+    // props.onDragUP(anno);
+    // props.onDragUP(anno);
   };
 
   const OnMouseDown = (param: EvtProps) => {
@@ -322,9 +331,14 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   };
   const OnMouseUp = (param: EvtProps) => {
     // debugger;
+    console.log(
+      `OnMouseUps`,
+      props.currentTool != 'rectangle',
+      props.currentTool != 'editor',
+      isClick,
+    );
     if (props.currentTool != 'rectangle' && props.currentTool != 'editor' && isClick) return;
     isClick = false;
-    console.log(`OnMouseUp`);
     const mouseX = param.mouseX + param.offsetX;
     const mouseY = param.mouseY + param.offsetY;
     addDotToRectangle(mouseX, mouseY, param?.pathName);

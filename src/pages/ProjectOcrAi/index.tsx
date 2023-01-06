@@ -3,7 +3,7 @@ import { Form, Input, Button, Select } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
-import { ProjectUtils, ModelUtils, LabelUtils, IntlInit } from '@/services/utils';
+import { ProjectUtils, ModelUtils, IntlInit } from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
 import styles from './index.less';
 import { history } from 'umi';
@@ -49,11 +49,9 @@ const { Option } = Select;
 const PaddleAi: React.FC = () => {
   const DEFAULT_ML_URL = 'http://127.0.0.1:1234';
   const intl = IntlInit('pages.ProjectAi');
-  const [frontendId, setFrontendId] = useState<number>(0);
+  // const [frontendId, setFrontendId] = useState<number>(0);
   const [form] = Form.useForm();
-  const [modelUrl, setModelUrl] = useState(DEFAULT_ML_URL);
-  const [modelSelected, setModelSelected] = useState();
-  const [languageSelected, setLanguageSelected] = useState();
+  const [modelUrl, setModelUrl] = useState<any>(DEFAULT_ML_URL);
   const [languages, setLanguages] = useState([
     'ch',
     'en',
@@ -68,141 +66,76 @@ const PaddleAi: React.FC = () => {
     'cyrillic',
     'devanagari',
   ]);
-  // const [isFlag, setisFlag] = useState<Boolean>(true);
-  // const [items, setItems] = useState([]);
-  // const [items2, setItems2] = useState([]);
-  // const [name, setName] = useState('');
-  // const [name2, setName2] = useState('');
-  // const [labels, setLabels] = useState('');
-  // const [labelOption, setLabelOption] = useState([]);
-  // const [labelItem, setlabelItem] = useState([]);
-  // const inputRef = useRef<InputRef>(null);
-  // const inputRef2 = useRef<InputRef>(null);
   const project = ProjectUtils(useState);
-  // const port = window.location.port == '8000' ? '1234' : window.location.port;
-  // const port = 17995;
-  // const baseUrl = `http://${window.location.hostname}:${port}/`;
-  // const baseUrl = modelUrl;
 
   const model = ModelUtils(useState, modelUrl);
   const projectId = serviceUtils.getQueryVariable('projectId');
-  console.log('FrontendId', frontendId);
 
-  const preCurrLabelUnset = () => {
-    // annotation.setCurr(undefined);
-    setFrontendId(0);
-  };
   const handleChange = (value: any) => {
     console.log(`modelSelected ${value}`);
-    setModelSelected(value);
+    // setModelSelected(value);
     for (const models of model.all) {
       if (models.name === value) {
-        // debugger;
-        setLanguages(models.languages);
+        debugger;
+        setLanguages(models?.languages);
       }
     }
   };
-  const handleChange2 = (value: any) => {
-    // debugger;
-    console.log(`LanguageSelected ${value}`);
-    // setModelSelected(value);
-    // for (const model of model.all) {
-    //   if (model.name === value) {
-    //     setLanguages(value.languages);
-    //   }
-    // }
-    setLanguageSelected(value);
-  };
-  const handleUrlChange = (value: string) => {
-    console.log(`Urlselected ${value}`);
-    setModelUrl(value);
-  };
-  // const addItem = (e: React.MouseEvent<HTMLAnchorElement>) => {
-  //   e.preventDefault();
-  //   setItems([...items, name || `New item ${index++}`]);
-  //   setName('');
-  //   setTimeout(() => {
-  //     inputRef.current?.focus();
-  //   }, 0);
-  // };
-  const label = LabelUtils(useState, {
-    oneHot: true,
-    postSelect: () => {
-      //   annotation.setCurr(undefined);
-      setFrontendId(0);
-    },
-    preUnsetCurr: preCurrLabelUnset,
-  });
-  // const onLabelAdd = (lab) => {
-  //   label.create({ ...lab, projectId: project.curr.projectId }).then((newLabel) => {
-  //     label.setCurr(newLabel);
-  //   });
-  // };
-  // const addLabels = () => {
-  //   const labelIdMap = new Map();
-  //   label.all.forEach((labelItems) => {
-  //     labelIdMap.set(labelItems.labelId, '');
-  //   });
-  //   items2.forEach((items) => {
-  //     if (!items.labelId) {
-  //       onLabelAdd(items);
-  //     }
-  //   });
-  // };
   const saveProject = () => {
-    // setLoading(true);
-    const otherSettings = {
-      mlBackendUrl: 'http://localhost:1234',
-      modelName: modelSelected,
-      lang: languageSelected,
-      // labelMapping: labelItem,
-    };
-    // if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
-    // debugger;
-    console.log('otherSettings', otherSettings);
-    // const values = project.curr;
-    project.update(projectId, { otherSettings: otherSettings }).then(() => {
-      // addLabels();
-      history.push(`/project_overview?projectId=${projectId}`);
-    });
-    project.setAllPredicted(false, projectId);
+    const otherSettings = form.getFieldsValue(true);
+    if (projectId) {
+      const projectIds = Number(projectId);
+      project.update(projectIds, { otherSettings: otherSettings }).then(() => {
+        history.push(`/project_overview?projectId=${projectId}`);
+      });
+      project.setAllPredicted(false, projectId);
+    }
   };
-  // useEffect(() => {
-  //   if (modelUrl) {
-  // model.setMlBackendUrl(modelUrl);
-  //   }
-  // }, [modelUrl, model.setMlBackendUrl]);
-  const blurChange = () => {
-    model.setMlBackendUrl(modelUrl);
-  };
-  useEffect(() => {
-    model.getAll();
-  }, [model.backendUrl]);
   useEffect(() => {
     if (projectId) {
       project.getCurr(projectId);
       model.getAll();
-      label.getAll(projectId);
+      // label.getAll(projectId);
     }
   }, [projectId]);
-  // useEffect(() => {
-  //   if (label.all) {
-  //     setItems2(label.all);
-  //   }
-  // }, [label.all]);
-  // useEffect(() => {
-  //   if (modelSelected) {
-  //     for (const models of model.all) {
-  //       console.log('models', models);
+  useEffect(() => {
+    if (project?.curr?.otherSettings) {
+      form.setFieldsValue(project?.curr?.otherSettings);
+      // setModelUrl(project?.curr?.otherSettings?.mlBackendUrl);
+    }
+  }, [project?.curr?.otherSettings]);
+  useEffect(() => {
+    if (modelUrl) {
+      model.setMlBackendUrl(modelUrl);
+    }
+  }, [modelUrl]);
+  useEffect(() => {
+    model.getAll();
+  }, [model.backendUrl]);
+  const onConfirm = () => {
+    console.log('form.getFieldsValue', form.getFieldsValue(true));
 
-  //       if (models.name === modelSelected) {
-  //         if (models.labelNames) {
-  //           setLabelOption(models.labelNames);
-  //         }
-  //       }
-  //     }
-  //   }
-  // }, [modelSelected]);
+    form
+      ?.validateFields()
+      .then(async (values) => {
+        console.log('formvalues', values);
+        // debugger;
+        saveProject();
+      })
+      .catch((errorInfo) => {
+        console.log('errorInfo', errorInfo);
+        // alert(errorInfo);
+      });
+  };
+  const handleUrlChange = (value: string) => {
+    form.setFields([
+      {
+        name: 'mlBackendUrl',
+        value: value,
+      },
+    ]);
+    setModelUrl(value);
+  };
   return (
     <PPContainer>
       <PPBlock style={{ height: '100%' }}>
@@ -226,7 +159,7 @@ const PaddleAi: React.FC = () => {
             // }}
           >
             <Form.Item
-              name="name"
+              name="mlBackendUrl"
               label={'机器学习后端网址'}
               labelCol={{
                 span: 6,
@@ -237,7 +170,7 @@ const PaddleAi: React.FC = () => {
               rules={[
                 {
                   required: true,
-                  message: 'Please input project name!',
+                  message: '该字段为必填项请填写对应信息',
                 },
               ]}
               style={{ fontSize: '1.5rem' }}
@@ -245,15 +178,19 @@ const PaddleAi: React.FC = () => {
               <Input
                 autoComplete="off"
                 size="large"
-                defaultValue={DEFAULT_ML_URL}
-                value={modelUrl}
-                onChange={handleUrlChange}
-                onBlur={blurChange}
+                // defaultValue={DEFAULT_ML_URL}
+                // value={modelUrl}
+                // onChange={(e) => {
+                //   handleUrlChange(e.target.value);
+                // }}
+                onBlur={(e) => {
+                  handleUrlChange(e.target.value);
+                }}
                 style={{ height: '3.13rem' }}
               />
             </Form.Item>
             <Form.Item
-              name="dataDir"
+              name="modelName"
               label={'模型选择'}
               labelCol={{
                 span: 6,
@@ -264,42 +201,30 @@ const PaddleAi: React.FC = () => {
               rules={[
                 {
                   required: true,
-                  message: 'Please input dataset path!',
+                  message: '该字段为必填项请填写对应信息',
                 },
               ]}
               style={{ fontSize: '1.5rem' }}
             >
-              <div
+              <Select
+                // defaultValue=""
+                onChange={handleChange}
+                // value={modelSelected}
                 style={{
                   width: '100%',
                 }}
               >
-                <Select
-                  defaultValue=""
-                  onChange={handleChange}
-                  value={modelSelected}
-                  style={{
-                    width: '100%',
-                  }}
-                >
-                  {model.all &&
-                    model.all?.map((item) => {
-                      if (item.name === 'PaddleOCR') {
-                        return <Option value={item.name}>{item.name}</Option>;
-                      }
-                    })}
-                  {/* {project?.curr?.taskCategory?.name === 'detection' ? (
-                    <Option value="PicoDet">PicoDet</Option>
-                  ) : project?.curr?.taskCategory?.name === 'optical_character_recognition' ? (
-                    <Option value="PPLCNetV2">Ocr</Option>
-                  ) : (
-                    <Option value="PPLCNetV2">PPLCNetV2</Option>
-                  )} */}
-                </Select>
-              </div>
+                {model.all &&
+                  model.all?.map((item) => {
+                    if (item.name === 'PaddleOCR') {
+                      return <Option value={item.name}>{item.name}</Option>;
+                    }
+                  })}
+                {/* <Option value={'PaddleOCR'}>{'PaddleOCR'}</Option> */}
+              </Select>
             </Form.Item>
             <Form.Item
-              name="dataDir"
+              name="lang"
               label={'语言选择'}
               labelCol={{
                 span: 6,
@@ -310,232 +235,22 @@ const PaddleAi: React.FC = () => {
               rules={[
                 {
                   required: true,
-                  message: 'Please input dataset path!',
+                  message: '该字段为必填项请填写对应信息',
                 },
               ]}
               style={{ fontSize: '1.5rem' }}
             >
-              <div
+              <Select
                 style={{
                   width: '100%',
                 }}
               >
-                <Select
-                  defaultValue=""
-                  onChange={handleChange2}
-                  value={languageSelected}
-                  style={{
-                    width: '100%',
-                  }}
-                >
-                  {languages &&
-                    languages?.map((item) => {
-                      return <Option value={item}>{item}</Option>;
-                    })}
-                  {/* {project?.curr?.taskCategory?.name === 'detection' ? (
-                    <Option value="PicoDet">PicoDet</Option>
-                  ) : (
-                    <Option value="PPLCNetV2">PPLCNetV2</Option>
-                  )} */}
-                </Select>
-              </div>
+                {languages &&
+                  languages?.map((item) => {
+                    return <Option value={item}>{item}</Option>;
+                  })}
+              </Select>
             </Form.Item>
-            {/* <Form.Item
-              name="dataDir"
-              label={'使用预标注模型标签'}
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input dataset path!',
-                },
-              ]}
-              style={{ fontSize: '1.5rem' }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                }}
-              >
-                <div style={{ width: '6rem', marginRight: '2rem' }}>
-                  <Button
-                    type={isFlag ? 'primary' : 'default'}
-                    block={true}
-                    onClick={() => {
-                      setisFlag(() => {
-                        return true;
-                      });
-                    }}
-                  >
-                    {'是'}
-                  </Button>
-                </div>
-                <div style={{ width: '6rem' }}>
-                  <Button
-                    block={true}
-                    type={!isFlag ? 'primary' : 'default'}
-                    onClick={() => {
-                      setisFlag(() => {
-                        return false;
-                      });
-                    }}
-                  >
-                    {'否'}
-                  </Button>
-                </div>
-              </div>
-            </Form.Item> */}
-            {/* <Form.Item
-              name="textArea"
-              label={'标签对应关系'}
-              labelCol={{
-                span: 6,
-              }}
-              wrapperCol={{
-                span: 16,
-              }}
-              rules={[
-                {
-                  required: false,
-                  message: 'Please input dataset path!',
-                },
-              ]}
-              style={{ fontSize: '1.5rem' }}
-            > */}
-            {/* {isFlag ? (
-                <TextArea
-                  rows={5}
-                  defaultValue={
-                    '接受预标注模型标签后，当模型检测到新标签后，会自动在标签列表中增加该标签'
-                  }
-                />
-              ) : (
-                <div className={styles.Corresponding_list_content}>
-                  {labelItem.map((item, labelItemIndex) => {
-                    return (
-                      <div className={styles.Corresponding_list} key={item.id}>
-                        <div className={styles.Corresponding_li}>
-                          <div className={styles.Corresponding_label1}>
-                            {/* {item.model.map((models, modelIndex) => {
-                              return (
-                                <div className={styles.label} key={modelIndex}>
-                                  {models}
-                                </div>
-                              );
-                            })} */}
-            {/* <div className={styles.label} key={labelItemIndex}>
-                              {item.model}
-                            </div>
-                          </div>
-                          <div className={styles.Corresponding_label2}>
-                            <div className={styles.label}>{item.project}</div>
-                          </div>
-                          <Button
-                            size={'small'}
-                            type="primary"
-                            danger
-                            onClick={() => {
-                              deleteItems(item.id, item.model);
-                            }}
-                          >
-                            {intl('delete')}
-                          </Button>
-                        </div>
-                      </div>
-                    );
-                  })} */}
-            {/* <div
-                    className={styles.Corresponding_select_content}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <div className={styles.Corresponding_select}>
-                      <div
-                        style={{
-                          width: '200px',
-                        }}
-                      >
-                        <Select
-                          defaultValue=""
-                          onChange={multipleChange}
-                          value={labels}
-                          style={{
-                            width: '100%',
-                          }}
-                          showSearch
-                          optionFilterProp="children"
-                          filterOption={(input, option) =>
-                            (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
-                          }
-                        >
-                          {labelOption &&
-                            labelOption?.map((item) => {
-                              return <Option value={item}>{item}</Option>;
-                            })}
-                        </Select>
-                      </div>
-                    </div>
-                    <div className={styles.Corresponding_select}>
-                      <div
-                        style={{
-                          width: '200px',
-                        }}
-                      >
-                        <Select
-                          style={{ width: 200 }}
-                          // mode="multiple"
-                          placeholder="custom dropdown render"
-                          onChange={multipleChange2}
-                          value={labels2}
-                          dropdownRender={(menu) => (
-                            <>
-                              {menu}
-                              <Divider style={{ margin: '8px 0' }} />
-                              <Space style={{ padding: '0 8px 4px' }}>
-                                <Input
-                                  placeholder="Please enter item"
-                                  ref={inputRef2}
-                                  value={name2}
-                                  onChange={onNameChange2}
-                                />
-                                <Button type="text" icon={<PlusOutlined />} onClick={addItem2}>
-                                  Add
-                                </Button>
-                              </Space>
-                            </>
-                          )}
-                        >
-                          {items2.map((item) => {
-                            return (
-                              <Option value={item.name} key={item.id}>
-                                {item.name}
-                              </Option>
-                            );
-                          })}
-                          {/* {label.all?.map((item) => {
-                            return (
-                              <Option value={item.name} key={item.id}>
-                                {item.name}
-                              </Option>
-                            );
-                          })} */}
-            {/* </Select>
-                      </div>
-                    </div>
-                    <Button size={'small'} type="primary" danger onClick={addLabel}>
-                      {intl('add')}
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </Form.Item> */}
           </Form>
           <div
             style={{
@@ -544,7 +259,7 @@ const PaddleAi: React.FC = () => {
             }}
           >
             <div style={{ width: '6rem', marginRight: '2rem' }}>
-              <Button block={true} type="primary" onClick={saveProject}>
+              <Button block={true} type="primary" onClick={onConfirm}>
                 {intl('confirm')}
               </Button>
             </div>

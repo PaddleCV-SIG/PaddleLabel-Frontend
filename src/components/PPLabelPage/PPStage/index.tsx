@@ -23,6 +23,7 @@ import { Threshold } from 'konva/lib/filters/Threshold';
 import { useModel } from 'umi';
 import type { Label } from '@/models';
 import { result } from 'lodash';
+import { YahooFilled } from '@ant-design/icons';
 
 // Mock Data
 // const imgSrc = './pics/32_23.jpg';
@@ -90,9 +91,20 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const radius = useModel('VisualRadius', (x) => x.radius);
   let drawToolTemp = undefined;
   console.log('props.currentTool', props?.currentTool);
-  if (props.currentTool == 'polygon' || props.currentTool == 'editor') {
+  if (props.currentTool == 'polygon') {
     // debugger;
     drawToolTemp = props.drawTool?.polygon;
+  } else if (
+    props.currentTool === 'editor' &&
+    (props.currentAnnotation?.type === 'ocr_polygon' || props.currentAnnotation?.type === 'polygon')
+  ) {
+    drawToolTemp = props.drawTool?.polygon;
+  } else if (
+    props.currentTool === 'editor' &&
+    (props.currentAnnotation?.type === 'ocr_rectangle' ||
+      props.currentAnnotation?.type === 'rectangle')
+  ) {
+    drawToolTemp = props.drawTool?.rectangle;
   } else if (props.currentTool == 'rectangle') {
     drawToolTemp = props.drawTool?.rectangle;
   } else if (props.currentTool == 'brush') drawToolTemp = props.drawTool?.brush;
@@ -174,9 +186,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
             ...annotation,
             result: results2,
           };
-          // debugger;
-          console.log('param.annotation', param.annotation);
-
           shape = props.drawTool?.rectangle.drawAnnotation(param, address);
         } else if (annotation.type == 'ocr_polygon') {
           const data = annotation.result?.split('||')[0];
@@ -386,6 +395,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     console.log('startPos', startPos, endPos);
     ctx.strokeStyle = 'red'; //将线条颜色设置为蓝色
     ctx.stroke();
+    layerRef.current?.batchDraw();
     // ctx.save();
   };
   function restoreDrawingSurface(drawingSurfaceImageData: any) {
@@ -453,6 +463,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       onMousepoint();
       return;
     }
+    // debugger;
     setisClick(true);
     console.log('props?.tool?.curr', props?.tool?.curr);
     const ctx = canvasRef.current?.getContext('2d');
@@ -496,10 +507,26 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         setflags(false);
       }
     } else {
-      setStartPos({
-        x: mouseX,
-        y: mouseY,
-      });
+      if (props.currentTool == 'editor') {
+        const resulsts = props.currentAnnotation?.result?.split(',');
+        if (resulsts) {
+          const x = resulsts[0] - 0 + imageWidth / 2;
+          const y = resulsts[1] - 0 + imageHeight / 2;
+          console.log('xy', x, y);
+          setStartPos({
+            x: x,
+            y: y,
+          });
+        }
+      } else if (props.currentTool == 'rectangle') {
+        // debugger;
+        console.log('xy', mouseX, mouseY);
+        setStartPos({
+          x: mouseX,
+          y: mouseY,
+        });
+      }
+
       drawTool?.onMouseDown(getEvtParam(e));
       if (e.evt.button === 2) {
         onMousepoint2();
@@ -524,21 +551,21 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     //  const { canvasRef } = param;
   };
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    console.log('props?.currentTool', props?.currentTool);
-
     const mouseX = (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
     const mouseY =
       (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
+    console.log('props?.currentTool', props?.currentTool, mouseX, mouseY);
     const ctx = canvasRef.current?.getContext('2d');
     const ctx3 = canvasRef3.current?.getContext('2d');
 
-    if (props?.currentTool == 'rectangle') {
+    if (props?.currentTool == 'rectangle' || 'editor') {
       restoreDrawingSurface(DrawingSurfaceImageData);
       drawTool?.drawGuidewires(mouseX, mouseY, ctx);
       const endpos = {
         x: mouseX,
         y: mouseY,
       };
+      console.log('isClick', isClick);
 
       if (isClick) {
         renderReact(endpos);
@@ -549,11 +576,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       ctx3.strokeStyle = props.currentLabel?.color; //线条颜色
       ctx3.lineWidth = 4; //线条粗细
       ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
-      // const piX = 0;
-      // const piY = 0;
       makearc(ctx3, mouseX, mouseY, GetRandomNum(4, 4), 0, 180, props.currentLabel?.color);
       console.log('pointArr', pointArr);
-
       if (pointArr.length > 0) {
         ctx3.beginPath();
         ctx3.moveTo(pointArr[0].x, pointArr[0].y);
@@ -589,24 +613,13 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         layerRef.current?.batchDraw();
       }
     }
-    //  else if (props?.currentTool == 'rubber' && ctx && isClick) {
-    //   // debugger;
-
-    //   if (ctx) {
-    //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    //     console.log('rubbersss');
-    //   }
-    //   layerRef.current?.batchDraw();
-    // }
     drawTool?.onMouseMove(getEvtParam(e));
-    // if (props?.currentTool == 'polygon') {
-    //   // restoreDrawingSurface(DrawingSurfaceImageData);
-    //   onMouseMovePolygon(mouseX, mouseY, ctx);
-    // }
   };
   const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
     setisClick(false);
+    // debugger;
     drawTool?.onMouseUp(getEvtParam(e));
+    // debugger;
     const ctx3 = canvasRef3.current?.getContext('2d');
     // const ctx2 = canvasRef3.current?.getContext('2d');
     // if (ctx2) {

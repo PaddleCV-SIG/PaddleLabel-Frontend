@@ -96,6 +96,7 @@ const Page = () => {
     console.log('onAnnotationModify:', newAnnos, anno);
     // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     annotation.setAll(newAnnos);
+    annotation.update(anno);
   };
   const onAnnotationModifyUP = (anno: Annotation) => {
     const newAnnos = [];
@@ -164,6 +165,7 @@ const Page = () => {
       setCurrentAnnotation(anno);
     },
     onAnnotationModify: onAnnotationModify,
+    onDragUP: onAnnotationModifyUP,
     modifyAnnoByFrontendId: onAnnotationModify,
     onMouseUp: onEndEdit,
     onMouseDown: onStartEdit,
