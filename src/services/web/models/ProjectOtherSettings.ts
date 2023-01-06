@@ -89,6 +89,12 @@ export interface ProjectOtherSettings {
    * @memberof ProjectOtherSettings
    */
   paramFilePath?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   */
+  lang?: string;
 }
 
 /**
@@ -125,6 +131,7 @@ export function ProjectOtherSettingsFromJSONTyped(
       : mapValues(json['modelSettings'], ProjectOtherSettingsModelSettingsValueFromJSON),
     modelFilePath: !exists(json, 'modelFilePath') ? undefined : json['modelFilePath'],
     paramFilePath: !exists(json, 'paramFilePath') ? undefined : json['paramFilePath'],
+    lang: !exists(json, 'lang') ? undefined : json['lang'],
   };
 }
 
@@ -151,5 +158,6 @@ export function ProjectOtherSettingsToJSON(value?: ProjectOtherSettings | null):
         : mapValues(value.modelSettings, ProjectOtherSettingsModelSettingsValueToJSON),
     modelFilePath: value.modelFilePath,
     paramFilePath: value.paramFilePath,
+    lang: value.lang,
   };
 }

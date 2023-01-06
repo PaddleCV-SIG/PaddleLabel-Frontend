@@ -25,12 +25,6 @@ export interface LoadRequest {
    * @memberof LoadRequest
    */
   initParams?: object;
-  /**
-   *
-   * @type {string}
-   * @memberof LoadRequest
-   */
-  lang?: string;
 }
 
 /**
@@ -52,7 +46,6 @@ export function LoadRequestFromJSONTyped(json: any, ignoreDiscriminator: boolean
   }
   return {
     initParams: !exists(json, 'init_params') ? undefined : json['init_params'],
-    lang: !exists(json, 'lang') ? undefined : json['lang'],
   };
 }
 
@@ -65,6 +58,5 @@ export function LoadRequestToJSON(value?: LoadRequest | null): any {
   }
   return {
     init_params: value.initParams,
-    lang: value.lang,
   };
 }

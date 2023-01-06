@@ -160,4 +160,10 @@ export default {
   'pages.ProjectAi.delete': '删除',
   'pages.ProjectAi.confirm': '确定',
   'pages.ProjectAi.goback': '返回',
+  'pages.ProjectAi.mlBackendUrl': '机器学习后端网址',
+  'pages.ProjectAi.modelSelection': '模型选择',
+  'pages.ProjectAi.usePretrainedModelLabels': '使用预标注标签',
+  'pages.ProjectAi.labelMapping': '标签对应关系',
+  'pages.ProjectAi.labelMappingHint':
+    '接受预标注模型标签后，当模型检测到新标签后，会自动在标签列表中增加该标签',
 };

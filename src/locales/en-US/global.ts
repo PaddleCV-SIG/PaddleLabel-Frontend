@@ -26,4 +26,6 @@ export default {
   'global.segMaskType.grayscale': 'Gray Scale',
   'global.segMaskType.pesudo': 'Pesudo Color',
   'global.loading': 'Loading',
+  'global.yes': 'Yes',
+  'global.no': 'No',
 };

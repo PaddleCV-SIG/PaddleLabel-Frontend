@@ -54,20 +54,25 @@ export const detail = {
     cy.g('component.PPCreater.create')
       .click()
       .wait(2000)
-      .then(() =>
+      .then(() => {
+        if (screenshot)
+          cy.screenshot(
+            runId +
+              '/' +
+              dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
+              '_afterImport',
+          );
+      });
+    if (!dpath.includes('polygon2mask')) label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
+    cy.wait(1000).then(() => {
+      if (screenshot)
         cy.screenshot(
           runId +
             '/' +
             dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
-            '_afterImport',
-        ),
-      );
-    if (!dpath.includes('polygon2mask')) label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
-    cy.wait(1000).then(() =>
-      cy.screenshot(
-        runId + '/' + dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) + '_label',
-      ),
-    );
+            '_label',
+        );
+    });
   },
   changeType: (pjId: number, newType: string) => {
     detail.to(pjId);
