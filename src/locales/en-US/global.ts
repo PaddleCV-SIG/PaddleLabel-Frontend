@@ -13,7 +13,7 @@ export default {
   'global.labelFormat.mask': 'Mask',
   'global.labelFormat.polygon': 'Polygon',
   'global.labelFormat.eiseg': 'EISeg Json',
-  'global.labelFormat.txt': 'txt',
+  'global.labelFormat.txt': 'PPOCRLabel Txt',
   'global.underDevelopment': 'This feature is still under development. Please check back later.',
   'global.set.train': 'Train',
   'global.set.val': 'Val',
