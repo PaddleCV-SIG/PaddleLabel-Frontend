@@ -1,6 +1,7 @@
 export const config = {
   sampleBaseDir: '~/.paddlelabel/sample/bear', // should not have ending /, don't forget to \\ on windows
   // sampleBaseDir: '~/.paddlelabel/sample/fruit', // should not have ending /, don't forget to \\ on windows
+  thirdPartyDir: '/home/lin/Desktop/data/pdlabel', // should not have ending /
   catgInfo: {
     // semanticSegmentation: { coco: 0 },
     // detection: { voc: 0 },

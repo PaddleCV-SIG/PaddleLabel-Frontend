@@ -14,7 +14,6 @@ export default {
   'global.labelFormat.mask': '掩膜',
   'global.labelFormat.eiseg': 'EISeg Json 格式',
   'global.labelFormat.txt': 'PPOCRLabel TXT 格式',
-  // 'global.labelFormat.polygon': '多边形',
   'global.segMaskType.pesudo': '伪彩色',
   'global.segMaskType.grayscale': '灰度',
   'global.underDevelopment': '此功能正在开发中，敬请期待',

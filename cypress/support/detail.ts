@@ -44,13 +44,11 @@ export const detail = {
       datasetPath != undefined
         ? datasetPath
         : `${config.sampleBaseDir}/${projectType}/${labelFormat}`;
-    const name = dpath.replace(config.sampleBaseDir, '');
+    const name = dpath.replace(config.sampleBaseDir, '').replace(config.thirdPartyDir, '3rd_party');
     cy.get('#name').type(name);
     cy.get('#dataDir').type(dpath);
     cy.get('#description').type(name);
     cy.g(`global.labelFormat.${labelFormat}`).click();
-    // if (projectType == 'semanticSegmentation' && labelFormat == 'mask')
-    //   cy.g('global.segMaskType.pesudo').should('be.visible');
     cy.g('component.PPCreater.create')
       .click()
       .wait(2000)

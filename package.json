@@ -43,7 +43,7 @@
     "not ie <= 10"
   ],
   "dependencies": {
-    "@ant-design/icons": "^4.7.0",
+    "@ant-design/icons": "latest",
     "@ant-design/pro-descriptions": "^1.10.0",
     "@ant-design/pro-form": "^1.52.0",
     "@ant-design/pro-layout": "^6.32.0",
