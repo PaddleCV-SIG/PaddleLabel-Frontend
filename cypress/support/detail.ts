@@ -52,8 +52,9 @@ export const detail = {
     cy.g(`global.labelFormat.${labelFormat}`).click();
     cy.g('component.PPCreater.create')
       .click()
-      .wait(1000)
+      .wait(500)
       .then(() => {
+        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
         if (screenshot)
           cy.screenshot(
             runId +
@@ -62,16 +63,22 @@ export const detail = {
               '_afterImport',
           );
       });
-    if (!dpath.includes('polygon2mask')) label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
-    if (screenshot)
-      cy.wait(1000).then(() => {
-        cy.screenshot(
-          runId +
-            '/' +
-            dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
-            '_label',
-        );
+    for (let t = 0; t < 4; t++)
+      cy.wait(400).then(() => {
+        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
       });
+    if (
+      !(
+        dpath.includes('polygon2mask') ||
+        dpath.includes('gray/coco') ||
+        dpath.includes('pseudo/coco')
+      )
+    )
+      label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
+    if (screenshot)
+      cy.screenshot(
+        runId + '/' + dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) + '_label',
+      );
   },
   changeType: (pjId: number, newType: string) => {
     detail.to(pjId);

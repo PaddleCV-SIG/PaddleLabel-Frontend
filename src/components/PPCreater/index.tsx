@@ -324,7 +324,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 }}
               >
                 <Radio.Group size="large" style={{ height: '3.13rem' }}>
-                  {['pesudo', 'grayscale'].map((k) => (
+                  {['pseudo', 'grayscale'].map((k) => (
                     <Radio key={k} value={k}>
                       {intlJsx(k, 'global.segMaskType')}
                     </Radio>

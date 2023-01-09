@@ -24,7 +24,7 @@ export default {
   'global.absolutePath': 'Absolute path',
   'global.anyString': 'Anything char you can type',
   'global.segMaskType.grayscale': 'Gray Scale',
-  'global.segMaskType.pesudo': 'Pesudo Color',
+  'global.segMaskType.pseudo': 'Pesudo Color',
   'global.loading': 'Loading',
   'global.yes': 'Yes',
   'global.no': 'No',

@@ -12,27 +12,56 @@ describe('Test Import Export then Import Back', () => {
   });
 
   var datasets = [
-    // {
-    //   path: 'easydata/clas/single/sample-img-single-cls-annotated-folder/',
-    //   category: 'classification',
-    //   format: 'singleClass',
-    // },
-
-    // { path: 'easydata/det/sample-obj-dct-annotated-voc/', category: 'detection', format: 'voc' },
-    // { path: 'easydata/det/sample-obj-dct-annotated-coco/', category: 'detection', format: 'coco' },
-    // { path: 'easydata/insseg/seg_coco_example/', category: 'instanceSegmentation', format: 'coco' },
-    { path: 'easydata/semseg/seg_coco_example/', category: 'semanticSegmentation', format: 'coco' },
-    // {'path':'easydata/ocr/sample-img-paddle-ocr-txt-annotated/','category': ,'format':}
-    // {'path':'labelme/rectangle/data_dataset_voc/','category': ,'format':}
-    // {'path':'labelme/insseg/data_dataset_coco/','category': ,'format':}
-    // {'path':'labelImg/voc/','category': ,'format':}
-    // {'path':'labelImg/yolo/','category': ,'format':}
-    // {'path':'eiseg/seg/coco/','category': ,'format':}
-    // {'path':'eiseg/seg/gray/','category': ,'format':}
-    // {'path':'eiseg/seg/eiseg_json/','category': ,'format':}
-    // {'path':'eiseg/seg/pesudo/','category': ,'format':}
-    // {'path':'eiseg/det/coco/','category': ,'format':}
-    // {'path':'eiseg/det/voc/','category': ,'format':}
+    {
+      path: '3rd_party/easydata/clas/single/sample-img-single-cls-annotated-folder/',
+      category: 'classification',
+      format: 'singleClass',
+    },
+    {
+      path: '3rd_party/easydata/det/sample-obj-dct-annotated-voc/',
+      category: 'detection',
+      format: 'voc',
+    },
+    {
+      path: '3rd_party/easydata/det/sample-obj-dct-annotated-coco/',
+      category: 'detection',
+      format: 'coco',
+    },
+    {
+      path: '3rd_party/easydata/insseg/seg_coco_example/',
+      category: 'instanceSegmentation',
+      format: 'coco',
+    },
+    {
+      path: '3rd_party/easydata/semseg/seg_coco_example/',
+      category: 'semanticSegmentation',
+      format: 'coco',
+    },
+    {
+      path: '3rd_party/easydata/ocr/sample-img-paddle-ocr-txt-annotated/',
+      category: 'opticalCharacterRecognition',
+      format: 'txt',
+    },
+    { path: '3rd_party/labelme/rectangle/data_dataset_voc/', category: 'detection', format: 'voc' },
+    {
+      path: '3rd_party/labelme/insseg/data_dataset_coco/',
+      category: 'instanceSegmentation',
+      format: 'coco',
+    },
+    { path: '3rd_party/labelImg/voc/', category: 'detection', format: 'voc' },
+    { path: '3rd_party/labelImg/yolo/', category: 'detection', format: 'yolo' },
+    { path: '3rd_party/eiseg/insseg/coco/', category: 'instanceSegmentation', format: 'coco' },
+    { path: '3rd_party/eiseg/semseg/coco/', category: 'semanticSegmentation', format: 'coco' },
+    { path: '3rd_party/eiseg/semseg/gray/', category: 'semanticSegmentation', format: 'mask' },
+    { path: '3rd_party/eiseg/semseg/pseudo/', category: 'semanticSegmentation', format: 'mask' },
+    {
+      path: '3rd_party/eiseg/semseg/eiseg_json/',
+      category: 'semanticSegmentation',
+      format: 'eiseg',
+    },
+    { path: '3rd_party/eiseg/det/coco/', category: 'detection', format: 'coco' },
+    { path: '3rd_party/eiseg/det/voc/', category: 'detection', format: 'voc' },
+    // { path: , category: , format: },
   ];
 
   var pjId = 2;
@@ -54,7 +83,7 @@ describe('Test Import Export then Import Back', () => {
       for (const expFormat of Object.keys(config.catgInfo[dataset.category])) {
         if (expFormat == 'eiseg') continue; // NOTE: This format doesn't support export
 
-        let exportPath = `${config.thirdPartyDir}/export/${dataset.path}/${expFormat}`;
+        let exportPath = `${config.thirdPartyDir}/export/${dataset.path}${expFormat}`;
 
         if (datasets[idx]['exports'] === undefined) datasets[idx]['exports'] = [];
         datasets[idx].exports.push({
