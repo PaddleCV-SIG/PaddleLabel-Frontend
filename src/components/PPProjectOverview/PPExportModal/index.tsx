@@ -106,7 +106,7 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
                   : 'none',
             }}
           >
-            <Radio.Group size="large" style={{ height: '3.13rem' }} value={'grayscale'}>
+            <Radio.Group size="large" style={{ height: '3.13rem' }} defaultValue={'grayscale'}>
               {['grayscale', 'pesudo'].map((k) => (
                 <Radio key={k} value={k}>
                   {intlJsx(k, 'global.segMaskType')}

@@ -12,15 +12,16 @@ describe('Test Import Export then Import Back', () => {
   });
 
   var datasets = [
-    {
-      path: 'easydata/clas/single/sample-img-single-cls-annotated-folder/',
-      category: 'classification',
-      format: 'singleClass',
-    },
-    // {'path':'easydata/clas/multi/sample-img-multi-cls-annotated-folder/','category': ,'format':}
-    // {'path':'easydata/det/sample-obj-dct-annotated-voc/','category': ,'format':}
-    // {'path':'easydata/det/sample-obj-dct-annotated-coco/','category': ,'format':}
-    // {'path':'easydata/insseg/seg_coco_example/','category': ,'format':}
+    // {
+    //   path: 'easydata/clas/single/sample-img-single-cls-annotated-folder/',
+    //   category: 'classification',
+    //   format: 'singleClass',
+    // },
+
+    // { path: 'easydata/det/sample-obj-dct-annotated-voc/', category: 'detection', format: 'voc' },
+    // { path: 'easydata/det/sample-obj-dct-annotated-coco/', category: 'detection', format: 'coco' },
+    // { path: 'easydata/insseg/seg_coco_example/', category: 'instanceSegmentation', format: 'coco' },
+    { path: 'easydata/semseg/seg_coco_example/', category: 'semanticSegmentation', format: 'coco' },
     // {'path':'easydata/ocr/sample-img-paddle-ocr-txt-annotated/','category': ,'format':}
     // {'path':'labelme/rectangle/data_dataset_voc/','category': ,'format':}
     // {'path':'labelme/insseg/data_dataset_coco/','category': ,'format':}
