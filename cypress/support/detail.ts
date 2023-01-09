@@ -14,10 +14,11 @@ export const detail = {
     cy.g('pages.projectOverview.projectSettings').click();
     detail.on();
   },
+  // DEPCRATED:
   modify: () => {
     const randName = (Math.random() + 1).toString(36);
     cy.onPage('project_detail').then(() => {
-      cy.get('#name').clear().type(randName);
+      cy.get('#name').clear().type(randName, { delay: 0 });
       cy.g('component.PPCreater.update').click();
     });
 
@@ -45,13 +46,13 @@ export const detail = {
         ? datasetPath
         : `${config.sampleBaseDir}/${projectType}/${labelFormat}`;
     const name = dpath.replace(config.sampleBaseDir, '').replace(config.thirdPartyDir, '3rd_party');
-    cy.get('#name').type(name);
-    cy.get('#dataDir').type(dpath);
-    cy.get('#description').type(name);
+    cy.get('#name').type(name, { delay: 0 });
+    cy.get('#dataDir').type(dpath, { delay: 0 });
+    cy.get('#description').type(name, { delay: 0 });
     cy.g(`global.labelFormat.${labelFormat}`).click();
     cy.g('component.PPCreater.create')
       .click()
-      .wait(2000)
+      .wait(1000)
       .then(() => {
         if (screenshot)
           cy.screenshot(
@@ -62,15 +63,15 @@ export const detail = {
           );
       });
     if (!dpath.includes('polygon2mask')) label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
-    cy.wait(1000).then(() => {
-      if (screenshot)
+    if (screenshot)
+      cy.wait(1000).then(() => {
         cy.screenshot(
           runId +
             '/' +
             dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
             '_label',
         );
-    });
+      });
   },
   changeType: (pjId: number, newType: string) => {
     detail.to(pjId);

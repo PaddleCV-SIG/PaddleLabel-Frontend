@@ -291,7 +291,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                         )}/`,
                       )
                       .then((res) => {
-                        console.log('asdfasdf', res);
+                        // console.log('asdfasdf', res);
                         setSampleFiles(res);
                       });
                   }}
