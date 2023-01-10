@@ -63,6 +63,9 @@ describe('Test Import Export then Import Back', () => {
     { path: '3rd_party/eiseg/det/voc/', category: 'detection', format: 'voc' },
     // { path: , category: , format: },
   ];
+  console.log('asdf', Cypress.env('os'));
+  if (Cypress.env('os') != undefined && Cypress.env('os').includes('windows'))
+    for (const idx in datasets) datasets[idx].path = datasets[idx].path.replace('/', '\\');
 
   var pjId = 2;
 
