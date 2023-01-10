@@ -66,15 +66,15 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
 
   const saveProject = (values: any) => {
     setLoading(true);
-    const otherSettings = {};
-    if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
+    // const otherSettings = {};
+    // if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
 
     if (!projectId) {
       projects
         .create({
           ...values,
           taskCategoryId: createInfo[props.taskCategory].id,
-          otherSettings: otherSettings,
+          // otherSettings: otherSettings,
         })
         .catch((err) => {
           message.error(intl('creationFail'));
