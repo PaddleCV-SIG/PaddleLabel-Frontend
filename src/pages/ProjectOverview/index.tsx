@@ -34,7 +34,7 @@ const TaskList: React.FC = () => {
   };
   const columns: ColumnsType<Task> = [
     {
-      title: 'ID',
+      title: intl('id'),
       dataIndex: 'taskId',
       key: 'taskId',
       width: '25%',
