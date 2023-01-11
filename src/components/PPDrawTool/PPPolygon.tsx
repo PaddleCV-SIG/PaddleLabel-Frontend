@@ -118,7 +118,13 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
   });
   // Create polygon
   return (
-    <Group key={annotation.frontendId}>
+    <Group
+      key={annotation.frontendId}
+      onClick={() => {
+        if (props.currentTool === 'editor' || props.currentTool === 'mover')
+          props.onSelect(annotation);
+      }}
+    >
       <Line
         onMouseOver={() => {
           if (props.currentTool == 'editor') {
@@ -127,9 +133,6 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
         }}
         onMouseOut={() => {
           document.body.style.cursor = 'default';
-        }}
-        onClick={() => {
-          if (props.currentTool == 'editor') props.onSelect(annotation);
         }}
         stroke={color}
         strokeWidth={2 / props.scale}

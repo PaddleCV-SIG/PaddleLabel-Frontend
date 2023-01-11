@@ -543,13 +543,12 @@ const Page: React.FC = () => {
                 settings?.modelSettings?.EISeg?.modelFilePath,
                 settings?.modelSettings?.EISeg?.paramFilePath,
               );
-
+              const params = {
+                model_path: settings?.modelSettings?.EISeg?.modelFilePath,
+                param_path: settings?.modelSettings?.EISeg?.paramFilePath,
+              };
               try {
-                await model.load(
-                  'EISeg',
-                  settings?.modelSettings?.EISeg?.modelFilePath,
-                  settings?.modelSettings?.EISeg?.paramFilePath,
-                );
+                await model.load('EISeg', params);
               } catch (e) {
                 return;
               }

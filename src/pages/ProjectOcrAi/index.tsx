@@ -76,7 +76,7 @@ const PaddleAi: React.FC = () => {
     // setModelSelected(value);
     for (const models of model.all) {
       if (models.name === value) {
-        debugger;
+        // debugger;
         setLanguages(models?.languages);
       }
     }

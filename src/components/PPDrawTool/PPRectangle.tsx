@@ -66,11 +66,19 @@ function drawVerticalLine(x, context) {
   context.lineTo(x + 0.5, context.canvas.height);
   context.stroke();
 }
-function drawRectangle(props: PPRenderFuncProps, address?: string): ReactElement {
-  console.log(`drawRectangle, annotation:`, props.annotation, address);
+function drawRectangle(props: PPRenderFuncProps): ReactElement {
+  // console.log(`drawRectangle, annotation:`, props.annotation, address);
   // return;
   // renderReact(props.canvasRef);
-  const lengths = props?.annotation?.result?.split(',').length;
+  let lengths: any = 0;
+  if (props.annotation.type == 'ocr_rectangle') {
+    const data = props.annotation.result?.split('||')[0];
+    const results2 = data && data.split('|').join(',');
+    console.log('results2', results2);
+    lengths = results2?.split(',').length;
+  } else {
+    lengths = props?.annotation?.result?.split(',').length;
+  }
   if (lengths && lengths < 4) {
     return <></>;
   }
@@ -83,7 +91,17 @@ function drawRectangle(props: PPRenderFuncProps, address?: string): ReactElement
     !annotation.annotationId
   )
     return <></>;
-  const pointsRaw = annotation.result.split(',');
+  let pointsRaw = [];
+  if (annotation.type == 'ocr_rectangle') {
+    const data = annotation.result?.split('||')[0];
+    // const address = annotation.result?.split('||')[1].split('|')[0];
+    const results2 = data && data.split('|').join(',');
+    // annotation.result = results2;
+    pointsRaw = results2.split(',');
+  } else {
+    pointsRaw = annotation.result.split(',');
+  }
+
   console.log('pointsRaw', pointsRaw);
 
   const points = {
@@ -117,7 +135,8 @@ function drawRectangle(props: PPRenderFuncProps, address?: string): ReactElement
         }}
         onClick={() => {
           console.log('props.currentTool', props.currentTool, annotation);
-          if (props.currentTool !== 'rectangle') props.onSelect(annotation);
+          if (props.currentTool === 'editor' || props.currentTool === 'mover')
+            props.onSelect(annotation);
           // props.onSelect(annotation);
         }}
         stroke={color}
@@ -257,13 +276,22 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (!props.currentAnnotation || !props.currentAnnotation.result || !props.currentLabel?.color)
       return;
     // debugger;
-    let result = '';
+    let result: any = '';
     console.log('props.currentAnnotation.result', props.currentAnnotation.result);
     if (pathName === '/optical_character_recognition') {
-      const data = props.currentAnnotation.result?.split('||');
-      const results2 = data[0] + `,${mouseX},${mouseY}`;
+      const data: any = props.currentAnnotation.result?.split('||');
+      // debugger;
+      // const address = props.currentAnnotation.result?.split('||')[1].split('|')[0];
+      const results2 = data && data[0].split('|');
 
-      result = results2 + '||' + data[1];
+      if (results2.length < 4) {
+        result = results2.join('|') + `|${mouseX}|${mouseY}` + '||' + data[1];
+      } else {
+        const results = results2;
+        results[2] = mouseX + '';
+        results[3] = mouseY + '';
+        result = results.join('|') + '||' + data[1];
+      }
       // debugger;
     } else {
       if (props.currentAnnotation.result.length < 4) {

@@ -31,8 +31,13 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     form.setFieldsValue(initialValues);
     if (settings.mlBackendUrl) model.setMlBackendUrl(settings.mlBackendUrl);
     else model.setMlBackendUrl(DEFAULT_ML_URL);
-    if (settings.modelFilePath && settings.paramFilePath)
-      model.load('EISeg', settings.modelFilePath, settings.paramFilePath);
+    if (settings.modelFilePath && settings.paramFilePath) {
+      const params = {
+        model_path: settings.modelFilePath,
+        param_path: settings.paramFilePath,
+      };
+      model.load('EISeg', params);
+    }
   }, [project.curr]);
 
   function saveMlsettings(settings: any) {

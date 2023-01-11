@@ -527,10 +527,23 @@ export function AnnotationUtils(
     if (dataId == undefined) return [];
     try {
       const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
-      console.log('All annotations', annRes);
+      // if () {
+      //   // if (Number(taskId) == annRes[0].taskId) {
+      //   //   setAll(annRes);
+      //   //   return annRes;
+      //   // }
+      //   project.get;
+      // } else {
+      //   setAll(annRes);
+      //   return annRes;
+      // }
+      console.log('annRes', annRes[0], project, project?.curr?.taskCategoryId, annRes[0].taskId);
+
+      if (annRes && Number(project?.curr?.taskCategoryId) == annRes[0].taskId) {
+        setAll(annRes);
+        return annRes;
+      }
       // setAll([]);
-      setAll(annRes);
-      return annRes;
     } catch (err) {
       console.log('AnnotationUtils ann getAll err', err);
       serviceUtils.parseError(err, message);
@@ -568,7 +581,14 @@ export function AnnotationUtils(
       }
       let annRes: Annotation[] = [];
       // sync anns from backend
-      if (anns[0]?.dataId) annRes = await getAll(anns[0]?.dataId);
+      if (anns[0]?.dataId) {
+        annRes = await getAll(anns[0]?.dataId);
+        // if (taskId) {
+        //   annRes = await getAll(anns[0]?.dataId, taskId);
+        // } else {
+        //   annRes = await getAll(anns[0]?.dataId);
+        // }
+      }
       // if currently 1 ann -> this is the first ann -> update progress
       if (project && annRes.length == 1) project.getFinished();
     } catch (err) {
@@ -948,12 +968,12 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
     }
   }
 
-  async function load(modelName: string, modelPath?: string, paramPath?: string) {
+  async function load(modelName: string, parmas = {}) {
     try {
       await checkAPI();
       setLoading(true);
       await modelApi.load(modelName, {
-        initParams: { model_path: modelPath, param_path: paramPath },
+        initParams: parmas,
       });
       setLoading(false);
     } catch (err) {

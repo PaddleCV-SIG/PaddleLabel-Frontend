@@ -121,6 +121,7 @@ const Page = () => {
     console.log('onAnnotationModify:', newAnnos, anno);
     // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     annotation.setAll(newAnnos);
+    annotation.update(anno);
   };
   const onAnnotationModifyUP = (anno: Annotation) => {
     const newAnnos = [];
@@ -243,9 +244,15 @@ const Page = () => {
   const onPredicted = (images: HTMLImageElement) => {
     const imgBase64 = getBase64Image(images);
     const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
+    const dataCurr = data?.curr;
+    console.log('dataIds', dataCurr);
+
     const line = model.predict('PaddleOCR', {
       format: 'b64',
       img: imgBase64,
+      piggyback: {
+        dataId: dataCurr?.dataId,
+      },
     });
     if (!line) return;
     line.then(
@@ -256,10 +263,8 @@ const Page = () => {
               return item;
             }
           });
-          // const predictions = res.predictions;
-          // debugger;
           setIsLoad(false);
-          data.updatePredicted(data.all[0]?.dataId, true);
+          data.updatePredicted(data.all[0]?.dataId, true); // 是否已经推理过
           setInteractorData({
             active: true,
             mousePoints: interactorData.mousePoints,
@@ -353,7 +358,10 @@ const Page = () => {
       const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
       model.setMlBackendUrl(settings.mlBackendUrl || '');
       model.setLoading(true);
-      model.load(settings.modelName).then(
+      const params = {
+        lang: settings.lang,
+      };
+      model.load(settings.modelName, params).then(
         () => {
           // message.info(intl('modelLoaded'));
           model.setLoading(false);
@@ -467,7 +475,7 @@ const Page = () => {
         });
         const deduplicate = true;
         // debugger;
-        annotation.create(annos, '', deduplicate);
+        annotation.create(annos, '', deduplicate, false);
         // debugger;
         setInteractorData({ active: false, predictData: [], mousePoints: [] });
         setflags(false);
