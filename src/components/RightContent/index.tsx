@@ -1,5 +1,5 @@
 import { Space } from 'antd';
-import { GithubOutlined } from '@ant-design/icons';
+import { GithubOutlined, QuestionCircleOutlined, BugFilled } from '@ant-design/icons';
 import React from 'react';
 import { useModel, SelectLang } from 'umi';
 // import Avatar from './AvatarDropdown';
@@ -49,12 +49,29 @@ const GlobalHeaderRight: React.FC = () => {
       <span
         className={styles.action}
         onClick={() => {
+          window.open('/static/doc/index.html');
+        }}
+      >
+        <QuestionCircleOutlined />
+      </span>
+      <span
+        className={styles.action}
+        onClick={() => {
+          window.open('https://github.com/PaddleCV-SIG/PaddleLabel/issues/new');
+        }}
+      >
+        <BugFilled />
+      </span>
+
+      <span
+        className={styles.action}
+        onClick={() => {
           window.open('https://github.com/PaddleCV-SIG/PaddleLabel');
         }}
       >
-        {/* <QuestionCircleOutlined /> */}
         <GithubOutlined />
       </span>
+
       {/* <Avatar /> */}
       <SelectLang className={styles.action} />
     </Space>

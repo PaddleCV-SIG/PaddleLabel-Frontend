@@ -153,8 +153,11 @@ export default {
   'pages.projectOverview.tasks': '任务',
   'pages.projectOverview.taskCount': '任务总数',
   'pages.projectOverview.autoInferenceSettings': '自动推理设置',
+  'pages.projectOverview.id': '任务编号',
+
   'pages.classification.preNext': '上一张图片尚未标记',
   'pages.classification.noHighScoreResult': '自动推理未发现高置信度结果',
+
   'pages.ProjectAi.title': '自动推理设置',
   'pages.ProjectAi.add': '添加',
   'pages.ProjectAi.delete': '删除',

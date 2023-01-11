@@ -66,15 +66,15 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
 
   const saveProject = (values: any) => {
     setLoading(true);
-    const otherSettings = {};
-    if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
+    // const otherSettings = {};
+    // if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
 
     if (!projectId) {
       projects
         .create({
           ...values,
           taskCategoryId: createInfo[props.taskCategory].id,
-          otherSettings: otherSettings,
+          // otherSettings: otherSettings,
         })
         .catch((err) => {
           message.error(intl('creationFail'));
@@ -291,7 +291,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                         )}/`,
                       )
                       .then((res) => {
-                        console.log('asdfasdf', res);
+                        // console.log('asdfasdf', res);
                         setSampleFiles(res);
                       });
                   }}
@@ -324,7 +324,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 }}
               >
                 <Radio.Group size="large" style={{ height: '3.13rem' }}>
-                  {['pesudo', 'grayscale'].map((k) => (
+                  {['pseudo', 'grayscale'].map((k) => (
                     <Radio key={k} value={k}>
                       {intlJsx(k, 'global.segMaskType')}
                     </Radio>

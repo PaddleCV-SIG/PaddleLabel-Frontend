@@ -25,6 +25,10 @@ export const overview = {
   toLabel: (projectType: string, skipAnnTest: string = false) => {
     cy.g('pages.projectOverview.label').first().click();
     label.on(projectType, skipAnnTest);
+    for (let t = 0; t < 4; t++)
+      cy.wait(500).then(() => {
+        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
+      });
   },
   toExport: () => {
     cy.g('component.PPExportModal.title').click();
@@ -77,7 +81,7 @@ export const overview = {
     cy.g('component.PPExportModal.export').should('be.visible'); // modal shouldn't close
 
     // input correct path
-    cy.get('#basic_exportDir').clear().type(exportPath);
+    cy.get('#basic_exportDir').clear().type(exportPath, { delay: 0 });
 
     // omit choosing export format
     cy.g('component.PPExportModal.nullLabelFormat').should('be.visible');

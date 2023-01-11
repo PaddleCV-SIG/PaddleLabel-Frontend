@@ -14,10 +14,11 @@ export const detail = {
     cy.g('pages.projectOverview.projectSettings').click();
     detail.on();
   },
+  // DEPCRATED:
   modify: () => {
     const randName = (Math.random() + 1).toString(36);
     cy.onPage('project_detail').then(() => {
-      cy.get('#name').clear().type(randName);
+      cy.get('#name').clear().type(randName, { delay: 0 });
       cy.g('component.PPCreater.update').click();
     });
 
@@ -44,17 +45,16 @@ export const detail = {
       datasetPath != undefined
         ? datasetPath
         : `${config.sampleBaseDir}/${projectType}/${labelFormat}`;
-    const name = dpath.replace(config.sampleBaseDir, '');
-    cy.get('#name').type(name);
-    cy.get('#dataDir').type(dpath);
-    cy.get('#description').type(name);
+    const name = dpath.replace(config.sampleBaseDir, '').replace(config.thirdPartyDir, '3rd_party');
+    cy.get('#name').type(name, { delay: 0 });
+    cy.get('#dataDir').type(dpath, { delay: 0 });
+    cy.get('#description').type(name, { delay: 0 });
     cy.g(`global.labelFormat.${labelFormat}`).click();
-    // if (projectType == 'semanticSegmentation' && labelFormat == 'mask')
-    //   cy.g('global.segMaskType.pesudo').should('be.visible');
     cy.g('component.PPCreater.create')
       .click()
-      .wait(2000)
+      .wait(500)
       .then(() => {
+        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
         if (screenshot)
           cy.screenshot(
             runId +
@@ -63,16 +63,22 @@ export const detail = {
               '_afterImport',
           );
       });
-    if (!dpath.includes('polygon2mask')) label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
-    cy.wait(1000).then(() => {
-      if (screenshot)
-        cy.screenshot(
-          runId +
-            '/' +
-            dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
-            '_label',
-        );
-    });
+    for (let t = 0; t < 4; t++)
+      cy.wait(400).then(() => {
+        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
+      });
+    if (
+      !(
+        dpath.includes('polygon2mask') ||
+        dpath.includes('gray/coco') ||
+        dpath.includes('pseudo/coco')
+      )
+    )
+      label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
+    if (screenshot)
+      cy.screenshot(
+        runId + '/' + dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) + '_label',
+      );
   },
   changeType: (pjId: number, newType: string) => {
     detail.to(pjId);
