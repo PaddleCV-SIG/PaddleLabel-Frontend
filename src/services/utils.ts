@@ -527,22 +527,11 @@ export function AnnotationUtils(
     if (dataId == undefined) return [];
     try {
       const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
-      // if () {
-      //   // if (Number(taskId) == annRes[0].taskId) {
-      //   //   setAll(annRes);
-      //   //   return annRes;
-      //   // }
-      //   project.get;
-      // } else {
-      //   setAll(annRes);
-      //   return annRes;
-      // }
-      console.log('annRes', annRes[0], project, project?.curr?.taskCategoryId, annRes[0].taskId);
+      console.log('All annotations', annRes);
+      // setAll([]);
+      setAll(annRes);
+      return annRes;
 
-      if (annRes && Number(project?.curr?.taskCategoryId) == annRes[0].taskId) {
-        setAll(annRes);
-        return annRes;
-      }
       // setAll([]);
     } catch (err) {
       console.log('AnnotationUtils ann getAll err', err);
@@ -552,7 +541,10 @@ export function AnnotationUtils(
   };
 
   async function clear() {
-    if (all.length == 0) return;
+    if (!all) return;
+    console.log('alls', all);
+
+    if (all?.length == 0) return;
     await pushToBackend(all[0].dataId, []);
     setAllRaw([]);
     if (label) {
@@ -583,13 +575,7 @@ export function AnnotationUtils(
       // sync anns from backend
       if (anns[0]?.dataId) {
         annRes = await getAll(anns[0]?.dataId);
-        // if (taskId) {
-        //   annRes = await getAll(anns[0]?.dataId, taskId);
-        // } else {
-        //   annRes = await getAll(anns[0]?.dataId);
-        // }
       }
-      // if currently 1 ann -> this is the first ann -> update progress
       if (project && annRes.length == 1) project.getFinished();
     } catch (err) {
       console.log('annotation create err', err);
@@ -684,9 +670,8 @@ export function AnnotationUtils(
 }
 
 export const DataUtils = (useState: UseStateType) => {
-  const [currIdx, setCurrIdx] = useState<number>();
+  const [currIdx, setCurrIdx] = useState<number>(0);
   const [all, setAll] = useState<Data[]>([]);
-
   const turnTo = async (turnToIdx: number) => {
     setCurrIdx(turnToIdx);
   };
@@ -741,6 +726,8 @@ export const DataUtils = (useState: UseStateType) => {
     updatePredicted,
     get curr() {
       // console.log('data.getcurr');
+
+      // debugger;
       if (currIdx == undefined || all == undefined) return undefined;
       return all[currIdx];
     },
@@ -785,17 +772,6 @@ export function importDataset(
       throw new Error();
     });
 }
-
-// type PageInitType = {
-//   tool: any;
-//   loading: LoadingUtilsType;
-//   scale: any;
-//   annotation: any;
-//   task: any;
-//   data: any;
-//   project: any;
-//   label: ;
-// };
 export function PageInit(
   useState: UseStateType,
   useEffect: UseEffectType,

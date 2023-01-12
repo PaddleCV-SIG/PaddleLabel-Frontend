@@ -4,7 +4,6 @@ import { Spin, message, Button } from 'antd';
 import { history, useModel } from 'umi';
 import styles from './index.less';
 import Tables from './Tables';
-
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
@@ -41,7 +40,7 @@ const Page = () => {
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const [otherSetting, setotherSetting] = useState();
   const [flags, setflags] = useState<boolean>(false);
-  const [onSelect, setOnSelect] = useState<Annotation>();
+  // const [onSelect, setOnSelect] = useState<Annotation>();
   const [transparency, setTransparency] = useState(60);
   // const [drawTool, setDrawTool] = useState<DrawToolType>();
   const model = ModelUtils(useState, baseUrl);
@@ -71,6 +70,8 @@ const Page = () => {
       },
     },
   );
+  const datas = useRef(data);
+  datas.current = data;
   const [image] = useImage(data.imgSrc || '', 'anonymous');
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
@@ -80,7 +81,7 @@ const Page = () => {
   }
 
   const setCurrentAnnotation = (anno?: Annotation) => {
-    console.log('setCurrentAnnotation');
+    console.log('setCurrentAnnotation', anno);
     annotation.setCurr(anno);
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
@@ -88,18 +89,28 @@ const Page = () => {
 
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
-    console.log('annotationfronsss', anno);
+    console.log('annotationfronsss', anno, annotation.all);
     if (anno.type === 'ocr_polygon') {
-      console.log('onAnnotationModify', anno);
-      annotation.all.pop();
-      annotation.all.push(anno);
-      setCurrentAnnotation(anno);
-      annotation.setAll(annotation.all);
+      // console.log('onAnnotationModify', anno);
+      if (!anno) return;
+      for (const item of annotation.all) {
+        console.log('annotationfrontendId:', item.frontendId, anno.frontendId, annotation.all);
+        if (item.frontendId === anno.frontendId) {
+          newAnnos.push({
+            ...item,
+            result: anno.result,
+          });
+          setCurrentAnnotation(anno);
+        } else {
+          newAnnos.push(item);
+        }
+      }
+      // annotation.setAll(annAll);
     } else {
       for (const item of annotation.all) {
         console.log('annotationfrontendId:', item.frontendId, anno.frontendId, annotation.all);
         let areasResult: any = '';
-        if (item.frontendId == anno.frontendId) {
+        if (item.frontendId === anno.frontendId) {
           if (history?.location?.pathname === '/optical_character_recognition') {
             areasResult = anno?.result?.split('||')[0].split('|').join(',');
           } else {
@@ -112,16 +123,19 @@ const Page = () => {
           if (Math.abs(area) > 10) {
             item.result = anno?.result;
             setCurrentAnnotation(anno);
+            newAnnos.push(item);
+            console.log('newAnnos.push:', item);
           }
         } else {
           newAnnos.push(item);
+          console.log('newAnnos.push:', item);
         }
       }
     }
     console.log('onAnnotationModify:', newAnnos, anno);
-    // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     annotation.setAll(newAnnos);
-    annotation.update(anno);
+
+    // // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
   };
   const onAnnotationModifyUP = (anno: Annotation) => {
     const newAnnos = [];
@@ -140,48 +154,45 @@ const Page = () => {
     annotation.update(anno);
   };
   const onStartEdit = () => {
+    console.log('onStartEdit', 'onStartEdit');
+
     setisClick(true);
   };
   const onEndEdit = () => {
+    console.log('onEndEdit', 'onEndEdit');
+
     setisClick(false);
   };
   const onFinishEdit = async () => {
-    // 鼠标抬起的时候
-    // console.log('here');
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     if (!annotation.curr) return;
-    console.log(
-      'annotations.curr',
-      onSelect,
-      annotation.curr,
-      annotation?.curr?.annotationId,
-      annotation.curr.result.split(',').length,
-    );
+    console.log('annotations.curr', annotation.curr, annotation?.curr?.annotationId);
     if (!annotation.curr.result) return;
-    const lengths = annotation.all.length - 1;
-    const ErrAnno = annotation.all[lengths];
-    const datas = ErrAnno?.result.split('||')[0] as string;
-    if (ErrAnno && datas?.split(',').length === 2) {
-      const newResult = datas.split(',').concat(annotation?.curr?.result.split(','));
-      const newResults = newResult.join(',') + ErrAnno?.result.split('||')[1];
-      annotation.curr.result = newResults;
-    }
-    const strings = annotation?.curr?.result.split('||')[0];
-    if (strings.length < 3) return;
-    if (annotation?.curr?.annotationId == undefined) {
-      console.log('finish', data.curr, annotation.curr);
-      await annotation.create(annotation?.curr);
-      // setCurrentAnnotation(annotation.all[annotation.all.length -1]);
-      if (tool.curr === 'polygon') {
-        // debugger;
-        const currs = await annotation.getAll(annotation?.curr.dataId);
-        setCurrentAnnotation(currs[currs.length - 1]);
-      }
+    if (annotation.curr.type === 'ocr_polygon') {
     } else {
-      annotation.update(annotation?.curr);
+      const lengths = annotation.all.length - 1;
+      const ErrAnno = annotation.all[lengths];
+      const ErrAnnoDatas = ErrAnno?.result.split('||')[0] as string;
+      if (ErrAnno && ErrAnnoDatas?.split('|').length === 2) {
+        console.log('annotation?.curr?.result', annotation?.curr?.result);
+        const currResults = annotation?.curr?.result;
+        const pointDatas = currResults.split('||')[0];
+        const newResult = ErrAnnoDatas.split('|').concat(pointDatas.split('|'));
+        const newResults = newResult.join('|') + ErrAnno?.result.split('||')[1];
+        annotation.curr.result = newResults;
+      }
+      const strings = annotation?.curr?.result.split('||')[0];
+      if (strings.length < 3) return;
+      if (annotation?.curr?.annotationId == undefined) {
+        console.log('finish', data.curr, annotation.curr);
+        await annotation.create(annotation?.curr);
+        // setCurrentAnnotation(annotation.all[annotation.all.length - 1]);
+      } else {
+        annotation.update(annotation?.curr);
+      }
+      setCurrentAnnotation(undefined);
+      message.success(tbIntl('saveSuccess'));
     }
-    message.success(tbIntl('saveSuccess'));
-    if (tool.curr == 'rectangle') setCurrentAnnotation(undefined);
   };
 
   const drawToolParam = {
@@ -194,11 +205,9 @@ const Page = () => {
     onAnnotationAdd: (anno: Annotation) => {
       setCurrentAnnotation(anno);
       const newAnnos = annotation.all.concat([anno]);
-      // debugger;
       annotation.setAll(newAnnos);
     },
     onAnnotationModify: onAnnotationModify,
-    modifyAnnoByFrontendId: onAnnotationModify,
     onMouseUp: onEndEdit,
     onMouseDown: onStartEdit,
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
@@ -241,6 +250,7 @@ const Page = () => {
 
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
   };
+
   const onPredicted = (images: HTMLImageElement) => {
     const imgBase64 = getBase64Image(images);
     const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
@@ -256,9 +266,16 @@ const Page = () => {
     });
     if (!line) return;
     line.then(
-      (res) => {
+      (res: any) => {
         if (res) {
-          const predictions = res.predictions.map((item) => {
+          // debugger;
+          const id = datas.current.curr?.dataId;
+          console.log('ids', id, res.piggyback.dataId);
+
+          if (id !== res.piggyback.dataId) {
+            return;
+          }
+          const predictions = res.predictions.map((item: any) => {
             if (item.score > thresholdRaw) {
               return item;
             }
@@ -278,54 +295,16 @@ const Page = () => {
       },
     );
   };
-  // const createLabels = (labels) => {
-  //   // debugger;
-  //   const newlabels = [...labels].map((item) => {
-  //     const addlabel = {
-  //       name: item,
-  //       projectId: project.curr.projectId,
-  //     };
-  //     return addlabel;
-  //   });
-  //   if (newlabels.length > 0) {
-  //     label.create(newlabels).then((newLabel) => {
-  //       // debugger;
-  //       setCurrentAnnotation(undefined);
-  //       label.setCurr(newLabel);
-
-  //       setflags(true);
-  //     });
-  //   }
-  // };
-  // useEffect(() => {
-  //   annHistory.init({});
-  // }, []);
-  // useUpdateEffect(() => {
-  //   if (tool.curr === 'rectangle') {
-  //     // debugger;
-  //     const rectagle = PPRectangle(drawToolParam);
-  //     const drawTools = { polygon: rectagle, brush: undefined };
-  //     setDrawTool(drawTools);
-  //   } else if (tool.curr === 'polygon') {
-  //     debugger;
-  //     const polygon = PPPolygon(drawToolParam);
-  //     const drawTools = { polygon: polygon, brush: undefined };
-  //     setDrawTool(drawTools);
-  //   }
-  // }, [tool.curr]);
-  // const rectagle = PPRectangle(drawToolParam);
-  // const polygon = PPPolygon(drawToolParam);
-  // const drawTool =
-  //   tool.curr === 'polygon'
-  //     ? { polygon: polygon, brush: undefined }
-  //     : { polygon: rectagle, brush: undefined };
   const drawTool = {
     polygon: PPPolygon(drawToolParam),
     rectangle: PPRectangle(drawToolParam),
-    // brush: PPBrush(drawToolParam),
-    // interactor: PPInteractor(drawToolParam),
-    // rubber: PPRubber(drawToolParam),
   };
+  // useEffect(() => {
+  //   if (data) {
+  //     const [images] = useImage(data.imgSrc || '', 'anonymous');
+  //     setImage(images);
+  //   }
+  // }, []);
   useUpdateEffect(() => {
     if (data.all.length > 0) {
       // data.updatePredicted(data.all[0].dataId);
@@ -343,6 +322,8 @@ const Page = () => {
     }
   }, [data.all]);
   useEffect(() => {
+    console.log('isClicks', isClick);
+
     if (!isClick) {
       onFinishEdit();
     }
@@ -356,6 +337,9 @@ const Page = () => {
         return;
       }
       const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
+      if (!settings?.mlBackendUrl) {
+        return;
+      }
       model.setMlBackendUrl(settings.mlBackendUrl || '');
       model.setLoading(true);
       const params = {
@@ -386,81 +370,22 @@ const Page = () => {
       onPredicted(image);
     }
   }, [isLoading, isLoad, image]);
-  // useUpdateEffect(() => {
-  //   // console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
-  //   if (interactorData.predictData.length && label.all) {
-  //     console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
-  //     const labels = new Set();
-  //     const oldLabel = new Map();
-  //     // const labelmaps: any = {};
-  //     for (const labelItem of label.all) {
-  //       if (labelItem.name) {
-  //         oldLabel.set(labelItem.name, labelItem);
-  //       }
-  //     }
-  //     if (otherSetting?.labelMapping?.length > 0) {
-  //       for (const labelMap of otherSetting?.labelMapping) {
-  //         // labelmaps[labelMap.model] = labelMap.project;
-  //         if (!oldLabel.has(labelMap.project)) {
-  //           labels.add(labelMap.project);
-  //         }
-  //       }
-  //     } else {
-  //       for (const labelItem of interactorData.predictData) {
-  //         console.log('!oldLabel.has(labelItem?.label_name)', oldLabel, labelItem?.label_name);
-  //         if (labelItem && !oldLabel.has(labelItem?.label_name)) {
-  //           labels.add(labelItem?.label_name);
-  //         }
-  //       }
-  //       if ([...labels].length) {
-  //         // debugger;
-  //         createLabels(labels);
-  //       }
-  //     }
-  //     if (![...labels].length) {
-  //       setflags(true);
-  //     }
-  //   }
-  // }, [interactorData, otherSetting]);
   useUpdateEffect(() => {
     if (interactorData.predictData.length && project.curr?.projectId !== undefined) {
-      // debugger;
-      // const labels = new Map();
       label.getAll(project.curr.projectId).then((labelAll) => {
-        // debugger;
-        // for (const labelItem of labelAll) {
-        //   labels.set(labelItem.name, labelItem);
-        // }
-        const annos = [];
-        // const labelMapping = new Map();
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-        let frontendId = annotation.all?.length ? getMaxFrontendId(annotation.all) + 1 : 1;
-        // if (otherSetting?.labelMapping?.length > 0) {
-        //   for (const labelMaps of otherSetting.labelMapping) {
-        //     labelMapping.set(labelMaps.model, labelMaps.project);
-        //   }
-        // }
-        // console.log('interactorData.predictData', interactorData.predictData);
+        const annos: any = [];
+        let frontendIds = annotation.all?.length ? getMaxFrontendId(annotation.all) + 1 : 1;
 
         interactorData.predictData.map((item) => {
           console.log('label_name', item);
           if (item) {
-            // const name = labelItem.name;
-            // // if (labelMapping.has(item.label_name)) {
-            // //   name = labelMapping.get(item.label_name);
-            // // } else {
-            // //   name = item.label_name;
-            // // }
-            // const labelitem = labels.get(name);
             const result = item.result;
-            const predictedBy = otherSetting.modelName;
-            const labelitem = labelAll[0];
-            // debugger;
-            // saveInteractorData(labelitem, item.result);
+            const predictedBy = otherSetting?.modelName;
+            const labelitem = labelAll && labelAll[0];
             if (interactorData.active) {
               // debugger;
               const anno = ectInteractorToAnnotation(
-                frontendId,
+                frontendIds,
                 result,
                 data.curr?.dataId,
                 labelitem,
@@ -468,14 +393,14 @@ const Page = () => {
               );
               if (anno) {
                 annos.push(anno);
-                frontendId++;
+                frontendIds++;
               }
             }
           }
         });
         const deduplicate = true;
         // debugger;
-        annotation.create(annos, '', deduplicate, false);
+        annotation.create(annos, '', deduplicate);
         // debugger;
         setInteractorData({ active: false, predictData: [], mousePoints: [] });
         setflags(false);
@@ -493,6 +418,10 @@ const Page = () => {
     annotation.setAll(newAll);
     setCurrentAnnotation(undefined);
     await annotation.pushToBackend(data.curr?.dataId, newAll);
+  };
+  const annotationDelete = (newAnnos: Annotation[]) => {
+    annotation.setAll(newAnnos);
+    annotation.pushToBackend(data.curr?.dataId, newAnnos);
   };
   return (
     <PPLabelPageContainer className={styles.det}>
@@ -626,6 +555,7 @@ const Page = () => {
               currentAnnotation={annotation.curr}
               setCurrentAnnotation={setCurrentAnnotation}
               onAnnotationModify={onAnnotationModify}
+              annotationDelete={annotationDelete}
               onAnnotationModifyComplete={() => {}}
               frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
               imgSrc={data.imgSrc}
@@ -637,7 +567,7 @@ const Page = () => {
               tool={tool}
               drawTool={drawTool}
               threshold={0}
-              OnSelect={setOnSelect}
+              // OnSelect={setOnSelect}
               onAnnotationModifyUP={onAnnotationModifyUP}
             />
           </div>
@@ -655,10 +585,12 @@ const Page = () => {
               setInteractorData({ active: false, predictData: [], mousePoints: [] });
               setCurrentAnnotation(undefined);
               setflags(false);
-              page?.current?.setDragEndPos({
-                x: 0,
-                y: 0,
-              });
+              if (page?.current) {
+                page?.current?.setDragEndPos({
+                  x: 0,
+                  y: 0,
+                });
+              }
             }}
           />
           <div
@@ -691,9 +623,11 @@ const Page = () => {
         </PPToolBarButton>
         <PPToolBarButton
           imgSrc="./pics/buttons/intelligent_interaction.png"
-          // disabled={!otherSetting?.labelMapping}
+          disabled={!image || !project?.curr?.otherSettings?.mlBackendUrl}
           onClick={() => {
-            onPredicted(image);
+            if (image) {
+              onPredicted(image);
+            }
           }}
         >
           {tbIntl('autoInference')}

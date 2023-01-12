@@ -24,18 +24,8 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
   const color = annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
-
-  // const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
-  // const transparency = 1; // Polygon fixed 0.3
-  // let transparency = selected ? props.transparency * 0.01 + 0.02 : props.transparency * 0.01;
-  // if (transparency > 1) transparency = 1;
-  // if (transparency < 0) transparency = 0;
   const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
   const transparency = selected ? 0.5 : 0.2;
-  // Create dots
-  // const onDragEvt = (evt: Konva.KonvaEventObject<DragEvent>, index: number) => {
-
-  // };
   let x: number | undefined = undefined;
   const pointElements: ReactElement[] = [];
 
@@ -91,7 +81,7 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
           const strings = address ? `||${address}|0|` : '||待识别|0|';
-          const newdata = points.join(',') + strings;
+          const newdata = points.join('|') + strings;
           // result = newdata;
           const newAnno = { ...annotation, result: newdata };
           // console.log(newAnno);
@@ -170,6 +160,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     mouseY: number,
     selectFinly: Annotation,
     pathName: string,
+    annotations?: Annotation[],
   ) => {
     const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY], pathName);
     if (!polygon) return;
@@ -177,9 +168,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const anno = {
       dataId: props.dataId,
       frontendId:
-        selectFinly?.frontendId !== undefined
-          ? selectFinly?.frontendId
-          : getMaxId(props.annotations) + 1,
+        selectFinly?.frontendId !== undefined ? selectFinly?.frontendId : getMaxId(annotations) + 1,
       label: props.currentLabel,
       labelId: props.currentLabel?.labelId,
       result: polygon,
@@ -190,6 +179,9 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     } else {
       anno.type = 'polygon';
     }
+    // debugger;
+    console.log('props.onAnnotationAdd', anno);
+
     props.onAnnotationAdd(anno);
   };
 
@@ -201,7 +193,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     // const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
     if (pathName === '/optical_character_recognition') {
       const data = props.currentAnnotation.result?.split('||');
-      const results2 = data[0] + `,${mouseX},${mouseY}`;
+      const results2 = data[0] + `|${mouseX}|${mouseY}`;
       result = results2 + '||' + data[1];
       // debugger;
     } else {
@@ -211,7 +203,9 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       ...props.currentAnnotation,
       result: result,
     };
-    props.modifyAnnoByFrontendId(anno);
+    console.log('props.onAnnotationModify', anno);
+
+    props.onAnnotationModify(anno);
   };
 
   const OnMouseDown = (param: EvtProps) => {
@@ -222,11 +216,14 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const mouseY = param.mouseY + param.offsetY;
     console.log(`currentAnnotation:`, props.currentAnnotation);
     // No annotation is marking, start new
-    console.log('param.flag', param.flags);
+    console.log('param.flag', param.flags, !props.currentAnnotation);
 
     if (!props.currentAnnotation && param.flags) {
-      startNewPolygon(mouseX, mouseY, props.selectFinly, param.pathName);
+      console.log('startNewPolygon', '111111');
+
+      startNewPolygon(mouseX, mouseY, props.selectFinly, param.pathName, param.annotations);
     } else {
+      console.log('addDotToPolygon', '111111');
       addDotToPolygon(mouseX, mouseY, param.pathName);
     }
     if (props.onMouseDown) props.onMouseDown();

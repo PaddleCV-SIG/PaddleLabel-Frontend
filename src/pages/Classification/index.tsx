@@ -3,6 +3,7 @@ import { Spin, message } from 'antd';
 import { history, useModel } from 'umi';
 import styles from './index.less';
 import { useUpdateEffect } from 'ahooks';
+
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';

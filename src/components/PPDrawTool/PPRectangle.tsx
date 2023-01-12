@@ -216,7 +216,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
         onMouseDown={() => {
           if (props.currentTool == 'editor') {
             // console.log(`select ${JSON.stringify(annotation)}`);
-            props.OnSelects(annotation);
+            // props.OnSelects(annotation);
             props.onSelect(annotation);
           }
         }}
@@ -280,10 +280,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     console.log('props.currentAnnotation.result', props.currentAnnotation.result);
     if (pathName === '/optical_character_recognition') {
       const data: any = props.currentAnnotation.result?.split('||');
-      // debugger;
-      // const address = props.currentAnnotation.result?.split('||')[1].split('|')[0];
       const results2 = data && data[0].split('|');
-
       if (results2.length < 4) {
         result = results2.join('|') + `|${mouseX}|${mouseY}` + '||' + data[1];
       } else {
@@ -292,7 +289,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         results[3] = mouseY + '';
         result = results.join('|') + '||' + data[1];
       }
-      // debugger;
     } else {
       if (props.currentAnnotation.result.length < 4) {
         result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
@@ -308,54 +304,40 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       result: result,
     };
     console.log('addDotToRectangle', anno);
-
-    props.modifyAnnoByFrontendId(anno);
-    // props.onDragUP(anno);
-    // props.onDragUP(anno);
+    props.onAnnotationModify(anno);
+    // debugger;
+    if (props.onMouseUp) props.onMouseUp();
   };
 
   const OnMouseDown = (param: EvtProps) => {
-    if (props.currentTool != 'rectangle') return;
-    isClick = true;
-    // saveDrawingSurface(param.canvasRef);
-    const mouseX = param.mouseX + param.offsetX;
-    const mouseY = param.mouseY + param.offsetY;
-    // console.log(`currentAnnotation:`, props.currentAnnotation);
-    console.log(`mouseX:`, p1, p2);
-    p1.x = param.mouseX;
-    p1.y = param.mouseY;
-    // No annotation is marking, start new
-    console.log(
-      'props.currentAnnotation',
-      param.mouseX,
-      param.mouseX,
-      param.offsetX,
-      param.offsetY,
-    );
-    startNewRectangle(mouseX, mouseY, param.pathName);
-    // if (!props.currentAnnotation) {
-    //   startNewRectangle(mouseX, mouseY);
-    // } else {
-    //   addDotToRectangle(mouseX, mouseY);
-    // }
-    // setTimeout(() => {
+    if (props.currentTool === 'rectangle' || props.currentTool === 'editor') {
+      isClick = true;
+      const mouseX = param.mouseX + param.offsetX;
+      const mouseY = param.mouseY + param.offsetY;
+      console.log(`mouseX:`, p1, p2);
+      p1.x = param.mouseX;
+      p1.y = param.mouseY;
+      console.log(
+        'props.currentAnnotation',
+        props.currentAnnotation,
+        param.mouseX,
+        param.mouseX,
+        param.offsetX,
+        param.offsetY,
+      );
+      // debugger;
+      if (!props.currentAnnotation) {
+        startNewRectangle(mouseX, mouseY, param.pathName);
+      }
+      console.log('props.onMouseDown', props.onMouseDown);
 
-    // }, 0);
-    if (props.onMouseDown) props.onMouseDown();
+      if (props.onMouseDown) props.onMouseDown();
+    }
   };
   const OnMousemove = (param: EvtProps) => {
     if (props.currentTool != 'rectangle' && isClick !== true) return;
-    // p2.x = param.mouseX + param.offsetX;
-    // p2.y = param.mouseY + param.offsetY;
     p2.x = param.mouseX;
     p2.y = param.mouseY;
-    // const ctx = param.canvasRef.current?.getContext('2d');
-    if (isClick) {
-      console.log('renderReact函数执行了');
-      // restoreDrawingSurface(param.canvasRef);
-      // renderReact(param.canvasRef);
-    }
-    // drawGuidewires(param.mouseX, param.mouseY, ctx);
   };
   const OnMouseUp = (param: EvtProps) => {
     // debugger;
@@ -370,7 +352,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const mouseX = param.mouseX + param.offsetX;
     const mouseY = param.mouseY + param.offsetY;
     addDotToRectangle(mouseX, mouseY, param?.pathName);
-    if (props.onMouseUp) props.onMouseUp();
   };
   return {
     onMouseDown: OnMouseDown,

@@ -44,7 +44,7 @@ function getPointer(toolType: ToolType) {
 export type pageRef = {
   image: HTMLImageElement;
   scaleImage: number;
-  setDragEndPos?: () => void;
+  setDragEndPos?: any;
 };
 export type PPStageProps = {
   imgSrc?: string;
@@ -141,10 +141,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     scale: props.scale,
     currentTool: props.currentTool,
     onSelect: props.setCurrentAnnotation,
-    OnSelects: props.OnSelect,
     stageRef: stageRef,
     layerRef: layerRef,
     currentAnnotation: props.currentAnnotation,
+    annotations: props.annotations,
     transparency: transparency,
     threshold: props.threshold,
     canvasRef: canvasRef,
@@ -474,7 +474,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         let results = '';
         if (history?.location?.pathname === '/optical_character_recognition') {
           const data: string = props.currentAnnotation?.result?.split('||')[0] as string;
-          results = data;
+          results = data.split('|').join(',');
         } else {
           results = props.currentAnnotation?.result as string;
         }
@@ -484,25 +484,37 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           results.split(',').length < 5
         ) {
           const newAnnotaions = props.annotations?.filter((item) => {
+            console.log('item.result', item.result, props.currentAnnotation?.result);
             if (item.result !== props.currentAnnotation?.result) {
               return item;
             }
           });
+          console.log('results', results, newAnnotaions);
           props.annotationDelete(newAnnotaions);
+        } else {
+          if (
+            history?.location?.pathname === '/optical_character_recognition' &&
+            props.annotationDelete
+          ) {
+            props.annotationDelete(props.annotations);
+          }
         }
 
         props.setCurrentAnnotation(undefined);
         setpointArr([]);
-        setflags(true);
+        if (!flags) {
+          setflags(true);
+        }
       } else {
         // debugger;
         ctx.strokeStyle = props.currentLabel?.color; //线条颜色
         ctx.lineWidth = 4; //线条粗细
         drawTool?.onMouseDown(getEvtParam(e));
-        // makearc(ctx, mouseX, mouseY, GetRandomNum(2, 2), 0, 180, props.currentLabel?.color);
+        if (flags) {
+          setflags(false);
+        }
         setpointArr([...pointArr, { x: mouseX, y: mouseY }]);
         // debugger;
-        setflags(false);
       }
     } else {
       if (props.currentTool === 'editor') {
@@ -535,6 +547,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           y: mouseY,
         });
       }
+      console.log('drawToolsss', drawTool);
 
       drawTool?.onMouseDown(getEvtParam(e));
       if (e.evt.button === 2) {
@@ -632,14 +645,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   };
   const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
     setisClick(false);
-    // debugger;
     drawTool?.onMouseUp(getEvtParam(e));
-    // debugger;
     const ctx3 = canvasRef3.current?.getContext('2d');
-    // const ctx2 = canvasRef3.current?.getContext('2d');
-    // if (ctx2) {
-    //   ctx2.closePath();
-    // }
     if (ctx3) {
       ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
     }
