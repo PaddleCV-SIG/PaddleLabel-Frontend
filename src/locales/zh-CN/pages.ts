@@ -114,7 +114,7 @@ export default {
   'pages.toolBar.autoInferenceThreshold': '推理阈值',
   'pages.toolBar.segmentThreshold': '分割阈值',
   'pages.toolBar.transparency': '透明度',
-  'pages.toolBar.visualRadius': '可视化半径',
+  'pages.toolBar.visualRadius': '控制点半径',
   'pages.toolBar.determineOutline': '确定轮廓',
   'pages.toolBar.divideData': '划分数据集',
   'pages.toolBar.export': '导出',
