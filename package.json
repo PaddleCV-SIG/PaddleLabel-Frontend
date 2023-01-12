@@ -43,7 +43,7 @@
     "not ie <= 10"
   ],
   "dependencies": {
-    "@ant-design/icons": "latest",
+    "@ant-design/icons": "^5.0.0",
     "@ant-design/pro-descriptions": "^1.10.0",
     "@ant-design/pro-form": "^1.52.0",
     "@ant-design/pro-layout": "^6.32.0",
@@ -118,7 +118,7 @@
     "stylelint": "^14.0.0",
     "stylelint-config-standard": "^25.0.0",
     "swagger-ui-react": "^3.52.0",
-    "typescript": "latest",
+    "typescript": "^4.9.4",
     "umi-serve": "^1.9.10"
   },
   "engines": {
