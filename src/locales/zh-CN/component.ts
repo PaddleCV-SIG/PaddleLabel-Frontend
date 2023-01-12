@@ -59,7 +59,7 @@ export default {
   'component.PPImportModal.nullPath': '额外数据路径不能为空',
   'component.PPImportModal.success': '额外数据导入成功',
 
-  'component.PPInteractorModal.title': '智能标注设置',
+  'component.PPInteractorModal.title': '交互式分割设置',
   'component.PPInteractorModal.mlBackendUrl': '机器学习后端网址',
   'component.PPInteractorModal.modelPath': '模型文件路径',
   'component.PPInteractorModal.weightPath': '权重文件路径',

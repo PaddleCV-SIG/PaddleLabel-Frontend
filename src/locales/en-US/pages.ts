@@ -93,8 +93,8 @@ export default {
   'pages.tableList.confSuccess': 'ConfSuccess',
   'pages.tableList.confFailed': 'Configuration failed, please try again',
   'pages.tableList.deleting': 'Deleting',
-  'pages.tableList.deletSuccess': 'DeletSuccess',
-  'pages.tableList.deletFailed': 'Deletion failed, please try again',
+  'pages.tableList.deleteSuccess': 'DeletSuccess',
+  'pages.tableList.deleteFailed': 'Deletion failed, please try again',
 
   'pages.toolBar.polygon': 'Polygon',
   'pages.toolBar.brush': 'Brush',
