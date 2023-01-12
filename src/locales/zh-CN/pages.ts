@@ -72,7 +72,7 @@ export default {
   'pages.welcome.myProjects': '我的项目',
   'pages.welcome.overview': '项目总览',
   'pages.welcome.createProject': '创建项目',
-  'pages.welcome.sampleProject': '项目样例',
+  'pages.welcome.sampleProject': '样例项目',
   'pages.welcome.imageClassification': '图像分类',
   'pages.welcome.objectDetection': '目标检测',
   'pages.welcome.objectOcr': '传图识字',
@@ -168,5 +168,5 @@ export default {
   'pages.ProjectAi.usePretrainedModelLabels': '使用预标注标签',
   'pages.ProjectAi.labelMapping': '标签对应关系',
   'pages.ProjectAi.labelMappingHint':
-    '接受预标注模型标签后，当模型检测到新标签后，会自动在标签列表中增加该标签',
+    '原样使用预标注模型返回的标签。（如果模型返回的标签当前项目中还不存在将会自动创建）',
 };
