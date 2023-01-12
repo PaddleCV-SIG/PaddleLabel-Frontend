@@ -1,6 +1,6 @@
 {
   "name": "PaddleLabel-Frontend",
-  "version": "0.5.1",
+  "version": "0.1.0",
   "private": true,
   "description": " An effective and flexible tool for data annotation",
   "scripts": {
