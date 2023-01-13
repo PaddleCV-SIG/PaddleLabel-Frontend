@@ -5,11 +5,12 @@ import { defineConfig } from 'cypress';
 export default defineConfig({
   projectId: 'dbb21d',
   e2e: {
-    // baseUrl: 'http://localhost:17995',
-    baseUrl: 'http://localhost:4321', // shouldn't have ending /
+    baseUrl: 'http://localhost:17995',
+    // baseUrl: 'http://localhost:4321', // shouldn't have ending /
     viewportHeight: 1080,
     viewportWidth: 1920,
     watchForFileChanges: false,
+    video: false,
 
     supportFile: './support/e2e.{js,jsx,ts,tsx}',
     specPattern: './e2e/**/*.cy.{js,jsx,ts,tsx}',
