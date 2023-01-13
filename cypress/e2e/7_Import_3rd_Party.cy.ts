@@ -64,8 +64,8 @@ describe('Test Import Export then Import Back', () => {
     // { path: , category: , format: },
   ];
   console.log('asdf', Cypress.env('os'));
-  if (Cypress.env('os') != undefined && Cypress.env('os').includes('windows'))
-    for (const idx in datasets) datasets[idx].path = datasets[idx].path.replace('/', '\\');
+  // if (Cypress.env('os') != undefined && Cypress.env('os').includes('windows'))
+  //   for (const idx in datasets) datasets[idx].path = datasets[idx].path.replace('/', '\\');
 
   var pjId = 2;
 

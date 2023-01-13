@@ -154,7 +154,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
           <_PPBlock
             title={intl(props.taskCategory, 'global') + intl('project')}
             content={intlJsx('titleContent')}
-            docUrl={`/static/doc/CN/project/${camel2snake(props.taskCategory)}.html`}
+            docUrl={`/static/doc/CN/manual/${camel2snake(props.taskCategory)}.html`}
             style={{ height: 760, padding: '1.25rem 0' }}
           >
             <Form

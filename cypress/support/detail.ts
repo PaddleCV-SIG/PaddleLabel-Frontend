@@ -41,10 +41,16 @@ export const detail = {
   ) => {
     welcome.to();
     welcome.toCreate(projectType);
-    const dpath =
+    var dpath =
       datasetPath != undefined
         ? datasetPath
         : `${config.sampleBaseDir}/${projectType}/${labelFormat}`;
+    if (Cypress.env('os') != undefined && Cypress.env('os').includes('win')) {
+      console.log('dpathb', dpath);
+      dpath = dpath.replace('/', '\\\\');
+      console.log('dpatha', dpath);
+    }
+
     const name = dpath.replace(config.sampleBaseDir, '').replace(config.thirdPartyDir, '3rd_party');
     cy.get('#name').type(name, { delay: 0 });
     cy.get('#dataDir').type(dpath, { delay: 0 });
