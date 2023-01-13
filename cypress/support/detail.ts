@@ -47,7 +47,7 @@ export const detail = {
         : `${config.sampleBaseDir}/${projectType}/${labelFormat}`;
     if (Cypress.env('os') != undefined && Cypress.env('os').includes('win')) {
       console.log('dpathb', dpath);
-      dpath = dpath.replace('/', '\\\\');
+      dpath = dpath.replaceAll('/', '\\\\');
       console.log('dpatha', dpath);
     }
 
