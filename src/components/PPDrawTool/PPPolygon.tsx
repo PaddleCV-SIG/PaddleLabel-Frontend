@@ -176,6 +176,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     };
     if (pathName === '/optical_character_recognition') {
       anno.type = 'ocr_polygon';
+      anno.frontendId = getMaxId(annotations) + 1;
     } else {
       anno.type = 'polygon';
     }
@@ -189,7 +190,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (!props.currentAnnotation || !props.currentAnnotation.result || !props.currentLabel?.color)
       return;
     let result = '';
-    console.log('props.currentAnnotation.result', props.currentAnnotation.result);
+    console.log('props.currentAnnotation', props.currentAnnotation);
     // const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
     if (pathName === '/optical_character_recognition') {
       const data = props.currentAnnotation.result?.split('||');
@@ -221,7 +222,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (!props.currentAnnotation && param.flags) {
       console.log('startNewPolygon', '111111');
 
-      startNewPolygon(mouseX, mouseY, props.selectFinly, param.pathName, param.annotations);
+      startNewPolygon(mouseX, mouseY, props.selectFinly, param.pathName, props.annotations);
     } else {
       console.log('addDotToPolygon', '111111');
       addDotToPolygon(mouseX, mouseY, param.pathName);
