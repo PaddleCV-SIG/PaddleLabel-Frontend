@@ -33,8 +33,8 @@ export default {
   'component.PPAddLabelModal.labelName': '标签名',
   'component.PPAnnotationList.annotationList': '标注列表',
   'component.PPAnnotationList.addAnnotation': '添加标注',
-  'component.PPLabelList.labelList': '标签列表',
-  'component.PPLabelList.addLabel': '添加标签',
+  'component.PPLabelList.labelList': '类别列表',
+  'component.PPLabelList.addLabel': '添加类别',
 
   'component.PPSplitDatasetModal.title': '划分数据集',
   'component.PPSplitDatasetModal.train': '训练集比例',
@@ -73,12 +73,12 @@ export default {
   'component.PPInteractorModal.loadFail':
     '模型加载失败，请检查 1.机器学习后端已经启动 2.机器学习后端网址填写正确',
   'component.PPInteractorModal.Warintoast':
-    '注意：完成当前目标标注后，请按下鼠标中键结束当前目标的交互输入，否则会影响交互式标注效果。',
+    '注意：完成一个目标的标注后，请按下鼠标中键结束本轮交互。在一轮交互中标注多个目标会影响交互式标注精度。',
   'component.history.noPrev': '没有更老的操作记录',
   'component.history.noNext': '没有更新的操作记录',
 
   'component.label.deleteSuccess': '类别删除成功',
-  'component.label.ontHotMultiple': '本项目为单分类，但标签列表中有多个标签',
+  'component.label.ontHotMultiple': '本项目为单分类，但类别列表中选中了多个分类',
 
   'component.PPMedical.windowWidth': '窗宽',
   'component.PPMedical.windowLevel': '窗位',

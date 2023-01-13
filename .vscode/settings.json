@@ -3,5 +3,5 @@
   "editor.formatOnPaste": true,
   "prettier.requireConfig": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "cSpell.words": ["Clas", "interactor", "keypoint"]
+  "cSpell.words": ["Clas", "interactor", "keypoint", "pdmodel"]
 }
