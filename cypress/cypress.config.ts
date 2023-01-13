@@ -3,6 +3,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
+  projectId: 'dbb21d',
   e2e: {
     // baseUrl: 'http://localhost:17995',
     baseUrl: 'http://localhost:4321', // shouldn't have ending /
