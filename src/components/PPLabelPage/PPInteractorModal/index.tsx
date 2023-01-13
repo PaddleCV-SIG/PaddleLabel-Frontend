@@ -123,7 +123,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           }}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input autoComplete="off" placeholder={intl('pathPh')} />
+          <Input autoComplete="off" placeholder={intl('modelPathPh')} />
         </Form.Item>
         <Form.Item
           name={'paramFilePath'}
@@ -136,7 +136,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           }}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input autoComplete="off" placeholder={intl('pathPh')} />
+          <Input autoComplete="off" placeholder={intl('weightPathPh')} />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
