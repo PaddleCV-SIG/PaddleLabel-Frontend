@@ -3,6 +3,10 @@
 // import cypress from 'cypress';
 import { camel2snake } from './util.ts';
 
+Cypress.Commands.add('interrupt', () => {
+  eval("window.top.document.body.querySelector('header button.stop').click()");
+});
+
 Cypress.Commands.add('spyAllApiCalls', () => {
   cy.intercept(`${Cypress.config('baseUrl')}/api/**`).as('apicalls');
 });
