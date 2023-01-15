@@ -7,6 +7,11 @@ describe('Test Import Samples', () => {
     cy.visit('/');
     cy.spyAllApiCalls();
   });
+  afterEach(function () {
+    if (this.currentTest.state === 'failed') {
+      Cypress.runner.stop();
+    }
+  });
 
   const projectCategories = [
     'classification',
