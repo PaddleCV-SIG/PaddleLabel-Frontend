@@ -10,7 +10,7 @@ export default defineConfig({
     viewportHeight: 1080,
     viewportWidth: 1920,
     watchForFileChanges: false,
-    video: false,
+    // video: false,
 
     supportFile: './support/e2e.{js,jsx,ts,tsx}',
     specPattern: './e2e/**/*.cy.{js,jsx,ts,tsx}',

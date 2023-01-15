@@ -7,6 +7,7 @@
     "cypress": "^12.3.0"
   },
   "dependencies": {
-    "typescript": "latest"
+    "typescript": "latest",
+    "wait-port": "^1.0.4"
   }
 }
