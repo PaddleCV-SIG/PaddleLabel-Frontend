@@ -10,6 +10,11 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
     cy.visit('/');
     cy.spyAllApiCalls();
   });
+  afterEach(function () {
+    if (this.currentTest.state === 'failed') {
+      Cypress.runner.stop();
+    }
+  });
 
   var pjId = 2;
   var catgInfo = { ...config.catgInfo };

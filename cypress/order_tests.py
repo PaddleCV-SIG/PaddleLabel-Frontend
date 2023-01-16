@@ -1,3 +1,4 @@
+''' Order the tests so previously failed ones get runed first '''
 from pathlib import Path
 HERE = Path(__file__).parent.absolute()
 
