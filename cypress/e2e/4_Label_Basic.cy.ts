@@ -22,7 +22,7 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
       },
     },
     sampleIt.import('placeholder'),
-    // create 8 pjs
+    // create all sample pjs
     ...Object.keys(catgInfo).map(function* (catg) {
       for (const labelFormat of Object.keys(catgInfo[catg])) {
         yield detailIt.import(catg, labelFormat);
@@ -35,9 +35,9 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
       for (const labelFormat of Object.keys(catgInfo[catg])) {
         const currPjId = catgInfo[catg][labelFormat];
 
-        if (labelFormat != 'coco' && labelFormat != 'polygon')
-          yield labelIt.rmCatg(currPjId, catg, false, 0, 'inuse');
-        else yield labelIt.rmCatg(currPjId, catg, false, 0, 'supercatg');
+        if (labelFormat == 'coco' || labelFormat == 'polygon')
+          yield labelIt.rmCatg(currPjId, catg, false, 0, 'supercatg');
+        else yield labelIt.rmCatg(currPjId, catg, false, 0, 'inuse');
 
         yield labelIt.tour(currPjId, 4, catg, true, false);
 

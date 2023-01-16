@@ -1,10 +1,11 @@
 from pathlib import Path
+HERE = Path(__file__).parent.absolute()
 
 print(Path("."))
 print(list(Path(".").glob("*")))
 
-failed_tests = Path("../screenshots").glob("*")
+failed_tests = (HERE / ".." / ".." /"../screenshots").glob("*")
 print(list(failed_tests))
 
-all_tests = Path("./cypress/e2e").glob("*.cy.ts")
+all_tests = (HERE / "e2e").glob("*.cy.ts")
 print(list(all_tests))

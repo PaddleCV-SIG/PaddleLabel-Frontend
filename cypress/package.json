@@ -7,5 +7,6 @@
     "typescript": "latest",
     "wait-port": "^1.0.4",
     "cypress": "^12.3.0"
-  }
+  },
+  "license": "Apache-2.0"
 }
