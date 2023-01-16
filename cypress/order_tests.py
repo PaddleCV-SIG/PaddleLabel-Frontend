@@ -13,6 +13,9 @@ tests = (HERE / "e2e").glob("*.cy.ts")
 all_ids = [t.name.split("_")[0] for t in tests]
 tests = {t.name.split("_")[0]: str(t.relative_to(HERE)) for t in tests}
 
+print(all_ids)
+print(tests)
+
 ordered = [tests[idx] for idx in failed_ids] + [tests[idx] for idx in all_ids if idx not in failed_ids]
 order = ",".join(ordered)
 
