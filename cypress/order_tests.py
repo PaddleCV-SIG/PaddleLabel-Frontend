@@ -1,8 +1,8 @@
 from pathlib import Path
 HERE = Path(__file__).parent.absolute()
 
-print(Path("."))
-print(list(Path(".").glob("*")))
+
+print(list((HERE / ".." / "..").glob("*")))
 
 failed_tests = (HERE / ".." / ".." / "screenshots").glob("*")
 print(list(failed_tests))
