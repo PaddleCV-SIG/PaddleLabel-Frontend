@@ -23,6 +23,6 @@ ordered = [tests[idx] for idx in failed_ids] + [tests[idx] for idx in all_ids if
 order = ",".join(ordered)
 
 if "win" in platform.system().lower():
-    order = order.replace("/", "//")
+    order = order.replace("/", "\\")
 
 print(order)
