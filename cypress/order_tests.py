@@ -22,7 +22,7 @@ tests = {t.name.split("_")[0]: str(t.relative_to(HERE)) for t in tests}
 ordered = [tests[idx] for idx in failed_ids] + [tests[idx] for idx in all_ids if idx not in failed_ids]
 order = ",".join(ordered)
 
-if "win" in platform.system().lower():
+if "windows" in platform.system().lower():
     order = order.replace("/", "\\")
 
 print(order)
