@@ -4,9 +4,9 @@
   "description": "PaddleLabel e2e test",
   "main": "index.js",
   "dependencies": {
-    "typescript": "latest",
-    "wait-port": "^1.0.4",
-    "cypress": "^12.3.0"
+    "cypress": "^12.3.0",
+    "typescript": "^4.9.4",
+    "wait-port": "^1.0.4"
   },
   "license": "Apache-2.0"
 }

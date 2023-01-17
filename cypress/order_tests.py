@@ -16,6 +16,7 @@ tests = list(tests)
 # print("all tests:", tests)
 
 all_ids = [t.name.split("_")[0] for t in tests]
+all_ids.sort(key=lambda idx: int(idx))
 tests = {t.name.split("_")[0]: str(t.relative_to(HERE)) for t in tests}
 
 ordered = [tests[idx] for idx in failed_ids] + [tests[idx] for idx in all_ids if idx not in failed_ids]
