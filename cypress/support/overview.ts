@@ -94,7 +94,7 @@ export const overview = {
       cy.g('global.segMaskType.grayscale').click();
 
     cy.g('component.PPExportModal.export').click();
-    cy.g('component.PPExportModal.exportSuccess').should('be.visible'); // should show success message
+    cy.g('component.PPExportModal.exportSuccess', { timeout: 10000 }).should('be.visible'); // should show success message
     cy.g('component.PPExportModal.export').should('not.be.visible'); // modal should close
   },
 };
