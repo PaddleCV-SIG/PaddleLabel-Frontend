@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test:win": "set HOMEPATH=%HOMEPATH%\\测试路径 & CALL C:\\Users\\runneradmin\\micromamba-root\\condabin\\mamba_hook.bat && micromamba activate PaddleLabel && paddlelabel --debug --port 1111 --lan",
-    "test:unix": "eval $(micromamba shell hook -s bash); micromamba activate PaddleLabel; HOME=~/测试路径/ paddlelabel --debug --port 1111 --lan"
+    "test:unix": "eval \"$(micromamba shell hook --shell=bash)\" & micromamba activate PaddleLabel & HOME=~/测试路径/ paddlelabel --debug --port 1111 --lan"
   },
   "license": "Apache-2.0"
 }
