@@ -21,6 +21,8 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
   if (!annotation || !annotation.result || annotation.result.length < 2 || !annotation.label?.color)
     return <></>;
   const points: number[] = annotation.result.split(',').map(Number);
+  console.log('points', points.length);
+
   const color = annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
@@ -30,10 +32,11 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
   const pointElements: ReactElement[] = [];
 
   points.forEach((point, index) => {
-    if (!x) {
+    if (index % 2 === 0) {
       x = point;
       return;
     }
+
     pointElements.push(
       <Circle
         onMouseDown={() => {
@@ -76,20 +79,22 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
             evt.target.setPosition({ x: newPositionX, y: newPositionY });
           }
           // End cross border control
-          console.log('pointsss', points, index, newPositionX, newPositionY);
 
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
-          const strings = address ? `||${address}|0|` : '||待识别|0|';
-          const newdata = points.join('|') + strings;
-          // result = newdata;
-          const newAnno = { ...annotation, result: newdata };
-          // console.log(newAnno);
-          props.onDragUP(newAnno);
+          if (props.pathName === '/optical_character_recognition') {
+            const strings = address ? `||${address}|0|` : '||待识别|0|';
+            const newdata = points.join('|') + strings;
+            // result = newdata;
+            const newAnno = { ...annotation, result: newdata };
+            props.onDragUP(newAnno);
+          } else {
+            const newAnno = { ...annotation, result: points.join(',') };
+            props.onDragUP(newAnno);
+          }
         }}
         onMouseOver={() => {
           // console.log(`Circle onMouseOver`);
-          console.log('props.stageRef?.current', props.currentTool, props.stageRef?.current);
           if (props.currentTool == 'editor' && props.stageRef?.current)
             props.stageRef.current.container().style.cursor = 'cell';
           props.layerRef.current?.batchDraw();
@@ -164,7 +169,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   ) => {
     const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY], pathName);
     if (!polygon) return;
-    console.log(polygon);
+
     const anno = {
       dataId: props.dataId,
       frontendId:
@@ -181,7 +186,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       anno.type = 'polygon';
     }
     // debugger;
-    console.log('props.onAnnotationAdd', anno);
 
     props.onAnnotationAdd(anno);
   };
@@ -190,7 +194,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (!props.currentAnnotation || !props.currentAnnotation.result || !props.currentLabel?.color)
       return;
     let result = '';
-    console.log('props.currentAnnotation', props.currentAnnotation);
     // const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
     if (pathName === '/optical_character_recognition') {
       const data = props.currentAnnotation.result?.split('||');
@@ -204,7 +207,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       ...props.currentAnnotation,
       result: result,
     };
-    console.log('props.onAnnotationModify', anno);
 
     props.onAnnotationModify(anno);
   };
@@ -215,24 +217,16 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (props.currentTool != 'polygon') return;
     const mouseX = param.mouseX + param.offsetX;
     const mouseY = param.mouseY + param.offsetY;
-    console.log(`currentAnnotation:`, props.currentAnnotation);
-    // No annotation is marking, start new
-    console.log('param.flag', param.flags, !props.currentAnnotation);
 
     if (!props.currentAnnotation && param.flags) {
-      console.log('startNewPolygon', '111111');
-
       startNewPolygon(mouseX, mouseY, props.selectFinly, param.pathName, props.annotations);
     } else {
-      console.log('addDotToPolygon', '111111');
       addDotToPolygon(mouseX, mouseY, param.pathName);
     }
     if (props.onMouseDown) props.onMouseDown();
     // isMove = false;
   };
-  const OnMousemove = (param: EvtProps) => {
-    console.log('param:', param);
-
+  const OnMousemove = () => {
     // if (props.currentTool != 'polygon' && props.currentTool != 'editor') return;
     // const mouseX = param.mouseX + param.offsetX;
     // const mouseY = param.mouseY + param.offsetY;
@@ -264,9 +258,12 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     //   }
     // }
   };
-  const OnMouseUp = () => {
+  const OnMouseUp = (param: EvtProps) => {
     if (props.currentTool != 'polygon') return;
     // console.log(`OnMouseUp`);
+    if (param.e.evt.button === 2) {
+      return;
+    }
     if (props.onMouseUp) props.onMouseUp();
   };
   return {

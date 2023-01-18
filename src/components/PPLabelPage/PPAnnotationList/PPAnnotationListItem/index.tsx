@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import styles from './index.less';
 import PPColorBall from '../../PPColorBall';
 import type { Annotation } from '@/models/annotation';
-
+import { history } from 'umi';
 export type PPAnnotationListItemProps = {
   active: boolean;
   annotation: Annotation;
@@ -21,7 +21,6 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
   useEffect(() => {
     setInvisible(props.annotation.invisible);
   }, [props.annotation.invisible]);
-  console.log('...props.annotation', annotation);
 
   const item = (
     <List.Item
@@ -32,18 +31,22 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
       }}
     >
       <Space align="center" size={5}>
-        <a
-          className={styles.eye}
-          style={{
-            backgroundImage: invisible ? 'url(./pics/hide.png)' : 'url(./pics/show.png)',
-          }}
-          onClick={(e) => {
-            e.stopPropagation();
-            setInvisible(!invisible);
-            props.onAnnotationModify(annotation);
-          }}
-        />{' '}
-        <span className={styles.annotationId}>{annotation?.frontendId}</span>
+        {history?.location?.pathname !== '/semantic_segmentation' && (
+          <a
+            className={styles.eye}
+            style={{
+              backgroundImage: invisible ? 'url(./pics/hide.png)' : 'url(./pics/show.png)',
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              setInvisible(!invisible);
+              props.onAnnotationModify(annotation);
+            }}
+          />
+        )}{' '}
+        {history?.location?.pathname !== '/semantic_segmentation' && (
+          <span className={styles.annotationId}>{annotation?.frontendId}</span>
+        )}
         <span className={styles.labelName}>{annotation?.label?.name}</span>
         <PPColorBall color={annotation?.label?.color} />
       </Space>

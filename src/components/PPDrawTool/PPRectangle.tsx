@@ -45,6 +45,8 @@ let isClick = false;
 //   // ctx.save();
 // };
 function drawGuidewires(x, y, context) {
+  console.log('drawGuidewires函数执行了');
+
   context.save();
   context.strokeStyle = 'rgba(0,0,230,0.9)';
   context.lineWidth = 0.8;
@@ -53,8 +55,6 @@ function drawGuidewires(x, y, context) {
   context.restore();
 }
 function drawHorizontalLine(y, context) {
-  console.log('context.canvas.width', context.canvas.width);
-
   context.beginPath();
   context.moveTo(0, y + 0.5);
   context.lineTo(context.canvas.width, y + 0.5);
@@ -74,7 +74,6 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
   if (props.annotation.type == 'ocr_rectangle') {
     const data = props.annotation.result?.split('||')[0];
     const results2 = data && data.split('|').join(',');
-    console.log('results2', results2);
     lengths = results2?.split(',').length;
   } else {
     lengths = props?.annotation?.result?.split(',').length;
@@ -102,8 +101,6 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
     pointsRaw = annotation.result.split(',');
   }
 
-  console.log('pointsRaw', pointsRaw);
-
   const points = {
     xmin: parseInt(pointsRaw[0]),
     ymin: parseInt(pointsRaw[1]),
@@ -114,11 +111,6 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
 
-  console.log(
-    `props.currentAnnotatio:`,
-    props.currentAnnotation?.frontendId,
-    annotation?.frontendId,
-  );
   const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
   const transparency = selected ? 0.5 : 0.2;
   // renderReact(param);
@@ -134,7 +126,6 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
           document.body.style.cursor = 'default';
         }}
         onClick={() => {
-          console.log('props.currentTool', props.currentTool, annotation);
           if (props.currentTool === 'editor' || props.currentTool === 'mover')
             props.onSelect(annotation);
           // props.onSelect(annotation);
@@ -251,7 +242,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   const startNewRectangle = (mouseX: number, mouseY: number, pathName: string) => {
     const polygon = createRectangle([mouseX, mouseY]);
     if (!polygon || !props.dataId) return;
-    console.log('props.annotations:', props.annotations);
     const anno: any = {
       dataId: props.dataId,
       type: 'rectangle',
@@ -277,7 +267,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       return;
     // debugger;
     let result: any = '';
-    console.log('props.currentAnnotation.result', props.currentAnnotation.result);
     if (pathName === '/optical_character_recognition') {
       const data: any = props.currentAnnotation.result?.split('||');
       const results2 = data && data[0].split('|');
@@ -303,7 +292,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       ...props.currentAnnotation,
       result: result,
     };
-    console.log('addDotToRectangle', anno);
     props.onAnnotationModify(anno);
     // debugger;
     if (props.onMouseUp) props.onMouseUp();
@@ -314,22 +302,12 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       isClick = true;
       const mouseX = param.mouseX + param.offsetX;
       const mouseY = param.mouseY + param.offsetY;
-      console.log(`mouseX:`, p1, p2);
       p1.x = param.mouseX;
       p1.y = param.mouseY;
-      console.log(
-        'props.currentAnnotation',
-        props.currentAnnotation,
-        param.mouseX,
-        param.mouseX,
-        param.offsetX,
-        param.offsetY,
-      );
       // debugger;
       if (!props.currentAnnotation) {
         startNewRectangle(mouseX, mouseY, param.pathName);
       }
-      console.log('props.onMouseDown', props.onMouseDown);
 
       if (props.onMouseDown) props.onMouseDown();
     }
@@ -341,12 +319,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   };
   const OnMouseUp = (param: EvtProps) => {
     // debugger;
-    console.log(
-      `OnMouseUps`,
-      props.currentTool != 'rectangle',
-      props.currentTool != 'editor',
-      isClick,
-    );
     if (props.currentTool != 'rectangle' && props.currentTool != 'editor' && isClick) return;
     isClick = false;
     const mouseX = param.mouseX + param.offsetX;

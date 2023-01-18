@@ -2,6 +2,7 @@ import type { InputRef } from 'antd';
 import { Form, Input, Popconfirm, Table } from 'antd';
 import type { FormInstance } from 'antd/es/form';
 import type { ForwardRefRenderFunction } from 'react';
+import { CloseCircleOutlined } from '@ant-design/icons';
 import React, {
   useContext,
   useEffect,
@@ -74,9 +75,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
       toggleEdit();
       handleSave({ ...record, ...values });
-    } catch (errInfo) {
-      console.log('Save failed:', errInfo);
-    }
+    } catch (errInfo) {}
   };
 
   let childNode = children;
@@ -160,7 +159,7 @@ const App: ForwardRefRenderFunction<pageRef, TablesProps> = (props, ref) => {
 
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
     {
-      title: 'address',
+      title: '',
       dataIndex: 'address',
       render: (text: string) => (
         <div
@@ -174,12 +173,12 @@ const App: ForwardRefRenderFunction<pageRef, TablesProps> = (props, ref) => {
       editable: true,
     },
     {
-      title: 'operation',
+      title: '',
       dataIndex: 'operation',
       render: (_, record: { key: React.Key }) =>
         dataSource.length >= 1 ? (
           <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-            <a>Delete</a>
+            <CloseCircleOutlined />
           </Popconfirm>
         ) : null,
     },
@@ -197,7 +196,6 @@ const App: ForwardRefRenderFunction<pageRef, TablesProps> = (props, ref) => {
   // };
 
   const handleSave = (row: DataType) => {
-    console.log('row111', row);
     const data = row?.result?.split('||')[0];
     const results = data + '||' + row.address + '|0|';
     const anno = {
@@ -226,7 +224,6 @@ const App: ForwardRefRenderFunction<pageRef, TablesProps> = (props, ref) => {
   };
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       const anno = selectedRows[0];
       // delete anno.address;
       // delete anno.key;
@@ -275,7 +272,7 @@ const App: ForwardRefRenderFunction<pageRef, TablesProps> = (props, ref) => {
         pagination={false}
         components={components}
         rowClassName={() => 'editable-row'}
-        bordered
+        bordered={false}
         dataSource={dataSource}
         columns={columns as ColumnTypes}
       />

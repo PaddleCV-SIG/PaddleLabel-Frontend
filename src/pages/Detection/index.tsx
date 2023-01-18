@@ -32,7 +32,7 @@ const Page = () => {
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const [otherSetting, setotherSetting] = useState();
   const [flags, setflags] = useState<boolean>(false);
-  const [onSelect, setOnSelect] = useState<Annotation>();
+  // const [onSelect, setOnSelect] = useState<Annotation>();
 
   const model = ModelUtils(useState, baseUrl);
   const page = useRef<pageRef>(null);
@@ -65,12 +65,10 @@ const Page = () => {
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
     setFrontendId(0);
-    console.log('preCurrLabelUnset');
     tool.setCurr('mover');
   }
 
   const setCurrentAnnotation = (anno?: Annotation) => {
-    console.log('setCurrentAnnotation');
     annotation.setCurr(anno);
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
@@ -79,7 +77,6 @@ const Page = () => {
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
-      console.log('annotationfrontendId:', item.frontendId, anno.frontendId, annotation.all);
       if (item.frontendId == anno.frontendId) {
         const result = anno?.result?.split(',').map((items: string) => {
           return Number(items);
@@ -93,7 +90,6 @@ const Page = () => {
         newAnnos.push(item);
       }
     }
-    console.log('onAnnotationModify:', newAnnos, anno);
     // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     annotation.setAll(newAnnos);
     annotation.update(anno);
@@ -101,7 +97,6 @@ const Page = () => {
   const onAnnotationModifyUP = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
-      console.log('annotationUP:', item, anno);
       if (item.frontendId == anno.frontendId) {
         newAnnos.push(anno);
       } else {
@@ -109,8 +104,6 @@ const Page = () => {
       }
     }
     setCurrentAnnotation(anno);
-    console.log('onAnnotationModifyUP:');
-
     annotation.setAll(newAnnos);
     annotation.update(anno);
   };
@@ -126,13 +119,7 @@ const Page = () => {
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
 
     if (!annotation.curr) return;
-    console.log(
-      'annotations.curr',
-      onSelect,
-      annotation.curr,
-      annotation?.curr?.annotationId,
-      annotation.curr.result.split(',').length,
-    );
+    // debugger;
     if (!annotation.curr.result) return;
     const lengths = annotation.all.length - 1;
     const ErrAnno = annotation.all[lengths];
@@ -140,9 +127,11 @@ const Page = () => {
       const newResult = ErrAnno?.result.split(',').concat(annotation?.curr?.result.split(','));
       annotation.curr.result = newResult.join(',');
     }
-    if (annotation?.curr?.result.split(',').length < 3) return;
+    if (annotation?.curr?.result.split(',').length < 3) {
+      setCurrentAnnotation(undefined);
+      return;
+    }
     if (annotation?.curr?.annotationId == undefined) {
-      console.log('finish', data.curr, annotation.curr);
       annotation.create(annotation?.curr);
     } else {
       annotation.update(annotation?.curr);
@@ -198,23 +187,19 @@ const Page = () => {
     return max;
   };
   const getBase64Image = (img?: HTMLImageElement) => {
-    console.log('getBase64Image', img);
-
     if (!img) return '';
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
-    console.log('img.width', img.width);
     const ctx = canvas.getContext('2d');
     ctx?.drawImage(img, 0, 0, img.width, img.height);
     const dataURL = canvas.toDataURL('image/png');
-    console.log('dataURL', dataURL);
 
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
   };
   const onPredicted = (images: HTMLImageElement) => {
     const imgBase64 = getBase64Image(images);
-    const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
+    const thresholdRaw = threshold ? threshold : 0.5;
     const line = model.predict('PicoDet', {
       format: 'b64',
       img: imgBase64,
@@ -238,8 +223,8 @@ const Page = () => {
         }
       },
       (error) => {
+        alert('error', error);
         model.setLoading(false);
-        console.log('line.error', error);
       },
     );
   };
@@ -325,7 +310,6 @@ const Page = () => {
   useUpdateEffect(() => {
     // console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
     if (interactorData.predictData.length && otherSetting?.labelMapping && label.all) {
-      console.log('interactorData.predictData', otherSetting, interactorData.predictData.length);
       const labels = new Set();
       const oldLabel = new Map();
       // const labelmaps: any = {};
@@ -343,7 +327,6 @@ const Page = () => {
         }
       } else {
         for (const labelItem of interactorData.predictData) {
-          console.log('!oldLabel.has(labelItem?.label_name)', oldLabel, labelItem?.label_name);
           if (labelItem && !oldLabel.has(labelItem?.label_name)) {
             labels.add(labelItem?.label_name);
           }
@@ -379,10 +362,8 @@ const Page = () => {
             labelMapping.set(labelMaps.model, labelMaps.project);
           }
         }
-        console.log('interactorData.predictData', interactorData.predictData);
 
         interactorData.predictData.map((item) => {
-          console.log('label_name', item);
           if (item) {
             let name = '';
             if (labelMapping.has(item.label_name)) {
@@ -423,7 +404,6 @@ const Page = () => {
   //   scale.change(curr);
   //   scale.setScales
   // }
-  console.log('annitonsss', annotation.all);
 
   return (
     <PPLabelPageContainer className={styles.det}>
@@ -432,8 +412,6 @@ const Page = () => {
           imgSrc="./pics/buttons/rectangle.png"
           active={tool.curr == 'rectangle'}
           onClick={() => {
-            console.log('label.curr', label.curr);
-
             if (!label.curr) {
               message.error(tbIntl('chooseCategoryFirst'));
               return;
@@ -548,7 +526,7 @@ const Page = () => {
               }}
               drawTool={drawTool}
               threshold={0}
-              OnSelect={setOnSelect}
+              // OnSelect={setOnSelect}
               onAnnotationModifyUP={onAnnotationModifyUP}
             />
           </div>
@@ -614,9 +592,9 @@ const Page = () => {
           imgSrc="./pics/buttons/threshold.png"
           disLoc="left"
           size={threshold}
-          maxSize={100}
-          minSize={10}
-          step={10}
+          maxSize={1}
+          minSize={0.1}
+          step={0.1}
           onChange={(newSize) => {
             setThreshold(newSize);
           }}

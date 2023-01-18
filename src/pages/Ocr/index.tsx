@@ -76,12 +76,10 @@ const Page = () => {
   function preCurrLabelUnset() {
     annotation.setCurr(undefined);
     setFrontendId(0);
-    console.log('preCurrLabelUnset');
     tool.setCurr('mover');
   }
 
   const setCurrentAnnotation = (anno?: Annotation) => {
-    console.log('setCurrentAnnotation', anno);
     annotation.setCurr(anno);
     if (!anno?.frontendId) setFrontendId(0);
     else setFrontendId(anno.frontendId);
@@ -89,12 +87,9 @@ const Page = () => {
 
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
-    console.log('annotationfronsss', anno, annotation.all);
     if (anno.type === 'ocr_polygon') {
-      // console.log('onAnnotationModify', anno);
       if (!anno) return;
       for (const item of annotation.all) {
-        console.log('annotationfrontendId:', item.frontendId, anno.frontendId, annotation.all);
         if (item.frontendId === anno.frontendId) {
           newAnnos.push({
             ...item,
@@ -108,7 +103,6 @@ const Page = () => {
       // annotation.setAll(annAll);
     } else {
       for (const item of annotation.all) {
-        console.log('annotationfrontendId:', item.frontendId, anno.frontendId, annotation.all);
         let areasResult: any = '';
         if (item.frontendId === anno.frontendId) {
           if (history?.location?.pathname === '/optical_character_recognition') {
@@ -124,15 +118,12 @@ const Page = () => {
             item.result = anno?.result;
             setCurrentAnnotation(anno);
             newAnnos.push(item);
-            console.log('newAnnos.push:', item);
           }
         } else {
           newAnnos.push(item);
-          console.log('newAnnos.push:', item);
         }
       }
     }
-    console.log('onAnnotationModify:', newAnnos, anno);
     annotation.setAll(newAnnos);
 
     // // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
@@ -140,7 +131,6 @@ const Page = () => {
   const onAnnotationModifyUP = (anno: Annotation) => {
     const newAnnos = [];
     for (const item of annotation.all) {
-      console.log('annotationUP:', item, anno);
       if (item.frontendId == anno.frontendId) {
         newAnnos.push(anno);
       } else {
@@ -148,25 +138,23 @@ const Page = () => {
       }
     }
     setCurrentAnnotation(anno);
-    console.log('onAnnotationModifyUP:');
 
     annotation.setAll(newAnnos);
     annotation.update(anno);
+    message.success(tbIntl('saveSuccess'));
   };
   const onStartEdit = () => {
-    console.log('onStartEdit', 'onStartEdit');
-
     setisClick(true);
   };
   const onEndEdit = () => {
-    console.log('onEndEdit', 'onEndEdit');
+    if (interactorData.active) return;
+    annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
 
     setisClick(false);
   };
   const onFinishEdit = async () => {
     annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     if (!annotation.curr) return;
-    console.log('annotations.curr', annotation.curr, annotation?.curr?.annotationId);
     if (!annotation.curr.result) return;
     if (annotation.curr.type === 'ocr_polygon') {
     } else {
@@ -174,7 +162,6 @@ const Page = () => {
       const ErrAnno = annotation.all[lengths];
       const ErrAnnoDatas = ErrAnno?.result.split('||')[0] as string;
       if (ErrAnno && ErrAnnoDatas?.split('|').length === 2) {
-        console.log('annotation?.curr?.result', annotation?.curr?.result);
         const currResults = annotation?.curr?.result;
         const pointDatas = currResults.split('||')[0];
         const newResult = ErrAnnoDatas.split('|').concat(pointDatas.split('|'));
@@ -182,9 +169,11 @@ const Page = () => {
         annotation.curr.result = newResults;
       }
       const strings = annotation?.curr?.result.split('||')[0];
-      if (strings.length < 3) return;
+      if (strings.length < 3) {
+        setCurrentAnnotation(undefined);
+        return;
+      }
       if (annotation?.curr?.annotationId == undefined) {
-        console.log('finish', data.curr, annotation.curr);
         await annotation.create(annotation?.curr);
         // setCurrentAnnotation(annotation.all[annotation.all.length - 1]);
       } else {
@@ -236,26 +225,21 @@ const Page = () => {
     return max;
   };
   const getBase64Image = (img?: HTMLImageElement) => {
-    console.log('getBase64Image', img);
-
     if (!img) return '';
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
-    console.log('img.width', img.width);
     const ctx = canvas.getContext('2d');
     ctx?.drawImage(img, 0, 0, img.width, img.height);
     const dataURL = canvas.toDataURL('image/png');
-    console.log('dataURL', dataURL);
 
     return dataURL.replace(/^data:image\/(png|jpg);base64,/, '');
   };
 
   const onPredicted = (images: HTMLImageElement) => {
     const imgBase64 = getBase64Image(images);
-    const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
+    const thresholdRaw = threshold ? threshold : 0.5;
     const dataCurr = data?.curr;
-    console.log('dataIds', dataCurr);
 
     const line = model.predict('PaddleOCR', {
       format: 'b64',
@@ -270,7 +254,6 @@ const Page = () => {
         if (res) {
           // debugger;
           const id = datas.current.curr?.dataId;
-          console.log('ids', id, res.piggyback.dataId);
 
           if (id !== res.piggyback.dataId) {
             return;
@@ -290,8 +273,8 @@ const Page = () => {
         }
       },
       (error) => {
+        alert('error', error);
         model.setLoading(false);
-        console.log('line.error', error);
       },
     );
   };
@@ -322,8 +305,6 @@ const Page = () => {
     }
   }, [data.all]);
   useEffect(() => {
-    console.log('isClicks', isClick);
-
     if (!isClick) {
       onFinishEdit();
     }
@@ -377,7 +358,6 @@ const Page = () => {
         let frontendIds = annotation.all?.length ? getMaxFrontendId(annotation.all) + 1 : 1;
 
         interactorData.predictData.map((item) => {
-          console.log('label_name', item);
           if (item) {
             const result = item.result;
             const predictedBy = otherSetting?.modelName;
@@ -411,7 +391,6 @@ const Page = () => {
   //   scale.change(curr);
   //   scale.setScales
   // }
-  console.log('annitonsss', annotation.all);
   const deletes = async (anno: Annotation) => {
     const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
     annHistory.record({ annos: newAll });
@@ -447,8 +426,6 @@ const Page = () => {
           imgSrc="./pics/buttons/rectangle.png"
           active={tool.curr == 'rectangle'}
           onClick={() => {
-            console.log('label.curr', label.curr);
-
             if (!label.curr && history?.location?.pathname !== '/optical_character_recognition') {
               message.error(tbIntl('chooseCategoryFirst'));
               return;
@@ -637,9 +614,9 @@ const Page = () => {
           imgSrc="./pics/buttons/threshold.png"
           disLoc="left"
           size={threshold}
-          maxSize={100}
-          minSize={10}
-          step={10}
+          maxSize={1}
+          minSize={0.1}
+          step={0.1}
           onChange={(newSize) => {
             setThreshold(newSize);
           }}

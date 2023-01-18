@@ -25,7 +25,6 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
       className={`${styles.listItem} ${props.active ? styles.listItemActive : ''}`}
       unselectable="on"
       onClick={() => {
-        console.log('click List.Item');
         props.onClick(annotation);
       }}
     >
@@ -49,7 +48,6 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
       <a
         className={styles.delete}
         onClick={(e) => {
-          console.log('click List.Item.delete');
           e.stopPropagation();
           // annotation.delete = true;
           props.onAnnotationDelete(annotation);

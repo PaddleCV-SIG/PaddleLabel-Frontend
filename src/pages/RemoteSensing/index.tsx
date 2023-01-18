@@ -81,8 +81,6 @@ const Page: React.FC = () => {
     // initHistory();
   }, []);
 
-  console.log(`rs is re-rendering! label.curr: ${JSON.stringify(label.curr)}`);
-
   const leafletMapRef = React.useRef<Map>(null);
   const dr = operation({
     leafletMapRef: leafletMapRef,

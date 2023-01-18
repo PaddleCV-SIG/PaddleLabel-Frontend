@@ -75,7 +75,6 @@ const TaskList: React.FC = () => {
             thisImage.target.src = loading;
             setTimeout(() => {
               thisImage.target.src = `${baseUrl}${paths[0]}reload`;
-              console.log(`${baseUrl}${paths[0]} reload`);
             }, 1000);
           }}
         />
@@ -104,9 +103,7 @@ const TaskList: React.FC = () => {
 
   useEffect(() => {
     project.getCurr(projectId);
-    task.getAll(projectId).then((tasks) => {
-      console.log('tasks', tasks);
-    });
+    task.getAll(projectId).then(() => {});
   }, []);
 
   // ensure projectid
@@ -114,8 +111,6 @@ const TaskList: React.FC = () => {
     message.error('No valid project id');
     history.push('/');
   }
-  // console.log('project.curr.taskCategory.name', project?.curr?.taskCategory?.name);
-  // console.log('tasks', [...toDict(task.all)]);
   return (
     <PPContainer>
       <PPBlock>
@@ -135,7 +130,6 @@ const TaskList: React.FC = () => {
         <Button
           type="primary"
           onClick={() => {
-            console.log('project', project.curr);
             history.push(
               `/project_detail?taskCategory=${snake2camel(
                 project.curr.taskCategory.name,
@@ -166,7 +160,6 @@ const TaskList: React.FC = () => {
           <Button
             type="primary"
             onClick={() => {
-              console.log('project.curr.taskCategory.name', project.curr.taskCategory.name);
               let path = '/project_ai';
               if (project?.curr?.taskCategory?.name === 'optical_character_recognition') {
                 path = '/project_ocr_ai';

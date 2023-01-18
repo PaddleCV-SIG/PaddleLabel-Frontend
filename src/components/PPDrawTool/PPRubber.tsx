@@ -29,20 +29,17 @@ function createLine(param: CanvasLineType): string {
 /**
  * Color lines on canvas as label.color
  */
-let isClick = false;
+// let isClick = false;
 let finlyResult = '';
-function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
-  console.log('flag', flag);
+function drawAnnotation(param: PPRenderFuncProps) {
   const { canvasRef2, annotation } = param;
   const canvasRef = canvasRef2;
   const result = annotation.result;
   if (!result) return <></>;
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
-  console.log(`PPBrush.drawAnnotation, result:`, result);
   let points: number[] = [];
   let startIndex = 0;
-  console.log('annotation.result', annotation, param.currentAnnotation);
 
   for (let i = 0; i < result.length; i++) {
     // Number end
@@ -81,7 +78,6 @@ function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
       renderPoints(points, ctx, annotation);
     }
   }
-  console.log('annotation param.currentAnnotation rubber', isClick, param.currentTool, flag);
   // if (isClick && param.currentTool === 'rubber' && flag) {
   //   ctx.beginPath();
   //   const pointss = points.slice(2);
@@ -99,10 +95,8 @@ function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
 function renderPoints(points: number[], ctx: CanvasRenderingContext2D, annotation: Annotation) {
   // console.log(`renderPoints: `, points, annotation, annotation.label?.color, ctx);
   // Draw shape
-  console.log('points', points);
 
   if (points.length < 4) {
-    console.log('found incorrect points:', points);
     return;
   }
   const width = points[0];
@@ -125,7 +119,6 @@ function renderBrush(
   points: number[], // x1, y1, x2, y2
   color: string | undefined, // No color means rubber
 ) {
-  console.log(`renderBrush: `, points, width, color, ctx);
   ctx.beginPath();
   ctx.moveTo(points[0], points[1]);
   for (let i = 0; i <= points.length / 2 - 1; i++) {
@@ -182,7 +175,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
    * Always start new annotation onMouseDown, assosiate annotations by same frontendId
    */
   const OnMouseDown = (param: EvtProps) => {
-    isClick = true;
+    // isClick = true;
     if (
       (props.currentTool != 'brush' && props.currentTool != 'rubber') ||
       // !props.currentLabel?.color ||
@@ -193,14 +186,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const mouseY = param.mouseY;
     const tool = getTool(props.currentTool, param.e.evt.button);
 
-    console.log(
-      `frontendId: `,
-      props.frontendIdOps.frontendId,
-      'maxId:',
-      getMaxFrontendId(props.annotations),
-      `tool: `,
-      tool,
-    );
     const frontendId =
       props.frontendIdOps.frontendId > 0
         ? props.frontendIdOps.frontendId
@@ -213,7 +198,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       type: tool,
       frontendId: frontendId,
     });
-    console.log(line);
 
     setCurrentTool(tool);
     if (!line) return;
@@ -248,16 +232,12 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   };
 
   const OnMouseMove = (param: EvtProps) => {
-    console.log('currentTool', currentTool);
-
     if (!currentTool) {
       return;
     }
-    console.log('props.currentAnnotation', props.currentAnnotation, props.annotations);
     // const LastAnnotations = props.annotations[props.annotations?.length - 1];
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
-    console.log('mouseX', mouseX, mouseY);
     // props.currentAnnotation 最新的一个节点，假设不使用这个的话 可以取Annotation里面的节点来用
     // const newResult = LastAnnotations.result + `,${mouseX},${mouseY}`;
     // props.onAnnotationModify({ ...LastAnnotations, result: newResult });
@@ -273,7 +253,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const LastAnnotations = props.annotations[props.annotations?.length - 1];
     props.onAnnotationModify({ ...LastAnnotations, result: finlyResult });
     finlyResult = '';
-    isClick = false;
+    // isClick = false;
     setCurrentTool(undefined);
     props.onMouseUp();
   };

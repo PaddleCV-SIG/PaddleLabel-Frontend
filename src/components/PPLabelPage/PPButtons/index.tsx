@@ -1,13 +1,13 @@
 import { IntlInitJsx } from '@/components/PPIntl';
 import { Col, Popover, Row, Select } from 'antd';
 import type { TooltipPlacement } from 'antd/lib/tooltip';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PPToolBarButton from '../PPToolBarButton';
 import styles from './index.less';
 
-const defaultMinSize = 0;
-const defaultMaxSize = 100;
-const defaultSize = 10;
+// const defaultMinSize = 0;
+// const defaultMaxSize = 100;
+// const defaultSize = 10;
 
 type Props = {
   size?: number;
@@ -24,25 +24,24 @@ type Props = {
 const { Option } = Select;
 const Component: React.FC<Props> = (props) => {
   const intl = IntlInitJsx('pages.toolBar.colorMode');
-  const [size, setSizeRaw] = useState(formatSize(props.size));
-  function setSize(destSize: number | undefined) {
-    setSizeRaw(formatSize(destSize));
-  }
-  console.log(size);
+  // const [size, setSizeRaw] = useState(formatSize(props.size));
+  // function setSize(destSize: number | undefined) {
+  //   setSizeRaw(formatSize(destSize));
+  // }
 
   // const step = props.step ? props.step : 10;
-  const minSize = props.minSize == undefined ? defaultMinSize : props.minSize;
-  const maxSize = props.maxSize == undefined ? defaultMaxSize : props.maxSize;
-  function formatSize(originSize?: number) {
-    if (originSize == undefined) return defaultSize;
-    if (originSize <= minSize) return minSize;
-    if (originSize >= maxSize) return maxSize;
-    return originSize;
-  }
-  useEffect(() => {
-    setSize(props.size);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.size]);
+  // const minSize = props.minSize == undefined ? defaultMinSize : props.minSize;
+  // const maxSize = props.maxSize == undefined ? defaultMaxSize : props.maxSize;
+  // function formatSize(originSize?: number) {
+  //   if (originSize == undefined) return defaultSize;
+  //   if (originSize <= minSize) return minSize;
+  //   if (originSize >= maxSize) return maxSize;
+  //   return originSize;
+  // }
+  // useEffect(() => {
+  //   setSize(props.size);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [props.size]);
 
   return (
     <Popover

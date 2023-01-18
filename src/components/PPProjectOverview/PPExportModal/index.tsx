@@ -73,7 +73,15 @@ const PPExportModal: React.FC<PPExportProps> = (props) => {
 
           <Form.Item
             name="exportFormat"
-            label={<p>{intlJsx('labelFormat')} </p>}
+            label={
+              <p
+                style={{
+                  marginBottom: '0px',
+                }}
+              >
+                {intlJsx('labelFormat')}{' '}
+              </p>
+            }
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 16 }}
             rules={[{ required: true, message: intlJsx('nullLabelFormat') }]}

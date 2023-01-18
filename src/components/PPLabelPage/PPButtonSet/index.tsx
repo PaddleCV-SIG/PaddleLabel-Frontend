@@ -46,7 +46,7 @@ const Component: React.FC<Props> = (props) => {
       placement={props.disLoc || 'right'}
       content={
         <Row>
-          <Col span={16}>
+          <Col span={14}>
             <Slider
               className={styles.slider}
               value={size}
@@ -55,11 +55,15 @@ const Component: React.FC<Props> = (props) => {
               onChange={(newSize) => {
                 props.onChange?.call(0, newSize);
               }}
+              step={0.01}
               tooltipVisible={false}
             />
           </Col>
-          <Col span={8}>
+          <Col span={10}>
             <InputNumber
+              style={{
+                width: '100%',
+              }}
               min={minSize}
               max={maxSize}
               value={size}

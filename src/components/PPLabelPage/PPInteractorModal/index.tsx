@@ -40,8 +40,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     }
   }, [project.curr]);
 
-  function saveMlsettings(settings: any) {
-    console.log('saveMlsettings', project.curr, settings);
+  function saveMlsettings() {
     if (!project.curr) {
       message.error('Please select project first!');
     }
@@ -92,7 +91,6 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         onFinish={(values) => {
-          console.log('form finish', values);
           saveMlsettings(values);
           props.setVisible(false);
         }}

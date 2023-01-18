@@ -18,7 +18,6 @@ const Projects: React.FC = (props) => {
   const intlJsx = IntlInitJsx('pages.welcome');
   const intl = IntlInit('pages.welcome');
 
-  console.log('render projects');
   const projects = ProjectUtils(useState);
   useEffect(() => {
     getVersion().then((version) => {
@@ -96,7 +95,6 @@ const Projects: React.FC = (props) => {
   // if found no project, return create project button
   // TODO: beautify frontend
   if (!projects.all?.length) return '';
-  console.log('all pjs', toDict(projects.all));
 
   return (
     <Row style={{ marginTop: 20 }}>
@@ -162,7 +160,7 @@ const Welcome: React.FC = () => {
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
               <Button
                 type="primary"
-                style={{ height: '3.125rem', lineHeight: '3.125rem' }}
+                style={{ height: '3.125rem' }}
                 onClick={() => {
                   window.open(`/static/doc/CN/training/PdLabel_PdClas.html`);
                 }}
@@ -172,7 +170,7 @@ const Welcome: React.FC = () => {
               </Button>
               <Button
                 type="primary"
-                style={{ height: '3.125rem', lineHeight: '3.125rem' }}
+                style={{ height: '3.125rem' }}
                 onClick={() => {
                   window.open('/static/doc/CN/training/PdLabel_PdDet.html');
                 }}
@@ -182,7 +180,7 @@ const Welcome: React.FC = () => {
               </Button>
               <Button
                 type="primary"
-                style={{ height: '3.125rem', lineHeight: '3.125rem' }}
+                style={{ height: '3.125rem' }}
                 onClick={() => {
                   window.open('/static/doc/CN/training/PdLabel_PdSeg.html');
                 }}
@@ -192,7 +190,7 @@ const Welcome: React.FC = () => {
               </Button>
               <Button
                 type="primary"
-                style={{ height: '3.125rem', lineHeight: '3.125rem' }}
+                style={{ height: '3.125rem' }}
                 onClick={() => {
                   window.open('/static/doc/CN/training/PdLabel_PdX.html');
                 }}

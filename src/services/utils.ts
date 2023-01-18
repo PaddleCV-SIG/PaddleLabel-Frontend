@@ -93,10 +93,8 @@ export const createInfo = {
 export async function getVersion() {
   try {
     const version = await manageApi.getVersion();
-    console.log('version', version);
     return version;
   } catch (err) {
-    console.log('err', err);
     message.error(
       'Backend unavaliable, please make sure backend is running and check ur internet connection.',
     );
@@ -228,6 +226,7 @@ export const ProjectUtils = (useState: UseStateType) => {
     projectApi
       .get(projectId)
       .then((project) => {
+        console.log('projects', project);
         setCurr(project);
         return project;
       })
@@ -274,7 +273,6 @@ export const ProjectUtils = (useState: UseStateType) => {
       setFinished(stat.finished);
       return stat.finished;
     } catch (err) {
-      console.log('get finished err', err);
       serviceUtils.parseError(err, message);
       return 0;
     }
@@ -282,7 +280,6 @@ export const ProjectUtils = (useState: UseStateType) => {
 
   async function predict(projectId: number, settings: object) {
     projectApi.predict(projectId, settings).catch((err) => {
-      console.log('project predict err', err);
       serviceUtils.parseError(err, message);
     });
   }
@@ -332,14 +329,12 @@ export const LabelUtils = (
       setAll(labels);
       return labels;
     } catch (err) {
-      console.log('label getall err ', err);
       serviceUtils.parseError(err, message);
       return;
     }
   }
 
   function onSelect(label: Label) {
-    console.log('on select', isOneHot, label, activeIds, activeIds.has(label.labelId));
     let activeIdsTemp = activeIds;
     if (activeIds.has(label.labelId)) {
       activeIds.delete(label.labelId);
@@ -361,7 +356,6 @@ export const LabelUtils = (
   }
 
   function setCurr(label: Label) {
-    console.log('label setcurr', label);
     if (label == undefined) return unsetCurr();
     setCurrRaw(label);
     if (isOneHot) activeIds.clear();
@@ -375,11 +369,9 @@ export const LabelUtils = (
     for (const ann of annotations) activeIds.add(ann.labelId);
     setActiveIds(new Set(activeIds));
     if (isOneHot && activeIds.size > 1) message.error(intlJsx('ontHotMultiple'));
-    console.log('initActive', activeIds);
   }
 
   async function create(label: Label | Label[]): Promise<Label[] | undefined> {
-    console.log('create label', label);
     try {
       // debugger;
       const newLabels = await labelApi.create(
@@ -387,19 +379,16 @@ export const LabelUtils = (
         undefined,
         true,
       );
-      console.log('newLabels', newLabels);
 
       getAll(label instanceof Array ? label[0].projectId : label.projectId);
       return newLabels;
     } catch (err) {
-      console.log('label create err', err);
       serviceUtils.parseError(err, message);
       return;
     }
   }
 
   async function remove(label: Label): Promise<Label[]> {
-    console.log('to delete', label);
     try {
       await labelApi.remove(label.labelId);
       if (activeIds.has(label.labelId)) {
@@ -411,7 +400,6 @@ export const LabelUtils = (
       message.success(intlJsx('deleteSuccess'));
       return labels;
     } catch (err) {
-      // console.log('label remove err', err);
       serviceUtils.parseError(err, message);
       return [];
     }
@@ -442,7 +430,7 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any; push
   const [currIdx, setCurrIdx] = useState<number>();
   const intl = IntlInitJsx('pages.toolBar.task');
 
-  const turnTo = async (turnToIdx: number) => {
+  const turnTo = (turnToIdx: number) => {
     if (!all) return false;
     if (turnToIdx < 0) {
       message.error(intl('noPrev'));
@@ -470,7 +458,6 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any; push
       }
       return allRes;
     } catch (err) {
-      console.log('task getall err ', err);
       return serviceUtils.parseError(err, message);
     }
   };
@@ -523,18 +510,15 @@ export function AnnotationUtils(
   }
 
   const getAll = async (dataId: number) => {
-    console.log('AnnotationUtils getAll, dataId:', dataId);
     if (dataId == undefined) return [];
     try {
       const annRes: Annotation[] = await dataApi.getAnnotations(dataId);
-      console.log('All annotations', annRes);
       // setAll([]);
       setAll(annRes);
       return annRes;
 
       // setAll([]);
     } catch (err) {
-      console.log('AnnotationUtils ann getAll err', err);
       serviceUtils.parseError(err, message);
       return [];
     }
@@ -542,7 +526,6 @@ export function AnnotationUtils(
 
   async function clear() {
     if (!all) return;
-    console.log('alls', all);
 
     if (all?.length == 0) return;
     await pushToBackend(all[0].dataId, []);
@@ -578,7 +561,6 @@ export function AnnotationUtils(
       }
       if (project && annRes.length == 1) project.getFinished();
     } catch (err) {
-      console.log('annotation create err', err);
       return serviceUtils.parseError(err, message);
     }
   };
@@ -591,18 +573,15 @@ export function AnnotationUtils(
       if (all && all.length && all[0].dataId!) {
         const anns = await getAll(all[0].dataId);
         recordHistory({ annos: anns });
-        console.log('anns', anns);
         if (anns.length == 0) project.getFinished();
       }
       message.success(tbIntl('saveSuccess'));
     } catch (err) {
-      console.log('annotation remove err', err);
       return serviceUtils.parseError(err, message);
     }
   }
 
   async function setCurr(annotation: Annotation | undefined) {
-    console.log('annotation.setCurr:', annotation);
     if (annotation == undefined) {
       setCurrRaw(undefined);
       return;
@@ -621,12 +600,10 @@ export function AnnotationUtils(
     annotationApi
       .update(ann.annotationId, ann)
       .then((res) => {
-        console.log('annotation update res', res);
         // setCurr(res);
         return getAll(ann.dataId);
       })
       .catch((err) => {
-        console.log('annotation update err ', err);
         serviceUtils.parseError(err, message);
         return [];
       });
@@ -642,10 +619,9 @@ export function AnnotationUtils(
   async function pushToBackend(dataId?: number, anns?: Annotation[]) {
     if (dataId == undefined || dataId == null) return;
     const newAll = anns ? anns : all;
-    console.log('pushToBackend, dataId:', dataId, 'newAll:', newAll);
     try {
       const res = await dataApi.setAnnotations(dataId + '', newAll);
-      console.log('res', res);
+
       setAllRaw(res);
       message.success(tbIntl('saveSuccess'));
       return res;
@@ -680,14 +656,12 @@ export const DataUtils = (useState: UseStateType) => {
     try {
       const allRes = await taskApi.getDatas(taskId);
       setAll(allRes);
-      console.log('allRes[0].dataId', allRes[0].dataId);
       if (turnToIdx != undefined) {
         turnTo(turnToIdx);
         return [allRes, allRes[turnToIdx]];
       }
       return allRes;
     } catch (err) {
-      console.log('data getall err ', err);
       return serviceUtils.parseError(err, message);
     }
   };
@@ -705,7 +679,6 @@ export const DataUtils = (useState: UseStateType) => {
       });
       // debugger;
     } catch (err) {
-      console.log('data getall err ', err);
       return serviceUtils.parseError(err, message);
     }
   };
@@ -713,7 +686,6 @@ export const DataUtils = (useState: UseStateType) => {
     try {
       await dataApi.setAnnotations(dataId + '', annotations);
     } catch (err) {
-      console.log('data getall err ', err);
       return serviceUtils.parseError(err, message);
     }
   };
@@ -725,8 +697,6 @@ export const DataUtils = (useState: UseStateType) => {
     setAnnotations,
     updatePredicted,
     get curr() {
-      // console.log('data.getcurr');
-
       // debugger;
       if (currIdx == undefined || all == undefined) return undefined;
       return all[currIdx];
@@ -744,12 +714,10 @@ export function exportDataset(
   projectId: number,
   params: { exportDir: string; exportFormat: string; segMaskType: string },
 ) {
-  console.log('export params', params);
   return projectApi
     .exportDataset(projectId, params)
     .then((res) => {})
     .catch((err) => {
-      console.log('export error', err);
       serviceUtils.parseError(err, message);
       throw err;
     });
@@ -765,7 +733,6 @@ export function importDataset(
     .importDataset(projectId, { importDir: importDir, importFormat: importFormat })
     .then((res) => {
       message.success('额外数据导入成功');
-      console.log(res);
     })
     .catch((err) => {
       serviceUtils.parseError(err, message);
@@ -907,7 +874,6 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   async function getAll() {
     try {
       const models: Model[] = await modelApi.getAll();
-      console.log('models', models);
       setAll(models);
       return models;
     } catch (err) {
@@ -923,7 +889,6 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   async function setMlBackendUrl(url: string) {
     modelApi = new ModelApi(new Configuration({ basePath: url }));
     setBackendUrl(url);
-    console.log('ml backend url set', url);
   }
 
   async function train(modelName: string, dataDir: string, configs: object) {
@@ -960,7 +925,6 @@ export function ModelUtils(useState: UseStateType, mlBackendUrl: string = undefi
   }
 
   async function checkAPI() {
-    console.log('model api url', modelApi.configuration.configuration.basePath);
     if (!modelApi.configuration.configuration.basePath) {
       // debugger;
       throw new Error('Set ML backend url first!');

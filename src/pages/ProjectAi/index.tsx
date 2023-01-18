@@ -76,22 +76,18 @@ const PaddleAi: React.FC = () => {
 
   const model = ModelUtils(useState, modelUrl);
   const projectId = serviceUtils.getQueryVariable('projectId');
-  console.log('FrontendId', frontendId);
 
   const preCurrLabelUnset = () => {
     // annotation.setCurr(undefined);
     setFrontendId(0);
   };
   const handleChange = (value: string) => {
-    console.log(`modelSelected ${value}`);
     setModelSelected(value);
   };
   const handleUrlChange = (value: string) => {
-    console.log(`Urlselected ${value}`);
     setModelUrl(value);
   };
   const multipleChange = (value: string | string[]) => {
-    console.log(`multipleChange: ${value}`);
     setLabels(value);
     const labelOptions = labelOption.filter((item) => {
       return item !== value;
@@ -99,7 +95,6 @@ const PaddleAi: React.FC = () => {
     setLabelOption(labelOptions);
   };
   const multipleChange2 = (value: string | string[]) => {
-    console.log(`multipleChange2: ${value}`);
     setLabels2(value);
   };
   // const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,8 +112,6 @@ const PaddleAi: React.FC = () => {
   //   }, 0);
   // };
   const addLabel = () => {
-    console.log('labels', labels, labels2);
-
     setlabelItem((labelItems) => {
       return [
         ...labelItems,
@@ -193,7 +186,6 @@ const PaddleAi: React.FC = () => {
       labelMapping: labelItem,
     };
     // if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
-    console.log('otherSettings', otherSettings);
     // const values = project.curr;
     project.update(projectId, { otherSettings: otherSettings }).then(() => {
       addLabels();
@@ -227,8 +219,6 @@ const PaddleAi: React.FC = () => {
   useEffect(() => {
     if (modelSelected) {
       for (const models of model.all) {
-        console.log('models', models);
-
         if (models.name === modelSelected) {
           if (models.labelNames) {
             setLabelOption(models.labelNames);
@@ -237,6 +227,8 @@ const PaddleAi: React.FC = () => {
       }
     }
   }, [modelSelected]);
+  console.log('frontendId', frontendId);
+
   return (
     <PPContainer>
       <PPBlock style={{ height: '100%' }}>

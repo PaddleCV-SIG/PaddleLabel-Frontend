@@ -210,7 +210,7 @@ const Page: React.FC = () => {
           }
         }
       }
-      const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
+      const thresholdRaw = threshold ? threshold : 0.5;
       for (const labelItem of interactorData.predictData) {
         if (labelItem?.score > thresholdRaw) {
           console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
@@ -354,9 +354,9 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/threshold.png"
           disLoc="left"
           size={threshold}
-          maxSize={100}
-          minSize={10}
-          step={10}
+          maxSize={1}
+          minSize={0.1}
+          step={0.1}
           onChange={(newSize) => {
             setThreshold(newSize);
           }}

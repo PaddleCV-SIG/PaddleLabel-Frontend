@@ -72,7 +72,6 @@ const PaddleAi: React.FC = () => {
   const projectId = serviceUtils.getQueryVariable('projectId');
 
   const handleChange = (value: any) => {
-    console.log(`modelSelected ${value}`);
     // setModelSelected(value);
     for (const models of model.all) {
       if (models.name === value) {
@@ -91,6 +90,14 @@ const PaddleAi: React.FC = () => {
       project.setAllPredicted(false, projectId);
     }
   };
+  useEffect(() => {
+    form.setFields([
+      {
+        name: 'mlBackendUrl',
+        value: DEFAULT_ML_URL,
+      },
+    ]);
+  }, []);
   useEffect(() => {
     if (projectId) {
       project.getCurr(projectId);
@@ -113,18 +120,14 @@ const PaddleAi: React.FC = () => {
     model.getAll();
   }, [model.backendUrl]);
   const onConfirm = () => {
-    console.log('form.getFieldsValue', form.getFieldsValue(true));
-
     form
       ?.validateFields()
-      .then(async (values) => {
-        console.log('formvalues', values);
+      .then(async () => {
         // debugger;
         saveProject();
       })
       .catch((errorInfo) => {
-        console.log('errorInfo', errorInfo);
-        // alert(errorInfo);
+        alert(errorInfo);
       });
   };
   const handleUrlChange = (value: string) => {
