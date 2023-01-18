@@ -28,13 +28,13 @@ export default {
     '如果希望导入数据集中的标注信息，请参考如上文件结构组织文件夹下的文件。点击上方文件可查看文件内容示例。',
   'component.PPCreater.importInProgress': '导入中，请稍候',
 
-  'component.PPAddLabelModal.selectColor': '选择颜色',
-  'component.PPAddLabelModal.addLabel': '创建标签',
-  'component.PPAddLabelModal.labelName': '标签名',
   'component.PPAnnotationList.annotationList': '标注列表',
-  'component.PPAnnotationList.addAnnotation': '添加标注',
+  // 'component.PPAnnotationList.addAnnotation': '添加标注',
   'component.PPLabelList.labelList': '类别列表',
   'component.PPLabelList.addLabel': '添加类别',
+  'component.PPAddLabelModal.selectColor': '选择颜色',
+  'component.PPAddLabelModal.addLabel': '添加类别',
+  'component.PPAddLabelModal.labelName': '类别名',
 
   'component.PPSplitDatasetModal.title': '划分数据集',
   'component.PPSplitDatasetModal.train': '训练集比例',
