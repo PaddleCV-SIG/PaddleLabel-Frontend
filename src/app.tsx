@@ -19,7 +19,7 @@ if (window.location.hostname == 'paddlecv-sig.github.io') {
 } else {
   const port = process.env.NODE_ENV == 'development' ? '17995' : window.location.port;
   localStorage.setItem('basePath', `http://${window.location.hostname}:${port}/api`);
-  console.log('asdf', process.env, `http://${window.location.hostname}:${port}/api`);
+  // console.log('asdf', process.env, `http://${window.location.hostname}:${port}/api`);
 }
 
 /**

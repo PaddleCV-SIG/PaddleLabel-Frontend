@@ -3,10 +3,10 @@
   "version": "0.5.0",
   "description": "PaddleLabel e2e test",
   "main": "index.js",
-  "devDependencies": {
-    "cypress": "latest"
-  },
   "dependencies": {
-    "typescript": "latest"
-  }
+    "cypress": "^12.3.0",
+    "typescript": "^4.9.4",
+    "wait-port": "^1.0.4"
+  },
+  "license": "Apache-2.0"
 }
