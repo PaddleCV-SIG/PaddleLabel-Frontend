@@ -8,7 +8,7 @@
     "typescript": "^4.9.4"
   },
   "scripts": {
-    "test:win": "CALL C:\\Users\\runneradmi\\micromamba-root\\condabin\\mamba_hook.bat && micromamba activate PaddleLabel && paddlelabel --debug --port 1111 --lan"
+    "test:win": "CALL C:\\Users\\runneradmin\\micromamba-root\\condabin\\mamba_hook.bat && micromamba activate PaddleLabel && paddlelabel --debug --port 1111 --lan"
   },
   "license": "Apache-2.0"
 }
