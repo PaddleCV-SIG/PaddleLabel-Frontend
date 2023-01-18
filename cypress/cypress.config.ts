@@ -14,6 +14,7 @@ export default defineConfig({
 
     supportFile: './support/e2e.{js,jsx,ts,tsx}',
     specPattern: './e2e/**/*.cy.{js,jsx,ts,tsx}',
+
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.name === 'chrome' && browser.isHeadless) {

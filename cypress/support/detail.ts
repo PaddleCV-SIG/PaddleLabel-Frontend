@@ -58,9 +58,8 @@ export const detail = {
     cy.g(`global.labelFormat.${labelFormat}`).click();
     cy.g('component.PPCreater.create')
       .click()
-      .wait(500)
       .then(() => {
-        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
+        cy.onPage(projectType, false);
         if (screenshot)
           cy.screenshot(
             runId +
@@ -68,10 +67,6 @@ export const detail = {
               dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
               '_afterImport',
           );
-      });
-    for (let t = 0; t < 4; t++)
-      cy.wait(400).then(() => {
-        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
       });
     if (
       !(

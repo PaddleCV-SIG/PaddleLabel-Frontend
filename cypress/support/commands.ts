@@ -1,6 +1,5 @@
 /// <reference types="cypress" />
 
-// import cypress from 'cypress';
 import { camel2snake } from './util.ts';
 
 Cypress.Commands.add('interrupt', () => {
@@ -25,14 +24,26 @@ Cypress.Commands.add('clearPjs', () => {
 });
 
 Cypress.Commands.add('onPage', (urlPart, allowError: boolean = false) => {
+  if (!allowError)
+    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+      'not.exist',
+    );
   const url_part = camel2snake(urlPart);
-  if (!allowError) cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
   cy.url({ timeout: 15000 }).should('contain', url_part);
-  if (!allowError) cy.get('[data-icon="close-circle"]').should('not.exist');
+  if (!allowError)
+    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+      'not.exist',
+    );
   cy.wait('@apicalls', { timeout: 15000 });
-  if (!allowError) cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
+  if (!allowError)
+    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+      'not.exist',
+    );
   cy.g('global.loading').should('not.exist');
-  cy.wait(500);
+  if (!allowError)
+    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+      'not.exist',
+    );
 });
 
 Cypress.Commands.add('printDebugId', (debugId: string) => {

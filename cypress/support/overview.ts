@@ -1,5 +1,3 @@
-import { over } from 'lodash';
-import { symbol } from 'prop-types';
 import { detail } from './detail';
 import { label } from './label';
 
@@ -25,10 +23,6 @@ export const overview = {
   toLabel: (projectType: string, skipAnnTest: string = false) => {
     cy.g('pages.projectOverview.label').first().click();
     label.on(projectType, skipAnnTest);
-    for (let t = 0; t < 4; t++)
-      cy.wait(500).then(() => {
-        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
-      });
   },
   toExport: () => {
     cy.g('component.PPExportModal.title').click();
