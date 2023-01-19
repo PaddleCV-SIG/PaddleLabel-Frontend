@@ -426,6 +426,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       other: { clicks: interactorData.mousePoints },
     });
     if (!line) return;
+    console.log('line', line);
 
     setInteractorData({
       mousePoints: interactorData.mousePoints,

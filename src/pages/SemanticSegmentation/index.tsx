@@ -30,7 +30,7 @@ const Page: React.FC = () => {
   const [selectFinly, setSelectFinly] = useState<Annotation>();
   const [isLabel, setisLabel] = useState<string>('label');
   const [brushSize, setBrushSize] = useState(10);
-  const [threshold, setThreshold] = useState(50);
+  const [threshold, setThreshold] = useState(0.5);
   const [newAnnotation, setNewAnnotation] = useState<Annotation[]>();
   const [transparency, setTransparency] = useState(60);
   const { radius, setRadius } = useModel('VisualRadius');
@@ -79,6 +79,8 @@ const Page: React.FC = () => {
         selectFinly,
         label.curr,
       );
+      console.log('saveInteractorData', anno);
+
       if (anno) {
         const newAnnos = annotation.all.concat([anno]);
         annotation.setAll(newAnnos);

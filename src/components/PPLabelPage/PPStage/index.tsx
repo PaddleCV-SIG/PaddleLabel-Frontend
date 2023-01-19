@@ -448,6 +448,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   };
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // debugger;
+    console.log('onMouseDown', e);
+
     if (e.evt.button === 1) {
       onMousepoint();
       return;
