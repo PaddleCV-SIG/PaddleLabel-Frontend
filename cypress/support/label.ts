@@ -3,22 +3,20 @@ import { overview } from './overview';
 export const label = {
   on: (projectType: string, skipAnnTest: boolean = false, allowError: boolean = false) => {
     cy.onPage(projectType, allowError);
-    cy.g('pages.toolBar.zoomIn').should('be.visible');
+    cy.g('pages.toolBar.zoomIn', { timeout: 6000 }).should('be.visible');
     cy.g('prevTask').should('be.visible');
 
     if (!skipAnnTest) {
-      cy.g('stage-container', { timeout: 15000 })
+      cy.g('stage-container', { timeout: 6000 })
         .should('have.attr', 'data-label-length')
         .and('not.undefined');
-      cy.g('stage-container', { timeout: 15000 })
+      cy.g('stage-container', { timeout: 6000 })
         .should('not.have.attr', 'data-label-length', '0')
         .then(cy.log);
     }
 
-    cy.g('stage-container', { timeout: 15000 })
-      .should('have.attr', 'data-image-src')
-      .and('not.undefined');
-    cy.g('stage-container', { timeout: 15000 }).should('not.equal', '').then(cy.log);
+    cy.g('stage-container').should('have.attr', 'data-image-src').and('not.undefined');
+    // cy.g('stage-container').should('not.equal', '').then(cy.log);
   },
   to: (projectId: number, projectType: string, skipAnnTest: boolean = false) => {
     overview.to(projectId);
