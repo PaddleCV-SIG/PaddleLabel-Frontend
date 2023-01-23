@@ -5,6 +5,9 @@ export const config = {
   catgInfo: {
     // semanticSegmentation: { coco: 0 },
     // detection: { voc: 0 },
+    // classification: { singleClass: 0 },
+    // classification: { singleClass: 0, multiClass: 0 },
+
     classification: { singleClass: 0, multiClass: 0 },
     detection: { coco: 0, voc: 0, yolo: 0 },
     semanticSegmentation: { mask: 0, coco: 0, eiseg: 0 },

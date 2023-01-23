@@ -10,9 +10,7 @@ export const label = {
       cy.g('stage-container', { timeout: 6000 })
         .should('have.attr', 'data-label-length')
         .and('not.undefined');
-      cy.g('stage-container', { timeout: 6000 })
-        .should('not.have.attr', 'data-label-length', '0')
-        .then(cy.log);
+      cy.g('stage-container', { timeout: 6000 }).should('not.have.attr', 'data-label-length', '0');
     }
 
     cy.g('stage-container').should('have.attr', 'data-image-src').and('not.undefined');

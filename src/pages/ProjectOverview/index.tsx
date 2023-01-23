@@ -120,7 +120,6 @@ const TaskList: React.FC = () => {
             history.push(
               `/${camel2snake(project.curr.taskCategory.name)}?projectId=${project.curr.projectId}`,
             );
-            // history.push(`/Ocr?projectId=${project.curr.projectId}`);
           }}
           hidden={task.all?.length == 0}
         >
@@ -197,6 +196,7 @@ const TaskList: React.FC = () => {
           );
         })()}
       </PPBlock>
+      <div data-test-id="test-overview" data-task-count={task.all?.length} />
     </PPContainer>
   );
 };

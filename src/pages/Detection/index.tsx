@@ -28,7 +28,7 @@ const Page = () => {
   const [isClick, setisClick] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { interactorData, setInteractorData } = useModel('InteractorData');
-  const [threshold, setThreshold] = useState(50);
+  const [threshold, setThreshold] = useState(0.9);
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const [otherSetting, setotherSetting] = useState();
   const [flags, setflags] = useState<boolean>(false);
@@ -385,6 +385,7 @@ const Page = () => {
                 labelitem,
                 predictedBy,
               );
+              anno.type = 'rectangle';
               if (anno) {
                 annos.push(anno);
                 frontendId++;

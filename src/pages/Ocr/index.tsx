@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useUpdateEffect } from 'ahooks';
-import { Spin, message, Button } from 'antd';
+import { Spin, message } from 'antd';
 import { history, useModel } from 'umi';
 import styles from './index.less';
 import Tables from './Tables';
@@ -36,7 +36,7 @@ const Page = () => {
   const [isClick, setisClick] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { interactorData, setInteractorData } = useModel('InteractorData');
-  const [threshold, setThreshold] = useState(50);
+  const [threshold, setThreshold] = useState(0.8);
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const [otherSetting, setotherSetting] = useState();
   const [flags, setflags] = useState<boolean>(false);
@@ -695,11 +695,11 @@ const Page = () => {
             marginTop: '20px',
           }}
         >
-          <div style={{ width: '100%' }}>
+          {/* <div style={{ width: '100%' }}>
             <Button type={'primary'} block={true}>
               {'确定'}
             </Button>
-          </div>
+          </div> */}
         </div>
       </div>
     </PPLabelPageContainer>

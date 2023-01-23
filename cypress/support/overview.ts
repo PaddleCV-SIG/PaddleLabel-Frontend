@@ -3,10 +3,13 @@ import { label } from './label';
 
 export const overview = {
   on: () => {
-    // test project id
     cy.onPage('project_overview');
-    cy.get('.ant-empty-img-simple-path', { timeout: 20000 }).should('not.exist'); // should have data
-    cy.wait(1000);
+    // cy.get('.ant-empty-img-simple-path', { timeout: 20000 }).should('not.exist'); // should have data
+    // cy.wait(1000);
+    cy.g('test-overview', { timeout: 6000 })
+      .should('have.attr', 'data-task-count')
+      .and('not.undefined');
+    cy.g('test-overview', { timeout: 6000 }).should('not.have.attr', 'data-task-count', '0');
   },
   to: (pjId: number) => {
     cy.visit(`/static/index.html#/static/project_overview?projectId=${pjId}`);
