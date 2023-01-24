@@ -51,3 +51,9 @@ Cypress.Commands.add('printDebugId', (debugId: string) => {
   console.log('replace', debugId);
   cy.request('GET', `${Cypress.config('baseUrl')}/api/debug/printid/${debugId}`);
 });
+
+Cypress.Commands.add('noError', (debugId: string) => {
+  cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+    'not.exist',
+  );
+});

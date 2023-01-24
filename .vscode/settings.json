@@ -16,7 +16,8 @@
     "micromamba",
     "paddlelabel",
     "pdmodel",
-    "runneradmin"
+    "runneradmin",
+    "semseg"
   ],
   "[python]": {
     "editor.defaultFormatter": "ms-python.python"

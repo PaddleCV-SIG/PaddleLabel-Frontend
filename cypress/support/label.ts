@@ -3,10 +3,12 @@ import { overview } from './overview';
 export const label = {
   on: (projectType: string, skipAnnTest: boolean = false, allowError: boolean = false) => {
     cy.onPage(projectType, allowError);
+    cy.noError();
 
     cy.g('pages.toolBar.zoomIn', { timeout: 6000 }).should('be.visible');
 
     cy.g('loading').should('not.exist');
+    cy.noError();
 
     cy.get("canvas[id='canvasId']").first().should('have.attr', 'width').and('not.equal', '1'); // default value is 1
     cy.get("canvas[id='canvasId']").first().should('have.attr', 'height').and('not.equal', '1');
@@ -18,14 +20,18 @@ export const label = {
       .should('not.equal', '')
       .then((src) => (firstSrc = src));
 
+    cy.g('stage-container').then((stage) => (firstSrc = stage.attr('data-image-src')));
+
+    // console.log('data-image-src', stage.attr('data-image-src')),
+
+    console.log('firstSrc', firstSrc);
     cy.g('nextTask').click({ timeout: 10000 });
     cy.g('loading').should('not.exist');
+    // cy.noError();
     cy.g('stage-container').should('have.attr', 'data-image-src').should('not.equal', firstSrc);
 
-    cy.g('stage-container').then(($stage) => cy.log(`Image url ${$stage.attr('data-image-src')}`));
+    cy.g('stage-container').then((stage) => cy.log(`Image url ${stage.attr('data-image-src')}`));
 
-    // cy.get("canvas[id='canvasId']").first().should('have.attr', 'width').and('not.equal', '1'); // default value is 1
-    // cy.get("canvas[id='canvasId']").first().should('have.attr', 'height').and('not.equal', '1');
     if (!skipAnnTest)
       cy.g('stage-container', { timeout: 6000 })
         .should('have.attr', 'data-label-length')

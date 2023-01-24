@@ -57,11 +57,10 @@ export const detail = {
 
     label.on(
       projectType,
-      // dpath.includes('polygon2mask') ||
-      //   dpath.includes('gray/coco') ||
-      //   dpath.includes('pseudo/coco'),
-      dpath.includes('mask_out_coco_in'),
-    ); // polygon2mask will be empty pj
+      dpath.includes('mask_out_coco_in') ||
+        dpath.includes('semseg/pseudo/coco') ||
+        dpath.includes('semseg/gray/coco'),
+    ); // mask to polygon will be empty pj
 
     if (Cypress.env('screenshot')) {
       cy.wait(200); // TODO: remove this and find a more reliable way to wait for page is stable

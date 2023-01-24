@@ -4,7 +4,7 @@
   "description": "PaddleLabel e2e test",
   "main": "index.js",
   "dependencies": {
-    "cypress": "^12.3.0",
+    "cypress": "12.4.0",
     "typescript": "^4.9.4"
   },
   "scripts": {
@@ -12,7 +12,7 @@
     "test:unix": "bash -c \"eval $(micromamba shell hook --shell=bash); micromamba activate PaddleLabel; HOME=~/测试路径/ paddlelabel --debug --port 1111 --lan\"",
     "unix:open": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; yarn outdated; npx cypress open --env waitAfter=3000,failFast=false",
     "unix:openfast": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; yarn outdated; npx cypress open --env failFast=true",
-    "unix:run": "rm -r ~/3rd_party/export; npx cypress run --env failFast=false"
+    "unix:run": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; npx cypress run --env failFast=false"
   },
   "license": "Apache-2.0"
 }
