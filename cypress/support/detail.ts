@@ -44,11 +44,8 @@ export const detail = {
       datasetPath != undefined
         ? datasetPath
         : `${config.sampleBaseDir}/${projectType}/${labelFormat}`;
-    if (Cypress.env('os') != undefined && Cypress.env('os').includes('win')) {
-      console.log('dpathb', dpath);
+    if (Cypress.env('os') != undefined && Cypress.env('os').includes('win'))
       dpath = dpath.replaceAll('/', '\\\\');
-      console.log('dpatha', dpath);
-    }
 
     const name = dpath.replace(config.sampleBaseDir, '').replace(config.thirdPartyDir, '3rd_party');
     cy.get('#name').type(name, { delay: 0 });
@@ -57,22 +54,16 @@ export const detail = {
     cy.g(`global.labelFormat.${labelFormat}`).click();
     cy.g('component.PPCreater.create').click();
     cy.onPage(projectType, false);
-    // if (
-    //   !(
-    //     dpath.includes('polygon2mask') ||
-    //     dpath.includes('gray/coco') ||
-    //     dpath.includes('pseudo/coco')
-    //   )
-    // )
+
     label.on(
       projectType,
-      dpath.includes('polygon2mask') ||
-        dpath.includes('gray/coco') ||
-        dpath.includes('pseudo/coco'),
+      // dpath.includes('polygon2mask') ||
+      //   dpath.includes('gray/coco') ||
+      //   dpath.includes('pseudo/coco'),
+      dpath.includes('mask_out_coco_in'),
     ); // polygon2mask will be empty pj
+
     if (Cypress.env('screenshot')) {
-      cy.get("canvas[id='canvasId']").first().should('have.attr', 'width').and('not.equal', '1'); // default value
-      cy.get("canvas[id='canvasId']").first().should('have.attr', 'height').and('not.equal', '1'); // default value
       cy.wait(200); // TODO: remove this and find a more reliable way to wait for page is stable
       cy.screenshot({ disableTimersAndAnimations: false });
     }

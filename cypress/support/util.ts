@@ -29,7 +29,7 @@ export function runTasks(tasks) {
     it(name, () => {
       cy.printDebugId(name);
       task.func();
-      cy.wait(Cypress.env('waitAfter'));
+      if (name.includes('Import')) cy.wait(Cypress.env('waitAfter')); // TODO: import wait
     });
   }
 }

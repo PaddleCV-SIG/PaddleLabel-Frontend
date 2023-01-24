@@ -3,7 +3,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-  env: { waitAfter: 0 },
+  env: { waitAfter: 0, failFast: true },
   e2e: {
     baseUrl: 'http://localhost:17995',
     // baseUrl: 'http://localhost:4321', // shouldn't have ending /

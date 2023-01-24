@@ -5,16 +5,17 @@ import { overview } from '../support/overview';
 import { config } from '../support/config';
 import { runTasks } from '../support/util';
 
-describe('Test Import Export then Import Back', () => {
+describe('Test compatibility with 3rd party tools', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.spyAllApiCalls();
   });
-  afterEach(function () {
-    if (this.currentTest.state === 'failed') {
-      Cypress.runner.stop();
-    }
-  });
+  if (Cypress.env('failFast'))
+    afterEach(function () {
+      if (this.currentTest.state === 'failed') {
+        Cypress.runner.stop();
+      }
+    });
 
   var datasets = [
     {

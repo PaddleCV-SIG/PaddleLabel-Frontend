@@ -1,5 +1,5 @@
 {
-  "name": "PaddleLabel-E2E-Tests",
+  "name": "paddlelabel-e2e-tests",
   "version": "1.0.0",
   "description": "PaddleLabel e2e test",
   "main": "index.js",
@@ -10,7 +10,9 @@
   "scripts": {
     "test:win": "set USERPROFILE=%HOMEDRIVE%%HOMEPATH%\\测试路径 & CALL C:\\Users\\runneradmin\\micromamba-root\\condabin\\mamba_hook.bat && micromamba activate PaddleLabel && paddlelabel --debug --port 1111 --lan",
     "test:unix": "bash -c \"eval $(micromamba shell hook --shell=bash); micromamba activate PaddleLabel; HOME=~/测试路径/ paddlelabel --debug --port 1111 --lan\"",
-    "unix": "yarn cypress open --env waitAfter=3000"
+    "unix:open": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; yarn outdated; npx cypress open --env waitAfter=3000,failFast=false",
+    "unix:openfast": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; yarn outdated; npx cypress open --env failFast=true",
+    "unix:run": "rm -r ~/3rd_party/export; npx cypress run --env failFast=false"
   },
   "license": "Apache-2.0"
 }

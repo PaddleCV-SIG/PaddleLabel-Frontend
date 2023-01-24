@@ -10,11 +10,12 @@ describe('Test Import Export then Import Back', () => {
     cy.visit('/');
     cy.spyAllApiCalls();
   });
-  afterEach(function () {
-    if (this.currentTest.state === 'failed') {
-      Cypress.runner.stop();
-    }
-  });
+  if (Cypress.env('failFast'))
+    afterEach(function () {
+      if (this.currentTest.state === 'failed') {
+        Cypress.runner.stop();
+      }
+    });
 
   var pjId = 2;
   var catgInfo = { ...config.catgInfo };
@@ -44,7 +45,7 @@ describe('Test Import Export then Import Back', () => {
         for (const expFormat of Object.keys(catgInfo[catg])) {
           if (expFormat == 'eiseg') continue;
           const currPjId = catgInfo[catg][impFormat];
-          const exportPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}2${expFormat}`;
+          const exportPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}_out_${expFormat}_in`;
           yield {
             name: `Export ${catg} ${impFormat} pj to ${expFormat}`,
             func: () => {
@@ -60,7 +61,7 @@ describe('Test Import Export then Import Back', () => {
         for (const expFormat of Object.keys(catgInfo[catg])) {
           if (expFormat == 'eiseg') continue;
           pjId += 1;
-          const dataPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}2${expFormat}`;
+          const dataPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}_out_${expFormat}_in`;
           yield {
             name: `Import ${catg} ${expFormat} pj`,
             func: () => detail.import(catg, expFormat, dataPath, expFormat != 'mask'),

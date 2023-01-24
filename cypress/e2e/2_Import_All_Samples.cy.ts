@@ -10,11 +10,12 @@ describe('Test Import Export then Import Back', () => {
     cy.visit('/');
     cy.spyAllApiCalls();
   });
-  afterEach(function () {
-    if (this.currentTest.state === 'failed') {
-      Cypress.runner.stop();
-    }
-  });
+  if (Cypress.env('failFast'))
+    afterEach(function () {
+      if (this.currentTest.state === 'failed') {
+        Cypress.runner.stop();
+      }
+    });
 
   var pjId = 2;
   var catgInfo = { ...config.catgInfo };
