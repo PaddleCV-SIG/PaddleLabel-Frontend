@@ -129,8 +129,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
-  const [imageWidth, setimageWidth] = useState<number>(500);
-  const [imageHeight, setimageHeight] = useState<number>(500);
+  const [imageWidth, setimageWidth] = useState<number>(1);
+  const [imageHeight, setimageHeight] = useState<number>(1);
   const [shapes, setShapes] = useState<any[]>([]);
   const [dragEndPos, setDragEndPos] = useState({ x: 0, y: 0 });
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });

@@ -2,7 +2,6 @@ import { welcome } from './welcome';
 import { config } from './config';
 import { overview } from './overview';
 import { label } from './label';
-import { runId } from './config';
 import { notLocal404 } from './util';
 
 export const detail = {
@@ -56,30 +55,27 @@ export const detail = {
     cy.get('#dataDir').type(dpath, { delay: 0 });
     cy.get('#description').type(name, { delay: 0 });
     cy.g(`global.labelFormat.${labelFormat}`).click();
-    cy.g('component.PPCreater.create')
-      .click()
-      .then(() => {
-        cy.onPage(projectType, false);
-        if (screenshot)
-          cy.screenshot(
-            runId +
-              '/' +
-              dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
-              '_afterImport',
-          );
-      });
-    if (
-      !(
-        dpath.includes('polygon2mask') ||
+    cy.g('component.PPCreater.create').click();
+    cy.onPage(projectType, false);
+    // if (
+    //   !(
+    //     dpath.includes('polygon2mask') ||
+    //     dpath.includes('gray/coco') ||
+    //     dpath.includes('pseudo/coco')
+    //   )
+    // )
+    label.on(
+      projectType,
+      dpath.includes('polygon2mask') ||
         dpath.includes('gray/coco') ||
-        dpath.includes('pseudo/coco')
-      )
-    )
-      label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
-    if (screenshot)
-      cy.screenshot(
-        runId + '/' + dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) + '_label',
-      );
+        dpath.includes('pseudo/coco'),
+    ); // polygon2mask will be empty pj
+    if (Cypress.env('screenshot')) {
+      cy.get("canvas[id='canvasId']").first().should('have.attr', 'width').and('not.equal', '1'); // default value
+      cy.get("canvas[id='canvasId']").first().should('have.attr', 'height').and('not.equal', '1'); // default value
+      cy.wait(200); // TODO: remove this and find a more reliable way to wait for page is stable
+      cy.screenshot({ disableTimersAndAnimations: false });
+    }
   },
   changeType: (pjId: number, newType: string) => {
     detail.to(pjId);

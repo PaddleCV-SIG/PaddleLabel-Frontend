@@ -23,7 +23,7 @@ export const overview = {
     cy.g('component.PPSplitDataset.title').click();
     cy.g('global.ok').should('be.visible');
   },
-  toLabel: (projectType: string, skipAnnTest: string = false) => {
+  toLabel: (projectType: string, skipAnnTest: boolean = false) => {
     cy.g('pages.projectOverview.label').first().click();
     label.on(projectType, skipAnnTest);
   },

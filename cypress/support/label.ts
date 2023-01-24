@@ -4,7 +4,6 @@ export const label = {
   on: (projectType: string, skipAnnTest: boolean = false, allowError: boolean = false) => {
     cy.onPage(projectType, allowError);
     cy.g('pages.toolBar.zoomIn', { timeout: 6000 }).should('be.visible');
-    cy.g('prevTask').should('be.visible');
 
     if (!skipAnnTest) {
       cy.g('stage-container', { timeout: 6000 })
@@ -14,7 +13,9 @@ export const label = {
     }
 
     cy.g('stage-container').should('have.attr', 'data-image-src').and('not.undefined');
-    // cy.g('stage-container').should('not.equal', '').then(cy.log);
+    cy.g('stage-container').should('not.equal', '');
+    cy.get("canvas[id='canvasId']").first().should('have.attr', 'width').and('not.equal', '1'); // default value is 1
+    cy.get("canvas[id='canvasId']").first().should('have.attr', 'height').and('not.equal', '1');
   },
   to: (projectId: number, projectType: string, skipAnnTest: boolean = false) => {
     overview.to(projectId);
@@ -33,9 +34,7 @@ export const label = {
     cy.g('stage-container', { timeout: 15000 })
       .should('have.attr', 'data-label-length')
       .and('not.undefined');
-    cy.g('stage-container', { timeout: 15000 })
-      .should('have.attr', 'data-label-length', '0')
-      .then(cy.log);
+    cy.g('stage-container', { timeout: 15000 }).should('have.attr', 'data-label-length', '0');
     cy.g('pages.toolBar.saveSuccess').should('be.visible');
   },
   rmCatg: (ith: number = 0, expect: string = 'success') => {

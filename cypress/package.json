@@ -9,7 +9,8 @@
   },
   "scripts": {
     "test:win": "set USERPROFILE=%HOMEDRIVE%%HOMEPATH%\\测试路径 & CALL C:\\Users\\runneradmin\\micromamba-root\\condabin\\mamba_hook.bat && micromamba activate PaddleLabel && paddlelabel --debug --port 1111 --lan",
-    "test:unix": "bash -c \"eval $(micromamba shell hook --shell=bash); micromamba activate PaddleLabel; HOME=~/测试路径/ paddlelabel --debug --port 1111 --lan\""
+    "test:unix": "bash -c \"eval $(micromamba shell hook --shell=bash); micromamba activate PaddleLabel; HOME=~/测试路径/ paddlelabel --debug --port 1111 --lan\"",
+    "unix": "yarn cypress open --env waitAfter=3000"
   },
   "license": "Apache-2.0"
 }
