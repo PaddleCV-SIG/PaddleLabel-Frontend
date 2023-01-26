@@ -10,8 +10,14 @@ export const label = {
     cy.g('loading').should('not.exist');
     cy.noError();
 
-    cy.get("canvas[id='canvasId']").first().should('have.attr', 'width').and('not.equal', '1'); // default value is 1
-    cy.get("canvas[id='canvasId']").first().should('have.attr', 'height').and('not.equal', '1');
+    cy.get("canvas[id='canvasId']", { timeout: 10000 })
+      .first()
+      .should('have.attr', 'width')
+      .and('not.equal', '1'); // default value is 1
+    cy.get("canvas[id='canvasId']", { timeout: 10000 })
+      .first()
+      .should('have.attr', 'height')
+      .and('not.equal', '1');
 
     let firstSrc = '';
     cy.g('stage-container')
