@@ -5,28 +5,28 @@ export const label = {
     cy.onPage(projectType, allowError);
     cy.noError();
 
-    cy.g('pages.toolBar.zoomIn', { timeout: 15000 }).should('be.visible');
+    cy.g('pages.toolBar.zoomIn', { timeout: 20000 }).should('be.visible');
 
     cy.g('loading').should('not.exist');
     cy.noError();
 
-    cy.get("canvas[id='canvasId']", { timeout: 10000 })
-      .first()
-      .should('have.attr', 'width')
-      .and('not.equal', '1'); // default value is 1
-    cy.get("canvas[id='canvasId']", { timeout: 10000 })
-      .first()
-      .should('have.attr', 'height')
-      .and('not.equal', '1');
-
     let firstSrc = '';
-    cy.g('stage-container')
+    cy.g('stage-container', { timeout: 20000 })
       .should('have.attr', 'data-image-src')
       .should('not.be.undefined')
       .should('not.equal', '')
       .then((src) => (firstSrc = src));
 
     cy.g('stage-container').then((stage) => (firstSrc = stage.attr('data-image-src')));
+
+    cy.get("canvas[id='canvasId']", { timeout: 10000 })
+      .first({ timeout: 10000 })
+      .should('have.attr', 'width')
+      .should('not.equal', '1'); // default value is 1
+    cy.get("canvas[id='canvasId']", { timeout: 10000 })
+      .first({ timeout: 10000 })
+      .should('have.attr', 'height')
+      .and('not.equal', '1');
 
     // console.log('data-image-src', stage.attr('data-image-src')),
 

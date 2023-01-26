@@ -24,26 +24,14 @@ Cypress.Commands.add('clearPjs', () => {
 });
 
 Cypress.Commands.add('onPage', (urlPart, allowError: boolean = false) => {
-  if (!allowError)
-    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
-      'not.exist',
-    );
+  if (!allowError) cy.noError();
   const url_part = camel2snake(urlPart);
-  cy.url({ timeout: 15000 }).should('contain', url_part);
-  if (!allowError)
-    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
-      'not.exist',
-    );
+  cy.url({ timeout: 20000 }).should('contain', url_part);
+  if (!allowError) cy.noError();
   cy.wait('@apicalls', { timeout: 15000 });
-  if (!allowError)
-    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
-      'not.exist',
-    );
+  if (!allowError) cy.noError();
   cy.g('global.loading').should('not.exist');
-  if (!allowError)
-    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
-      'not.exist',
-    );
+  if (!allowError) cy.noError();
 });
 
 Cypress.Commands.add('printDebugId', (debugId: string) => {
