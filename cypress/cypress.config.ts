@@ -11,6 +11,7 @@ export default defineConfig({
     viewportWidth: 1920,
     watchForFileChanges: false,
     video: false,
+    defaultCommandTimeout: 10000,
 
     supportFile: './support/e2e.{js,jsx,ts,tsx}',
     specPattern: './e2e/**/*.cy.{js,jsx,ts,tsx}',

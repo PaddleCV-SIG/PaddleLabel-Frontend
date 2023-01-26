@@ -18,15 +18,10 @@ export const label = {
       .then((src) => (firstSrc = src));
 
     cy.g('stage-container').then((stage) => (firstSrc = stage.attr('data-image-src')));
+    cy.g('loading').should('not.exist');
 
-    cy.get("canvas[id='canvasId']", { timeout: 10000 })
-      .first({ timeout: 10000 })
-      .should('have.attr', 'width')
-      .should('not.equal', '1'); // default value is 1
-    cy.get("canvas[id='canvasId']", { timeout: 10000 })
-      .first({ timeout: 10000 })
-      .should('have.attr', 'height')
-      .and('not.equal', '1');
+    cy.get("canvas[id='canvasId']").first().should('have.attr', 'width').should('not.equal', '1'); // default value is 1
+    cy.get("canvas[id='canvasId']").first().should('have.attr', 'height').and('not.equal', '1');
 
     // console.log('data-image-src', stage.attr('data-image-src')),
 
