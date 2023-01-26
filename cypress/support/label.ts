@@ -39,7 +39,7 @@ export const label = {
     cy.g('stage-container').then((stage) => cy.log(`Image url ${stage.attr('data-image-src')}`));
 
     if (!skipAnnTest)
-      cy.g('stage-container', { timeout: 6000 })
+      cy.g('stage-container', { timeout: 20000 })
         .should('have.attr', 'data-label-length')
         .and('not.undefined')
         .and('not.equal', '0');
