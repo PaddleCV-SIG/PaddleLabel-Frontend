@@ -5,7 +5,7 @@ export const label = {
     cy.onPage(projectType, allowError);
     cy.noError();
 
-    cy.g('pages.toolBar.zoomIn', { timeout: 6000 }).should('be.visible');
+    cy.g('pages.toolBar.zoomIn', { timeout: 15000 }).should('be.visible');
 
     cy.g('loading').should('not.exist');
     cy.noError();

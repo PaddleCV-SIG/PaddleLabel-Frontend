@@ -40,6 +40,7 @@ export const detail = {
   ) => {
     welcome.to();
     welcome.toCreate(projectType);
+    cy.g('component.PPCreater.create', { timeout: 10000 }).should('exist');
     var dpath =
       datasetPath != undefined
         ? datasetPath
