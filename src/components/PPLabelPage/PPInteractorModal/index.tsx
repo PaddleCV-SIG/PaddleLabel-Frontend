@@ -31,12 +31,16 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
     form.setFieldsValue(initialValues);
     if (settings.mlBackendUrl) model.setMlBackendUrl(settings.mlBackendUrl);
     else model.setMlBackendUrl(DEFAULT_ML_URL);
-    if (settings.modelFilePath && settings.paramFilePath)
-      model.load('EISeg', settings.modelFilePath, settings.paramFilePath);
+    if (settings.modelFilePath && settings.paramFilePath) {
+      const params = {
+        model_path: settings.modelFilePath,
+        param_path: settings.paramFilePath,
+      };
+      model.load('EISeg', params);
+    }
   }, [project.curr]);
 
-  function saveMlsettings(settings: any) {
-    console.log('saveMlsettings', project.curr, settings);
+  function saveMlsettings() {
     if (!project.curr) {
       message.error('Please select project first!');
     }
@@ -87,7 +91,6 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         onFinish={(values) => {
-          console.log('form finish', values);
           saveMlsettings(values);
           props.setVisible(false);
         }}
@@ -118,7 +121,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           }}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input autoComplete="off" placeholder={intl('pathPh')} />
+          <Input autoComplete="off" placeholder={intl('modelPathPh')} />
         </Form.Item>
         <Form.Item
           name={'paramFilePath'}
@@ -131,7 +134,7 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           }}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input autoComplete="off" placeholder={intl('pathPh')} />
+          <Input autoComplete="off" placeholder={intl('weightPathPh')} />
         </Form.Item>
 
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

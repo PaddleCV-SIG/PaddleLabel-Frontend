@@ -3,22 +3,47 @@ import { overview } from './overview';
 export const label = {
   on: (projectType: string, skipAnnTest: boolean = false, allowError: boolean = false) => {
     cy.onPage(projectType, allowError);
-    cy.g('pages.toolBar.zoomIn').should('be.visible');
-    cy.g('prevTask').should('be.visible');
+    cy.noError();
 
-    if (!skipAnnTest) {
-      cy.g('stage-container', { timeout: 15000 })
-        .should('have.attr', 'data-label-length')
-        .and('not.undefined');
-      cy.g('stage-container', { timeout: 15000 })
-        .should('not.have.attr', 'data-label-length', '0')
-        .then(cy.log);
-    }
+    cy.g('pages.toolBar.zoomIn', { timeout: 15000 }).should('be.visible');
 
-    cy.g('stage-container', { timeout: 15000 })
+    cy.g('loading').should('not.exist');
+    cy.noError();
+
+    cy.get("canvas[id='canvasId']", { timeout: 10000 })
+      .first()
+      .should('have.attr', 'width')
+      .and('not.equal', '1'); // default value is 1
+    cy.get("canvas[id='canvasId']", { timeout: 10000 })
+      .first()
+      .should('have.attr', 'height')
+      .and('not.equal', '1');
+
+    let firstSrc = '';
+    cy.g('stage-container')
       .should('have.attr', 'data-image-src')
-      .and('not.undefined');
-    cy.g('stage-container', { timeout: 15000 }).should('not.equal', '').then(cy.log);
+      .should('not.be.undefined')
+      .should('not.equal', '')
+      .then((src) => (firstSrc = src));
+
+    cy.g('stage-container').then((stage) => (firstSrc = stage.attr('data-image-src')));
+
+    // console.log('data-image-src', stage.attr('data-image-src')),
+
+    console.log('firstSrc', firstSrc);
+    cy.g('nextTask').click({ timeout: 10000 });
+    cy.g('loading').should('not.exist');
+    // cy.noError();
+    cy.g('stage-container').should('have.attr', 'data-image-src').should('not.equal', firstSrc);
+
+    cy.g('stage-container').then((stage) => cy.log(`Image url ${stage.attr('data-image-src')}`));
+
+    if (!skipAnnTest)
+      cy.g('stage-container', { timeout: 6000 })
+        .should('have.attr', 'data-label-length')
+        .and('not.undefined')
+        .and('not.equal', '0');
+    // cy.g('stage-container', { timeout: 6000 }).should('not.have.attr', 'data-label-length', '0');
   },
   to: (projectId: number, projectType: string, skipAnnTest: boolean = false) => {
     overview.to(projectId);
@@ -37,9 +62,7 @@ export const label = {
     cy.g('stage-container', { timeout: 15000 })
       .should('have.attr', 'data-label-length')
       .and('not.undefined');
-    cy.g('stage-container', { timeout: 15000 })
-      .should('have.attr', 'data-label-length', '0')
-      .then(cy.log);
+    cy.g('stage-container', { timeout: 15000 }).should('have.attr', 'data-label-length', '0');
     cy.g('pages.toolBar.saveSuccess').should('be.visible');
   },
   rmCatg: (ith: number = 0, expect: string = 'success') => {
@@ -94,10 +117,11 @@ export const labelIt = {
       name: `Tour project ${projectId}, ${clear ? 'clear' : 'wont clear'} anns`,
       func: () => {
         label.to(projectId, projectType, skipAnnTest);
-        cy.wait(1000);
+        // cy.wait(1000);
         for (var idx = 1; idx < taskCount; idx++) {
           if (clear) label.clear();
-          label.next(projectType, skipAnnTest);
+          console.log('asdf', skipAnnTest, idx, taskCount - 1, skipAnnTest || idx != taskCount - 1);
+          label.next(projectType, skipAnnTest || idx == taskCount - 1);
         }
         if (clear) label.clear();
         cy.wait(2000);

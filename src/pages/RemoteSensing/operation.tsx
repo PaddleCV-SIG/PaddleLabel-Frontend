@@ -1,4 +1,4 @@
-import { Label } from '@/models/Label';
+import type { Label } from '@/models/Label';
 import { useEffect, useState } from 'react';
 import type { GeojsonCollection } from '.';
 

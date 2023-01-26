@@ -93,8 +93,8 @@ export default {
   'pages.tableList.confSuccess': 'ConfSuccess',
   'pages.tableList.confFailed': 'Configuration failed, please try again',
   'pages.tableList.deleting': 'Deleting',
-  'pages.tableList.deletSuccess': 'DeletSuccess',
-  'pages.tableList.deletFailed': 'Deletion failed, please try again',
+  'pages.tableList.deleteSuccess': 'DeletSuccess',
+  'pages.tableList.deleteFailed': 'Deletion failed, please try again',
 
   'pages.toolBar.polygon': 'Polygon',
   'pages.toolBar.brush': 'Brush',
@@ -156,12 +156,22 @@ export default {
   'pages.projectOverview.autoInferenceSettings': 'Auto Inference Settings',
   'pages.projectOverview.projectSettings': 'Project Settings',
   'pages.projectOverview.mlSettings': 'ML Settings',
+  'pages.projectOverview.id': 'Task ID',
+
   'pages.classification.preNext': 'The previous picture has not been marked',
   'pages.classification.noHighScoreResult':
     "Auto inference didn't find result with high confidence",
+
   'pages.ProjectAi.title': 'Automatic inference settings',
   'pages.ProjectAi.add': 'add',
   'pages.ProjectAi.delete': 'delete',
   'pages.ProjectAi.confirm': 'Save',
   'pages.ProjectAi.goback': 'Return',
+
+  'pages.ProjectAi.mlBackendUrl': 'ML backend url',
+  'pages.ProjectAi.modelSelection': 'Model selection',
+  'pages.ProjectAi.usePretrainedModelLabels': 'Use pretrained model labels',
+  'pages.ProjectAi.labelMapping': 'Label Mapping',
+  'pages.ProjectAi.labelMappingHint':
+    "If choosing to use pretrained model labels, if labels that aren't present in the current project are detected, it will be added automatically to the project.",
 };

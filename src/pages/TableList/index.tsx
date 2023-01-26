@@ -75,8 +75,8 @@ const handleUpdate = async (
 const handleRemove = async (
   selectedRows: API.RuleListItem[],
   deleting: {} | null | undefined,
-  deletSuccess: {} | null | undefined,
-  deletFailed: {} | null | undefined,
+  deleteSuccess: {} | null | undefined,
+  deleteFailed: {} | null | undefined,
 ) => {
   const hide = message.loading(deleting);
   if (!selectedRows) return true;
@@ -85,11 +85,11 @@ const handleRemove = async (
       key: selectedRows.map((row) => row.key),
     });
     hide();
-    message.success(deletSuccess);
+    message.success(deleteSuccess);
     return true;
   } catch (error) {
     hide();
-    message.error(deletFailed);
+    message.error(deleteFailed);
     return false;
   }
 };
@@ -124,8 +124,8 @@ const TableList: React.FC = () => {
   const confSuccess = intl.formatMessage({ id: 'pages.tableList.confSuccess' });
   const confFailed = intl.formatMessage({ id: 'pages.tableList.confFailed' });
   const deleting = intl.formatMessage({ id: 'pages.tableList.deleting' });
-  const deletSuccess = intl.formatMessage({ id: 'pages.tableList.deletSuccess' });
-  const deletFailed = intl.formatMessage({ id: 'pages.tableList.deletFailed' });
+  const deleteSuccess = intl.formatMessage({ id: 'pages.tableList.deleteSuccess' });
+  const deleteFailed = intl.formatMessage({ id: 'pages.tableList.deleteFailed' });
 
   const columns: ProColumns<API.RuleListItem>[] = [
     {
@@ -314,7 +314,7 @@ const TableList: React.FC = () => {
         >
           <Button
             onClick={async () => {
-              await handleRemove(selectedRowsState, deleting, deletSuccess, deletFailed);
+              await handleRemove(selectedRowsState, deleting, deleteSuccess, deleteFailed);
               setSelectedRows([]);
               actionRef.current?.reloadAndRest?.();
             }}

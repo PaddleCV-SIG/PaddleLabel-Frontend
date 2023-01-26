@@ -28,13 +28,13 @@ export default {
     '如果希望导入数据集中的标注信息，请参考如上文件结构组织文件夹下的文件。点击上方文件可查看文件内容示例。',
   'component.PPCreater.importInProgress': '导入中，请稍候',
 
-  'component.PPAddLabelModal.selectColor': '选择颜色',
-  'component.PPAddLabelModal.addLabel': '创建标签',
-  'component.PPAddLabelModal.labelName': '标签名',
   'component.PPAnnotationList.annotationList': '标注列表',
-  'component.PPAnnotationList.addAnnotation': '添加标注',
-  'component.PPLabelList.labelList': '标签列表',
-  'component.PPLabelList.addLabel': '添加标签',
+  // 'component.PPAnnotationList.addAnnotation': '添加标注',
+  'component.PPLabelList.labelList': '类别列表',
+  'component.PPLabelList.addLabel': '添加类别',
+  'component.PPAddLabelModal.selectColor': '选择颜色',
+  'component.PPAddLabelModal.addLabel': '添加类别',
+  'component.PPAddLabelModal.labelName': '类别名',
 
   'component.PPSplitDatasetModal.title': '划分数据集',
   'component.PPSplitDatasetModal.train': '训练集比例',
@@ -59,22 +59,26 @@ export default {
   'component.PPImportModal.nullPath': '额外数据路径不能为空',
   'component.PPImportModal.success': '额外数据导入成功',
 
-  'component.PPInteractorModal.title': '智能标注设置',
+  'component.PPInteractorModal.title': '交互式分割设置',
   'component.PPInteractorModal.mlBackendUrl': '机器学习后端网址',
   'component.PPInteractorModal.modelPath': '模型文件路径',
   'component.PPInteractorModal.weightPath': '权重文件路径',
-  'component.PPInteractorModal.pathPh': '留空使用内置路径，或填写绝对路径',
+  // 'component.PPInteractorModal.pathPh': '留空使用内置路径，或填写绝对路径',
+  'component.PPInteractorModal.modelPathPh':
+    '留空将使用内置模型路径，或填写到.pdmodel文件的绝对路径',
+  'component.PPInteractorModal.weightPathPh':
+    '留空将使用内置权重路径，或填写到.pdiparams文件的绝对路径',
   'component.PPInteractorModal.settingSaved': '智能标注配置完成，模型需要约1分钟加载',
   'component.PPInteractorModal.modelLoaded': '模型加载完成，您可以开始使用智能标注工具了',
   'component.PPInteractorModal.loadFail':
     '模型加载失败，请检查 1.机器学习后端已经启动 2.机器学习后端网址填写正确',
   'component.PPInteractorModal.Warintoast':
-    '注意：完成当前目标标注后，请按下鼠标中键结束当前目标的交互输入，否则会影响交互式标注效果。',
+    '注意：完成一个目标的标注后，请按下鼠标中键结束本轮交互。在一轮交互中标注多个目标会影响交互式标注精度。',
   'component.history.noPrev': '没有更老的操作记录',
   'component.history.noNext': '没有更新的操作记录',
 
   'component.label.deleteSuccess': '类别删除成功',
-  'component.label.ontHotMultiple': '本项目为单分类，但标签列表中有多个标签',
+  'component.label.ontHotMultiple': '本项目为单分类，但类别列表中选中了多个分类',
 
   'component.PPMedical.windowWidth': '窗宽',
   'component.PPMedical.windowLevel': '窗位',
@@ -108,4 +112,17 @@ export default {
   'component.PPSegMode.remoteSensing': '遥感数据分割',
   'component.PPSegMode.changeDetection': '遥感变化检测',
   'component.PPSegMode.ok': '确定',
+
+  'component.PaddleOCR.ch': '中英文',
+  'component.PaddleOCR.en': '英文',
+  'component.PaddleOCR.korean': '韩文',
+  'component.PaddleOCR.japan': '日文',
+  'component.PaddleOCR.chinese_cht': '中文繁体',
+  'component.PaddleOCR.ta': '泰米尔文',
+  'component.PaddleOCR.te': '泰卢固文',
+  'component.PaddleOCR.ka': '卡纳达文',
+  'component.PaddleOCR.latin': '塞尔维亚文（latin)',
+  'component.PaddleOCR.arabic': '阿拉伯文',
+  'component.PaddleOCR.cyrillic': '塞尔维亚文（cyrillic)',
+  'component.PaddleOCR.devanagari': '梵文',
 };

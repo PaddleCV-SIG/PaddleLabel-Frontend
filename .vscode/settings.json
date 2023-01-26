@@ -2,5 +2,24 @@
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "prettier.requireConfig": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "cSpell.words": [
+    "catg",
+    "Clas",
+    "condabin",
+    "dpath",
+    "eiseg",
+    "HOMEDRIVE",
+    "HOMEPATH",
+    "interactor",
+    "keypoint",
+    "micromamba",
+    "paddlelabel",
+    "pdmodel",
+    "runneradmin",
+    "semseg"
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python"
+  }
 }

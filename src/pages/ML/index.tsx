@@ -62,7 +62,6 @@ const ML: React.FC = () => {
   }
 
   function saveMlsettings(settings: object) {
-    console.log('saveMlsettings', project.curr, settings);
     if (!project.curr) {
       message.error('Please select model first!');
       return;
@@ -146,7 +145,6 @@ const ML: React.FC = () => {
         <Button
           type={'primary'}
           onClick={() => {
-            console.log('pjid', project.curr.projectId);
             history.push(`/${project.curr.taskCategory.name}?projectId=${project.curr.projectId}`);
           }}
         >
@@ -169,7 +167,6 @@ const ML: React.FC = () => {
           size="large"
           style={{ marginTop: '5.69rem' }}
           onFinish={(values) => {
-            console.log('form finish', values);
             saveMlsettings(values);
           }}
           hidden={project.curr == undefined}

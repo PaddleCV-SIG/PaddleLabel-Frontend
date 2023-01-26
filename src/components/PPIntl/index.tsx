@@ -5,9 +5,9 @@ export const IntlInitJsx = (page: string) => {
   return (id: string, pageName: string = page) => {
     const intlId = id == undefined || id == '' ? pageName : pageName + '.' + id;
     return (
-      <p data-test-id={intlId} style={{ display: 'inline' }}>
+      <div data-test-id={intlId} style={{ display: 'inline-block' }}>
         {useintl.formatMessage({ id: intlId })}
-      </p>
+      </div>
     );
   };
 };

@@ -2,8 +2,7 @@ import { welcome } from './welcome';
 import { config } from './config';
 import { overview } from './overview';
 import { label } from './label';
-import { runId } from './config';
-import { notGithub404 } from './util';
+import { notLocal404 } from './util';
 
 export const detail = {
   on: () => {
@@ -14,10 +13,11 @@ export const detail = {
     cy.g('pages.projectOverview.projectSettings').click();
     detail.on();
   },
+  // DEPCRATED:
   modify: () => {
     const randName = (Math.random() + 1).toString(36);
     cy.onPage('project_detail').then(() => {
-      cy.get('#name').clear().type(randName);
+      cy.get('#name').clear().type(randName, { delay: 0 });
       cy.g('component.PPCreater.update').click();
     });
 
@@ -40,34 +40,33 @@ export const detail = {
   ) => {
     welcome.to();
     welcome.toCreate(projectType);
-    const dpath =
+    cy.g('component.PPCreater.create', { timeout: 10000 }).should('exist');
+    var dpath =
       datasetPath != undefined
         ? datasetPath
         : `${config.sampleBaseDir}/${projectType}/${labelFormat}`;
-    const name = dpath.replace(config.sampleBaseDir, '');
-    cy.get('#name').type(name);
-    cy.get('#dataDir').type(dpath);
-    cy.get('#description').type(name);
+    if (Cypress.env('os') != undefined && Cypress.env('os').includes('win'))
+      dpath = dpath.replaceAll('/', '\\\\');
+
+    const name = dpath.replace(config.sampleBaseDir, '').replace(config.thirdPartyDir, '3rd_party');
+    cy.get('#name').type(name, { delay: 0 });
+    cy.get('#dataDir').type(dpath, { delay: 0 });
+    cy.get('#description').type(name, { delay: 0 });
     cy.g(`global.labelFormat.${labelFormat}`).click();
-    if (projectType == 'semanticSegmentation' && labelFormat == 'mask')
-      cy.g('global.segMaskType.pesudo').should('be.visible');
-    cy.g('component.PPCreater.create')
-      .click()
-      .wait(2000)
-      .then(() =>
-        cy.screenshot(
-          runId +
-            '/' +
-            dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
-            '_afterImport',
-        ),
-      );
-    if (!dpath.includes('polygon2mask')) label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
-    cy.wait(1000).then(() =>
-      cy.screenshot(
-        runId + '/' + dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) + '_label',
-      ),
-    );
+    cy.g('component.PPCreater.create').click();
+    cy.onPage(projectType, false);
+
+    label.on(
+      projectType,
+      dpath.includes('mask_out_coco_in') ||
+        dpath.includes('semseg/pseudo/coco') ||
+        dpath.includes('semseg/gray/coco'),
+    ); // mask to polygon will be empty pj
+
+    if (Cypress.env('screenshot')) {
+      cy.wait(200); // TODO: remove this and find a more reliable way to wait for page is stable
+      cy.screenshot({ disableTimersAndAnimations: false });
+    }
   },
   changeType: (pjId: number, newType: string) => {
     detail.to(pjId);
@@ -114,7 +113,7 @@ export const detailIt = {
           cy.g('component.PPCreater.titleContent')
             .click()
             .then(() => {
-              notGithub404(url);
+              notLocal404(url);
             });
         },
       };

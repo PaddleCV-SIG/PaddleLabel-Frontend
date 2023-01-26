@@ -10,6 +10,12 @@ describe('Test Import Export then Import Back', () => {
     cy.visit('/');
     cy.spyAllApiCalls();
   });
+  if (Cypress.env('failFast'))
+    afterEach(function () {
+      if (this.currentTest.state === 'failed') {
+        Cypress.runner.stop();
+      }
+    });
 
   var pjId = 2;
   var catgInfo = { ...config.catgInfo };
@@ -23,7 +29,7 @@ describe('Test Import Export then Import Back', () => {
     },
     sampleIt.import('placeholder'),
 
-    // create 8 pjs
+    // create all pjs
     ...Object.keys(catgInfo).map(function* (catg) {
       console.log('pjId', pjId);
       for (const labelFormat of Object.keys(catgInfo[catg])) {
@@ -33,16 +39,16 @@ describe('Test Import Export then Import Back', () => {
       }
     }),
 
-    // export 16 pjs
+    // export all pjs in every format
     ...Object.keys(catgInfo).map(function* (catg) {
       for (const impFormat of Object.keys(catgInfo[catg]))
         for (const expFormat of Object.keys(catgInfo[catg])) {
+          if (expFormat == 'eiseg') continue;
           const currPjId = catgInfo[catg][impFormat];
-          const exportPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}2${expFormat}`;
+          const exportPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}_out_${expFormat}_in`;
           yield {
             name: `Export ${catg} ${impFormat} pj to ${expFormat}`,
             func: () => {
-              // detail.changeType(currPjId, expFormat);
               overview.export(currPjId, exportPath, expFormat);
             },
           };
@@ -53,8 +59,9 @@ describe('Test Import Export then Import Back', () => {
     ...Object.keys(catgInfo).map(function* (catg) {
       for (const impFormat of Object.keys(catgInfo[catg]))
         for (const expFormat of Object.keys(catgInfo[catg])) {
+          if (expFormat == 'eiseg') continue;
           pjId += 1;
-          const dataPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}2${expFormat}`;
+          const dataPath = `${config.sampleBaseDir}/export/${runId}/${catg}/${impFormat}_out_${expFormat}_in`;
           yield {
             name: `Import ${catg} ${expFormat} pj`,
             func: () => detail.import(catg, expFormat, dataPath, expFormat != 'mask'),

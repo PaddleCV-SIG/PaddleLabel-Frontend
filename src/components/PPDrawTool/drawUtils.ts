@@ -14,8 +14,8 @@ export type PPRenderFuncProps = {
   scale: number;
   currentTool: ToolType;
   onSelect: (anntation: Annotation) => void;
-
   stageRef: React.RefObject<StageType>;
+  layerRef: React.RefObject<any>;
   currentAnnotation?: Annotation;
   transparency: number;
   threshold?: number;

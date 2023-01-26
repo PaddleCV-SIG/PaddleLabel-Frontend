@@ -1,10 +1,13 @@
 /// <reference types="cypress" />
 
-import cypress from 'cypress';
 import { camel2snake } from './util.ts';
 
+Cypress.Commands.add('interrupt', () => {
+  eval("window.top.document.body.querySelector('header button.stop').click()");
+});
+
 Cypress.Commands.add('spyAllApiCalls', () => {
-  cy.intercept('http://localhost:17995/api/**').as('apicalls');
+  cy.intercept(`${Cypress.config('baseUrl')}/api/**`).as('apicalls');
 });
 
 Cypress.Commands.add('g', (testId, params = {}) => {
@@ -12,27 +15,45 @@ Cypress.Commands.add('g', (testId, params = {}) => {
 });
 
 Cypress.Commands.add('clearPjs', () => {
-  cy.request('GET', 'http://localhost:17995/api/projects').then((res) => {
+  cy.request('GET', `${Cypress.config('baseUrl')}/api/projects`).then((res) => {
     console.log('res', res.body);
     for (const pj of res.body) {
-      cy.request('DELETE', `http://localhost:17995/api/projects/${pj.project_id}`);
+      cy.request('DELETE', `${Cypress.config('baseUrl')}/api/projects/${pj.project_id}`);
     }
   });
 });
 
 Cypress.Commands.add('onPage', (urlPart, allowError: boolean = false) => {
+  if (!allowError)
+    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+      'not.exist',
+    );
   const url_part = camel2snake(urlPart);
-  if (!allowError) cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
   cy.url({ timeout: 15000 }).should('contain', url_part);
-  if (!allowError) cy.get('[data-icon="close-circle"]').should('not.exist');
+  if (!allowError)
+    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+      'not.exist',
+    );
   cy.wait('@apicalls', { timeout: 15000 });
-  if (!allowError) cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
+  if (!allowError)
+    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+      'not.exist',
+    );
   cy.g('global.loading').should('not.exist');
-  cy.wait(500);
+  if (!allowError)
+    cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+      'not.exist',
+    );
 });
 
 Cypress.Commands.add('printDebugId', (debugId: string) => {
   debugId = debugId.replace(/\//g, '|');
   console.log('replace', debugId);
-  cy.request('GET', `http://localhost:17995/api/debug/printid/${debugId}`);
+  cy.request('GET', `${Cypress.config('baseUrl')}/api/debug/printid/${debugId}`);
+});
+
+Cypress.Commands.add('noError', (debugId: string) => {
+  cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+    'not.exist',
+  );
 });

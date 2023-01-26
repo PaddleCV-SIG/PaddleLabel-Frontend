@@ -1,13 +1,15 @@
-import { over } from 'lodash';
 import { detail } from './detail';
 import { label } from './label';
 
 export const overview = {
   on: () => {
-    // test project id
     cy.onPage('project_overview');
-    cy.get('.ant-empty-img-simple-path', { timeout: 20000 }).should('not.exist'); // should have data
-    cy.wait(1000);
+    // cy.get('.ant-empty-img-simple-path', { timeout: 20000 }).should('not.exist'); // should have data
+    // cy.wait(1000);
+    cy.g('test-overview', { timeout: 6000 })
+      .should('have.attr', 'data-task-count')
+      .and('not.undefined');
+    cy.g('test-overview', { timeout: 6000 }).should('not.have.attr', 'data-task-count', '0');
   },
   to: (pjId: number) => {
     cy.visit(`/static/index.html#/static/project_overview?projectId=${pjId}`);
@@ -21,7 +23,7 @@ export const overview = {
     cy.g('component.PPSplitDataset.title').click();
     cy.g('global.ok').should('be.visible');
   },
-  toLabel: (projectType: string, skipAnnTest: string = false) => {
+  toLabel: (projectType: string, skipAnnTest: boolean = false) => {
     cy.g('pages.projectOverview.label').first().click();
     label.on(projectType, skipAnnTest);
   },
@@ -76,7 +78,7 @@ export const overview = {
     cy.g('component.PPExportModal.export').should('be.visible'); // modal shouldn't close
 
     // input correct path
-    cy.get('#basic_path').clear().type(exportPath);
+    cy.get('#basic_exportDir').clear().type(exportPath, { delay: 0 });
 
     // omit choosing export format
     cy.g('component.PPExportModal.nullLabelFormat').should('be.visible');
@@ -85,8 +87,11 @@ export const overview = {
     // choose format
     cy.g('global.labelFormat.' + exportFormat).click();
 
+    if (exportPath.includes('semanticSegmentation') && exportFormat == 'mask')
+      cy.g('global.segMaskType.grayscale').click();
+
     cy.g('component.PPExportModal.export').click();
-    cy.g('component.PPExportModal.exportSuccess').should('be.visible'); // should show success message
+    cy.g('component.PPExportModal.exportSuccess', { timeout: 10000 }).should('be.visible'); // should show success message
     cy.g('component.PPExportModal.export').should('not.be.visible'); // modal should close
   },
 };

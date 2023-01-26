@@ -53,10 +53,12 @@ export type PPCreaterProps = {
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
 };
+// const projectId = serviceUtils.getQueryVariable('projectId');
 
 const PPCreater: React.FC<PPCreaterProps> = (props) => {
+  const { query = {} } = history.location;
+  const projectId = query?.projectId;
   const projects = ProjectUtils(useState);
-  const projectId = serviceUtils.getQueryVariable('projectId');
   const [loading, setLoading] = useState<boolean>(false);
   const [sampleFiles, setSampleFiles] = useState<TreeDataNode[]>([]);
   // const [labelFormat, setLabelFormat] = useState<string>();
@@ -66,15 +68,15 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
 
   const saveProject = (values: any) => {
     setLoading(true);
-    const otherSettings = {};
-    if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
+    // const otherSettings = {};
+    // if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
 
     if (!projectId) {
       projects
         .create({
           ...values,
-          taskCategoryId: createInfo[props.taskCategory]['id'],
-          otherSettings: otherSettings,
+          taskCategoryId: createInfo[props.taskCategory].id,
+          // otherSettings: otherSettings,
         })
         .catch((err) => {
           message.error(intl('creationFail'));
@@ -95,28 +97,33 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    projects.getCurr(projectId).then((project) => {
-      const values = {
-        name: project?.name,
-        description: project?.description,
-        dataDir: project?.dataDir,
-        labelDir: project?.labelDir,
-        labelFormat: project?.labelFormat,
-        segMaskType: project?.otherSettings?.segMaskType,
-      };
-      console.log('values', values);
-      console.log('othersettings', project?.otherSettings);
-      // if (project?.labelFormat) setLabelFormat(project.labelFormat);
-      form.setFieldsValue(values);
-    });
-  }, []);
+    if (!projectId) {
+      return;
+    }
+
+    projects.getCurr(projectId).then(() => {});
+  }, [projectId]);
+  useEffect(() => {
+    if (!projects.curr) {
+      return;
+    }
+    const project = projects.curr;
+    const values = {
+      name: project?.name,
+      description: project?.description,
+      dataDir: project?.dataDir,
+      labelDir: project?.labelDir,
+      labelFormat: project?.labelFormat,
+      segMaskType: project?.otherSettings?.segMaskType,
+    };
+    // if (project?.labelFormat) setLabelFormat(project.labelFormat);
+    form.setFieldsValue(values);
+  }, [projects.curr]);
 
   const { DirectoryTree } = Tree;
   const onTreeSelect: DirectoryTreeProps['onSelect'] = (keys, info) => {
-    console.log('Trigger Select', keys, info, info.node.isLeaf != undefined);
     const isLeaf = info.node.isLeaf == true;
     if (isLeaf) {
-      console.log('url', encodeURIComponent(info.node.key));
       window.open('/api/samples/file?path=' + encodeURIComponent(info.node.key));
     }
   };
@@ -154,9 +161,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
           <_PPBlock
             title={intl(props.taskCategory, 'global') + intl('project')}
             content={intlJsx('titleContent')}
-            docUrl={`https://github.com/PaddleCV-SIG/PaddleLabel/blob/docs/doc/CN/project/${camel2snake(
-              props.taskCategory,
-            )}.md`}
+            docUrl={`/static/doc/CN/manual/${camel2snake(props.taskCategory)}.html`}
             style={{ height: 760, padding: '1.25rem 0' }}
           >
             <Form
@@ -243,7 +248,11 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
               <Form.Item
                 name="labelFormat"
                 label={
-                  <p>
+                  <p
+                    style={{
+                      marginBottom: '0px',
+                    }}
+                  >
                     {props.taskCategory == 'classification'
                       ? intlJsx('clasSubCags')
                       : intlJsx('labelFormat')}{' '}
@@ -282,7 +291,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
               >
                 <Radio.Group
                   size="large"
-                  style={{ height: '3.13rem' }}
+                  // style={{ height: '3.13rem' }}
                   onChange={() => {
                     // setLabelFormat(form.getFieldValue('labelFormat'));
                     sampleApi
@@ -325,7 +334,7 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
                 }}
               >
                 <Radio.Group size="large" style={{ height: '3.13rem' }}>
-                  {['pesudo', 'grayscale'].map((k) => (
+                  {['pseudo', 'grayscale'].map((k) => (
                     <Radio key={k} value={k}>
                       {intlJsx(k, 'global.segMaskType')}
                     </Radio>

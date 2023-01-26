@@ -12,7 +12,6 @@ const Project: React.FC = () => {
 
   // 1. get taskCategory and ensure exist + valid
   const taskCategory = serviceUtils.getQueryVariable('taskCategory');
-  console.log(taskCategory);
 
   if (!taskCategory) {
     message.error(intl('noTaskCategory'));

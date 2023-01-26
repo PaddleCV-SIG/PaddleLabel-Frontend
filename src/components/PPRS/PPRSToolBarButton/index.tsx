@@ -11,7 +11,7 @@ export type PPRSToolBarButtonProps = {
 const component: React.FC<PPRSToolBarButtonProps> = (props) => {
   return (
     <div
-      unselectable="on"
+      // unselectable="on"
       className={`${styles.toolBarButtonContainerWrapper} ${
         props.active && styles.toolBarButtonContainerWrapperActive
       }`}

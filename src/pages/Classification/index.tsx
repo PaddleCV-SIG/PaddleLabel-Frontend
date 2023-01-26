@@ -3,6 +3,7 @@ import { Spin, message } from 'antd';
 import { history, useModel } from 'umi';
 import styles from './index.less';
 import { useUpdateEffect } from 'ahooks';
+
 import PPLabelPageContainer from '@/components/PPLabelPage/PPLabelPageContainer';
 import PPToolBarButton from '@/components/PPLabelPage/PPToolBarButton';
 import PPToolBar from '@/components/PPLabelPage/PPToolBar';
@@ -27,7 +28,7 @@ const Page: React.FC = () => {
   const [otherSetting, setotherSetting] = useState();
   // const [flags, setflags] = useState<boolean>(false);
   const { interactorData, setInteractorData } = useModel('InteractorData');
-  const [threshold, setThreshold] = useState(50);
+  const [threshold, setThreshold] = useState(0.9);
 
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,
@@ -209,7 +210,7 @@ const Page: React.FC = () => {
           }
         }
       }
-      const thresholdRaw = threshold ? threshold * 0.01 : 0.5;
+      const thresholdRaw = threshold ? threshold : 0.5;
       for (const labelItem of interactorData.predictData) {
         if (labelItem?.score > thresholdRaw) {
           console.log('!oldLabel.has(labelItem?.label_name)', oldLabel);
@@ -353,9 +354,9 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/threshold.png"
           disLoc="left"
           size={threshold}
-          maxSize={100}
-          minSize={10}
-          step={10}
+          maxSize={1}
+          minSize={0.1}
+          step={0.1}
           onChange={(newSize) => {
             setThreshold(newSize);
           }}

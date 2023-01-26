@@ -7,12 +7,19 @@ describe('Test Import Samples', () => {
     cy.visit('/');
     cy.spyAllApiCalls();
   });
+  if (Cypress.env('failFast'))
+    afterEach(function () {
+      if (this.currentTest.state === 'failed') {
+        Cypress.runner.stop();
+      }
+    });
 
   const projectCategories = [
     'classification',
     'detection',
     'semanticSegmentation',
     'instanceSegmentation',
+    'opticalCharacterRecognition',
   ];
 
   const tasks = [

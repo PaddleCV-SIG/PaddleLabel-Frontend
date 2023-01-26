@@ -57,7 +57,7 @@ const PaddleAi: React.FC = () => {
   const [form] = Form.useForm();
   const [modelUrl, setModelUrl] = useState(DEFAULT_ML_URL);
   const [modelSelected, setModelSelected] = useState();
-  const [isFlag, setisFlag] = useState<Boolean>(true);
+  const [isFlag, setisFlag] = useState<boolean>(true);
   // const [items, setItems] = useState([]);
   const [items2, setItems2] = useState([]);
   // const [name, setName] = useState('');
@@ -76,22 +76,18 @@ const PaddleAi: React.FC = () => {
 
   const model = ModelUtils(useState, modelUrl);
   const projectId = serviceUtils.getQueryVariable('projectId');
-  console.log('FrontendId', frontendId);
 
   const preCurrLabelUnset = () => {
     // annotation.setCurr(undefined);
     setFrontendId(0);
   };
   const handleChange = (value: string) => {
-    console.log(`modelSelected ${value}`);
     setModelSelected(value);
   };
   const handleUrlChange = (value: string) => {
-    console.log(`Urlselected ${value}`);
     setModelUrl(value);
   };
   const multipleChange = (value: string | string[]) => {
-    console.log(`multipleChange: ${value}`);
     setLabels(value);
     const labelOptions = labelOption.filter((item) => {
       return item !== value;
@@ -99,7 +95,6 @@ const PaddleAi: React.FC = () => {
     setLabelOption(labelOptions);
   };
   const multipleChange2 = (value: string | string[]) => {
-    console.log(`multipleChange2: ${value}`);
     setLabels2(value);
   };
   // const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,8 +112,6 @@ const PaddleAi: React.FC = () => {
   //   }, 0);
   // };
   const addLabel = () => {
-    console.log('labels', labels, labels2);
-
     setlabelItem((labelItems) => {
       return [
         ...labelItems,
@@ -193,7 +186,6 @@ const PaddleAi: React.FC = () => {
       labelMapping: labelItem,
     };
     // if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
-    console.log('otherSettings', otherSettings);
     // const values = project.curr;
     project.update(projectId, { otherSettings: otherSettings }).then(() => {
       addLabels();
@@ -227,8 +219,6 @@ const PaddleAi: React.FC = () => {
   useEffect(() => {
     if (modelSelected) {
       for (const models of model.all) {
-        console.log('models', models);
-
         if (models.name === modelSelected) {
           if (models.labelNames) {
             setLabelOption(models.labelNames);
@@ -237,6 +227,8 @@ const PaddleAi: React.FC = () => {
       }
     }
   }, [modelSelected]);
+  console.log('frontendId', frontendId);
+
   return (
     <PPContainer>
       <PPBlock style={{ height: '100%' }}>
@@ -261,7 +253,7 @@ const PaddleAi: React.FC = () => {
           >
             <Form.Item
               name="name"
-              label={'机器学习后端网址'}
+              label={intl('mlBackendUrl')}
               labelCol={{
                 span: 6,
               }}
@@ -288,7 +280,7 @@ const PaddleAi: React.FC = () => {
             </Form.Item>
             <Form.Item
               name="dataDir"
-              label={'模型选择'}
+              label={intl('modelSelection')}
               labelCol={{
                 span: 6,
               }}
@@ -330,7 +322,7 @@ const PaddleAi: React.FC = () => {
             </Form.Item>
             <Form.Item
               name="dataDir"
-              label={'使用预标注模型标签'}
+              label={intl('usePretrainedModelLabels')}
               labelCol={{
                 span: 6,
               }}
@@ -360,7 +352,7 @@ const PaddleAi: React.FC = () => {
                       });
                     }}
                   >
-                    {'是'}
+                    {intl('yes', 'global')}
                   </Button>
                 </div>
                 <div style={{ width: '6rem' }}>
@@ -373,14 +365,14 @@ const PaddleAi: React.FC = () => {
                       });
                     }}
                   >
-                    {'否'}
+                    {intl('no', 'global')}
                   </Button>
                 </div>
               </div>
             </Form.Item>
             <Form.Item
               name="textArea"
-              label={'标签对应关系'}
+              label={intl('labelMapping')}
               labelCol={{
                 span: 6,
               }}
@@ -396,12 +388,7 @@ const PaddleAi: React.FC = () => {
               style={{ fontSize: '1.5rem' }}
             >
               {isFlag ? (
-                <TextArea
-                  rows={5}
-                  defaultValue={
-                    '接受预标注模型标签后，当模型检测到新标签后，会自动在标签列表中增加该标签'
-                  }
-                />
+                <TextArea rows={5} defaultValue={intl('labelMappingHint')} />
               ) : (
                 <div className={styles.Corresponding_list_content}>
                   {labelItem.map((item, labelItemIndex) => {

@@ -45,6 +45,10 @@ export default [
     component: './ProjectAi',
   },
   {
+    path: '/project_ocr_ai',
+    component: './ProjectOcrAi',
+  },
+  {
     path: '/classification',
     component: './Classification',
   },
@@ -63,6 +67,10 @@ export default [
   {
     path: '/detection',
     component: './Detection',
+  },
+  {
+    path: '/optical_character_recognition',
+    component: './Ocr',
   },
   // {
   //   path: '/keypoint_detection',

@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 import { detailIt } from '../support/detail';
+import { overviewIt } from '../support/overview';
 import { config } from '../support/config';
-import { labelIt } from '../support/label';
 import { sampleIt } from '../support/sample';
 import { runTasks } from '../support/util';
 
@@ -10,6 +10,13 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
     cy.visit('/');
     cy.spyAllApiCalls();
   });
+  if (Cypress.env('failFast'))
+    afterEach(function () {
+      if (this.currentTest.state === 'failed') {
+        Cypress.runner.stop();
+      }
+    });
+
 
   var pjId = 2;
   var catgInfo = { ...config.catgInfo };
@@ -34,20 +41,9 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
     ...Object.keys(catgInfo).map(function* (catg) {
       for (const labelFormat of Object.keys(catgInfo[catg])) {
         const currPjId = catgInfo[catg][labelFormat];
-
-        if (labelFormat != 'coco' && labelFormat != 'polygon')
-          yield labelIt.rmCatg(currPjId, catg, false, 0, 'inuse');
-        else yield labelIt.rmCatg(currPjId, catg, false, 0, 'supercatg');
-
-        yield labelIt.tour(currPjId, 4, catg, true, false);
-
-        if (labelFormat != 'coco' && labelFormat != 'polygon')
-          yield labelIt.rmCatg(currPjId, catg, true, 0, 'success');
-        else {
-          yield labelIt.rmCatg(currPjId, catg, true, 0, 'supercatg');
-          yield labelIt.rmCatg(currPjId, catg, true, 1, 'success');
-          yield labelIt.rmCatg(currPjId, catg, true, 0, 'success');
-        }
+        yield overviewIt.split50(currPjId);
+        yield overviewIt.split100(currPjId);
+        yield overviewIt.export(currPjId, `${config.sampleBaseDir}/export/dummy`, labelFormat);
       }
     }),
   ];

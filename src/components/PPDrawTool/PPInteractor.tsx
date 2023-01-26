@@ -3,7 +3,7 @@ import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from
 import type { Stage as StageType } from 'konva/lib/Stage';
 import type { Annotation } from '@/models/Annotation';
 import { useModel } from 'umi';
-import { Label } from '@/models';
+import type { Label } from '@/models';
 import { message } from 'antd';
 import { IntlInit } from '@/services/utils';
 
@@ -232,13 +232,10 @@ const SAMPLE_RESULT = {
   ],
 };
 function getBase64Image(img?: HTMLImageElement) {
-  console.log('getBase64Image', typeof img);
-
   if (!img) return '';
   const canvas = document.createElement('canvas');
   canvas.width = img.width;
   canvas.height = img.height;
-  console.log('img.width', img.width);
   const ctx = canvas.getContext('2d');
   ctx?.drawImage(img, 0, 0, img.width, img.height);
   const dataURL = canvas.toDataURL('image/png');
@@ -254,7 +251,6 @@ function drawAnnotation(param: PPRenderFuncProps) {
   const result: number[][] = param.interactorData.predictData;
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
-  console.log(`PPInteractor.drawAnnotation`, param.interactorData);
   renderPoints(filterPoints(result, param.threshold), ctx, param.label.color);
   renderMousePoints(param.interactorData.mousePoints, ctx, param.radius || 10);
   return <></>;
@@ -281,7 +277,7 @@ function renderMousePoints(mousePoints: any[][], ctx: CanvasRenderingContext2D, 
 }
 
 function filterPoints(result: number[][], thresholdRaw?: number) {
-  const threshold = thresholdRaw ? thresholdRaw * 0.01 : 0.5;
+  const threshold = thresholdRaw ? thresholdRaw : 0.5;
   // 域值
   const points: number[] = [];
   let rowNum = 0;
@@ -311,7 +307,6 @@ export function interactorToAnnotation(
   if (!dataId || !label || !interactorData) return null;
   const points = filterPoints(interactorData, threshold);
   const width = 0; // Pixel type
-  console.log('selectFinly', selectFinly);
 
   let frontendId;
   // 有模型
@@ -334,7 +329,6 @@ export function interactorToAnnotation(
   // if (!points.length) {
   //   return null;
   // }
-  console.log('pointsss', points);
   const result = `${width},${frontendId},` + points.join(',');
   const anno = {
     dataId: dataId,
@@ -360,7 +354,7 @@ export function ectInteractorToAnnotation(
     labelId: label.labelId,
     frontendId: frontendId,
     result: result,
-    type: 'rectangle',
+    type: 'ocr_polygon',
     predictedBy: predictedBy,
   };
 
@@ -371,13 +365,11 @@ function renderPoints(points: number[], ctx: CanvasRenderingContext2D, color: st
   // console.log(`renderPoints: `, points, annotation, annotation.label?.color, ctx);
   // Draw shape
   if (points.length < 4) {
-    console.log('found incorrect points:', points);
     return;
   }
   renderPixel(ctx, points.slice(2), color);
 }
 function renderPixel(ctx: CanvasRenderingContext2D, points: number[], color: string | undefined) {
-  console.log(`renderPixel: `, points, color, ctx);
   ctx.globalCompositeOperation = color ? 'source-over' : 'destination-out';
   if (color) ctx.fillStyle = color;
   for (let i = 0; i <= points.length / 2 - 1; i++) {
@@ -403,7 +395,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   const tbIntl = IntlInit('pages.toolBar');
 
   const OnMouseDown = async (param: EvtProps) => {
-    console.log('param.e.evt.button', param.e.evt.button);
     if (props.currentTool != 'interactor') return;
     if (!props.currentLabel?.color) {
       message.error(tbIntl('chooseCategoryFirst'));
@@ -421,7 +412,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         ? props.frontendIdOps.frontendId
         : getMaxFrontendId(props.annotations) + 1;
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
-    console.log('interactorData.mousePoints', interactorData.mousePoints);
 
     interactorData.mousePoints.push(new Array(mouseX, mouseY, param.e.evt.button != 2));
     // Predict from ML Backend
@@ -436,14 +426,12 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       other: { clicks: interactorData.mousePoints },
     });
     if (!line) return;
-    console.log('line.result', line.predictions);
 
     setInteractorData({
       mousePoints: interactorData.mousePoints,
       active: true,
       predictData: line.predictions,
     });
-    console.log('param.img', line.result);
   };
 
   const OnMouseMove = () => {};

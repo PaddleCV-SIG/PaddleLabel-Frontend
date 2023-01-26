@@ -6,7 +6,7 @@ const serviceUtils = () => {
     msgComponent: MessageApi,
     defaultErrMsg?: string,
   ) => {
-    console.log('errsss', err);
+    // console.log('errsss', err);
 
     const defaultErrStr = defaultErrMsg
       ? defaultErrMsg

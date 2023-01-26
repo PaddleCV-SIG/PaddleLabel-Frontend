@@ -30,42 +30,26 @@ function createLine(param: CanvasLineType): string {
 /**
  * Color lines on canvas as label.color
  */
-let isClick = false;
+// let isClick = false;
 let finlyResult = '';
-function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
-  console.log('flag', flag);
-
+function drawAnnotation(param: PPRenderFuncProps) {
   const { canvasRef2, annotation } = param;
   const canvasRef = canvasRef2;
   const result = annotation.result;
   if (!result) return <></>;
   const ctx = canvasRef.current?.getContext('2d');
   if (!ctx) return <></>;
-  console.log(`PPBrush.drawAnnotation, result:`, result);
   let points: number[] = [];
   let startIndex = 0;
-  console.log('annotation.result', annotation, param.currentAnnotation);
 
   for (let i = 0; i < result.length; i++) {
     // Number end
     if (result.at(i) == ',') {
-      // console.log(
-      //   `PPBrush.drawAnnotation, Number end:`,
-      //   parseFloat(result.slice(startIndex, i)),
-      //   `i:`,
-      //   i,
-      // );
       points.push(parseFloat(result.slice(startIndex, i)));
       startIndex = i + 1;
     }
     // Array end
     else if (result.at(i) == '|') {
-      // console.log(
-      //   `PPBrush.drawAnnotation, Array end:`,
-      //   parseFloat(result.slice(startIndex, i)),
-      //   `i:`,
-      //   i,
-      // );
       points.push(parseFloat(result.slice(startIndex, i)));
       renderPoints(points, ctx, annotation);
       points = [];
@@ -73,17 +57,10 @@ function drawAnnotation(param: PPRenderFuncProps, flag: boolean) {
     }
     // result end
     else if (i == result.length - 1) {
-      // console.log(
-      //   `PPBrush.drawAnnotation, result end:`,
-      //   parseFloat(result.slice(startIndex, result.length)),
-      //   `i:`,
-      //   i,
-      // );
       points.push(parseFloat(result.slice(startIndex, result.length)));
       renderPoints(points, ctx, annotation);
     }
   }
-  console.log('annotation param.currentAnnotation brush', isClick, param.currentTool, flag);
   // if (isClick && param.currentTool !== 'rubber' && flag) {
   //   ctx.beginPath();
   //   const pointss = points.slice(2);
@@ -104,7 +81,6 @@ const drawGuidewires = (x: number, y: number, context: any, brushSize: number) =
   // drawHorizontalLine(y, context);
   // context.restore();
   context.beginPath();
-  console.log('Brushs', x, y);
   context?.arc(x, y, brushSize / 16, 0, 2 * Math.PI);
   context.strokeStyle = 'red'; //将线条颜色设置为蓝色
   context.stroke();
@@ -112,16 +88,15 @@ const drawGuidewires = (x: number, y: number, context: any, brushSize: number) =
 function renderPoints(points: number[], ctx: CanvasRenderingContext2D, annotation: Annotation) {
   // console.log(`renderPoints: `, points, annotation, annotation.label?.color, ctx);
   // Draw shape
-  console.log('points', points);
 
   if (points.length < 4) {
-    console.log('found incorrect points:', points);
     return;
   }
   const width = points[0];
   const frontendId = points[1];
-  if (width == 0) {
+  if (width === 0) {
     renderPixel(ctx, points.slice(2), annotation.label?.color);
+    // renderBrush(ctx, width, points.slice(2), annotation.label?.color);
     return;
   }
   if (frontendId == 0) {
@@ -155,7 +130,6 @@ function renderBrush(
   ctx.stroke();
 }
 function renderPixel(ctx: CanvasRenderingContext2D, points: number[], color: string | undefined) {
-  console.log(`renderPixel: `, points, color, ctx);
   ctx.globalCompositeOperation = color ? 'source-over' : 'destination-out';
   if (color) ctx.fillStyle = color;
   for (let i = 0; i <= points.length / 2 - 1; i++) {
@@ -194,7 +168,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
    * Always start new annotation onMouseDown, assosiate annotations by same frontendId
    */
   const OnMouseDown = (param: EvtProps) => {
-    isClick = true;
+    // isClick = true;
     if (
       (props.currentTool != 'brush' && props.currentTool != 'rubber') ||
       !props.currentLabel?.color ||
@@ -205,32 +179,22 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     const mouseY = param.mouseY;
     const tool = getTool(props.currentTool, param.e.evt.button);
 
-    console.log(
-      `frontendId: `,
-      props.frontendIdOps.frontendId,
-      'maxId:',
-      getMaxFrontendId(props.annotations),
-    );
     let frontendId;
-    console.log('props.finlyList', props.finlyList, props.selectFinly, history?.location?.pathname);
     // debugger;
     if (history?.location?.pathname === '/instance_segmentation') {
       if (props.finlyList && props.finlyList?.length > 0 && props.selectFinly) {
         // 有列表长度且有选中
 
         frontendId = props.selectFinly.frontendId;
-        console.log('有列表长度且有选中', frontendId);
       } else if (props.finlyList && props.finlyList?.length > 0 && !props.selectFinly) {
         // 有列表长度，无选中
         frontendId = props.finlyList?.length > 0 ? getMaxFrontendId(props.finlyList) + 1 : 1;
-        console.log('有列表长度，无选中', frontendId);
       } else if (props.finlyList?.length === 0 && !props.selectFinly) {
         // 无列表长度，无选中
         frontendId =
           props.frontendIdOps.frontendId > 0
             ? props.frontendIdOps.frontendId
             : getMaxFrontendId(props.annotations) + 1;
-        console.log('无列表长度，无选中', frontendId);
       }
     } else {
       frontendId =
@@ -239,7 +203,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
           : getMaxFrontendId(props.annotations) + 1;
     }
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
-    console.log('frontendId', frontendId);
     const line = createLine({
       width: props.brushSize || 10,
       color: props.currentLabel?.color || 'blue',
@@ -279,10 +242,8 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     ) {
       return;
     }
-    console.log('props.currentAnnotation', props.currentAnnotation, props.annotations);
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
-    console.log('mouseX', mouseX, mouseY);
     // props.currentAnnotation 最新的一个节点，假设不使用这个的话 可以取Annotation里面的节点来用
     // const newResult = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
     // props.onAnnotationModify({ ...props.currentAnnotation, result: newResult });
@@ -304,9 +265,10 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       return;
     }
     const LastAnnotations = props.annotations[props.annotations?.length - 1];
-    props.onAnnotationModify({ ...LastAnnotations, result: finlyResult });
+    // props.onAnnotationModify({ ...LastAnnotations, result: finlyResult });
+    props.onAnnotationupdata({ ...LastAnnotations, result: finlyResult });
     finlyResult = '';
-    isClick = false;
+    // isClick = false;
     setCurrentTool(undefined);
     props.onMouseUp();
   };
