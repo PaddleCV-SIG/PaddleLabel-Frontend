@@ -59,9 +59,8 @@ export const detail = {
     label.on(
       projectType,
       dpath.includes('mask_out_coco_in') ||
-        dpath.includes('semseg/pseudo/coco') ||
-        dpath.includes('semseg/gray/coco') ||
-        dpath.includes('semseg\\gray\\coco'),
+        (dpath.includes('semseg') && dpath.includes('pseudo') && dpath.includes('coco')) ||
+        (dpath.includes('semseg') && dpath.includes('gray') && dpath.includes('coco')),
     ); // mask to polygon will be empty pj
 
     if (Cypress.env('screenshot')) {

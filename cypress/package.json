@@ -12,7 +12,10 @@
     "test:unix": "bash -c \"eval $(micromamba shell hook --shell=bash); micromamba activate PaddleLabel; HOME=~/测试路径/ paddlelabel --debug --port 1111 --lan\"",
     "unix:open": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; yarn outdated; npx cypress open --env waitAfter=3000,failFast=false",
     "unix:openfast": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; yarn outdated; npx cypress open --env failFast=true",
-    "unix:run": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; npx cypress run --env failFast=false"
+    "unix:run": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; npx cypress run --env failFast=false",
+    "win:open": "rmdir /s %HOMEDRIVE%%HOMEPATH%\\3rd_party\\export&rmdir /s %HOMEDRIVE%%HOMEPATH%\\.paddlelabel\\sample\\bear\\export&npx cypress open --env waitAfter=3000,failFast=false",
+    "win:openfast": "rmdir /s %HOMEDRIVE%%HOMEPATH%\\3rd_party\\export&rmdir /s %HOMEDRIVE%%HOMEPATH%\\.paddlelabel\\sample\\bear\\export&npx cypress open --env failFast=true",
+    "win:run": "rmdir /s %HOMEDRIVE%%HOMEPATH%\\3rd_party\\export&rmdir /s %HOMEDRIVE%%HOMEPATH%\\.paddlelabel\\sample\\bear\\export&npx cypress run --env failFast=false"
   },
   "license": "Apache-2.0"
 }
