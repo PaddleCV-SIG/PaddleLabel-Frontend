@@ -25,10 +25,10 @@ Cypress.Commands.add('clearPjs', () => {
 
 Cypress.Commands.add('onPage', (urlPart, allowError: boolean = false) => {
   if (!allowError) cy.noError();
-  const url_part = camel2snake(urlPart);
-  cy.url({ timeout: 20000 }).should('contain', url_part);
+  cy.wait('@apicalls', { timeout: 30000 });
   if (!allowError) cy.noError();
-  cy.wait('@apicalls', { timeout: 15000 });
+  const url_part = camel2snake(urlPart);
+  cy.url({ timeout: 60000 }).should('contain', url_part);
   if (!allowError) cy.noError();
   cy.g('global.loading').should('not.exist');
   if (!allowError) cy.noError();

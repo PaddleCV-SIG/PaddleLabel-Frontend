@@ -67,6 +67,7 @@ export const detail = {
       cy.wait(200); // TODO: remove this and find a more reliable way to wait for page is stable
       cy.screenshot({ disableTimersAndAnimations: false });
     }
+    return name;
   },
   changeType: (pjId: number, newType: string) => {
     detail.to(pjId);
