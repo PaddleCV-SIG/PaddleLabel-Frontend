@@ -8,8 +8,10 @@ export const overview = {
     // cy.wait(1000);
     cy.g('test-overview', { timeout: 6000 })
       .should('have.attr', 'data-task-count')
-      .and('not.undefined');
-    cy.g('test-overview', { timeout: 6000 }).should('not.have.attr', 'data-task-count', '0');
+      .should('not.undefined')
+      .should('not.equal', '')
+      .should('not.equal', '0');
+    // cy.g('test-overview', { timeout: 6000 }).should('not.have.attr', 'data-task-count', '0');
   },
   to: (pjId: number) => {
     cy.visit(`/static/index.html#/static/project_overview?projectId=${pjId}`);
