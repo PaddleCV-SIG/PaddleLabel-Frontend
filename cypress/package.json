@@ -8,8 +8,8 @@
     "typescript": "^4.9.4"
   },
   "scripts": {
-    "win:ci": "set USERPROFILE=%HOMEDRIVE%%HOMEPATH%\\测试路径\\& CALL C:\\Users\\runneradmin\\micromamba-root\\condabin\\mamba_hook.bat && micromamba activate PaddleLabel && paddlelabel --debug --port 1111 --lan",
-    "unix:ci": "bash -c \"eval $(micromamba shell hook --shell=bash); micromamba activate PaddleLabel; HOME=~/测试路径/ paddlelabel --debug --port 1111 --lan\"",
+    "win:ci": "set USERPROFILE=%HOMEDRIVE%%HOMEPATH%\\测试路径\\& CALL C:\\Users\\runneradmin\\micromamba-root\\condabin\\mamba_hook.bat && micromamba activate PaddleLabel && paddlelabel --debug --port 1111 --lan || echo 'PaddleLabel is probably already running'",
+    "unix:ci": "bash -c \"eval $(micromamba shell hook --shell=bash); micromamba activate PaddleLabel; HOME=~/测试路径/ paddlelabel --debug --port 1111 --lan || echo 'PaddleLabel is probably already running'\"",
     "unix:open": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; yarn outdated; npx cypress open --env waitAfter=3000,failFast=false",
     "unix:openfast": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; yarn outdated; npx cypress open --env failFast=true",
     "unix:run": "rm -r ~/3rd_party/export; rm -r ~/.paddlelabel/sample/bear/export; npx cypress run --env failFast=false",
