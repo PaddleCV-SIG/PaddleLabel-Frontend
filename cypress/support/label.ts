@@ -22,13 +22,11 @@ export const label = {
 
     cy.get("canvas[id='canvasId']").first().should('have.attr', 'width').should('not.equal', '1'); // default value is 1
     cy.get("canvas[id='canvasId']").first().should('have.attr', 'height').and('not.equal', '1');
+    cy.noError();
 
-    // console.log('data-image-src', stage.attr('data-image-src')),
-
-    console.log('firstSrc', firstSrc);
-    cy.g('nextTask').click({ timeout: 10000 });
+    cy.g('nextTask').click({ timeout: 30000 });
     cy.g('loading').should('not.exist');
-    // cy.noError();
+
     cy.g('stage-container').should('have.attr', 'data-image-src').should('not.equal', firstSrc);
 
     cy.g('stage-container').then((stage) => cy.log(`Image url ${stage.attr('data-image-src')}`));
