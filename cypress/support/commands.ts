@@ -10,7 +10,14 @@ Cypress.Commands.add('spyAllApiCalls', () => {
   cy.intercept(`${Cypress.config('baseUrl')}/api/**`).as('apicalls');
 });
 
+Cypress.Commands.add('noError', (debugId: string) => {
+  cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
+    'not.exist',
+  );
+});
+
 Cypress.Commands.add('g', (testId, params = {}) => {
+  cy.noError();
   cy.get(`[data-test-id='${testId}']`, params);
 });
 
@@ -38,10 +45,4 @@ Cypress.Commands.add('printDebugId', (debugId: string) => {
   debugId = debugId.replace(/\//g, '|');
   console.log('replace', debugId);
   cy.request('GET', `${Cypress.config('baseUrl')}/api/debug/printid/${debugId}`);
-});
-
-Cypress.Commands.add('noError', (debugId: string) => {
-  cy.get('[class="ant-message-custom-content ant-message-error"]', { timeout: 100 }).should(
-    'not.exist',
-  );
 });
