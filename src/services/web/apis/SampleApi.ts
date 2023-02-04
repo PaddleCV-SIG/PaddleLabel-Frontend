@@ -163,4 +163,36 @@ export class SampleApi extends runtime.BaseAPI {
     );
     return await response.value();
   }
+
+  /**
+   *
+   * Reset all sample datasets on disk
+   */
+  async resetAllRaw(
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<void>> {
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request(
+      {
+        path: `/samples/reset`,
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.VoidApiResponse(response);
+  }
+
+  /**
+   *
+   * Reset all sample datasets on disk
+   */
+  async resetAll(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+    await this.resetAllRaw(initOverrides);
+  }
 }

@@ -6,8 +6,6 @@ const serviceUtils = () => {
     msgComponent: MessageApi,
     defaultErrMsg?: string,
   ) => {
-    // console.log('errsss', err);
-
     const defaultErrStr = defaultErrMsg
       ? defaultErrMsg
       : 'Something unexpected happened, please try again later.';
@@ -16,11 +14,11 @@ const serviceUtils = () => {
       return;
     }
     const res = await err.response.json();
-    if (!res || !res.detail) {
+    if (!res || !res.title) {
       msgComponent.error(defaultErrStr);
       return;
     }
-    msgComponent.error(res.detail);
+    msgComponent.error(res.title);
   };
 
   function getQueryVariable(name: string, url = window.location.href) {
