@@ -398,6 +398,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       canvasRef: canvasRef,
       stageRef: stageRef,
       img: image,
+      pointIndex: pointIndex,
+      onPointIndex: (index: any) => {
+        setPointIndex(index);
+      },
       pathName: history?.location?.pathname,
       currentAnnotation: props?.currentAnnotation,
       flags: flags,
@@ -545,9 +549,17 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
             resulsts = props.currentAnnotation?.result?.split(',');
           }
         }
-        if (resulsts) {
-          const x = resulsts[0] - 0 + imageWidth / 2;
-          const y = resulsts[1] - 0 + imageHeight / 2;
+        if (resulsts && pointIndex) {
+          let x, y;
+          // debugger;
+          if (pointIndex === 2) {
+            x = resulsts[0];
+            y = resulsts[1];
+          } else {
+            x = resulsts[2];
+            y = resulsts[3];
+          }
+
           setpointArr([...resulsts]);
           setStartPos({
             x: x,
@@ -675,7 +687,16 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       return;
     }
     setisClick(false);
-    if (pointIndex !== null && props.currentAnnotation && !flags) {
+    const types =
+      props.currentAnnotation?.type === 'polygon' ||
+      props.currentAnnotation?.type === 'ocr_polygon';
+    if (
+      pointIndex !== null &&
+      props.currentAnnotation &&
+      !flags &&
+      props.currentAnnotation.type === 'polygon' &&
+      types
+    ) {
       const mouseX =
         (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
       const mouseY =
@@ -688,7 +709,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       } else {
         results = props.currentAnnotation?.result;
       }
-
       results = results + `,${mouseX},${mouseY}`;
       if (history?.location?.pathname === '/optical_character_recognition') {
         const datass: string = props.currentAnnotation?.result?.split('||')[1] as string;

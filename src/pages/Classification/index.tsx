@@ -97,29 +97,36 @@ const Page: React.FC = () => {
       img: imgBase64,
     });
     if (!line) return;
-    line.then(
-      (res) => {
-        if (res) {
-          console.log('resss', res);
+    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
 
-          // const predictions = res.predictions.map((item) => {
-          //   if (item.score > thresholdRaw) {
-          //     return item;
-          //   }
-          // });
-          const predictions = res?.predictions;
-          setIsLoad(false);
-          data.updatePredicted(data.all[0].dataId, true);
-          setInteractorData({
-            active: true,
-            mousePoints: interactorData.mousePoints,
-            predictData: predictions,
-          });
-        }
+    model.load(settings?.modelName).then(
+      () => {
+        // message.info(intl('modelLoaded'));
+        line.then(
+          (res) => {
+            if (res) {
+              console.log('resss', res);
+              const predictions = res?.predictions;
+              setIsLoad(false);
+              data.updatePredicted(data.all[0].dataId, true);
+              setInteractorData({
+                active: true,
+                mousePoints: interactorData.mousePoints,
+                predictData: predictions,
+              });
+            }
+          },
+          (error) => {
+            model.setLoading(false);
+            console.log('line.error', error);
+          },
+        );
       },
-      (error) => {
+      () => {
         model.setLoading(false);
-        console.log('line.error', error);
+        if (!isLoading) {
+          setIsLoading(true);
+        }
       },
     );
   };

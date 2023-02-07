@@ -217,6 +217,11 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
           if (props.currentTool !== 'polygon') {
             if (props.ChanegeTool) {
               props.ChanegeTool('editor');
+              if (isMin) {
+                props.onPointIndex(1);
+              } else {
+                props.onPointIndex(2);
+              }
             }
             props.onSelect(annotation);
           }
@@ -280,7 +285,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     props.onAnnotationAdd(anno);
   };
 
-  const addDotToRectangle = (mouseX: number, mouseY: number, pathName: string) => {
+  const addDotToRectangle = (mouseX: number, mouseY: number, pathName: string, pointIndex = 2) => {
     if (!props.currentAnnotation || !props.currentAnnotation.result || !props.currentLabel?.color)
       return;
     // debugger;
@@ -292,8 +297,14 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         result = results2.join('|') + `|${mouseX}|${mouseY}` + '||' + data[1];
       } else {
         const results = results2;
-        results[2] = mouseX + '';
-        results[3] = mouseY + '';
+        if (pointIndex === 2) {
+          results[2] = mouseX + '';
+          results[3] = mouseY + '';
+        } else {
+          results[0] = mouseX + '';
+          results[1] = mouseY + '';
+        }
+
         result = results.join('|') + '||' + data[1];
       }
     } else {
@@ -301,8 +312,13 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
       } else {
         const results = props.currentAnnotation.result.split(',');
-        results[2] = mouseX + '';
-        results[3] = mouseY + '';
+        if (pointIndex === 2) {
+          results[2] = mouseX + '';
+          results[3] = mouseY + '';
+        } else {
+          results[0] = mouseX + '';
+          results[1] = mouseY + '';
+        }
         result = results.join(',');
       }
     }
@@ -347,7 +363,13 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     isClick = false;
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
-    addDotToRectangle(mouseX, mouseY, param?.pathName);
+    if (param?.pointIndex) {
+      addDotToRectangle(mouseX, mouseY, param?.pathName, param?.pointIndex);
+    } else {
+      addDotToRectangle(mouseX, mouseY, param?.pathName);
+    }
+
+    param.onPointIndex(null);
   };
   return {
     onMouseDown: OnMouseDown,

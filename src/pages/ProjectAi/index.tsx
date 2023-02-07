@@ -5,7 +5,7 @@ import Title from 'antd/lib/typography/Title';
 import type { InputRef } from 'antd';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
-import { ProjectUtils, ModelUtils, LabelUtils, IntlInit } from '@/services/utils';
+import { ProjectUtils, ModelUtils, LabelUtils, IntlInit, getVersion } from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
 import styles from './index.less';
 import { v4 as uuid } from 'uuid';
@@ -198,7 +198,8 @@ const PaddleAi: React.FC = () => {
   // model.setMlBackendUrl(modelUrl);
   //   }
   // }, [modelUrl, model.setMlBackendUrl]);
-  const blurChange = () => {
+  const blurChange = async () => {
+    if (!(await getVersion())) return;
     model.setMlBackendUrl(modelUrl);
   };
   useEffect(() => {

@@ -255,32 +255,50 @@ const Page = () => {
       },
     });
     if (!line) return;
-    line.then(
-      (res: any) => {
-        if (res) {
-          // debugger;
-          const id = datas.current.curr?.dataId;
+    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
+    if (!settings?.mlBackendUrl) {
+      return;
+    }
+    const params = {
+      lang: settings.lang,
+    };
+    model.load(settings?.modelName, params).then(
+      () => {
+        // message.info(intl('modelLoaded'));
+        line.then(
+          (res: any) => {
+            if (res) {
+              // debugger;
+              const id = datas.current.curr?.dataId;
 
-          if (id !== res.piggyback.dataId) {
-            return;
-          }
-          const predictions = res.predictions.map((item: any) => {
-            if (item.score > thresholdRaw) {
-              return item;
+              if (id !== res.piggyback.dataId) {
+                return;
+              }
+              const predictions = res.predictions.map((item: any) => {
+                if (item.score > thresholdRaw) {
+                  return item;
+                }
+              });
+              setIsLoad(false);
+              data.updatePredicted(data.all[0]?.dataId, true); // 是否已经推理过
+              setInteractorData({
+                active: true,
+                mousePoints: interactorData.mousePoints,
+                predictData: predictions,
+              });
             }
-          });
-          setIsLoad(false);
-          data.updatePredicted(data.all[0]?.dataId, true); // 是否已经推理过
-          setInteractorData({
-            active: true,
-            mousePoints: interactorData.mousePoints,
-            predictData: predictions,
-          });
-        }
+          },
+          (error) => {
+            alert('error', error);
+            model.setLoading(false);
+          },
+        );
       },
-      (error) => {
-        alert('error', error);
+      () => {
         model.setLoading(false);
+        if (!isLoading) {
+          setIsLoading(true);
+        }
       },
     );
   };

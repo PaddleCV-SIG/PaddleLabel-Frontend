@@ -208,32 +208,44 @@ const Page = () => {
   const onPredicted = (images: HTMLImageElement) => {
     const imgBase64 = getBase64Image(images);
     const thresholdRaw = threshold ? threshold : 0.5;
-    // 判断接口是否在线 不在线setloading true
     const line = model.predict('PicoDet', {
       format: 'b64',
       img: imgBase64,
     });
     if (!line) return;
-    line.then(
-      (res) => {
-        if (res) {
-          const predictions = res.predictions.map((item) => {
-            if (item.score > thresholdRaw) {
-              return item;
+    // 判断接口是否在线 不在线setloading true
+    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
+    model.load(settings?.modelName).then(
+      () => {
+        // message.info(intl('modelLoaded'));
+        line.then(
+          (res) => {
+            if (res) {
+              const predictions = res.predictions.map((item) => {
+                if (item.score > thresholdRaw) {
+                  return item;
+                }
+              });
+              setIsLoad(false);
+              data.updatePredicted(data.all[0]?.dataId, true);
+              setInteractorData({
+                active: true,
+                mousePoints: interactorData.mousePoints,
+                predictData: predictions,
+              });
             }
-          });
-          setIsLoad(false);
-          data.updatePredicted(data.all[0]?.dataId, true);
-          setInteractorData({
-            active: true,
-            mousePoints: interactorData.mousePoints,
-            predictData: predictions,
-          });
-        }
+          },
+          (error) => {
+            alert('error', error);
+            model.setLoading(false);
+          },
+        );
       },
-      (error) => {
-        alert('error', error);
+      () => {
         model.setLoading(false);
+        if (!isLoading) {
+          setIsLoading(true);
+        }
       },
     );
   };
@@ -291,11 +303,14 @@ const Page = () => {
         return;
       }
       const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
-      model.setMlBackendUrl(settings.mlBackendUrl || '');
+      model.setMlBackendUrl(settings?.mlBackendUrl || '');
       model.setLoading(true);
-      model.load(settings.modelName).then(
-        () => {
+      model.load(settings?.modelName).then(
+        (res: any) => {
           // message.info(intl('modelLoaded'));
+          // debugger;
+          console.log('ress', res);
+
           model.setLoading(false);
           if (isLoading) {
             // debugger;
@@ -427,6 +442,7 @@ const Page = () => {
     setInteractorData({ active: false, predictData: [], mousePoints: [] });
     setCurrentAnnotation(undefined);
     setflags(false);
+    loacalstore();
     page?.current?.setDragEndPos({
       x: 0,
       y: 0,
@@ -680,6 +696,8 @@ const Page = () => {
                   return;
                 }
                 // scale.setCurr(1);
+                // debugger;
+
                 setInteractorData({ active: false, predictData: [], mousePoints: [] });
                 setCurrentAnnotation(undefined);
                 setflags(false);
