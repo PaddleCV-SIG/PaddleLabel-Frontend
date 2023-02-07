@@ -74,6 +74,7 @@
     "react-dom": "^16.8.0",
     "react-helmet-async": "^1.2.0",
     "react-intl": "^5.25.1",
+    "react-keyevent": "^1.1.0",
     "react-konva": "^17.0.2-5",
     "react-router": "^5.0.0",
     "recursive-diff": "^1.0.8",
