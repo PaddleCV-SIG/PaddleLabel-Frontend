@@ -67,7 +67,6 @@ function drawVerticalLine(x, context) {
   context.stroke();
 }
 function drawRectangle(props: PPRenderFuncProps): ReactElement {
-  // console.log(`drawRectangle, annotation:`, props.annotation, address);
   // return;
   // renderReact(props.canvasRef);
   let lengths: any = 0;
@@ -100,13 +99,18 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
   } else {
     pointsRaw = annotation.result.split(',');
   }
-
+  // let xmins, ymins, xmaxs, ymaxs;
+  const xmins = pointsRaw[0] - props.canvasWidth / 2;
+  const ymins = pointsRaw[1] - props.canvasHeight / 2;
+  const xmaxs = pointsRaw[2] - props.canvasWidth / 2;
+  const ymaxs = pointsRaw[3] - props.canvasHeight / 2;
   const points = {
-    xmin: parseInt(pointsRaw[0]),
-    ymin: parseInt(pointsRaw[1]),
-    xmax: pointsRaw.length >= 3 ? parseInt(pointsRaw[2]) : undefined,
-    ymax: pointsRaw.length >= 4 ? parseInt(pointsRaw[3]) : undefined,
+    xmin: parseInt(xmins),
+    ymin: parseInt(ymins),
+    xmax: pointsRaw.length >= 3 ? parseInt(xmaxs) : undefined,
+    ymax: pointsRaw.length >= 4 ? parseInt(ymaxs) : undefined,
   };
+  // debugger;
   const color = annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
@@ -205,17 +209,27 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
     return (
       <Circle
         onMouseDown={() => {
-          if (props.currentTool == 'editor') {
-            // console.log(`select ${JSON.stringify(annotation)}`);
-            // props.OnSelects(annotation);
+          // if (props.currentTool == 'editor') {
+          //   // console.log(`select ${JSON.stringify(annotation)}`);
+          //   // props.OnSelects(annotation);
+
+          // }
+          if (props.currentTool !== 'polygon') {
+            if (props.ChanegeTool) {
+              props.ChanegeTool('editor');
+            }
             props.onSelect(annotation);
           }
+          // if (props.ChanegeTool) {
+          //   props.ChanegeTool('editor');
+          // }
+          // props.onSelect(annotation);
         }}
         // draggable={props.currentTool == 'editor'}
         // onDragMove={onDragEvt}
         // onDragEnd={onDragEvt}
         onMouseOver={() => {
-          if (props.currentTool == 'editor' && props.stageRef?.current)
+          if (props.stageRef?.current && props.currentTool !== 'polygon')
             props.stageRef.current.container().style.cursor = 'cell';
         }}
         onMouseOut={() => {
@@ -224,12 +238,16 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
         x={isMin ? points.xmin : points.xmax}
         y={isMin ? points.ymin : points.ymax}
         radius={5 / props.scale}
+        // radius={5}
         fill={color}
       />
     );
   }
   // Create dots
+  console.log('props.scale', props.scale);
+
   return (
+    // <Group key={annotation.annotationId} scaleX={props.scale} scaleY={props.scale}>
     <Group key={annotation.annotationId}>
       {rect}
       {createDot(true)}
@@ -293,15 +311,20 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       result: result,
     };
     props.onAnnotationModify(anno);
-    // debugger;
+    if (props.ChanegeTool && props.preTool) {
+      props.ChanegeTool(props.preTool);
+    }
     if (props.onMouseUp) props.onMouseUp();
   };
 
   const OnMouseDown = (param: EvtProps) => {
+    // debugger;
+    isClick = true;
     if (props.currentTool === 'rectangle' || props.currentTool === 'editor') {
-      isClick = true;
-      const mouseX = param.mouseX + param.offsetX;
-      const mouseY = param.mouseY + param.offsetY;
+      // const mouseX = param.mouseX + param.offsetX;
+      // const mouseY = param.mouseY + param.offsetY;
+      const mouseX = param.mouseX;
+      const mouseY = param.mouseY;
       p1.x = param.mouseX;
       p1.y = param.mouseY;
       // debugger;
@@ -319,10 +342,11 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   };
   const OnMouseUp = (param: EvtProps) => {
     // debugger;
+    // if ()
     if (props.currentTool != 'rectangle' && props.currentTool != 'editor' && isClick) return;
     isClick = false;
-    const mouseX = param.mouseX + param.offsetX;
-    const mouseY = param.mouseY + param.offsetY;
+    const mouseX = param.mouseX;
+    const mouseY = param.mouseY;
     addDotToRectangle(mouseX, mouseY, param?.pathName);
   };
   return {

@@ -66,6 +66,7 @@ export type PPStageProps = {
     rubber?: PPDrawToolRet;
     interactor?: PPDrawToolRet;
   };
+  hideLabel: number[];
   frontendIdOps: { frontendId: number; setFrontendId: (id: number) => void };
   refresh?: number;
   image?: HTMLImageElement;
@@ -80,6 +81,7 @@ export type PPStageProps = {
   annotationDelete?: (anntation: Annotation[]) => void;
   onMousepoint?: () => void;
   onMousepoint2?: () => void;
+  ChanegeTool?: () => void;
 };
 
 const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
@@ -90,7 +92,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const radius = useModel('VisualRadius', (x) => x.radius);
   let drawToolTemp = undefined;
   if (props.currentTool === 'polygon') {
-    // debugger;
     drawToolTemp = props.drawTool?.polygon;
   } else if (
     props.currentTool === 'editor' &&
@@ -113,7 +114,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     ) {
       drawToolTemp = props.drawTool?.polygon;
     } else if (props.currentTool === 'polygon') {
-      // debugger;
       drawToolTemp = props.drawTool?.polygon;
     } else if (props.currentTool === 'rectangle') {
       drawToolTemp = props.drawTool?.rectangle;
@@ -138,7 +138,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const [isClick, setisClick] = useState(false);
   const [flags, setflags] = useState(true);
   const [frist, setfrist] = useState(true);
-
+  const [scaleFlag, setScaleFlag] = useState(0);
+  const [pointIndex, setPointIndex] = useState(null);
   const [refoce, setRefoce] = useState(0);
   const [DrawingSurfaceImageData, setDrawingSurfaceImageData] = useState<ImageData>();
   const stageRef = useRef<StageType>(null);
@@ -155,6 +156,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     scale: props.scale,
     currentTool: props.currentTool,
     onSelect: props.setCurrentAnnotation,
+    onPointIndex: (index: number) => {
+      setPointIndex(index);
+    },
     stageRef: stageRef,
     layerRef: layerRef,
     currentAnnotation: props.currentAnnotation,
@@ -163,10 +167,16 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     threshold: props.threshold,
     canvasRef: canvasRef,
     canvasRef2: canvasRef2,
+    canvasWidth: imageWidth,
+    canvasHeight: imageHeight,
     interactorData: interactorData,
     label: props.currentLabel,
     radius: radius,
     pathName: history?.location?.pathname,
+    ChanegeTool: props.ChanegeTool,
+    pointIndex: pointIndex,
+    ctx3: canvasRef3.current?.getContext('2d'),
+    pointArr: pointArr,
   };
   function handleWindowResize() {
     const parent = document.getElementById('dr');
@@ -178,8 +188,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const renderShape = () => {
     const newShapes: React.ReactElement[] = [];
     props.annotations.forEach((annotation, index) => {
-      // if (!annotation) continue;
-      if (annotation) {
+      const flagss = props.hideLabel.includes(annotation.labelId);
+      console.log('props.annotations', annotation, flags, props.hideLabel);
+
+      if (annotation && !flagss) {
         param.annotation = annotation;
         let shape;
         if (annotation.type === 'polygon') {
@@ -187,20 +199,17 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           const flag = flags || props.currentAnnotation?.result !== annotation.result;
           shape = props.drawTool?.polygon.drawAnnotation(param, flag);
         } else if (annotation.type === 'rectangle') {
+          // debugger;
           shape = props.drawTool?.rectangle.drawAnnotation(param);
+          // debugger;
+          // shape.scaleX(0.1);
+          // shape.scaleY(0.1);
         } else if (annotation.type === 'ocr_rectangle') {
-          // const data = annotation.result?.split('||')[0];
-          // const address = annotation.result?.split('||')[1].split('|')[0];
-          // const results2 = data && data.split('|').join(',');
-          // param.annotation = {
-          //   ...annotation,
-          //   result: results2,
-          // };
           shape = props.drawTool?.rectangle.drawAnnotation(param);
         } else if (annotation.type === 'ocr_polygon') {
-          const data = annotation.result?.split('||')[0];
+          const datass = annotation.result?.split('||')[0];
           const address = annotation.result?.split('||')[1].split('|')[0];
-          const results2 = data && data.split('|').join(',');
+          const results2 = datass && datass.split('|').join(',');
           param.annotation = {
             ...annotation,
             result: results2,
@@ -257,15 +266,12 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       props.scaleChange &&
       props.taskIndex !== undefined
     ) {
-      // debugger;
       const imagewidth = image?.width || 0;
       const imageheight = image?.height || 0;
 
-      // debugger;
       const zoomlevel = canvasWidth / imagewidth;
       const zoomlevel2 = canvasHeight / imageheight;
       let scaleImages2 = 0;
-      // debugger;
       if (zoomlevel > 1 && zoomlevel2 > 1) {
         // 图片需要放大
         if (zoomlevel > zoomlevel2) {
@@ -288,36 +294,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       props.scaleChange(scaleImages2);
       setimageHeight(imageheight);
       setimageWidth(imagewidth);
-      // if (zoomlevel2 > zoomlevel) {
-      //   props.scaleChange(zoomlevel);
-      // } else {
-      //   props.scaleChange(zoomlevel2);
-      // }
-      // setimageHeight(imageheight);
-      // setimageWidth(imagewidth);
-      // if (imagewidth === imageheight) {
-      //   let scaleImages = 0;
-      //   if (canvasWidth - canvasWidth > 0) {
-      //     scaleImages = canvasHeight / imageheight;
-      //   } else {
-      //     scaleImages = canvasWidth / imagewidth;
-      //   }
-      //   props.scaleChange(scaleImages);
-      //   setimageHeight(imageheight);
-      //   setimageWidth(imagewidth);
-      // } else {
-      //   // const flags = imagewidth - imageheight > 0 ? true : false;
-      //   let scaleImages2 = 0;
-      //   if (zoomlevel > zoomlevel2) {
-      //     scaleImages2 = canvasHeight / imageheight;
-      //   } else {
-      //     scaleImages2 = canvasWidth / imagewidth;
-      //   }
-      //   // const scales = scaleImages - 1;
-      //   props.scaleChange(scaleImages2);
-      //   setimageHeight(imageheight);
-      //   setimageWidth(imagewidth);
-      // }
     }
   }, [canvasHeight, canvasWidth, image]);
   useEffect(() => {
@@ -333,6 +309,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     setisClick(false);
   }, [props.currentTool]);
   useEffect(() => {
+    setScaleFlag(props.scale);
+  }, [props.scale]);
+  useEffect(() => {
     if (props.annotations) {
       const ctx = canvasRef.current?.getContext('2d');
       const ctx2 = canvasRef2.current?.getContext('2d');
@@ -341,7 +320,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       if (ctx2) ctx2.clearRect(0, 0, ctx2.canvas.width, ctx2.canvas.height);
       if (ctx3) ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height);
-      // debugger;
       // const length = props?.annotations?.length;
       if (frist) {
         setTimeout(() => {
@@ -352,7 +330,14 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         renderShape();
       }
     }
-  }, [props.annotations, props.currentAnnotation, flags, props.currentTool]);
+  }, [
+    props.annotations,
+    props.currentAnnotation,
+    flags,
+    props.currentTool,
+    props.hideLabel,
+    scaleFlag,
+  ]);
   useEffect(() => {
     // debugger;
     layerRef.current?.batchDraw();
@@ -389,7 +374,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   };
   function restoreDrawingSurface(drawingSurfaceImageData: any) {
     const ctx = canvasRef.current?.getContext('2d');
-
     ctx?.putImageData(drawingSurfaceImageData, 0, 0);
   }
   function saveDrawingSurface() {
@@ -448,25 +432,29 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   };
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // debugger;
-    console.log('onMouseDown', e);
+    console.log('onMouseDowns', e, props?.tool?.curr);
 
     if (e.evt.button === 1) {
-      onMousepoint();
-      return;
+      if (props?.tool?.curr === 'polygon') {
+        props.changePreTools('polygon');
+        props.tool.setCurr('mover');
+        return;
+      } else {
+        onMousepoint();
+        return;
+      }
     }
-    // debugger;
     setisClick(true);
     const ctx = canvasRef.current?.getContext('2d');
     const mouseX = (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
     const mouseY =
       (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
     if (props?.tool?.curr === 'polygon' && ctx) {
-      // debugger;
       if (e.evt.button === 2) {
         let results = '';
         if (history?.location?.pathname === '/optical_character_recognition') {
-          const data: string = props.currentAnnotation?.result?.split('||')[0] as string;
-          results = data.split('|').join(',');
+          const datass: string = props.currentAnnotation?.result?.split('||')[0] as string;
+          results = datass.split('|').join(',');
         } else {
           results = props.currentAnnotation?.result as string;
         }
@@ -490,36 +478,77 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         props.setCurrentAnnotation(undefined);
         setpointArr([]);
         if (!flags) {
+          // debugger;
           setflags(true);
         }
       } else {
-        // debugger;
-        ctx.strokeStyle = props.currentLabel?.color; //线条颜色
-        ctx.lineWidth = 4; //线条粗细
-        drawTool?.onMouseDown(getEvtParam(e));
-        if (flags) {
-          setflags(false);
+        if (pointIndex !== null && props.currentAnnotation && flags) {
+          // 开始编辑
+          // 编辑
+          const newAnno = props.currentAnnotation;
+          const newAnnos = props.currentAnnotation?.result?.split(',');
+
+          const starts = newAnnos?.slice(pointIndex + 1, newAnnos?.length);
+          const ends = newAnnos?.slice(0, pointIndex - 1);
+
+          const finly = [...starts, ...ends];
+          // debugger;
+          const pointArrs = [];
+          for (let index = 0; index < finly.length; index += 2) {
+            pointArrs.push({
+              // x: finly[index] - 0 + imageWidth / 2,
+              // y: finly[index + 1] - 0 + imageHeight / 2,
+              x: finly[index],
+              y: finly[index + 1],
+            });
+          }
+          if (history?.location?.pathname === '/optical_character_recognition') {
+            const datass: any = [];
+            for (const item of props.annotations) {
+              if (item.annotationId == props.currentAnnotation?.annotationId) {
+                datass.push(item);
+              }
+            }
+            const datas: string = datass[0].result?.split('||')[1] as string;
+            newAnno.result = finly.join('|') + '||' + datas;
+          } else {
+            newAnno.result = finly.join(',');
+          }
+
+          if (flags) {
+            setflags(false);
+          }
+          props.onAnnotationModify(newAnno);
+          setpointArr(pointArrs);
+        } else {
+          ctx.strokeStyle = props.currentLabel?.color; //线条颜色
+          ctx.lineWidth = 4; //线条粗细
+          drawTool?.onMouseDown(getEvtParam(e));
+          if (flags) {
+            setflags(false);
+          }
+          setpointArr([...pointArr, { x: mouseX, y: mouseY }]);
         }
-        setpointArr([...pointArr, { x: mouseX, y: mouseY }]);
-        // debugger;
       }
     } else {
       if (props.currentTool === 'editor') {
+        console.log('props.currentTool', props.currentTool === 'editor');
+
         let resulsts: any = [];
         if (history?.location?.pathname === '/optical_character_recognition') {
           if (props.currentAnnotation) {
-            const data: string = props.currentAnnotation?.result?.split('||')[0] as string;
-            resulsts = data.split('|');
+            const datass: string = props.currentAnnotation?.result?.split('||')[0] as string;
+            resulsts = datass.split('|');
           }
         } else {
           if (props.currentAnnotation) {
             resulsts = props.currentAnnotation?.result?.split(',');
           }
         }
-
         if (resulsts) {
           const x = resulsts[0] - 0 + imageWidth / 2;
           const y = resulsts[1] - 0 + imageHeight / 2;
+          setpointArr([...resulsts]);
           setStartPos({
             x: x,
             y: y,
@@ -562,8 +591,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
     const ctx = canvasRef.current?.getContext('2d');
     const ctx3 = canvasRef3.current?.getContext('2d');
-    console.log('props?.currentTool', props?.currentTool);
-
+    console.log('props.currentTool', props?.currentTool, isClick);
     if (props?.currentTool === 'rectangle' || props?.currentTool === 'editor') {
       if (history?.location?.pathname === '/optical_character_recognition') {
         if (
@@ -598,6 +626,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         setRefoce(newrefoce);
       }
     } else if (props?.currentTool === 'polygon' && ctx3 && !flags) {
+      console.log('props.currentTool3', props?.currentTool, pointArr);
+
       ctx3.strokeStyle = props.currentLabel?.color; //线条颜色
       ctx3.lineWidth = 4; //线条粗细
       // ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
@@ -610,7 +640,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
             ctx3.lineTo(pointArr[i].x, pointArr[i].y);
           }
         }
-
         ctx3.lineTo(mouseX, mouseY);
         ctx3.fillStyle = props.currentLabel?.color; //填充颜色
         ctx3.fill(); //填充
@@ -641,7 +670,43 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     drawTool?.onMouseMove(getEvtParam(e));
   };
   const onMouseUp = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (e.evt.button === 1 && props.preTools) {
+      props.tool.setCurr(props.preTools);
+      return;
+    }
     setisClick(false);
+    if (pointIndex !== null && props.currentAnnotation && !flags) {
+      const mouseX =
+        (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
+      const mouseY =
+        (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
+      // 编辑中
+      let results = '';
+      if (history?.location?.pathname === '/optical_character_recognition') {
+        const datass: string = props.currentAnnotation?.result?.split('||')[0] as string;
+        results = datass.split('|').join(',');
+      } else {
+        results = props.currentAnnotation?.result;
+      }
+
+      results = results + `,${mouseX},${mouseY}`;
+      if (history?.location?.pathname === '/optical_character_recognition') {
+        const datass: string = props.currentAnnotation?.result?.split('||')[1] as string;
+
+        results = results.split(',').join('|') + '||' + datass;
+      }
+      const newanno = props.currentAnnotation;
+      newanno.result = results;
+      props.onAnnotationModifyUP(newanno);
+
+      props.setCurrentAnnotation(undefined);
+      setpointArr([]);
+      if (!flags) {
+        // debugger;
+        setflags(true);
+      }
+      setPointIndex(null);
+    }
     drawTool?.onMouseUp(getEvtParam(e));
     const ctx3 = canvasRef3.current?.getContext('2d');
     if (ctx3) {

@@ -346,6 +346,7 @@ export function ectInteractorToAnnotation(
   dataId?: number,
   label?: Label,
   predictedBy?: string,
+  detection?: string,
 ): Annotation | null {
   if (!dataId || !label || !result) return null;
   const anno = {
@@ -357,6 +358,9 @@ export function ectInteractorToAnnotation(
     type: 'ocr_polygon',
     predictedBy: predictedBy,
   };
+  if (detection) {
+    anno.type = detection;
+  }
 
   return anno;
 }

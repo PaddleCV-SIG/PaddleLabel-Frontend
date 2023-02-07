@@ -21,11 +21,13 @@ import type { pageRef } from '@/components/PPLabelPage/PPStage';
 import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 import PPInteractor, { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
+import Keyevent from 'react-keyevent';
 import { IntlInitJsx } from '@/components/PPIntl';
 const Page: React.FC = () => {
   const tbIntl = IntlInitJsx('pages.toolBar');
   const [frontendId, setFrontendId] = useState<number>(0);
   const [pathNames] = useState(!history?.location?.pathname.includes('/instance_segmentation'));
+  const [preTools, setPreTools] = useState<string>('mover');
   const [finlyList, setfinlyList] = useState<Annotation[]>([]);
   const [selectFinly, setSelectFinly] = useState<Annotation>();
   const [isLabel, setisLabel] = useState<string>('label');
@@ -38,6 +40,7 @@ const Page: React.FC = () => {
   const [saveFlag, setsaveFlag] = useState(false);
   const [mousepoint, setMousepoint] = useState(false);
   const [mousepoint2, setMousepoint2] = useState(false);
+  const [hideLabel, setHideLabel] = useState<number[]>([]);
 
   const model = ModelUtils(useState);
   const page = useRef<pageRef>(null);
@@ -231,11 +234,8 @@ const Page: React.FC = () => {
     // onMouseUp: onEndEdit,
     // onMouseDown: onStartEdit,
     onMouseUp: () => {
-      // Do not record interactor's history, do not pushToBackend either
       if (interactorData.active) return;
       annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
-      // annotation.pushToBackend(data.curr?.dataId, annotation.all);
-      // 存下一份记录
     },
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
     model: model,
@@ -243,6 +243,10 @@ const Page: React.FC = () => {
     selectFinly: selectFinly,
     isLabel: isLabel,
     pathName: history?.location?.pathname,
+    ChanegeTool: (tools: any) => {
+      tool.setCurr(tools);
+    },
+    preTool: preTools,
   };
 
   const drawTool = {
@@ -254,6 +258,84 @@ const Page: React.FC = () => {
 
   const handleChange = (value: string) => {
     setisLabel(value);
+  };
+  const onG = () => {
+    // if (interactorData.active) saveInteractorData();
+    const flag = task.nextTask();
+    if (!flag) {
+      return;
+    }
+    setCurrentAnnotation(undefined);
+    // if (interactorData.active)
+    //   setInteractorData({ active: false, predictData: [], mousePoints: [] });
+    setSelectFinly(null);
+    setfinlyList([]);
+    page?.current?.setDragEndPos({
+      x: 0,
+      y: 0,
+    });
+  };
+  const onF = () => {
+    // if (interactorData.active) saveInteractorData();
+    const flag = task.prevTask();
+    if (!flag) {
+      return;
+    }
+
+    setCurrentAnnotation(undefined);
+    // if (interactorData.active)
+    //   setInteractorData({ active: false, predictData: [], mousePoints: [] });
+    setSelectFinly(null);
+    setfinlyList([]);
+    page?.current?.setDragEndPos({
+      x: 0,
+      y: 0,
+    });
+  };
+  const onD = () => {
+    const anno = annotation.curr;
+    annotation.setAll(annotation.all.filter((x) => x.frontendId != anno.frontendId));
+    setCurrentAnnotation(undefined);
+    annotation.remove(anno);
+  };
+  const onB = () => {
+    annHistory.backward().then((res) => {
+      if (res) {
+        annotation.setAll(res.annos);
+        setCurrentAnnotation(res.currAnno);
+        annotation.pushToBackend(data.curr?.dataId, res.annos);
+      }
+    });
+  };
+  const onM = () => {
+    savefinlyList();
+  };
+  const onCtrlS = () => {
+    annotation.pushToBackend(data.curr?.dataId);
+  };
+  const onShiftCtrlC = () => {
+    console.log('onShiftCtrlC');
+  };
+  const handleWheel = (event) => {
+    const deta = event.deltaY;
+    if (deta > 0) {
+      scale.change(-0.1);
+    }
+    if (deta < 0) {
+      scale.change(0.1);
+    }
+  };
+  const onHideLabel = (change: boolean, id: number) => {
+    if (change) {
+      setHideLabel([...hideLabel, id]);
+    } else {
+      const ids: number[] = hideLabel?.map((item: number) => {
+        if (item !== id) {
+          return item;
+        }
+      });
+      setHideLabel(ids);
+    }
   };
   return (
     <PPLabelPageContainer className="segment">
@@ -269,13 +351,14 @@ const Page: React.FC = () => {
               return;
             }
             tool.setCurr('polygon');
+            setPreTools('polygon');
             setCurrentAnnotation(undefined);
           }}
         >
           {tbIntl('polygon')}
         </PPToolBarButton>
         {/* 编辑 */}
-        <PPToolBarButton
+        {/* <PPToolBarButton
           active={tool.curr == 'editor'}
           disabled={interactorData.active}
           imgSrc="./pics/buttons/edit.png"
@@ -285,7 +368,7 @@ const Page: React.FC = () => {
           }}
         >
           {tbIntl('edit')}
-        </PPToolBarButton>
+        </PPToolBarButton> */}
         {/* 笔刷 */}
         <PPSetButton
           imgSrc="./pics/buttons/brush.png"
@@ -301,6 +384,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
             }
             tool.setCurr('brush');
+            setPreTools('brush');
           }}
           onChange={(newBrushSize) => {
             if (newBrushSize >= 1) {
@@ -320,6 +404,7 @@ const Page: React.FC = () => {
               setCurrentAnnotation(undefined);
             }
             tool.setCurr('rubber');
+            setPreTools('rubber');
           }}
           onChange={(newBrushSize) => {
             setBrushSize(newBrushSize);
@@ -370,6 +455,7 @@ const Page: React.FC = () => {
             } else {
               tool.setCurr('mover');
             }
+            setPreTools('mover');
           }}
         >
           {tbIntl('move')}
@@ -418,6 +504,7 @@ const Page: React.FC = () => {
             setSelectFinly(null);
             setfinlyList([]);
             tool.setCurr(undefined);
+            setPreTools('');
             label.setCurr(undefined);
           }}
           disabled={interactorData.active}
@@ -426,50 +513,75 @@ const Page: React.FC = () => {
         </PPToolBarButton>
       </PPToolBar>
       {/* 主内容区域 */}
-      <div id="dr" className="mainStage">
+      <div id="dr" className="mainStage" onWheel={handleWheel}>
         <Spin tip="loading" spinning={!!loading.curr}>
-          <div className="draw">
-            <PPStage
-              ref={page}
-              scale={scale.curr}
-              taskIndex={task.currIdx}
-              scaleChange={scale.setScale}
-              annotations={isLabel == 'label' ? annotation.all : newAnnotation ? newAnnotation : []}
-              currentTool={tool.curr}
-              labels={label.all}
-              tool={tool}
-              currentAnnotation={annotation.curr}
-              currentLabel={label.curr}
-              setCurrentAnnotation={setCurrentAnnotation}
-              onAnnotationModify={modifyAnnoByFrontendId}
-              onAnnotationModifyUP={onAnnotationModifyUP}
-              onAnnotationModifyComplete={() => {
-                // Do not record interactor's history
-                if (interactorData.active) return;
-                // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
-              }}
-              onMousepoint={() => {
-                setMousepoint(!mousepoint);
-              }}
-              onMousepoint2={() => {
-                setMousepoint2(!mousepoint2);
-              }}
-              annotationDelete={annotationDelete}
-              frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
-              imgSrc={data.imgSrc}
-              transparency={transparency}
-              threshold={threshold}
-              onAnnotationAdd={(anno) => {
-                const newAnnos = annotation.all.concat([anno]);
-                annotation.setAll(newAnnos);
-                if (!annotation.curr) setCurrentAnnotation(anno);
-              }}
-              drawTool={drawTool}
-              refresh={refreshVar}
-              brushSize={brushSize}
-            />
-          </div>
-          <div
+          <Keyevent
+            className="TopSide"
+            events={{
+              onG,
+              onF,
+              onD,
+              onB,
+              onM,
+              onCtrlS,
+              onShiftCtrlC,
+            }}
+            needFocusing
+          >
+            <div className="draw">
+              <PPStage
+                ref={page}
+                scale={scale.curr}
+                taskIndex={task.currIdx}
+                scaleChange={scale.setScale}
+                annotations={
+                  isLabel == 'label' ? annotation.all : newAnnotation ? newAnnotation : []
+                }
+                currentTool={tool.curr}
+                labels={label.all}
+                tool={tool}
+                preTools={preTools}
+                changePreTools={(tool: string) => {
+                  setPreTools(tool);
+                }}
+                currentAnnotation={annotation.curr}
+                currentLabel={label.curr}
+                setCurrentAnnotation={setCurrentAnnotation}
+                onAnnotationModify={modifyAnnoByFrontendId}
+                onAnnotationModifyUP={onAnnotationModifyUP}
+                onAnnotationModifyComplete={() => {
+                  // Do not record interactor's history
+                  if (interactorData.active) return;
+                  // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+                }}
+                onMousepoint={() => {
+                  setMousepoint(!mousepoint);
+                }}
+                onMousepoint2={() => {
+                  setMousepoint2(!mousepoint2);
+                }}
+                annotationDelete={annotationDelete}
+                frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
+                imgSrc={data.imgSrc}
+                transparency={transparency}
+                threshold={threshold}
+                onAnnotationAdd={(anno) => {
+                  const newAnnos = annotation.all.concat([anno]);
+                  annotation.setAll(newAnnos);
+                  if (!annotation.curr) setCurrentAnnotation(anno);
+                }}
+                hideLabel={hideLabel}
+                drawTool={drawTool}
+                refresh={refreshVar}
+                brushSize={brushSize}
+                ChanegeTool={(tools: any) => {
+                  tool.setCurr(tools);
+                }}
+              />
+            </div>
+          </Keyevent>
+
+          {/* <div
             className="prevTask"
             data-test-id="prevTask"
             onClick={() => {
@@ -509,10 +621,72 @@ const Page: React.FC = () => {
                 y: 0,
               });
             }}
-          />
+          /> */}
         </Spin>
-        <div className="pblock">
+        <div
+          className="pblock"
+          style={{
+            display: 'flex',
+          }}
+        >
+          <div
+            className="preButton"
+            style={{
+              background: 'blue',
+              color: 'white',
+              width: '100px',
+              textAlign: 'center',
+              lineHeight: '2.55rem',
+            }}
+            onClick={() => {
+              // if (interactorData.active) saveInteractorData();
+              const flag = task.prevTask();
+              if (!flag) {
+                return;
+              }
+
+              setCurrentAnnotation(undefined);
+              // if (interactorData.active)
+              //   setInteractorData({ active: false, predictData: [], mousePoints: [] });
+              setSelectFinly(null);
+              setfinlyList([]);
+              page?.current?.setDragEndPos({
+                x: 0,
+                y: 0,
+              });
+            }}
+          >
+            上一个
+          </div>
           <PPProgress task={task} project={project} />
+          <div
+            className="nextButton"
+            style={{
+              background: 'blue',
+              color: 'white',
+              width: '100px',
+              textAlign: 'center',
+              lineHeight: '2.55rem',
+            }}
+            onClick={() => {
+              // if (interactorData.active) saveInteractorData();
+              const flag = task.nextTask();
+              if (!flag) {
+                return;
+              }
+              setCurrentAnnotation(undefined);
+              // if (interactorData.active)
+              //   setInteractorData({ active: false, predictData: [], mousePoints: [] });
+              setSelectFinly(null);
+              setfinlyList([]);
+              page?.current?.setDragEndPos({
+                x: 0,
+                y: 0,
+              });
+            }}
+          >
+            下一个
+          </div>
         </div>
       </div>
 
@@ -537,6 +711,8 @@ const Page: React.FC = () => {
             }
             if (interactorData.active) {
               tool.setCurr(undefined);
+              setPreTools('');
+
               setInteractorData({ active: false, predictData: [], mousePoints: [] });
             } else {
               const settings = project.curr.otherSettings ? project.curr.otherSettings : {};
@@ -649,6 +825,7 @@ const Page: React.FC = () => {
               label.setCurr(newLabel);
             });
           }}
+          onHideLabel={onHideLabel}
         />
         {pathNames ? (
           <PPAnnotationList

@@ -14,6 +14,7 @@ export type PPRenderFuncProps = {
   scale: number;
   currentTool: ToolType;
   onSelect: (anntation: Annotation) => void;
+  onPointIndex: (index: number) => void;
   stageRef: React.RefObject<StageType>;
   layerRef: React.RefObject<any>;
   currentAnnotation?: Annotation;

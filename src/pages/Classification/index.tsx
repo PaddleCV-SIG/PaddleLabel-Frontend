@@ -29,7 +29,7 @@ const Page: React.FC = () => {
   // const [flags, setflags] = useState<boolean>(false);
   const { interactorData, setInteractorData } = useModel('InteractorData');
   const [threshold, setThreshold] = useState(0.5);
-
+  const [hideLabel, setHideLabel] = useState<number[]>([]);
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,
     useEffect,
@@ -235,8 +235,18 @@ const Page: React.FC = () => {
       }
     }
   }, [interactorData, otherSetting]);
-  console.log('label.activeIds', label.activeIds.size);
-
+  const onHideLabel = (change: boolean, id: number) => {
+    if (change) {
+      setHideLabel([...hideLabel, id]);
+    } else {
+      const ids: number[] = hideLabel?.map((item: number) => {
+        if (item !== id) {
+          return item;
+        }
+      });
+      setHideLabel(ids);
+    }
+  };
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
@@ -291,6 +301,7 @@ const Page: React.FC = () => {
               currentTool={tool.curr}
               scaleChange={scale.setScale}
               taskIndex={task.currIdx}
+              hideLabel={hideLabel}
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
               onAnnotationModifyComplete={() => {}}
@@ -298,10 +309,62 @@ const Page: React.FC = () => {
               annotations={annotation.all}
             />
           </div>
-          <div className="pblock">
+          {/* <div className="pblock">
             <PPProgress task={task} project={project} />
-          </div>
+          </div> */}
           <div
+            className="pblock"
+            style={{
+              display: 'flex',
+            }}
+          >
+            <div
+              className="preButton"
+              style={{
+                background: 'blue',
+                color: 'white',
+                width: '100px',
+                textAlign: 'center',
+                lineHeight: '2.55rem',
+              }}
+              onClick={() => {
+                if (!label.activeIds.size) {
+                  message.info(intl('preNext'));
+                }
+                task.prevTask();
+                page?.current?.setDragEndPos({
+                  x: 0,
+                  y: 0,
+                });
+              }}
+            >
+              上一个
+            </div>
+            <PPProgress task={task} project={project} />
+            <div
+              className="nextButton"
+              style={{
+                background: 'blue',
+                color: 'white',
+                width: '100px',
+                textAlign: 'center',
+                lineHeight: '2.55rem',
+              }}
+              onClick={() => {
+                if (!label.activeIds.size) {
+                  message.info(intl('preNext'));
+                }
+                task.nextTask();
+                page?.current?.setDragEndPos({
+                  x: 0,
+                  y: 0,
+                });
+              }}
+            >
+              下一个
+            </div>
+          </div>
+          {/* <div
             className="prevTask"
             onClick={() => {
               if (!label.activeIds.size) {
@@ -328,7 +391,7 @@ const Page: React.FC = () => {
               });
             }}
             data-test-id={'nextTask'}
-          />
+          /> */}
         </Spin>
       </div>
       <PPToolBar disLoc="right">
@@ -374,6 +437,7 @@ const Page: React.FC = () => {
           hideColorPicker={true}
           hideEye={true}
           refresh={refreshVar}
+          onHideLabel={onHideLabel}
         />
       </div>
     </PPLabelPageContainer>
