@@ -32,7 +32,7 @@ const Page: React.FC = () => {
   const [selectFinly, setSelectFinly] = useState<Annotation>();
   const [isLabel, setisLabel] = useState<string>('label');
   const [brushSize, setBrushSize] = useState(10);
-  const [threshold, setThreshold] = useState(0.5);
+  const [threshold, setThreshold] = useState(0.7);
   const [newAnnotation, setNewAnnotation] = useState<Annotation[]>();
   const [transparency, setTransparency] = useState(60);
   const { radius, setRadius } = useModel('VisualRadius');
@@ -744,8 +744,8 @@ const Page: React.FC = () => {
           maxSize={1}
           minSize={0.1}
           step={0.1}
-          onChange={(newSize) => {
-            setThreshold(newSize);
+          onChange={(newThresh) => {
+            setThreshold(newThresh);
           }}
         >
           {tbIntl('segmentThreshold')}

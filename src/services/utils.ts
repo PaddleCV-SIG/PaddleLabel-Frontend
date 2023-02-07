@@ -84,6 +84,12 @@ export const createInfo = {
     id: 7,
     labelFormats: { txt: 'txt' },
   },
+  // point: {
+  //   name: 'Point',
+  //   avatar: './pics/ocr.png',
+  //   id: 8,
+  //   labelFormats: { labelme: 'labelme' },
+  // },
 };
 
 // TODO: all should default to undefined or []

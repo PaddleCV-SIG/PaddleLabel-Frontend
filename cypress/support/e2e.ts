@@ -23,3 +23,6 @@ Cypress.on('uncaught:exception', (err, runnable) => {
   console.log('uncaught:exception', err);
   return false;
 });
+
+// Cypress.Screenshot.defaults({ onBeforeScreenshot: () => cy.wait(1000) });
+Cypress.Screenshot.defaults({ disableTimersAndAnimations: false });

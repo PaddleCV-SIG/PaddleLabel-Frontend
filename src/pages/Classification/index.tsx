@@ -28,7 +28,7 @@ const Page: React.FC = () => {
   const [otherSetting, setotherSetting] = useState();
   // const [flags, setflags] = useState<boolean>(false);
   const { interactorData, setInteractorData } = useModel('InteractorData');
-  const [threshold, setThreshold] = useState(0.5);
+  const [threshold, setThreshold] = useState(0.9);
   const [hideLabel, setHideLabel] = useState<number[]>([]);
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,

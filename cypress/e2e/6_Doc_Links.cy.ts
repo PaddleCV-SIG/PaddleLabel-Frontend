@@ -9,6 +9,12 @@ describe('Test Project Overview Page Functions on 8 Sample Datasets', () => {
     cy.visit('/');
     cy.spyAllApiCalls();
   });
+  if (Cypress.env('failFast'))
+    afterEach(function () {
+      if (this.currentTest.state === 'failed') {
+        Cypress.runner.stop();
+      }
+    });
 
   const tasks = [welcomeIt.toReadme(), welcomeIt.toTrainKnoleget(), detailIt.toDoc()];
 

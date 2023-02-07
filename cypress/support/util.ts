@@ -5,12 +5,12 @@ export function camel2snake(name: string) {
 
 export function notGithub404(url) {
   cy.wrap(url).should('not.be.undefined');
-  cy.request(url);
+  cy.request(url, { timeout: 5000 });
 }
 
 export function notLocal404(url) {
   cy.wrap(url).should('not.be.undefined');
-  cy.request(url).its('body').should('not.include', '404');
+  cy.request(url, { timeout: 5000 }).its('body').should('not.include', '404');
 }
 
 export function runTasks(tasks) {
@@ -29,6 +29,7 @@ export function runTasks(tasks) {
     it(name, () => {
       cy.printDebugId(name);
       task.func();
+      if (name.includes('Import')) cy.wait(Cypress.env('waitAfter')); // TODO: import wait
     });
   }
 }

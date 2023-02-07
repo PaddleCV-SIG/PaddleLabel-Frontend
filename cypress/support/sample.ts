@@ -44,7 +44,14 @@ export const sample = {
     }
     sample.to();
     sample.toOverview(sampleType);
+    overview.on();
     overview.toLabel(sampleType);
+    if (Cypress.env('screenshot')) {
+      cy.get("canvas[id='canvasId']").first().should('have.attr', 'width').and('not.equal', '1'); // default value
+      cy.get("canvas[id='canvasId']").first().should('have.attr', 'height').and('not.equal', '1'); // default value
+      cy.wait(200); // TODO: remove this and find a more reliable way to wait for page is stable
+      cy.screenshot({ disableTimersAndAnimations: false });
+    }
   },
 };
 

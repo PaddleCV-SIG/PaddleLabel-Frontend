@@ -47,39 +47,35 @@ const _PPBlock: React.FC<_PPCardProps> = (props) => {
   );
 };
 
-export type PPCreaterProps = {
+export type PPCreatorProps = {
   taskCategory: string; // TODO: stricter
   imgSrc?: string;
   style?: React.CSSProperties;
   innerStyle?: React.CSSProperties;
 };
-// const projectId = serviceUtils.getQueryVariable('projectId');
 
-const PPCreater: React.FC<PPCreaterProps> = (props) => {
+const PPCreator: React.FC<PPCreatorProps> = (props) => {
   const { query = {} } = history.location;
-  const projectId = query?.projectId;
+  console.log('query?.projectId', query?.projectId);
+  const projectId = query?.projectId != undefined ? parseInt(query.projectId) : undefined;
   const projects = ProjectUtils(useState);
   const [loading, setLoading] = useState<boolean>(false);
   const [sampleFiles, setSampleFiles] = useState<TreeDataNode[]>([]);
   // const [labelFormat, setLabelFormat] = useState<string>();
 
-  const intlJsx = IntlInitJsx('component.PPCreater');
-  const intl = IntlInit('component.PPCreater');
+  const intlJsx = IntlInitJsx('component.PPCreator');
+  const intl = IntlInit('component.PPCreator');
 
   const saveProject = (values: any) => {
     setLoading(true);
-    // const otherSettings = {};
-    // if (values.segMaskType) otherSettings.segMaskType = values.segMaskType;
-
     if (!projectId) {
       projects
         .create({
           ...values,
           taskCategoryId: createInfo[props.taskCategory].id,
-          // otherSettings: otherSettings,
         })
         .catch((err) => {
-          message.error(intl('creationFail'));
+          message.error(intlJsx('creationFail'));
           serviceUtils.parseError(err, message);
           setLoading(false);
         })
@@ -112,7 +108,6 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
       name: project?.name,
       description: project?.description,
       dataDir: project?.dataDir,
-      labelDir: project?.labelDir,
       labelFormat: project?.labelFormat,
       segMaskType: project?.otherSettings?.segMaskType,
     };
@@ -145,8 +140,6 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
           />
           <div className={styles.DirectoryContent}>
             <div>{intlJsx('folderStructureSampleDetail')}</div>
-            {/* <div>1.标注完成后，生成标注结果的组织形式ru如上所示</div>
-            <div>2.若重新导入已有标注，请参加如上标注结构组织文件夹下的文件</div> */}
           </div>
         </div>
       );
@@ -408,4 +401,4 @@ const PPCreater: React.FC<PPCreaterProps> = (props) => {
   );
 };
 
-export default PPCreater;
+export default PPCreator;

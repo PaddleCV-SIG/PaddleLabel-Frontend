@@ -2,7 +2,6 @@ import { welcome } from './welcome';
 import { config } from './config';
 import { overview } from './overview';
 import { label } from './label';
-import { runId } from './config';
 import { notLocal404 } from './util';
 
 export const detail = {
@@ -41,50 +40,34 @@ export const detail = {
   ) => {
     welcome.to();
     welcome.toCreate(projectType);
+    cy.g('component.PPCreater.create', { timeout: 10000 }).should('exist');
     var dpath =
       datasetPath != undefined
         ? datasetPath
         : `${config.sampleBaseDir}/${projectType}/${labelFormat}`;
-    if (Cypress.env('os') != undefined && Cypress.env('os').includes('win')) {
-      console.log('dpathb', dpath);
+    if (Cypress.env('os') != undefined && Cypress.env('os').includes('win'))
       dpath = dpath.replaceAll('/', '\\\\');
-      console.log('dpatha', dpath);
-    }
 
     const name = dpath.replace(config.sampleBaseDir, '').replace(config.thirdPartyDir, '3rd_party');
     cy.get('#name').type(name, { delay: 0 });
     cy.get('#dataDir').type(dpath, { delay: 0 });
     cy.get('#description').type(name, { delay: 0 });
     cy.g(`global.labelFormat.${labelFormat}`).click();
-    cy.g('component.PPCreater.create')
-      .click()
-      .wait(500)
-      .then(() => {
-        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
-        if (screenshot)
-          cy.screenshot(
-            runId +
-              '/' +
-              dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) +
-              '_afterImport',
-          );
-      });
-    for (let t = 0; t < 4; t++)
-      cy.wait(400).then(() => {
-        cy.get('[data-icon="close-circle"]', { timeout: 500 }).should('not.exist');
-      });
-    if (
-      !(
-        dpath.includes('polygon2mask') ||
-        dpath.includes('gray/coco') ||
-        dpath.includes('pseudo/coco')
-      )
-    )
-      label.on(projectType, skipAnnTest); // polygon2mask will be empty pj
-    if (screenshot)
-      cy.screenshot(
-        runId + '/' + dpath.replace(config.sampleBaseDir, '').replace('/', '-').slice(1) + '_label',
-      );
+    cy.g('component.PPCreater.create').click();
+    cy.onPage(projectType, false);
+
+    label.on(
+      projectType,
+      dpath.includes('mask_out_coco_in') ||
+        (dpath.includes('semseg') && dpath.includes('pseudo') && dpath.includes('coco')) ||
+        (dpath.includes('semseg') && dpath.includes('gray') && dpath.includes('coco')),
+    ); // mask to polygon will be empty pj
+
+    if (Cypress.env('screenshot')) {
+      cy.wait(200); // TODO: remove this and find a more reliable way to wait for page is stable
+      cy.screenshot({ disableTimersAndAnimations: false });
+    }
+    return name;
   },
   changeType: (pjId: number, newType: string) => {
     detail.to(pjId);

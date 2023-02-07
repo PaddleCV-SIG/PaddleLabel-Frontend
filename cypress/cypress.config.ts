@@ -3,7 +3,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
-  projectId: 'dbb21d',
+  env: { waitAfter: 0, failFast: true },
   e2e: {
     baseUrl: 'http://localhost:17995',
     // baseUrl: 'http://localhost:4321', // shouldn't have ending /
@@ -11,9 +11,11 @@ export default defineConfig({
     viewportWidth: 1920,
     watchForFileChanges: false,
     video: false,
+    defaultCommandTimeout: 10000,
 
     supportFile: './support/e2e.{js,jsx,ts,tsx}',
     specPattern: './e2e/**/*.cy.{js,jsx,ts,tsx}',
+
     setupNodeEvents(on, config) {
       on('before:browser:launch', (browser, launchOptions) => {
         if (browser.name === 'chrome' && browser.isHeadless) {

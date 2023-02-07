@@ -1,7 +1,7 @@
 import React from 'react';
 import { message } from 'antd';
 import { history } from 'umi';
-import PPCreater from '@/components/PPCreater';
+import PPCreator from '@/components/PPCreator';
 import PPContainer from '@/components/PPContainer';
 import serviceUtils from '@/services/serviceUtils';
 import { createInfo, getVersion, IntlInit } from '@/services/utils';
@@ -25,7 +25,7 @@ const Project: React.FC = () => {
   }
   return (
     <PPContainer>
-      <PPCreater imgSrc="./pics/illustration.jpg" taskCategory={taskCategory} />
+      <PPCreator imgSrc="./pics/illustration.jpg" taskCategory={taskCategory} />
     </PPContainer>
   );
 };
