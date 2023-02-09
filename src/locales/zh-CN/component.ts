@@ -9,17 +9,32 @@ export default {
   'component.PPCreator.requireLabelFormat': '请选择一个标注格式',
 
   // 分类项目
-  'component.PPCreator.singleClass': '单分类',
-  'component.PPCreator.multiClass': '多分类',
+  'component.PPCreator.clasSubCatg': '分类项目类型',
+  'component.PPCreator.classificationSubCatgDetail':
+    '单分类项目中一张图片只能有一个类别，多分类项目中一张图片可以有多个类别',
+  'component.PPCreator.singleClass': '单图单分类',
+  'component.PPCreator.multiClass': '单图多分类',
   'component.PPCreator.singleClassFolder': '文件夹代表类别',
   'component.PPCreator.singleClassList': '列表文件记录类别',
   'component.PPCreator.multiClassList': '列表文件记录类别',
 
-  'component.PPCreator.clasSubCatg': '分类项目类型',
+  // 检测
+  'component.PPCreator.coco': 'COCO',
+  'component.PPCreator.voc': 'Pascal VOC',
+  'component.PPCreator.yolo': 'YOLO',
+
+  // 分割
+  'component.PPCreator.segMaskType': '掩膜类型',
+  'component.PPCreator.mask': '掩膜',
+  'component.PPCreator.eiseg': 'EISeg',
+
+  // OCR
+  'component.PPCreator.json': 'Json格式',
+  'component.PPCreator.txt': 'PaddleOCR txt 格式',
+
   'component.PPCreator.labelFormatDetail':
     '如果要导入的数据集没有任何标注信息，这里不需要选择。如果有标注信息，请选择标注信息的格式。',
-  'component.PPCreator.classificationSubCatgDetail':
-    '单分类项目中一张图片只能有一个类别，多分类项目中一张图片可以有多个类别',
+
   'component.PPCreator.maxPoints': '最大点数',
   'component.PPCreator.annotationMode': '标注模式',
   'component.PPCreator.pixelMode': '像素级标注',
@@ -29,8 +44,7 @@ export default {
   'component.PPCreator.cancel': '返回',
   'component.PPCreator.creationFail': '项目创建失败',
   'component.PPCreator.project': '项目',
-  'component.PPCreator.sampleProject': '样例项目',
-  'component.PPCreator.segMaskType': '掩膜类型',
+  // 'component.PPCreator.sampleProject': '样例项目',
   'component.PPCreator.titleContent': '点此查看有关项目文件结构更多细节',
   'component.PPCreator.folderStructureSample': '数据集文件结构示例',
   'component.PPCreator.folderStructureSampleDetail':
@@ -38,9 +52,11 @@ export default {
   'component.PPCreator.importInProgress': '导入中，请稍候',
 
   'component.PPAnnotationList.annotationList': '标注列表',
-  // 'component.PPAnnotationList.addAnnotation': '添加标注',
+
   'component.PPLabelList.labelList': '类别列表',
   'component.PPLabelList.addLabel': '添加类别',
+  'component.label.deleteSuccess': '类别删除成功',
+  'component.label.ontHotMultiple': '本项目为单分类，但类别列表中选中了多个分类',
   'component.PPAddLabelModal.selectColor': '选择颜色',
   'component.PPAddLabelModal.addLabel': '添加类别',
   'component.PPAddLabelModal.labelName': '类别名',
@@ -72,7 +88,6 @@ export default {
   'component.PPInteractorModal.mlBackendUrl': '机器学习后端网址',
   'component.PPInteractorModal.modelPath': '模型文件路径',
   'component.PPInteractorModal.weightPath': '权重文件路径',
-  // 'component.PPInteractorModal.pathPh': '留空使用内置路径，或填写绝对路径',
   'component.PPInteractorModal.modelPathPh':
     '留空将使用内置模型路径，或填写到.pdmodel文件的绝对路径',
   'component.PPInteractorModal.weightPathPh':
@@ -83,11 +98,9 @@ export default {
     '模型加载失败，请检查 1.机器学习后端已经启动 2.机器学习后端网址填写正确',
   'component.PPInteractorModal.Warintoast':
     '注意：完成一个目标的标注后，请按下鼠标中键结束本轮交互。在一轮交互中标注多个目标会影响交互式标注精度。',
+
   'component.history.noPrev': '没有更老的操作记录',
   'component.history.noNext': '没有更新的操作记录',
-
-  'component.label.deleteSuccess': '类别删除成功',
-  'component.label.ontHotMultiple': '本项目为单分类，但类别列表中选中了多个分类',
 
   'component.PPMedical.windowWidth': '窗宽',
   'component.PPMedical.windowLevel': '窗位',
@@ -115,12 +128,12 @@ export default {
   'component.PPRS.gridSize': '宫格大小',
   'component.PPRS.overlap': '重叠大小',
   'component.PPRS.completed': '当前标注完成{show}/{total}',
-  'component.PPSegMode.note': '语义分割标注提供多种垂类方向，请选择',
-  'component.PPSegMode.general': '通用数据分割',
-  'component.PPSegMode.medical': '医疗数据分割',
-  'component.PPSegMode.remoteSensing': '遥感数据分割',
-  'component.PPSegMode.changeDetection': '遥感变化检测',
-  'component.PPSegMode.ok': '确定',
+  // 'component.PPSegMode.note': '语义分割标注提供多种垂类方向，请选择',
+  // 'component.PPSegMode.general': '通用数据分割',
+  // 'component.PPSegMode.medical': '医疗数据分割',
+  // 'component.PPSegMode.remoteSensing': '遥感数据分割',
+  // 'component.PPSegMode.changeDetection': '遥感变化检测',
+  // 'component.PPSegMode.ok': '确定',
 
   'component.PaddleOCR.ch': '中英文',
   'component.PaddleOCR.en': '英文',

@@ -4,21 +4,43 @@ export default {
   'component.PPCreator.datasetPath': 'Dataset Path',
   'component.PPCreator.requireDatasetPath': 'Please input a dataset path',
   'component.PPCreator.description': 'Description',
-  'component.PPCreator.maxPoints': 'Max Points',
+  'component.PPCreator.noLabel': 'No Annotation',
+  'component.PPCreator.labelFormat': 'Import Annotation Format',
+  'component.PPCreator.requireLabelFormat': 'Please select an import annotation format',
+
+  // 分类项目
+  'component.PPCreator.clasSubCatg': 'Classification Type',
+  'component.PPCreator.classificationSubCatgDetail':
+    'An image in single class classification can only have one category, while in multi class classification it can have more than one.',
+  'component.PPCreator.singleClass': 'Single Class',
+  'component.PPCreator.multiClass': 'Multi Class',
+  'component.PPCreator.singleClassFolder': 'Folder name is class name',
+  'component.PPCreator.singleClassList': 'Class name in list files',
+  'component.PPCreator.multiClassList': 'Class name in list files',
+
+  // 检测
+  'component.PPCreator.coco': 'COCO',
+  'component.PPCreator.voc': 'Pascal VOC',
+  'component.PPCreator.yolo': 'YOLO',
+
+  // 分割
+  'component.PPCreator.segMaskType': 'Mask Type',
+  'component.PPCreator.mask': 'Mask',
+  'component.PPCreator.eiseg': 'EISeg',
+
+  // OCR
+  'component.PPCreator.json': 'Json',
+  'component.PPCreator.txt': 'PaddleOCR txt',
+
   'component.PPCreator.annotationMode': 'Annotation Mode',
   'component.PPCreator.pixelMode': 'Pixel Mode',
   'component.PPCreator.polygonMode': 'Polygon Mode',
   'component.PPCreator.update': 'Update',
   'component.PPCreator.create': 'Create',
   'component.PPCreator.cancel': 'Cancel',
-  'component.PPCreator.labelFormat': 'Import Label Format',
-  'component.PPCreator.clasSubCatg': 'Classification type',
   'component.PPCreator.chooseClasSubcatg': 'Please choose a classfication project type',
-  'component.PPCreator.classificationSubCatgDetail':
-    'An image in single class classification can only have one category, while in multi class classification it can have more than one.',
   'component.PPCreator.project': ' Project',
   'component.PPCreator.sampleProject': 'Demo Project',
-  'component.PPCreator.segMaskType': 'Mask Type',
   'component.PPCreator.creationFail': 'Project Creation Failed',
   'component.PPCreator.titleContent': 'Click to see more details about project folder structure.',
   'component.PPCreator.folderStructureSample': 'Folder Structure Example',
