@@ -1,7 +1,7 @@
+import { IntlInitJsx } from '@/components/PPIntl';
 import { Form, Input, Modal, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useIntl } from 'umi';
 import PPColorBall from '../PPColorBall';
 import type { Label } from '../PPLabelList';
 
@@ -51,12 +51,7 @@ const generatedColorList: string[] = [
 ];
 
 const Component: React.FC<PPAddLabelProps> = (props) => {
-  const intl = useIntl();
-  const selectColor = intl.formatMessage({ id: 'component.PPAddLabelModal.selectColor' });
-  const addLabel = intl.formatMessage({ id: 'component.PPAddLabelModal.addLabel' });
-  const labelName = intl.formatMessage({ id: 'component.PPAddLabelModal.labelName' });
-  const cancel = intl.formatMessage({ id: 'component.PPCreater.cancel' });
-  const ok = intl.formatMessage({ id: 'component.PPSegMode.ok' });
+  const intlJsx = IntlInitJsx('component.PPAddLabelModal');
 
   const [newLabelColor, setNewLabelColor] = useState<string>(
     props.defaultLabel?.color || generatedColorList[props.order || 0],
@@ -68,7 +63,7 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
   const colorPicker = props.hideColorPicker ? (
     <></>
   ) : (
-    <Form.Item label={selectColor} name="color">
+    <Form.Item label={intlJsx('selectColor')} name="color">
       <PPColorBall
         color={newLabelColor}
         changeable={true}
@@ -82,7 +77,7 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
   const [form] = Form.useForm();
 
   return (
-    <Modal title={addLabel} visible={props.visible} onCancel={props.onCancel} footer={null}>
+    <Modal title={intlJsx('addLabel')} open={props.visible} onCancel={props.onCancel} footer={null}>
       <Form
         form={form}
         name="basic"
@@ -100,9 +95,9 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
         autoComplete="off"
       >
         <Form.Item
-          label={labelName}
+          label={intlJsx('labelName')}
           name="labelname"
-          rules={[{ required: true, message: 'Please input label name!' }]}
+          rules={[{ required: true, message: intlJsx('requiresLabelName') }]}
         >
           <Input autoComplete="off" />
         </Form.Item>
@@ -117,10 +112,10 @@ const Component: React.FC<PPAddLabelProps> = (props) => {
                 form.resetFields();
               }}
             >
-              {cancel}
+              {intlJsx('cancel', 'global')}
             </Button>
             <Button type="primary" htmlType="submit">
-              {ok}
+              {intlJsx('ok', 'global')}
             </Button>
           </Space>
         </Form.Item>

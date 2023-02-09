@@ -656,7 +656,7 @@ const Page: React.FC = () => {
               });
             }}
           >
-            上一个
+            {tbIntl('prevTask')}
           </div>
           <PPProgress task={task} project={project} />
           <div
@@ -685,7 +685,7 @@ const Page: React.FC = () => {
               });
             }}
           >
-            下一个
+            {tbIntl('nextTask')}
           </div>
         </div>
       </div>

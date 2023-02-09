@@ -60,6 +60,7 @@ export default {
   'component.PPAddLabelModal.selectColor': '选择颜色',
   'component.PPAddLabelModal.addLabel': '添加类别',
   'component.PPAddLabelModal.labelName': '类别名',
+  'component.PPAddLabelModal.requiresLabelName': '请填写类别名',
 
   'component.PPSplitDatasetModal.title': '划分数据集',
   'component.PPSplitDatasetModal.train': '训练集比例',

@@ -10,13 +10,12 @@ import PPSampleButton from '@/components/PPSampleButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { toDict, ProjectUtils, getVersion, snake2camel } from '@/services/utils';
 import { IntlInitJsx } from '@/components/PPIntl';
-import { createInfo, IntlInit } from '@/services/utils';
+import { createInfo } from '@/services/utils';
 import type { ColumnsType } from 'antd/es/table';
 import type { Project } from '@/services/web/models';
 
 const Projects: React.FC = (props) => {
   const intlJsx = IntlInitJsx('pages.welcome');
-  const intl = IntlInit('pages.welcome');
 
   const projects = ProjectUtils(useState);
   useEffect(() => {
@@ -49,7 +48,7 @@ const Projects: React.FC = (props) => {
       width: '20rem',
       render: (project) => {
         const categoryName = snake2camel(project.taskCategory.name);
-        return intl(categoryName, 'global');
+        return intlJsx(categoryName, 'global');
       },
     },
     {
@@ -94,8 +93,6 @@ const Projects: React.FC = (props) => {
     },
   ];
 
-  // if found no project, return create project button
-  // TODO: beautify frontend
   if (!projects.all?.length) return '';
 
   return (

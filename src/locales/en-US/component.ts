@@ -90,6 +90,8 @@ export default {
   'component.PPAddLabelModal.selectColor': 'Select Color',
   'component.PPAddLabelModal.addLabel': 'Add Label',
   'component.PPAddLabelModal.labelName': 'Label Name',
+  'component.PPAddLabelModal.requiresLabelName': 'Please input a label name',
+
   'component.PPAnnotationList.annotationList': 'Annotation List',
   'component.PPAnnotationList.addAnnotation': 'Add Annotation',
   'component.PPLabelList.labelList': 'Label List',
