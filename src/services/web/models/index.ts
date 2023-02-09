@@ -26,5 +26,6 @@ export * from './SplitDatasetRequest';
 export * from './Tag';
 export * from './TagTask';
 export * from './Task';
+export * from './TaskCategory';
 export * from './ToEasydataRequest';
 export * from './User';

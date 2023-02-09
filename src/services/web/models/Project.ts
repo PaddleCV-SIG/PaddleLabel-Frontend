@@ -21,9 +21,15 @@ import {
   ProjectOtherSettingsFromJSONTyped,
   ProjectOtherSettingsToJSON,
 } from './ProjectOtherSettings';
+import type { TaskCategory } from './TaskCategory';
+import {
+  TaskCategoryFromJSON,
+  TaskCategoryFromJSONTyped,
+  TaskCategoryToJSON,
+} from './TaskCategory';
 
 /**
- * 项目基本信息和设置
+ * project info and settings
  * @export
  * @interface Project
  */
@@ -47,6 +53,12 @@ export interface Project {
    */
   description?: string;
   /**
+   * Absolute directory path where all the data file is stored
+   * @type {string}
+   * @memberof Project
+   */
+  dataDir?: string;
+  /**
    * Top level annotation task category, see TODO for int <-> category map
    * @type {number}
    * @memberof Project
@@ -54,16 +66,10 @@ export interface Project {
   taskCategoryId?: number;
   /**
    *
-   * @type {string}
+   * @type {TaskCategory}
    * @memberof Project
    */
-  readonly taskCategory?: string;
-  /**
-   * Absolute directory path where all the data file is stored
-   * @type {string}
-   * @memberof Project
-   */
-  dataDir?: string;
+  taskCategory?: TaskCategory;
   /**
    *
    * @type {Array<Label>}
@@ -95,7 +101,7 @@ export interface Project {
    */
   otherSettings?: ProjectOtherSettings;
   /**
-   *
+   * This property is only used for passing project create/export options around more easilly. It's discarded after the project is created or exported.
    * @type {object}
    * @memberof Project
    */
@@ -123,9 +129,11 @@ export function ProjectFromJSONTyped(json: any, ignoreDiscriminator: boolean): P
     projectId: !exists(json, 'project_id') ? undefined : json['project_id'],
     name: !exists(json, 'name') ? undefined : json['name'],
     description: !exists(json, 'description') ? undefined : json['description'],
-    taskCategoryId: !exists(json, 'task_category_id') ? undefined : json['task_category_id'],
-    taskCategory: !exists(json, 'task_category') ? undefined : json['task_category'],
     dataDir: !exists(json, 'data_dir') ? undefined : json['data_dir'],
+    taskCategoryId: !exists(json, 'task_category_id') ? undefined : json['task_category_id'],
+    taskCategory: !exists(json, 'task_category')
+      ? undefined
+      : TaskCategoryFromJSON(json['task_category']),
     labels: !exists(json, 'labels') ? undefined : (json['labels'] as Array<any>).map(LabelFromJSON),
     created: !exists(json, 'created') ? undefined : json['created'],
     modified: !exists(json, 'modified') ? undefined : json['modified'],
@@ -147,8 +155,9 @@ export function ProjectToJSON(value?: Project | null): any {
   return {
     name: value.name,
     description: value.description,
-    task_category_id: value.taskCategoryId,
     data_dir: value.dataDir,
+    task_category_id: value.taskCategoryId,
+    task_category: TaskCategoryToJSON(value.taskCategory),
     labels: value.labels === undefined ? undefined : (value.labels as Array<any>).map(LabelToJSON),
     upid: value.upid,
     other_settings: ProjectOtherSettingsToJSON(value.otherSettings),

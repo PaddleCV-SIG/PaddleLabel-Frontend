@@ -95,6 +95,12 @@ export interface ProjectOtherSettings {
    * @memberof ProjectOtherSettings
    */
   lang?: string;
+  /**
+   *
+   * @type {boolean}
+   * @memberof ProjectOtherSettings
+   */
+  isSample?: boolean;
 }
 
 /**
@@ -132,6 +138,7 @@ export function ProjectOtherSettingsFromJSONTyped(
     modelFilePath: !exists(json, 'modelFilePath') ? undefined : json['modelFilePath'],
     paramFilePath: !exists(json, 'paramFilePath') ? undefined : json['paramFilePath'],
     lang: !exists(json, 'lang') ? undefined : json['lang'],
+    isSample: !exists(json, 'isSample') ? undefined : json['isSample'],
   };
 }
 
@@ -159,5 +166,6 @@ export function ProjectOtherSettingsToJSON(value?: ProjectOtherSettings | null):
     modelFilePath: value.modelFilePath,
     paramFilePath: value.paramFilePath,
     lang: value.lang,
+    isSample: value.isSample,
   };
 }
