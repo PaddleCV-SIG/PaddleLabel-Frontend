@@ -121,18 +121,22 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
     if (taskCategory)
       projects.getImportOptions(taskCategory).then((res) => {
         for (const option of res)
-          if (option.label == 'labelFormat') option.choices?.unshift(['defaultImporter', '']);
+          if (option.label == 'labelFormat') option.choices?.unshift(['noLabel', '']);
         setImportOptions(res);
       });
   }, [taskCategory]);
 
   const saveProject = (values: any) => {
     setLoading(true);
+    console.log('values', values);
     if (!projectId) {
       projects
         .create({
-          ...values,
+          name: values.name,
+          dataDir: values.dataDir,
+          description: values.description,
           taskCategoryId: createInfo[props.taskCategory].id,
+          allOptions: values,
         })
         .catch((err) => {
           message.error(intlJsx('creationFail'));

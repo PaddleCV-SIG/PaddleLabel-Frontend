@@ -4,7 +4,7 @@ export default {
   'component.PPCreator.datasetPath': '数据集路径',
   'component.PPCreator.requireDatasetPath': '请填写数据集路径',
   'component.PPCreator.description': '项目描述',
-  'component.PPCreator.defaultImporter': '无标注',
+  'component.PPCreator.noLabel': '无标注',
   'component.PPCreator.labelFormat': '导入标注格式',
   'component.PPCreator.requireLabelFormat': '请选择一个标注格式',
 
@@ -13,6 +13,7 @@ export default {
   'component.PPCreator.multiClass': '多分类',
   'component.PPCreator.singleClassFolder': '文件夹代表类别',
   'component.PPCreator.singleClassList': '列表文件记录类别',
+  'component.PPCreator.multiClassList': '列表文件记录类别',
 
   'component.PPCreator.clasSubCatg': '分类项目类型',
   'component.PPCreator.labelFormatDetail':
