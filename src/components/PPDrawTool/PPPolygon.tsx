@@ -20,8 +20,17 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
   const annotation = props.annotation;
   if (!annotation || !annotation.result || annotation.result.length < 2 || !annotation.label?.color)
     return <></>;
-  const points: number[] = annotation.result.split(',').map(Number);
-  console.log('points', points.length);
+  console.log('annotation.result', annotation.result.split(','));
+  const points: number[] = annotation.result.split(',').map((item: string, index: number) => {
+    if (index % 2 === 0) {
+      const items = Number(item) + -props.canvasWidth / 2;
+      return items;
+    } else {
+      const items = Number(item) + -props.canvasHeight / 2;
+      return items;
+    }
+  });
+  console.log('points', points, points.length);
 
   const color = annotation.label.color;
   const rgb = hexToRgb(color);
@@ -34,15 +43,33 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
   points.forEach((point, index) => {
     if (index % 2 === 0) {
       x = point;
+      // debugger;
       return;
     }
-
     pointElements.push(
       <Circle
         onMouseDown={() => {
-          if (props.currentTool == 'editor') props.onSelect(annotation);
+          // if (props.currentTool === 'polygon') {
+
+          // }
+          // debugger;
+          if (props.currentTool !== 'rectangle') {
+            if (props.ChanegeTool) {
+              // debugger;
+              props.ChanegeTool('polygon');
+            }
+            props.onSelect(annotation);
+            props.onPointIndex(index);
+          }
+          // if (props.ChanegeTool) {
+          //   props.ChanegeTool('editor');
+          // }
+          // props.onSelect(annotation);
         }}
-        draggable={props.currentTool == 'editor'}
+        // onMouseDown={() => {
+        //   if (props.currentTool == 'editor') props.onSelect(annotation);
+        // }}
+        // draggable={props.currentTool == 'editor'}
         // onMouseDown={() => {
         //   if (props.currentTool == 'editor') {
         //     // console.log(`select ${JSON.stringify(annotation)}`);
@@ -51,6 +78,7 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
         //   }
         // }}
         // onDragMove={onDragEvt}
+        // draggable={true}
         onDragEnd={(evt) => {
           evt.cancelBubble = true;
           // start Forbid drage cross image border
@@ -95,7 +123,8 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
         }}
         onMouseOver={() => {
           // console.log(`Circle onMouseOver`);
-          if (props.currentTool == 'editor' && props.stageRef?.current)
+          // if (props.currentTool == 'editor' && props.stageRef?.current)
+          if (props.stageRef?.current && props.currentTool !== 'rectangle')
             props.stageRef.current.container().style.cursor = 'cell';
           props.layerRef.current?.batchDraw();
         }}
@@ -215,50 +244,64 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     // && props.currentTool != 'editor'
     // debugger;
     if (props.currentTool != 'polygon') return;
-    const mouseX = param.mouseX + param.offsetX;
-    const mouseY = param.mouseY + param.offsetY;
-
-    if (!props.currentAnnotation && param.flags) {
+    // const mouseX = param.mouseX + param.offsetX;
+    // const mouseY = param.mouseY + param.offsetY;
+    const mouseX = param.mouseX;
+    const mouseY = param.mouseY;
+    // if (!props.currentAnnotation && param.flags) {
+    if (param.flags) {
       startNewPolygon(mouseX, mouseY, props.selectFinly, param.pathName, props.annotations);
     } else {
       addDotToPolygon(mouseX, mouseY, param.pathName);
     }
     if (props.onMouseDown) props.onMouseDown();
+
     // isMove = false;
   };
-  const OnMousemove = () => {
-    // if (props.currentTool != 'polygon' && props.currentTool != 'editor') return;
-    // const mouseX = param.mouseX + param.offsetX;
-    // const mouseY = param.mouseY + param.offsetY;
-    // // console.log(`currentAnnotation:`, props.currentAnnotation);
-    // // No annotation is marking, start new
-    // if (props.currentAnnotation) {
-    //   // console.log('OnMousemoveResult', result);
-    //   const array = props.currentAnnotation.result?.split(',');
-    //   const result = props.currentAnnotation.result + `,${mouseX},${mouseY}`;
-    //   if (array?.length >= 4 && !isMove) {
-    //     console.log('result1', result);
-    //     const anno = {
-    //       ...props.currentAnnotation,
-    //       result: result,
-    //     };
-    //     props.modifyAnnoByFrontendId(anno);
-    //     isMove = true;
-    //   } else if (array?.length >= 6 && isMove) {
-    //     array.splice(array.length - 2, 2);
-    //     console.log('newArray', array);
-    //     const results = array.join(',');
-    //     const resultss = results + `,${mouseX},${mouseY}`;
-    //     const anno = {
-    //       ...props.currentAnnotation,
-    //       result: resultss,
-    //     };
-    //     props.modifyAnnoByFrontendId(anno);
-    //     // props.onMouseMovePolygon(anno);
-    //   }
+  const OnMousemove = (param: EvtProps) => {
+    console.log('params', param);
+    // const pointIndex = param.pointIndex;
+    // const ctx3 = param.ctx3;
+    // const pointArr = param.pointArr;
+    // let beginX, beginY, endX, endY;
+    // if (!ctx3 || pointIndex || !pointIndex) {
+    //   return;
     // }
+    // ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
+    // const mouseX = param.mouseX;
+    // const mouseY = param.mouseY;
+    // if (pointIndex !== pointArr.length - 1 && pointIndex !== 1) {
+    //   beginX = pointArr[pointIndex - 3] - 0 + +param.offsetX;
+    //   beginY = pointArr[pointIndex - 2] - 0 + param.offsetY;
+    //   endX = pointArr[pointIndex + 1] - 0 + +param.offsetX;
+    //   endY = pointArr[pointIndex + 2] - 0 + param.offsetY;
+    // } else if (pointIndex === pointArr.length - 1) {
+    //   // 最后一个
+    //   beginX = pointArr[0] - 0 + +param.offsetX;
+    //   beginY = pointArr[1] - 0 + param.offsetY;
+    //   endX = pointArr[pointIndex - 3] - 0 + +param.offsetX;
+    //   endY = pointArr[pointIndex - 2] - 0 + param.offsetY;
+    // } else {
+    //   // 第一个
+    //   beginX = pointArr[pointArr.length - 3] - 0 + +param.offsetX;
+    //   beginY = pointArr[pointArr.length - 2] - 0 + param.offsetY;
+    //   endX = pointArr[pointIndex + 1] - 0 + +param.offsetX;
+    //   endY = pointArr[pointIndex + 2] - 0 + param.offsetY;
+    // }
+    // ctx3.beginPath();
+    // ctx3.moveTo(beginX, beginY);
+    // ctx3.lineTo(mouseX, mouseY);
+    // ctx3.moveTo(endX, endY);
+    // ctx3.lineTo(mouseX, mouseY);
+    // ctx3.fillStyle = props.currentLabel?.color; //填充颜色
+    // ctx3.fill(); //填充
+    // ctx3.stroke(); //绘制
   };
   const OnMouseUp = (param: EvtProps) => {
+    // debugger;
+    if (props.ChanegeTool && props.preTool) {
+      props.ChanegeTool(props.preTool);
+    }
     if (props.currentTool != 'polygon') return;
     // console.log(`OnMouseUp`);
     if (param.e.evt.button === 2) {

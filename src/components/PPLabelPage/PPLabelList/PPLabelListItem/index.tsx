@@ -13,6 +13,7 @@ export type PPLabelListItemProps = {
   onLabelModify?: (label: Label) => void;
   onLabelDelete: (label: Label) => void;
   onClick: (label: Label) => void;
+  onHideLabel: (change: boolean, id: number) => void;
 };
 
 const Component: React.FC<PPLabelListItemProps> = (props) => {
@@ -33,6 +34,7 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
           e.stopPropagation();
           setInvisible(!invisible);
           if (props.onLabelModify) props.onLabelModify(label);
+          props.onHideLabel(Boolean(!invisible), label.labelId);
         }}
       />{' '}
     </>

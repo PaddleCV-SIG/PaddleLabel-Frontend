@@ -21,6 +21,7 @@ import { IntlInitJsx } from '@/components/PPIntl';
 import type { ToolType, Annotation, Label } from '@/models/';
 import { ModelApi } from '@/services/ml';
 import type { Model } from '@/services/ml/models';
+import { History } from '/Users/v_xiaoyixin/paddlefortends/PaddleLabel-Frontend/node_modules/@umijs/runtime';
 
 const baseUrl = localStorage.getItem('basePath');
 const config = new Configuration(baseUrl ? { basePath: baseUrl } : undefined);
@@ -190,7 +191,22 @@ export function ToolUtils(
     setCurr,
   };
 }
-
+export function projectHistory(Id: number, taskId: number) {
+  const str = localStorage.getItem('projectHistory');
+  if (str) {
+    const historysData = JSON.parse(str);
+    const newData = {
+      ...historysData,
+      [Id]: taskId,
+    };
+    localStorage.setItem('projectHistory', JSON.stringify(newData));
+  } else {
+    const newData = {
+      [Id]: taskId,
+    };
+    localStorage.setItem('projectHistory', JSON.stringify(newData));
+  }
+}
 export function LoadingUtils(useState: UseStateType) {
   const [curr, setCurr] = useState<boolean>(false);
   return { curr, setCurr };
@@ -462,6 +478,19 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any; push
       if (turnToIdx != undefined) {
         turnTo(turnToIdx);
         return [allRes, allRes[turnToIdx]];
+      } else {
+        const HistoryData = JSON.parse(localStorage.getItem('projectHistory'));
+        const storeIndex = HistoryData[projectId];
+        if (storeIndex !== undefined) {
+          for (let index = 0; index < allRes.length; index++) {
+            const item = allRes[index];
+            if (item.taskId === storeIndex) {
+              localStorage.setItem('currTaskId', storeIndex);
+              turnTo(index);
+              return [allRes, allRes[index]];
+            }
+          }
+        }
       }
       return allRes;
     } catch (err) {
@@ -846,6 +875,7 @@ export function PageInit(
     const onTaskChange = async () => {
       if (task.curr?.projectId) project.getFinished(task.curr.projectId);
       if (task.curr?.taskId) {
+        projectHistory(task.curr?.projectId, task.curr?.taskId);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [allData, currData] = await data.getAll(task.curr.taskId, 0);
         const allAnns = await annotation.getAll(currData.dataId);

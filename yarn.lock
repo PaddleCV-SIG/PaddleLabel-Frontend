@@ -13901,6 +13901,11 @@ react-is@^17.0.1, react-is@^17.0.2:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-keyevent@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmmirror.com/react-keyevent/-/react-keyevent-1.1.0.tgz#fd3f8b6da0f46a01ed0c187fed5a18277abd9436"
+  integrity sha512-E3WT+CaYKURgvWmM6mBLsD0SytABzt2qqv/g6HOYyClW07J2IWe8gF1ZKoI2Dx/8CgqyhSi8xhcqgjmM1uLZPg==
+
 react-konva@^17.0.2-5:
   version "17.0.2-6"
   resolved "https://registry.yarnpkg.com/react-konva/-/react-konva-17.0.2-6.tgz#80b3fdebfd915878eafe554c191bec282cdda0de"

@@ -19,6 +19,7 @@ import PPRectangle from '@/components/PPDrawTool/PPRectangle';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { IntlInitJsx } from '@/components/PPIntl';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
+import Keyevent from 'react-keyevent';
 const port = window.location.port == '8000' ? '1234' : window.location.port;
 const baseUrl = `http://${window.location.hostname}:${port}/`;
 const Page = () => {
@@ -32,6 +33,8 @@ const Page = () => {
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const [otherSetting, setotherSetting] = useState();
   const [flags, setflags] = useState<boolean>(false);
+  const [preTools, setPreTools] = useState<string>('');
+  const [hideLabel, setHideLabel] = useState<number[]>([]);
   // const [onSelect, setOnSelect] = useState<Annotation>();
 
   const model = ModelUtils(useState, baseUrl);
@@ -66,6 +69,7 @@ const Page = () => {
     annotation.setCurr(undefined);
     setFrontendId(0);
     tool.setCurr('mover');
+    setPreTools('mover');
   }
 
   const setCurrentAnnotation = (anno?: Annotation) => {
@@ -160,6 +164,10 @@ const Page = () => {
     onMouseDown: onStartEdit,
     frontendIdOps: { frontendId: frontendId, setFrontendId: setFrontendId },
     pathName: history?.location?.pathname,
+    ChanegeTool: (tools: any) => {
+      tool.setCurr(tools);
+    },
+    preTool: preTools,
   };
 
   const rectagle = PPRectangle(drawToolParam);
@@ -205,26 +213,39 @@ const Page = () => {
       img: imgBase64,
     });
     if (!line) return;
-    line.then(
-      (res) => {
-        if (res) {
-          const predictions = res.predictions.map((item) => {
-            if (item.score > thresholdRaw) {
-              return item;
+    // 判断接口是否在线 不在线setloading true
+    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
+    model.load(settings?.modelName).then(
+      () => {
+        // message.info(intl('modelLoaded'));
+        line.then(
+          (res) => {
+            if (res) {
+              const predictions = res.predictions.map((item) => {
+                if (item.score > thresholdRaw) {
+                  return item;
+                }
+              });
+              setIsLoad(false);
+              data.updatePredicted(data.all[0]?.dataId, true);
+              setInteractorData({
+                active: true,
+                mousePoints: interactorData.mousePoints,
+                predictData: predictions,
+              });
             }
-          });
-          setIsLoad(false);
-          data.updatePredicted(data.all[0]?.dataId, true);
-          setInteractorData({
-            active: true,
-            mousePoints: interactorData.mousePoints,
-            predictData: predictions,
-          });
-        }
+          },
+          (error) => {
+            alert('error', error);
+            model.setLoading(false);
+          },
+        );
       },
-      (error) => {
-        alert('error', error);
+      () => {
         model.setLoading(false);
+        if (!isLoading) {
+          setIsLoading(true);
+        }
       },
     );
   };
@@ -252,6 +273,7 @@ const Page = () => {
   // }, []);
   useUpdateEffect(() => {
     if (data.all.length > 0) {
+      // debugger;
       // data.updatePredicted(data.all[0].dataId);
       if (data.all[0].predicted) {
         const flag = false;
@@ -274,19 +296,24 @@ const Page = () => {
 
   useUpdateEffect(() => {
     // debugger;
-    if (isLoad && project.curr?.otherSettings?.labelMapping) {
+    if (isLoad && project.curr?.otherSettings?.labelMapping && isLoading) {
+      // debugger;
       if (model.loading) {
         message.error(tbIntl('modelLoading'));
         return;
       }
       const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
-      model.setMlBackendUrl(settings.mlBackendUrl || '');
+      model.setMlBackendUrl(settings?.mlBackendUrl || '');
       model.setLoading(true);
-      model.load(settings.modelName).then(
-        () => {
+      model.load(settings?.modelName).then(
+        (res: any) => {
           // message.info(intl('modelLoaded'));
+          // debugger;
+          console.log('ress', res);
+
           model.setLoading(false);
           if (isLoading) {
+            // debugger;
             setIsLoading(false);
           }
         },
@@ -303,6 +330,7 @@ const Page = () => {
   }, [isLoad, project.curr?.otherSettings]);
   useUpdateEffect(() => {
     const predictflag = !isLoading && image && isLoad;
+    // debugger;
     if (predictflag) {
       onPredicted(image);
     }
@@ -384,6 +412,7 @@ const Page = () => {
                 data.curr?.dataId,
                 labelitem,
                 predictedBy,
+                'rectangle',
               );
               anno.type = 'rectangle';
               if (anno) {
@@ -405,7 +434,76 @@ const Page = () => {
   //   scale.change(curr);
   //   scale.setScales
   // }
+  const onG = () => {
+    if (!task.nextTask()) {
+      return;
+    }
+    // scale.setCurr(1);
+    setInteractorData({ active: false, predictData: [], mousePoints: [] });
+    setCurrentAnnotation(undefined);
+    setflags(false);
+    loacalstore();
+    page?.current?.setDragEndPos({
+      x: 0,
+      y: 0,
+    });
+  };
+  const onF = () => {
+    if (!task.prevTask()) {
+      return;
+    }
+    // scale.setCurr(1);
+    setInteractorData({ active: false, predictData: [], mousePoints: [] });
+    setCurrentAnnotation(undefined);
+    setflags(false);
+    page?.current?.setDragEndPos({
+      x: 0,
+      y: 0,
+    });
+  };
+  const onD = () => {
+    const anno = annotation.curr;
+    annotation.setAll(annotation.all.filter((x) => x.frontendId != anno.frontendId));
+    setCurrentAnnotation(undefined);
+    annotation.remove(anno);
+  };
+  const onB = () => {
+    annHistory.backward().then((res) => {
+      if (res) {
+        annotation.setAll(res.annos);
+        setCurrentAnnotation(res.currAnno);
+        annotation.pushToBackend(data.curr?.dataId, res.annos);
+      }
+    });
+  };
+  const onCtrlS = () => {
+    annotation.pushToBackend(data.curr?.dataId);
+  };
 
+  const onShiftCtrlC = () => {
+    console.log('onShiftCtrlC');
+  };
+  const handleWheel = (event) => {
+    const deta = event.deltaY;
+    if (deta > 0) {
+      scale.change(-0.1);
+    }
+    if (deta < 0) {
+      scale.change(0.1);
+    }
+  };
+  const onHideLabel = (change: boolean, id: number) => {
+    if (change) {
+      setHideLabel([...hideLabel, id]);
+    } else {
+      const ids: number[] = hideLabel?.map((item: number) => {
+        if (item !== id) {
+          return item;
+        }
+      });
+      setHideLabel(ids);
+    }
+  };
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -418,20 +516,22 @@ const Page = () => {
               return;
             }
             tool.setCurr('rectangle');
+            setPreTools('rectangle');
             setCurrentAnnotation(undefined);
           }}
         >
           {tbIntl('rectangle')}
         </PPToolBarButton>
-        <PPToolBarButton
+        {/* <PPToolBarButton
           active={tool.curr == 'editor'}
           imgSrc="./pics/buttons/edit.png"
           onClick={() => {
             tool.setCurr('editor');
+            setPreTools('editor');
           }}
         >
           {tbIntl('edit')}
-        </PPToolBarButton>
+        </PPToolBarButton> */}
         <PPToolBarButton
           imgSrc="./pics/buttons/zoom_in.png"
           onClick={() => {
@@ -461,6 +561,7 @@ const Page = () => {
           active={tool.curr == 'mover'}
           onClick={() => {
             tool.setCurr('mover');
+            setPreTools('mover');
           }}
         >
           {tbIntl('move')}
@@ -498,43 +599,118 @@ const Page = () => {
             annotation.clear();
             annHistory.record({ annos: [] });
             tool.setCurr(undefined);
+            setPreTools('');
             label.setCurr(undefined);
           }}
         >
           {tbIntl('clearMark')}
         </PPToolBarButton>
       </PPToolBar>
-      <div id="dr" className="mainStage">
+      <div id="dr" className="mainStage" onWheel={handleWheel}>
         <Spin tip="loading" spinning={!!loading.curr}>
-          <div className="draw">
-            <PPStage
-              ref={page}
-              taskIndex={task.currIdx}
-              scale={scale.curr}
-              scaleChange={scale.setScale}
-              annotations={annotation.all}
-              currentTool={tool.curr}
-              currentAnnotation={annotation.curr}
-              setCurrentAnnotation={setCurrentAnnotation}
-              onAnnotationModify={onAnnotationModify}
-              onAnnotationModifyComplete={() => {}}
-              frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
-              imgSrc={data.imgSrc}
-              transparency={100}
-              onAnnotationAdd={(anno) => {
-                const newAnnos = annotation.all.concat([anno]);
-                annotation.setAll(newAnnos);
-              }}
-              drawTool={drawTool}
-              threshold={0}
-              // OnSelect={setOnSelect}
-              onAnnotationModifyUP={onAnnotationModifyUP}
-            />
-          </div>
-          <div className="pblock">
-            <PPProgress task={task} project={project} />
-          </div>
+          <Keyevent
+            className="TopSide"
+            events={{
+              onG,
+              onF,
+              onD,
+              onB,
+              onCtrlS,
+              onShiftCtrlC,
+            }}
+            needFocusing
+          >
+            <div className="draw">
+              <PPStage
+                ref={page}
+                taskIndex={task.currIdx}
+                scale={scale.curr}
+                scaleChange={scale.setScale}
+                annotations={annotation.all}
+                currentTool={tool.curr}
+                currentAnnotation={annotation.curr}
+                setCurrentAnnotation={setCurrentAnnotation}
+                onAnnotationModify={onAnnotationModify}
+                onAnnotationModifyComplete={() => {}}
+                frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
+                imgSrc={data.imgSrc}
+                transparency={100}
+                onAnnotationAdd={(anno) => {
+                  const newAnnos = annotation.all.concat([anno]);
+                  annotation.setAll(newAnnos);
+                }}
+                drawTool={drawTool}
+                hideLabel={hideLabel}
+                threshold={0}
+                // OnSelect={setOnSelect}
+                onAnnotationModifyUP={onAnnotationModifyUP}
+                ChanegeTool={(tools: any) => {
+                  tool.setCurr(tools);
+                }}
+              />
+            </div>
+          </Keyevent>
           <div
+            className="pblock"
+            style={{
+              display: 'flex',
+            }}
+          >
+            <div
+              className="preButton"
+              style={{
+                background: 'blue',
+                color: 'white',
+                width: '100px',
+                textAlign: 'center',
+                lineHeight: '2.55rem',
+              }}
+              onClick={() => {
+                if (!task.prevTask()) {
+                  return;
+                }
+                // scale.setCurr(1);
+                setInteractorData({ active: false, predictData: [], mousePoints: [] });
+                setCurrentAnnotation(undefined);
+                setflags(false);
+                page?.current?.setDragEndPos({
+                  x: 0,
+                  y: 0,
+                });
+              }}
+            >
+              上一个
+            </div>
+            <PPProgress task={task} project={project} />
+            <div
+              className="nextButton"
+              style={{
+                background: 'blue',
+                color: 'white',
+                width: '100px',
+                textAlign: 'center',
+                lineHeight: '2.55rem',
+              }}
+              onClick={() => {
+                if (!task.nextTask()) {
+                  return;
+                }
+                // scale.setCurr(1);
+                // debugger;
+
+                setInteractorData({ active: false, predictData: [], mousePoints: [] });
+                setCurrentAnnotation(undefined);
+                setflags(false);
+                page?.current?.setDragEndPos({
+                  x: 0,
+                  y: 0,
+                });
+              }}
+            >
+              下一个
+            </div>
+          </div>
+          {/* <div
             className="prevTask"
             data-test-id="prevTask"
             onClick={() => {
@@ -567,7 +743,7 @@ const Page = () => {
                 y: 0,
               });
             }}
-          />
+          /> */}
         </Spin>
       </div>
       <PPToolBar disLoc="right">
@@ -636,6 +812,7 @@ const Page = () => {
               label.setCurr(newLabel);
             });
           }}
+          onHideLabel={onHideLabel}
         />
         <PPAnnotationList
           disabled={false}

@@ -29,7 +29,7 @@ const Page: React.FC = () => {
   // const [flags, setflags] = useState<boolean>(false);
   const { interactorData, setInteractorData } = useModel('InteractorData');
   const [threshold, setThreshold] = useState(0.9);
-
+  const [hideLabel, setHideLabel] = useState<number[]>([]);
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar } = PageInit(
     useState,
     useEffect,
@@ -97,29 +97,36 @@ const Page: React.FC = () => {
       img: imgBase64,
     });
     if (!line) return;
-    line.then(
-      (res) => {
-        if (res) {
-          console.log('resss', res);
+    const settings = project.curr?.otherSettings ? project.curr.otherSettings : {};
 
-          // const predictions = res.predictions.map((item) => {
-          //   if (item.score > thresholdRaw) {
-          //     return item;
-          //   }
-          // });
-          const predictions = res?.predictions;
-          setIsLoad(false);
-          data.updatePredicted(data.all[0].dataId, true);
-          setInteractorData({
-            active: true,
-            mousePoints: interactorData.mousePoints,
-            predictData: predictions,
-          });
-        }
+    model.load(settings?.modelName).then(
+      () => {
+        // message.info(intl('modelLoaded'));
+        line.then(
+          (res) => {
+            if (res) {
+              console.log('resss', res);
+              const predictions = res?.predictions;
+              setIsLoad(false);
+              data.updatePredicted(data.all[0].dataId, true);
+              setInteractorData({
+                active: true,
+                mousePoints: interactorData.mousePoints,
+                predictData: predictions,
+              });
+            }
+          },
+          (error) => {
+            model.setLoading(false);
+            console.log('line.error', error);
+          },
+        );
       },
-      (error) => {
+      () => {
         model.setLoading(false);
-        console.log('line.error', error);
+        if (!isLoading) {
+          setIsLoading(true);
+        }
       },
     );
   };
@@ -235,8 +242,18 @@ const Page: React.FC = () => {
       }
     }
   }, [interactorData, otherSetting]);
-  console.log('label.activeIds', label.activeIds.size);
-
+  const onHideLabel = (change: boolean, id: number) => {
+    if (change) {
+      setHideLabel([...hideLabel, id]);
+    } else {
+      const ids: number[] = hideLabel?.map((item: number) => {
+        if (item !== id) {
+          return item;
+        }
+      });
+      setHideLabel(ids);
+    }
+  };
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
@@ -291,6 +308,7 @@ const Page: React.FC = () => {
               currentTool={tool.curr}
               scaleChange={scale.setScale}
               taskIndex={task.currIdx}
+              hideLabel={hideLabel}
               setCurrentAnnotation={() => {}}
               onAnnotationModify={() => {}}
               onAnnotationModifyComplete={() => {}}
@@ -298,10 +316,62 @@ const Page: React.FC = () => {
               annotations={annotation.all}
             />
           </div>
-          <div className="pblock">
+          {/* <div className="pblock">
             <PPProgress task={task} project={project} />
-          </div>
+          </div> */}
           <div
+            className="pblock"
+            style={{
+              display: 'flex',
+            }}
+          >
+            <div
+              className="preButton"
+              style={{
+                background: 'blue',
+                color: 'white',
+                width: '100px',
+                textAlign: 'center',
+                lineHeight: '2.55rem',
+              }}
+              onClick={() => {
+                if (!label.activeIds.size) {
+                  message.info(intl('preNext'));
+                }
+                task.prevTask();
+                page?.current?.setDragEndPos({
+                  x: 0,
+                  y: 0,
+                });
+              }}
+            >
+              上一个
+            </div>
+            <PPProgress task={task} project={project} />
+            <div
+              className="nextButton"
+              style={{
+                background: 'blue',
+                color: 'white',
+                width: '100px',
+                textAlign: 'center',
+                lineHeight: '2.55rem',
+              }}
+              onClick={() => {
+                if (!label.activeIds.size) {
+                  message.info(intl('preNext'));
+                }
+                task.nextTask();
+                page?.current?.setDragEndPos({
+                  x: 0,
+                  y: 0,
+                });
+              }}
+            >
+              下一个
+            </div>
+          </div>
+          {/* <div
             className="prevTask"
             onClick={() => {
               if (!label.activeIds.size) {
@@ -328,7 +398,7 @@ const Page: React.FC = () => {
               });
             }}
             data-test-id={'nextTask'}
-          />
+          /> */}
         </Spin>
       </div>
       <PPToolBar disLoc="right">
@@ -374,6 +444,7 @@ const Page: React.FC = () => {
           hideColorPicker={true}
           hideEye={true}
           refresh={refreshVar}
+          onHideLabel={onHideLabel}
         />
       </div>
     </PPLabelPageContainer>

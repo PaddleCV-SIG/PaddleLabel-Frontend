@@ -3,7 +3,7 @@ import { Form, Input, Button, Select } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
-import { ProjectUtils, ModelUtils, IntlInit } from '@/services/utils';
+import { ProjectUtils, ModelUtils, IntlInit, getVersion } from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
 import styles from './index.less';
 import { history } from 'umi';
@@ -130,7 +130,8 @@ const PaddleAi: React.FC = () => {
         alert(errorInfo);
       });
   };
-  const handleUrlChange = (value: string) => {
+  const handleUrlChange = async (value: string) => {
+    if (!(await getVersion())) return;
     form.setFields([
       {
         name: 'mlBackendUrl',

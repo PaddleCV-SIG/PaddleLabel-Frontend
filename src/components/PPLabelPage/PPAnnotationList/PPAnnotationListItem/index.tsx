@@ -1,9 +1,8 @@
 import { List, Space } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './index.less';
 import PPColorBall from '../../PPColorBall';
 import type { Annotation } from '@/models/annotation';
-import { history } from 'umi';
 export type PPAnnotationListItemProps = {
   active: boolean;
   annotation: Annotation;
@@ -15,12 +14,12 @@ export type PPAnnotationListItemProps = {
 
 const Component: React.FC<PPAnnotationListItemProps> = (props) => {
   const annotation = { ...props.annotation };
-  const [invisible, setInvisible] = useState(annotation.invisible);
+  // const [invisible, setInvisible] = useState(annotation.invisible);
   const [lastClickTime, setLastClickTime] = useState<number>(0);
 
-  useEffect(() => {
-    setInvisible(props.annotation.invisible);
-  }, [props.annotation.invisible]);
+  // useEffect(() => {
+  //   setInvisible(props.annotation.invisible);
+  // }, [props.annotation.invisible]);
 
   const item = (
     <List.Item
@@ -31,7 +30,7 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
       }}
     >
       <Space align="center" size={5}>
-        {history?.location?.pathname !== '/semantic_segmentation' && (
+        {/* {history?.location?.pathname !== '/semantic_segmentation' && (
           <a
             className={styles.eye}
             style={{
@@ -46,7 +45,7 @@ const Component: React.FC<PPAnnotationListItemProps> = (props) => {
         )}{' '}
         {history?.location?.pathname !== '/semantic_segmentation' && (
           <span className={styles.annotationId}>{annotation?.frontendId}</span>
-        )}
+        )} */}
         <span className={styles.labelName}>{annotation?.label?.name}</span>
         <PPColorBall color={annotation?.label?.color} />
       </Space>

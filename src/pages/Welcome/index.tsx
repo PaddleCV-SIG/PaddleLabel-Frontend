@@ -24,7 +24,9 @@ const Projects: React.FC = (props) => {
       if (version != false) projects.getAll();
     });
   }, []);
-
+  const reset = () => {
+    console.log('项目重置');
+  };
   const columns: ColumnsType<Project> = [
     {
       title: 'ID',
@@ -99,7 +101,7 @@ const Projects: React.FC = (props) => {
   return (
     <Row style={{ marginTop: 20 }}>
       <Col span={24}>
-        <PPBlock title={intlJsx('myProjects')}>
+        <PPBlock title={intlJsx('myProjects')} reset={reset}>
           <PPTable columns={columns} dataSource={toDict(projects.all)} showHeader={false} />
         </PPBlock>
       </Col>
