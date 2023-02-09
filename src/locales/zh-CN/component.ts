@@ -1,12 +1,20 @@
 export default {
   'component.PPCreator.projectName': '项目名称',
   'component.PPCreator.requireProjectName': '请填写项目名称',
-  'component.PPCreator.datasePath': '数据集路径',
-  'component.PPCreator.requireDatasePath': '请填写数据集路径',
+  'component.PPCreator.datasetPath': '数据集路径',
+  'component.PPCreator.requireDatasetPath': '请填写数据集路径',
   'component.PPCreator.description': '项目描述',
+  'component.PPCreator.defaultImporter': '无标注',
   'component.PPCreator.labelFormat': '导入标注格式',
-  'component.PPCreator.clasSubCags': '分类项目类型',
-  'component.PPCreator.chooseClasSubcatg': '请选择分类项目类型',
+  'component.PPCreator.requireLabelFormat': '请选择一个标注格式',
+
+  // 分类项目
+  'component.PPCreator.singleClass': '单分类',
+  'component.PPCreator.multiClass': '多分类',
+  'component.PPCreator.singleClassFolder': '文件夹代表类别',
+  'component.PPCreator.singleClassList': '列表文件记录类别',
+
+  'component.PPCreator.clasSubCatg': '分类项目类型',
   'component.PPCreator.labelFormatDetail':
     '如果要导入的数据集没有任何标注信息，这里不需要选择。如果有标注信息，请选择标注信息的格式。',
   'component.PPCreator.classificationSubCatgDetail':

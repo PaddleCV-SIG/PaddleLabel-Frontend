@@ -9,6 +9,7 @@ export * from './ExportDatasetRequest';
 export * from './GetFoldersRequest';
 export * from './GetProgress200Response';
 export * from './ImportDatasetRequest';
+export * from './ImportOption';
 export * from './Label';
 export * from './LoadSample200Response';
 export * from './LoadSampleRequest';

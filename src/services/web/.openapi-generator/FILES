@@ -19,6 +19,7 @@ models/ExportDatasetRequest.ts
 models/GetFoldersRequest.ts
 models/GetProgress200Response.ts
 models/ImportDatasetRequest.ts
+models/ImportOption.ts
 models/Label.ts
 models/LoadSample200Response.ts
 models/LoadSampleRequest.ts

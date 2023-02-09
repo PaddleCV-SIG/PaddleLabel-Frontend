@@ -202,6 +202,10 @@ export const ProjectUtils = (useState: UseStateType) => {
   const [finished, setFinished] = useState<number>();
   const splitIntl = IntlInitJsx('component.PPSplitDatasetModal');
 
+  function getImportOptions(projectType: string) {
+    return projectApi.getImportOptions(projectType);
+  }
+
   async function splitDataset(props: { train: number; val: number; test: number }) {
     return projectApi
       .splitDataset(curr.projectId, props)
@@ -226,9 +230,7 @@ export const ProjectUtils = (useState: UseStateType) => {
     }
   }
 
-  async function getCurr(projectId: string) {
-    if (projectId == undefined) return undefined;
-    console.log('here');
+  async function getCurr(projectId: number): Promise<Project | undefined> {
     projectApi
       .get(projectId)
       .then((project) => {
@@ -237,16 +239,14 @@ export const ProjectUtils = (useState: UseStateType) => {
         return project;
       })
       .catch((err) => {
-        err.response.json().then((res) => {
-          console.log('detail', res.detail);
-          message.error(res.detail);
-          history.push('/');
-        });
+        serviceUtils.parseError(err);
+        history.push('/');
+        return undefined;
       });
   }
 
   async function remove(project: Project | number | string) {
-    const projectId: number = typeof project == 'object' ? project.projectId : +project;
+    const projectId: number = typeof project == 'object' ? +project.projectId : +project;
     await projectApi.remove(projectId);
     getAll();
   }
@@ -269,13 +269,12 @@ export const ProjectUtils = (useState: UseStateType) => {
   }
 
   // todo: fix
-  async function getFinished(projectId: number = undefined): Promise<number> {
+  async function getFinished(projectId: number | undefined = undefined): Promise<number> {
     try {
       const pjId = projectId == undefined ? curr.projectId : projectId;
       const stat = await projectApi.getProgress(pjId);
       if (!stat || stat.finished == undefined || stat.total == undefined)
         throw Error('empty progress');
-      // const prog = Math.ceil((stat.finished / stat.total) * 100);
       setFinished(stat.finished);
       return stat.finished;
     } catch (err) {
@@ -289,6 +288,7 @@ export const ProjectUtils = (useState: UseStateType) => {
       serviceUtils.parseError(err, message);
     });
   }
+
   function setAllPredicted(predicted: boolean, projectId: string) {
     projectApi.setAll(projectId, { dataPredicted: predicted });
   }
@@ -305,6 +305,7 @@ export const ProjectUtils = (useState: UseStateType) => {
     predict,
     setAllPredicted,
     splitDataset,
+    getImportOptions,
   };
 };
 

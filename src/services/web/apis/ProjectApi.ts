@@ -18,6 +18,7 @@ import type {
   ExportDatasetRequest,
   GetProgress200Response,
   ImportDatasetRequest,
+  ImportOption,
   Label,
   PredictRequest,
   Project,
@@ -36,6 +37,8 @@ import {
   GetProgress200ResponseToJSON,
   ImportDatasetRequestFromJSON,
   ImportDatasetRequestToJSON,
+  ImportOptionFromJSON,
+  ImportOptionToJSON,
   LabelFromJSON,
   LabelToJSON,
   PredictRequestFromJSON,
@@ -412,7 +415,7 @@ export class ProjectApi extends runtime.BaseAPI {
   async getImportOptionsRaw(
     requestParameters: GetImportOptionsRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<object>>> {
+  ): Promise<runtime.ApiResponse<Array<ImportOption>>> {
     if (requestParameters.projectType === null || requestParameters.projectType === undefined) {
       throw new runtime.RequiredError(
         'projectType',
@@ -441,7 +444,9 @@ export class ProjectApi extends runtime.BaseAPI {
       initOverrides,
     );
 
-    return new runtime.JSONApiResponse<any>(response);
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      jsonValue.map(ImportOptionFromJSON),
+    );
   }
 
   /**
@@ -451,7 +456,7 @@ export class ProjectApi extends runtime.BaseAPI {
     projectType: string,
     requestId?: number,
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<object>> {
+  ): Promise<Array<ImportOption>> {
     const response = await this.getImportOptionsRaw(
       { projectType: projectType, requestId: requestId },
       initOverrides,

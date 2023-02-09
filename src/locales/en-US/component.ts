@@ -1,8 +1,8 @@
 export default {
   'component.PPCreator.projectName': 'Project Name',
   'component.PPCreator.requireProjectName': 'Please input a project name',
-  'component.PPCreator.datasePath': 'Dataset Path',
-  'component.PPCreator.requireDatasePath': 'Please input a dataset path',
+  'component.PPCreator.datasetPath': 'Dataset Path',
+  'component.PPCreator.requireDatasetPath': 'Please input a dataset path',
   'component.PPCreator.description': 'Description',
   'component.PPCreator.maxPoints': 'Max Points',
   'component.PPCreator.annotationMode': 'Annotation Mode',
@@ -12,7 +12,7 @@ export default {
   'component.PPCreator.create': 'Create',
   'component.PPCreator.cancel': 'Cancel',
   'component.PPCreator.labelFormat': 'Import Label Format',
-  'component.PPCreator.clasSubCags': 'Classification type',
+  'component.PPCreator.clasSubCatg': 'Classification type',
   'component.PPCreator.chooseClasSubcatg': 'Please choose a classfication project type',
   'component.PPCreator.classificationSubCatgDetail':
     'An image in single class classification can only have one category, while in multi class classification it can have more than one.',

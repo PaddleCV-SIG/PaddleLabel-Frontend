@@ -26,23 +26,17 @@ const SampleProject: React.FC = () => {
                       height={360}
                       width={310}
                       imgSrc={val.avatar}
-                      onClick={
-                        key != 'keypointDetection'
-                          ? () => {
-                              sampleApi.loadSample({ taskCategoryId: val.id }).then(
-                                (res) => {
-                                  history.push(`/project_overview?projectId=${res.projectId}`);
-                                },
-                                (err) => {
-                                  message.error(intlJsx('creationFail', 'component.PPCreator'));
-                                  serviceUtils.parseError(err, message);
-                                },
-                              );
-                            }
-                          : () => {
-                              message.info(intlJsx('underDevelopment', 'global'));
-                            }
-                      }
+                      onClick={() => {
+                        sampleApi.loadSample({ taskCategoryId: val.id }).then(
+                          (res) => {
+                            history.push(`/project_overview?projectId=${res.projectId}`);
+                          },
+                          (err) => {
+                            message.error(intlJsx('creationFail', 'component.PPCreator'));
+                            serviceUtils.parseError(err, message);
+                          },
+                        );
+                      }}
                     >
                       {intlJsx(key, 'global')}
                     </PPCard>
