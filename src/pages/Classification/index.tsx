@@ -44,7 +44,7 @@ const Page: React.FC = () => {
   const model = ModelUtils(useState, baseUrl);
 
   function postProjectChanged() {
-    if (project.curr?.labelFormat == 'single_class') label.setOneHot(true);
+    if (project.curr?.otherSettings?.clasSubCatg == 'singleClass') label.setOneHot(true);
   }
   const getBase64Image = (img?: HTMLImageElement) => {
     console.log('getBase64Image', img);
@@ -315,9 +315,6 @@ const Page: React.FC = () => {
               annotations={annotation.all}
             />
           </div>
-          {/* <div className="pblock">
-            <PPProgress task={task} project={project} />
-          </div> */}
           <div
             className="pblock"
             style={{
@@ -361,43 +358,12 @@ const Page: React.FC = () => {
                   message.info(intl('preNext'));
                 }
                 task.nextTask();
-                page?.current?.setDragEndPos({
-                  x: 0,
-                  y: 0,
-                });
+                page?.current?.setDragEndPos({ x: 0, y: 0 });
               }}
             >
               {tbIntl('nextTask')}
             </div>
           </div>
-          {/* <div
-            className="prevTask"
-            onClick={() => {
-              if (!label.activeIds.size) {
-                message.info(intl('preNext'));
-              }
-              task.prevTask();
-              page?.current?.setDragEndPos({
-                x: 0,
-                y: 0,
-              });
-            }}
-            data-test-id={'prevTask'}
-          />
-          <div
-            className="nextTask"
-            onClick={() => {
-              if (!label.activeIds.size) {
-                message.info(intl('preNext'));
-              }
-              task.nextTask();
-              page?.current?.setDragEndPos({
-                x: 0,
-                y: 0,
-              });
-            }}
-            data-test-id={'nextTask'}
-          /> */}
         </Spin>
       </div>
       <PPToolBar disLoc="right">

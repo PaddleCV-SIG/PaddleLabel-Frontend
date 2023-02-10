@@ -218,8 +218,8 @@ export const ProjectUtils = (useState: UseStateType) => {
   const [finished, setFinished] = useState<number>();
   const splitIntl = IntlInitJsx('component.PPSplitDatasetModal');
 
-  function getImportOptions(projectType: string) {
-    return projectApi.getImportOptions(projectType);
+  function getOptions(imOrExport: string, projectType: string) {
+    return projectApi.getOptions(projectType, imOrExport);
   }
 
   async function splitDataset(props: { train: number; val: number; test: number }) {
@@ -321,7 +321,7 @@ export const ProjectUtils = (useState: UseStateType) => {
     predict,
     setAllPredicted,
     splitDataset,
-    getImportOptions,
+    getOptions,
   };
 };
 

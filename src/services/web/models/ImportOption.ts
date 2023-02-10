@@ -36,7 +36,7 @@ export interface ImportOption {
    * @type {string}
    * @memberof ImportOption
    */
-  type?: string;
+  type: string;
   /**
    *
    * @type {Array<Array<string>>}
@@ -54,7 +54,13 @@ export interface ImportOption {
    * @type {Array<Array<string>>}
    * @memberof ImportOption
    */
-  showAfter?: Array<Array<string>>;
+  showAfter: Array<Array<string>>;
+  /**
+   *
+   * @type {boolean}
+   * @memberof ImportOption
+   */
+  allowEdit: boolean;
 }
 
 /**
@@ -64,6 +70,9 @@ export function instanceOfImportOption(value: object): boolean {
   let isInstance = true;
   isInstance = isInstance && 'label' in value;
   isInstance = isInstance && 'required' in value;
+  isInstance = isInstance && 'type' in value;
+  isInstance = isInstance && 'showAfter' in value;
+  isInstance = isInstance && 'allowEdit' in value;
 
   return isInstance;
 }
@@ -79,10 +88,11 @@ export function ImportOptionFromJSONTyped(json: any, ignoreDiscriminator: boolea
   return {
     label: json['label'],
     required: json['required'],
-    type: !exists(json, 'type') ? undefined : json['type'],
+    type: json['type'],
     choices: !exists(json, 'choices') ? undefined : json['choices'],
     tips: !exists(json, 'tips') ? undefined : json['tips'],
-    showAfter: !exists(json, 'show_after') ? undefined : json['show_after'],
+    showAfter: json['show_after'],
+    allowEdit: json['allow_edit'],
   };
 }
 
@@ -100,5 +110,6 @@ export function ImportOptionToJSON(value?: ImportOption | null): any {
     choices: value.choices,
     tips: value.tips,
     show_after: value.showAfter,
+    allow_edit: value.allowEdit,
   };
 }

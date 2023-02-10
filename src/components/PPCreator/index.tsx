@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import { Col, Form, Input, Button, Radio, Row, Spin, Tree, message } from 'antd';
 import type { TreeDataNode, DirectoryTreeProps } from 'antd';
@@ -7,7 +6,7 @@ import Title from 'antd/lib/typography/Title';
 import { history } from 'umi';
 import styles from './index.less';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, camel2snake, snake2camel, sampleApi, IntlInit } from '@/services/utils';
+import { createInfo, camel2snake, IntlInit } from '@/services/utils';
 import { ProjectUtils } from '@/services/utils';
 import { IntlInitJsx } from '@/components/PPIntl';
 // import { render } from 'react-dom';
@@ -63,6 +62,7 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
   const taskCategory = query?.taskCategory;
   const projects = ProjectUtils(useState);
   const [loading, setLoading] = useState<boolean>(false);
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [sampleFiles, setSampleFiles] = useState<TreeDataNode[]>([]);
   const [importOptions, setImportOptions] = useState<ImportOption[]>([]);
   const [reload, setReload] = useState<number>(0);
@@ -71,22 +71,20 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
   const [form] = Form.useForm();
 
   const renderImportOptions = () => {
-    console.log('asdf');
     const options: object[] = [];
     for (const option of importOptions) {
       let display = true;
-      for (const idx in option.showAfter) {
-        const condition = option.showAfter[idx];
+      for (const condition of option.showAfter) {
+        // const condition = option.showAfter[idx];
         if (form.getFieldValue(condition[0]) != condition[1]) display = false;
-        console.log('asdf', form.getFieldValue(condition[0]), condition[1]);
       }
-      console.log('asdf', display);
+      if (projectId) display = display && option.allowEdit; // if editing project settings, only show allowEdit questions
 
       if (display)
         options.push(
           <Form.Item
             name={option.label}
-            label={intl(option.label)}
+            label={intlJsx(option.label)}
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 16 }}
             style={{ fontSize: '1.5rem' }}
@@ -119,16 +117,11 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
   };
   useEffect(() => {
     if (taskCategory)
-      projects.getImportOptions(taskCategory).then((res) => {
-        for (const option of res)
-          if (option.label == 'labelFormat') option.choices?.unshift(['noLabel', '']);
-        setImportOptions(res);
-      });
+      projects.getOptions('import', taskCategory).then((res) => setImportOptions(res));
   }, [taskCategory]);
 
   const saveProject = (values: any) => {
     setLoading(true);
-    console.log('values', values);
     if (!projectId) {
       projects
         .create({
@@ -148,9 +141,17 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
             history.push(`/${camel2snake(props.taskCategory)}?projectId=${project.projectId}`);
         });
     } else {
-      projects.update(projectId, { ...values, otherSettings: otherSettings }).then(() => {
-        history.push(`/project_overview?projectId=${projectId}`);
-      });
+      projects
+        .update(projectId, {
+          name: values.name,
+          dataDir: values.dataDir,
+          description: values.description,
+          taskCategoryId: createInfo[props.taskCategory].id,
+          allOptions: values,
+        })
+        .then(() => {
+          history.push(`/project_overview?projectId=${projectId}`);
+        });
     }
   };
 

@@ -53,13 +53,6 @@ export interface ProjectOtherSettings {
    */
   models?: object;
   /**
-   *
-   * @type {string}
-   * @memberof ProjectOtherSettings
-   * @deprecated
-   */
-  segMaskType?: string;
-  /**
    * 正在使用的模型名称
    * @type {string}
    * @memberof ProjectOtherSettings
@@ -101,6 +94,12 @@ export interface ProjectOtherSettings {
    * @memberof ProjectOtherSettings
    */
   isSample?: boolean;
+  /**
+   *
+   * @type {string}
+   * @memberof ProjectOtherSettings
+   */
+  clasSubCatg?: string;
 }
 
 /**
@@ -127,7 +126,6 @@ export function ProjectOtherSettingsFromJSONTyped(
     mlBackendUrl: !exists(json, 'mlBackendUrl') ? undefined : json['mlBackendUrl'],
     perviousModel: !exists(json, 'perviousModel') ? undefined : json['perviousModel'],
     models: !exists(json, 'models') ? undefined : json['models'],
-    segMaskType: !exists(json, 'segMaskType') ? undefined : json['segMaskType'],
     modelName: !exists(json, 'modelName') ? undefined : json['modelName'],
     labelMapping: !exists(json, 'labelMapping')
       ? undefined
@@ -139,6 +137,7 @@ export function ProjectOtherSettingsFromJSONTyped(
     paramFilePath: !exists(json, 'paramFilePath') ? undefined : json['paramFilePath'],
     lang: !exists(json, 'lang') ? undefined : json['lang'],
     isSample: !exists(json, 'isSample') ? undefined : json['isSample'],
+    clasSubCatg: !exists(json, 'clasSubCatg') ? undefined : json['clasSubCatg'],
   };
 }
 
@@ -153,7 +152,6 @@ export function ProjectOtherSettingsToJSON(value?: ProjectOtherSettings | null):
     mlBackendUrl: value.mlBackendUrl,
     perviousModel: value.perviousModel,
     models: value.models,
-    segMaskType: value.segMaskType,
     modelName: value.modelName,
     labelMapping:
       value.labelMapping === undefined
@@ -167,5 +165,6 @@ export function ProjectOtherSettingsToJSON(value?: ProjectOtherSettings | null):
     paramFilePath: value.paramFilePath,
     lang: value.lang,
     isSample: value.isSample,
+    clasSubCatg: value.clasSubCatg,
   };
 }
