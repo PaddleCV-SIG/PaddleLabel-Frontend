@@ -9,7 +9,6 @@ import serviceUtils from '@/services/serviceUtils';
 import { createInfo, camel2snake, IntlInit } from '@/services/utils';
 import { ProjectUtils } from '@/services/utils';
 import { IntlInitJsx } from '@/components/PPIntl';
-// import { render } from 'react-dom';
 import type { ImportOption } from '@/services/web';
 
 export type _PPCardProps = {
@@ -411,9 +410,7 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
                   htmlType="button"
                   style={{ height: '2.5rem', width: '48%' }}
                   block
-                  onClick={() => {
-                    history.goBack();
-                  }}
+                  onClick={() => history.goBack()}
                 >
                   {intlJsx('cancel')}
                 </Button>
