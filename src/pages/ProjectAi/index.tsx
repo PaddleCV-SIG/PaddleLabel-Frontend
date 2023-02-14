@@ -3,6 +3,8 @@ import { Form, Input, Button, Select, Divider, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import Title from 'antd/lib/typography/Title';
 import type { InputRef } from 'antd';
+import { message } from 'antd';
+
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
 import { ProjectUtils, ModelUtils, LabelUtils, IntlInit, getVersion } from '@/services/utils';
@@ -10,6 +12,7 @@ import serviceUtils from '@/services/serviceUtils';
 import styles from './index.less';
 import { v4 as uuid } from 'uuid';
 import { history } from 'umi';
+// import { number } from 'prop-types';
 // import { label } from '../../../cypress/support/label';
 // import Project from '../../services/web/models/Project';
 const { Option } = Select;
@@ -199,7 +202,12 @@ const PaddleAi: React.FC = () => {
   //   }
   // }, [modelUrl, model.setMlBackendUrl]);
   const blurChange = async () => {
-    if (!(await getVersion())) return;
+    const errversion = 1.01;
+    const version: string = (await getVersion()) as string;
+    const versions = Number(version);
+    if (versions && errversion > versions) {
+      message.error('ml版本过低,请升级到升级');
+    }
     model.setMlBackendUrl(modelUrl);
   };
   useEffect(() => {

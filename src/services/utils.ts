@@ -874,7 +874,7 @@ export function PageInit(
     const onTaskChange = async () => {
       if (task.curr?.projectId) project.getFinished(task.curr.projectId);
       if (task.curr?.taskId) {
-        projectHistory(task.curr?.projectId, task.curr?.taskId);
+        projectHistory(project.curr.upid, task.curr?.taskId);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [allData, currData] = await data.getAll(task.curr.taskId, 0);
         const allAnns = await annotation.getAll(currData.dataId);

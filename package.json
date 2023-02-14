@@ -54,6 +54,7 @@
     "browserslist": "^4.21.3",
     "classnames": "^2.3.0",
     "dva-core": "^1.6.0-0",
+    "intro.js": "^6.0.0",
     "jsdom": ">=10.0.0",
     "konva": "^8.3.2",
     "loader-utils": "^3.2.0",

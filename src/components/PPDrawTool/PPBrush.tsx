@@ -191,6 +191,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
         frontendId = props.finlyList?.length > 0 ? getMaxFrontendId(props.finlyList) + 1 : 1;
       } else if (props.finlyList?.length === 0 && !props.selectFinly) {
         // 无列表长度，无选中
+
         frontendId =
           props.frontendIdOps.frontendId > 0
             ? props.frontendIdOps.frontendId
@@ -202,6 +203,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
           ? props.frontendIdOps.frontendId
           : getMaxFrontendId(props.annotations) + 1;
     }
+    // debugger
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
     const line = createLine({
       width: props.brushSize || 10,

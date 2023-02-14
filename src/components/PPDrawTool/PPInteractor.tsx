@@ -286,7 +286,6 @@ function filterPoints(result: number[][], thresholdRaw?: number) {
     for (const point of row) {
       if (point >= threshold) {
         points.push(colNum, rowNum);
-        // console.log(`point:`, point, `x y:`, rowNum, colNum);
       }
       colNum++;
     }
@@ -411,10 +410,34 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     }
     const mouseX = Math.round(param.mouseX);
     const mouseY = Math.round(param.mouseY);
-    const frontendId =
-      props.frontendIdOps.frontendId > 0
-        ? props.frontendIdOps.frontendId
-        : getMaxFrontendId(props.annotations) + 1;
+    let frontendId;
+    if (history?.location?.pathname === '/instance_segmentation') {
+      if (props.finlyList && props.finlyList?.length > 0 && props.selectFinly) {
+        // 有列表长度且有选中
+
+        frontendId = props.selectFinly.frontendId;
+      } else if (props.finlyList && props.finlyList?.length > 0 && !props.selectFinly) {
+        // 有列表长度，无选中
+        frontendId = props.finlyList?.length > 0 ? getMaxFrontendId(props.finlyList) + 1 : 1;
+      } else if (props.finlyList?.length === 0 && !props.selectFinly) {
+        // 无列表长度，无选中
+        // debugger;
+        console.log('无列表长度，无选中', props.frontendIdOps.frontendId);
+        frontendId =
+          props.frontendIdOps.frontendId > 0
+            ? props.frontendIdOps.frontendId
+            : getMaxFrontendId(props.annotations) + 1;
+      }
+    } else {
+      frontendId =
+        props.frontendIdOps.frontendId > 0
+          ? props.frontendIdOps.frontendId
+          : getMaxFrontendId(props.annotations) + 1;
+    }
+    // const frontendId =
+    //   props.frontendIdOps.frontendId > 0
+    //     ? props.frontendIdOps.frontendId
+    //     : getMaxFrontendId(props.annotations) + 1;
     if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
 
     interactorData.mousePoints.push(new Array(mouseX, mouseY, param.e.evt.button != 2));

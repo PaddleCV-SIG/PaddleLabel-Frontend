@@ -333,6 +333,7 @@ const Page: React.FC = () => {
                 width: '100px',
                 textAlign: 'center',
                 lineHeight: '2.55rem',
+                cursor: 'pointer',
               }}
               onClick={() => {
                 if (!label.activeIds.size) {
@@ -356,6 +357,7 @@ const Page: React.FC = () => {
                 width: '100px',
                 textAlign: 'center',
                 lineHeight: '2.55rem',
+                cursor: 'pointer',
               }}
               onClick={() => {
                 if (!label.activeIds.size) {

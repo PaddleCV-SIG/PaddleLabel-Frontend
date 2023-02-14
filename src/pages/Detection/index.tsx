@@ -120,8 +120,6 @@ const Page = () => {
   const onFinishEdit = () => {
     // 鼠标抬起的时候
     // console.log('here');
-    annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
-
     if (!annotation.curr) return;
     // debugger;
     if (!annotation.curr.result) return;
@@ -137,8 +135,10 @@ const Page = () => {
     }
     if (annotation?.curr?.annotationId == undefined) {
       annotation.create(annotation?.curr);
+      annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     } else {
       annotation.update(annotation?.curr);
+      annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     }
     message.success(tbIntl('saveSuccess'));
     if (tool.curr == 'rectangle') setCurrentAnnotation(undefined);
@@ -153,7 +153,6 @@ const Page = () => {
     currentAnnotation: annotation.curr,
     onAnnotationAdd: (anno: Annotation) => {
       const newAnnos = annotation.all.concat([anno]);
-      // debugger;
       annotation.setAll(newAnnos);
       setCurrentAnnotation(anno);
     },
@@ -598,8 +597,8 @@ const Page = () => {
           onClick={() => {
             annotation.clear();
             annHistory.record({ annos: [] });
-            tool.setCurr(undefined);
-            setPreTools('');
+            tool.setCurr(preTools);
+            // setPreTools('');
             label.setCurr(undefined);
           }}
         >
@@ -664,6 +663,7 @@ const Page = () => {
                 width: '100px',
                 textAlign: 'center',
                 lineHeight: '2.55rem',
+                cursor: 'pointer',
               }}
               onClick={() => {
                 if (!task.prevTask()) {
@@ -690,6 +690,7 @@ const Page = () => {
                 width: '100px',
                 textAlign: 'center',
                 lineHeight: '2.55rem',
+                cursor: 'pointer',
               }}
               onClick={() => {
                 if (!task.nextTask()) {

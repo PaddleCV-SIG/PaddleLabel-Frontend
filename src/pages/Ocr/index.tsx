@@ -596,8 +596,9 @@ const Page = () => {
           onClick={() => {
             annotation.clear();
             annHistory.record({ annos: [] });
-            tool.setCurr(undefined);
-            setPreTools('');
+            // tool.setCurr(undefined);
+            tool.setCurr(preTools);
+            // setPreTools('');
             if (history?.location?.pathname !== '/optical_character_recognition') {
               label.setCurr(undefined);
             }
@@ -673,6 +674,7 @@ const Page = () => {
                 width: '100px',
                 textAlign: 'center',
                 lineHeight: '2.55rem',
+                cursor: 'pointer',
               }}
               onClick={() => {
                 if (!task.prevTask()) {
@@ -701,6 +703,7 @@ const Page = () => {
                 width: '100px',
                 textAlign: 'center',
                 lineHeight: '2.55rem',
+                cursor: 'pointer',
               }}
               onClick={() => {
                 if (!task.nextTask()) {

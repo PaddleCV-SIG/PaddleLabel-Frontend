@@ -5,6 +5,8 @@ import { Circle, Group, Line } from 'react-konva';
 import type { EvtProps, PPDrawToolProps, PPDrawToolRet, PPRenderFuncProps } from './drawUtils';
 import { hexToRgb } from './drawUtils';
 // let isMove = false;
+import { history } from 'umi';
+
 function createPolygon(color: string, points: number[], pathName: string): string | undefined {
   // debugger;
   if (!color || !points) return undefined;
@@ -187,6 +189,14 @@ function getMaxId(annotations?: Annotation[]): any {
   }
   return maxId;
 }
+function getMaxFrontendId(annotations?: Annotation[]) {
+  if (!annotations || annotations.length == 0) return 0;
+  let max = 0;
+  for (const annotation of annotations) {
+    if (annotation.frontendId > max) max = annotation.frontendId;
+  }
+  return max;
+}
 
 export default function (props: PPDrawToolProps): PPDrawToolRet {
   const startNewPolygon = (
@@ -198,11 +208,35 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
   ) => {
     const polygon = createPolygon(props.currentLabel?.color, [mouseX, mouseY], pathName);
     if (!polygon) return;
+    let frontendId;
+    if (history?.location?.pathname === '/instance_segmentation') {
+      if (props.finlyList && props.finlyList?.length > 0 && props.selectFinly) {
+        // 有列表长度且有选中
 
+        frontendId = props.selectFinly.frontendId;
+      } else if (props.finlyList && props.finlyList?.length > 0 && !props.selectFinly) {
+        // 有列表长度，无选中
+        frontendId = props.finlyList?.length > 0 ? getMaxFrontendId(props.finlyList) + 1 : 1;
+      } else if (props.finlyList?.length === 0 && !props.selectFinly) {
+        // 无列表长度，无选中
+        // debugger;
+        console.log('无列表长度，无选中', props.frontendIdOps.frontendId);
+        frontendId =
+          props.frontendIdOps.frontendId > 0
+            ? props.frontendIdOps.frontendId
+            : getMaxFrontendId(props.annotations) + 1;
+      }
+    } else {
+      frontendId =
+        props.frontendIdOps.frontendId > 0
+          ? props.frontendIdOps.frontendId
+          : getMaxFrontendId(props.annotations) + 1;
+    }
+    // debugger;
+    if (frontendId != props.frontendIdOps.frontendId) props.frontendIdOps.setFrontendId(frontendId);
     const anno = {
       dataId: props.dataId,
-      frontendId:
-        selectFinly?.frontendId !== undefined ? selectFinly?.frontendId : getMaxId(annotations) + 1,
+      frontendId: frontendId,
       label: props.currentLabel,
       labelId: props.currentLabel?.labelId,
       result: polygon,
@@ -305,6 +339,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (props.currentTool != 'polygon') return;
     // console.log(`OnMouseUp`);
     if (param.e.evt.button === 2) {
+      // debugger;
       return;
     }
     if (props.onMouseUp) props.onMouseUp();

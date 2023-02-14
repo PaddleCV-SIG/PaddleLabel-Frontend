@@ -13,6 +13,7 @@ import { IntlInitJsx } from '@/components/PPIntl';
 import { createInfo, IntlInit } from '@/services/utils';
 import type { ColumnsType } from 'antd/es/table';
 import type { Project } from '@/services/web/models';
+// import classNames from 'classnames';
 
 const Projects: React.FC = (props) => {
   const intlJsx = IntlInitJsx('pages.welcome');
@@ -142,6 +143,7 @@ const Welcome: React.FC = () => {
       <Row gutter={[20, 20]}>
         <Col span={24}>
           <PPSampleButton
+            className="step1"
             onClick={() => {
               history.push('/sample_project');
             }}
@@ -153,12 +155,12 @@ const Welcome: React.FC = () => {
       </Row>
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>
         <Col span={17}>
-          <PPBlock title={intlJsx('createProject')} style={{ height: 430 }}>
+          <PPBlock classNames="step4" title={intlJsx('createProject')} style={{ height: 430 }}>
             <Row>{createButtons()}</Row>
           </PPBlock>
         </Col>
         <Col span={7}>
-          <PPBlock title={intlJsx('trainingKnowledge')} style={{ height: 430 }}>
+          <PPBlock classNames="step3" title={intlJsx('trainingKnowledge')} style={{ height: 430 }}>
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
               <Button
                 type="primary"

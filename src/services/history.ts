@@ -86,6 +86,7 @@ export function HistoryUtils(useState: UseStateType, rpcApi) {
     console.log('history undo', diff);
     const curr = applyDiff(JSON.parse(JSON.stringify(prevState)), diff);
     history.redos.push(await recDiff(getDiff(curr, prevState)));
+    console.log('history.redoss', recDiff(getDiff(curr, prevState)));
     setPrev(curr);
     localStorage.setItem('history', JSON.stringify(history));
     return curr;

@@ -34,6 +34,8 @@ const Component: React.FC<PPLabelListProps> = (props) => {
   // const items: Annotation[] = [];
 
   if (history?.location?.pathname === '/semantic_segmentation' && props.annotations?.length > 0) {
+    // debugger;
+
     for (const anno of props.annotations) {
       if (added.has(anno.frontendId)) continue;
       if (anno.type === 'rubber') continue;
@@ -77,7 +79,13 @@ const Component: React.FC<PPLabelListProps> = (props) => {
         renderItem={(item) => {
           return (
             <PPAnnotationListItem
-              onClick={props.disabled ? () => {} : props.onAnnotationSelect}
+              onClick={
+                props.disabled
+                  ? () => {}
+                  : (annotation) => {
+                      props.onAnnotationSelect(annotation);
+                    }
+              }
               annotation={item}
               active={
                 props.disabled
