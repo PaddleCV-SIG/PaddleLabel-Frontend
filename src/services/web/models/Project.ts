@@ -21,9 +21,15 @@ import {
   ProjectOtherSettingsFromJSONTyped,
   ProjectOtherSettingsToJSON,
 } from './ProjectOtherSettings';
+import type { TaskCategory } from './TaskCategory';
+import {
+  TaskCategoryFromJSON,
+  TaskCategoryFromJSONTyped,
+  TaskCategoryToJSON,
+} from './TaskCategory';
 
 /**
- * 项目基本信息和设置
+ * project info and settings
  * @export
  * @interface Project
  */
@@ -47,6 +53,12 @@ export interface Project {
    */
   description?: string;
   /**
+   * Absolute directory path where all the data file is stored
+   * @type {string}
+   * @memberof Project
+   */
+  dataDir?: string;
+  /**
    * Top level annotation task category, see TODO for int <-> category map
    * @type {number}
    * @memberof Project
@@ -54,35 +66,16 @@ export interface Project {
   taskCategoryId?: number;
   /**
    *
-   * @type {string}
+   * @type {TaskCategory}
    * @memberof Project
    */
-  readonly taskCategory?: string;
-  /**
-   * Absolute directory path where all the data file is stored
-   * @type {string}
-   * @memberof Project
-   */
-  dataDir?: string;
-  /**
-   * Absolute directory path where all the label files are stored
-   * @type {string}
-   * @memberof Project
-   * @deprecated
-   */
-  labelDir?: string;
+  taskCategory?: TaskCategory;
   /**
    *
    * @type {Array<Label>}
    * @memberof Project
    */
   labels?: Array<Label>;
-  /**
-   * eg: single_class/multi_class for classification
-   * @type {string}
-   * @memberof Project
-   */
-  labelFormat?: string;
   /**
    * Project creation timestamp in UTC
    * @type {string}
@@ -107,6 +100,12 @@ export interface Project {
    * @memberof Project
    */
   otherSettings?: ProjectOtherSettings;
+  /**
+   * This property is only used for passing project create/export options around more easilly. It's discarded after the project is created or exported.
+   * @type {object}
+   * @memberof Project
+   */
+  allOptions?: object;
 }
 
 /**
@@ -130,18 +129,19 @@ export function ProjectFromJSONTyped(json: any, ignoreDiscriminator: boolean): P
     projectId: !exists(json, 'project_id') ? undefined : json['project_id'],
     name: !exists(json, 'name') ? undefined : json['name'],
     description: !exists(json, 'description') ? undefined : json['description'],
-    taskCategoryId: !exists(json, 'task_category_id') ? undefined : json['task_category_id'],
-    taskCategory: !exists(json, 'task_category') ? undefined : json['task_category'],
     dataDir: !exists(json, 'data_dir') ? undefined : json['data_dir'],
-    labelDir: !exists(json, 'label_dir') ? undefined : json['label_dir'],
+    taskCategoryId: !exists(json, 'task_category_id') ? undefined : json['task_category_id'],
+    taskCategory: !exists(json, 'task_category')
+      ? undefined
+      : TaskCategoryFromJSON(json['task_category']),
     labels: !exists(json, 'labels') ? undefined : (json['labels'] as Array<any>).map(LabelFromJSON),
-    labelFormat: !exists(json, 'label_format') ? undefined : json['label_format'],
     created: !exists(json, 'created') ? undefined : json['created'],
     modified: !exists(json, 'modified') ? undefined : json['modified'],
     upid: !exists(json, 'upid') ? undefined : json['upid'],
     otherSettings: !exists(json, 'other_settings')
       ? undefined
       : ProjectOtherSettingsFromJSON(json['other_settings']),
+    allOptions: !exists(json, 'all_options') ? undefined : json['all_options'],
   };
 }
 
@@ -155,12 +155,12 @@ export function ProjectToJSON(value?: Project | null): any {
   return {
     name: value.name,
     description: value.description,
-    task_category_id: value.taskCategoryId,
     data_dir: value.dataDir,
-    label_dir: value.labelDir,
+    task_category_id: value.taskCategoryId,
+    task_category: TaskCategoryToJSON(value.taskCategory),
     labels: value.labels === undefined ? undefined : (value.labels as Array<any>).map(LabelToJSON),
-    label_format: value.labelFormat,
     upid: value.upid,
     other_settings: ProjectOtherSettingsToJSON(value.otherSettings),
+    all_options: value.allOptions,
   };
 }

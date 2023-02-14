@@ -96,6 +96,8 @@ export default {
   'pages.tableList.deleteSuccess': '删除成功',
   'pages.tableList.deleteFailed': '删除失败，请重试',
 
+  'pages.toolBar.nextTask': '下一张',
+  'pages.toolBar.prevTask': '上一张',
   'pages.toolBar.polygon': '多边形',
   'pages.toolBar.brush': '笔刷',
   'pages.toolBar.rubber': '橡皮檫',
@@ -115,7 +117,7 @@ export default {
   'pages.toolBar.segmentThreshold': '分割阈值',
   'pages.toolBar.transparency': '透明度',
   'pages.toolBar.visualRadius': '控制点半径',
-  'pages.toolBar.determineOutline': '确定轮廓',
+  'pages.toolBar.determineOutline': '完成当前实例',
   'pages.toolBar.divideData': '划分数据集',
   'pages.toolBar.export': '导出',
   'pages.toolBar.medicalSetting': '医疗设置',

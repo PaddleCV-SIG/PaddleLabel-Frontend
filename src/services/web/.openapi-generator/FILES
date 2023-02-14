@@ -19,6 +19,7 @@ models/ExportDatasetRequest.ts
 models/GetFoldersRequest.ts
 models/GetProgress200Response.ts
 models/ImportDatasetRequest.ts
+models/ImportOption.ts
 models/Label.ts
 models/LoadSample200Response.ts
 models/LoadSampleRequest.ts
@@ -35,6 +36,7 @@ models/SplitDatasetRequest.ts
 models/Tag.ts
 models/TagTask.ts
 models/Task.ts
+models/TaskCategory.ts
 models/ToEasydataRequest.ts
 models/User.ts
 models/index.ts

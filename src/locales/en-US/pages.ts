@@ -96,6 +96,8 @@ export default {
   'pages.tableList.deleteSuccess': 'DeletSuccess',
   'pages.tableList.deleteFailed': 'Deletion failed, please try again',
 
+  'pages.toolBar.nextTask': 'Next Task',
+  'pages.toolBar.prevTask': 'Prev Task',
   'pages.toolBar.polygon': 'Polygon',
   'pages.toolBar.brush': 'Brush',
   'pages.toolBar.rubber': 'Rubber',
@@ -108,7 +110,7 @@ export default {
   'pages.toolBar.autoSave':
     'Annotation results are saved automatically in this type of project, no need to click save.',
   'pages.toolBar.edit': 'Edit',
-  'pages.toolBar.clearMark': 'ClearMark',
+  'pages.toolBar.clearMark': 'Clear Annotations',
   'pages.toolBar.interactor': 'Interactor',
   'pages.toolBar.autoInference': 'Auto Inference',
   'pages.toolBar.autoInferenceThreshold': 'Inference Threshold',
@@ -129,7 +131,7 @@ export default {
   'pages.toolBar.scale.smallestScale': 'Smallest scale is',
   'pages.toolBar.scale.largestScale': 'Largest scale is',
   'pages.toolBar.chooseCategoryFirst': 'Please choose a annotation category first',
-  'pages.toolBar.progress': 'Finished / Total Task count ',
+  'pages.toolBar.progress': 'Finished / Total task count ',
   'pages.toolBar.progress.currentId': 'Current task ID',
   'pages.toolBar.modelLoading':
     'Model is still loading, please wait till model loading is finished popup and then use interactor tool',

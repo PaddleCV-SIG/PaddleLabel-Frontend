@@ -15,6 +15,7 @@
     "keypoint",
     "micromamba",
     "paddlelabel",
+    "pdiparams",
     "pdmodel",
     "runneradmin",
     "semseg"

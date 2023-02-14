@@ -1,6 +1,6 @@
 export default {
   'component.PPCreater.projectName': ' اسم المشروع ',
-  'component.PPCreater.datasePath': ' مسار مجموعة البيانات ',
+  'component.PPCreater.datasetPath': ' مسار مجموعة البيانات ',
   'component.PPCreater.description': 'وصف',
   'component.PPCreater.maxPoints': 'أعلى درجة',
   'component.PPCreater.annotationMode': 'طريقة الشرح',

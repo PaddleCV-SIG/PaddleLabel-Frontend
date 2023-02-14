@@ -1,9 +1,10 @@
 import type { MessageApi } from 'antd/lib/message';
+import { message } from 'antd';
 
 const serviceUtils = () => {
   const parseError = async (
     err: Response | any,
-    msgComponent: MessageApi,
+    msgComponent: MessageApi = message, // TODO: remove this param, just use antd.message
     defaultErrMsg?: string,
   ) => {
     const defaultErrStr = defaultErrMsg

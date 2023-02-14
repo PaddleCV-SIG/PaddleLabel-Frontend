@@ -18,6 +18,7 @@ import type {
   ExportDatasetRequest,
   GetProgress200Response,
   ImportDatasetRequest,
+  ImportOption,
   Label,
   PredictRequest,
   Project,
@@ -36,6 +37,8 @@ import {
   GetProgress200ResponseToJSON,
   ImportDatasetRequestFromJSON,
   ImportDatasetRequestToJSON,
+  ImportOptionFromJSON,
+  ImportOptionToJSON,
   LabelFromJSON,
   LabelToJSON,
   PredictRequestFromJSON,
@@ -78,13 +81,14 @@ export interface GetAnnotationsRequest {
   projectId: number;
 }
 
-export interface GetImportOptionsRequest {
-  projectType: string;
-  requestId?: number;
-}
-
 export interface GetLabelsRequest {
   projectId: number;
+}
+
+export interface GetOptionsRequest {
+  projectType: string;
+  imOrExport: string;
+  requestId?: number;
 }
 
 export interface GetProgressRequest {
@@ -407,59 +411,6 @@ export class ProjectApi extends runtime.BaseAPI {
   }
 
   /**
-   * Read all projects, sort by last modify date
-   */
-  async getImportOptionsRaw(
-    requestParameters: GetImportOptionsRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<runtime.ApiResponse<Array<object>>> {
-    if (requestParameters.projectType === null || requestParameters.projectType === undefined) {
-      throw new runtime.RequiredError(
-        'projectType',
-        'Required parameter requestParameters.projectType was null or undefined when calling getImportOptions.',
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
-      headerParameters['request_id'] = String(requestParameters.requestId);
-    }
-
-    const response = await this.request(
-      {
-        path: `/projects/importOptions/{project_type}`.replace(
-          `{${'project_type'}}`,
-          encodeURIComponent(String(requestParameters.projectType)),
-        ),
-        method: 'GET',
-        headers: headerParameters,
-        query: queryParameters,
-      },
-      initOverrides,
-    );
-
-    return new runtime.JSONApiResponse<any>(response);
-  }
-
-  /**
-   * Read all projects, sort by last modify date
-   */
-  async getImportOptions(
-    projectType: string,
-    requestId?: number,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction,
-  ): Promise<Array<object>> {
-    const response = await this.getImportOptionsRaw(
-      { projectType: projectType, requestId: requestId },
-      initOverrides,
-    );
-    return await response.value();
-  }
-
-  /**
    *
    * Get all labels under a project
    */
@@ -503,6 +454,68 @@ export class ProjectApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction,
   ): Promise<Array<Label>> {
     const response = await this.getLabelsRaw({ projectId: projectId }, initOverrides);
+    return await response.value();
+  }
+
+  /**
+   * Read all projects, sort by last modify date
+   */
+  async getOptionsRaw(
+    requestParameters: GetOptionsRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<runtime.ApiResponse<Array<ImportOption>>> {
+    if (requestParameters.projectType === null || requestParameters.projectType === undefined) {
+      throw new runtime.RequiredError(
+        'projectType',
+        'Required parameter requestParameters.projectType was null or undefined when calling getOptions.',
+      );
+    }
+
+    if (requestParameters.imOrExport === null || requestParameters.imOrExport === undefined) {
+      throw new runtime.RequiredError(
+        'imOrExport',
+        'Required parameter requestParameters.imOrExport was null or undefined when calling getOptions.',
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (requestParameters.requestId !== undefined && requestParameters.requestId !== null) {
+      headerParameters['request_id'] = String(requestParameters.requestId);
+    }
+
+    const response = await this.request(
+      {
+        path: `/projects/options/{im_or_export}/{project_type}`
+          .replace(`{${'project_type'}}`, encodeURIComponent(String(requestParameters.projectType)))
+          .replace(`{${'im_or_export'}}`, encodeURIComponent(String(requestParameters.imOrExport))),
+        method: 'GET',
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides,
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      jsonValue.map(ImportOptionFromJSON),
+    );
+  }
+
+  /**
+   * Read all projects, sort by last modify date
+   */
+  async getOptions(
+    projectType: string,
+    imOrExport: string,
+    requestId?: number,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction,
+  ): Promise<Array<ImportOption>> {
+    const response = await this.getOptionsRaw(
+      { projectType: projectType, imOrExport: imOrExport, requestId: requestId },
+      initOverrides,
+    );
     return await response.value();
   }
 

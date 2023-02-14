@@ -6,9 +6,11 @@ import Title from 'antd/lib/typography/Title';
 import { history } from 'umi';
 import styles from './index.less';
 import serviceUtils from '@/services/serviceUtils';
-import { createInfo, camel2snake, snake2camel, sampleApi, IntlInit } from '@/services/utils';
+import { createInfo, camel2snake, IntlInit } from '@/services/utils';
 import { ProjectUtils } from '@/services/utils';
 import { IntlInitJsx } from '@/components/PPIntl';
+// import { render } from 'react-dom';
+import type { ImportOption } from '@/services/web';
 
 export type _PPCardProps = {
   title?: string;
@@ -56,23 +58,78 @@ export type PPCreatorProps = {
 
 const PPCreator: React.FC<PPCreatorProps> = (props) => {
   const { query = {} } = history.location;
-  console.log('query?.projectId', query?.projectId);
   const projectId = query?.projectId != undefined ? parseInt(query.projectId) : undefined;
+  const taskCategory = query?.taskCategory;
   const projects = ProjectUtils(useState);
   const [loading, setLoading] = useState<boolean>(false);
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
   const [sampleFiles, setSampleFiles] = useState<TreeDataNode[]>([]);
-  // const [labelFormat, setLabelFormat] = useState<string>();
-
+  const [importOptions, setImportOptions] = useState<ImportOption[]>([]);
+  const [reload, setReload] = useState<number>(0);
   const intlJsx = IntlInitJsx('component.PPCreator');
   const intl = IntlInit('component.PPCreator');
+  const [form] = Form.useForm();
+
+  const renderImportOptions = () => {
+    const options: object[] = [];
+    for (const option of importOptions) {
+      let display = true;
+      for (const condition of option.showAfter) {
+        // const condition = option.showAfter[idx];
+        if (form.getFieldValue(condition[0]) != condition[1]) display = false;
+      }
+      if (projectId) display = display && option.allowEdit; // if editing project settings, only show allowEdit questions
+
+      if (display)
+        options.push(
+          <Form.Item
+            name={option.label}
+            label={intlJsx(option.label)}
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 16 }}
+            style={{ fontSize: '1.5rem' }}
+            rules={[
+              {
+                required: option.required,
+                message: intlJsx('require' + option.label[0].toUpperCase() + option.label.slice(1)),
+              },
+            ]}
+          >
+            {option.type == 'choice' ? (
+              <Radio.Group
+                size="large"
+                style={{ height: '3.13rem' }}
+                onChange={() => setReload(reload + 1)}
+              >
+                {option.choices.map((c) => (
+                  <Radio key={c[0]} value={c[0]}>
+                    {intlJsx(c[0])}
+                  </Radio>
+                ))}
+              </Radio.Group>
+            ) : (
+              <div />
+            )}
+          </Form.Item>,
+        );
+    }
+    return options;
+  };
+  useEffect(() => {
+    if (taskCategory)
+      projects.getOptions('import', taskCategory).then((res) => setImportOptions(res));
+  }, [taskCategory]);
 
   const saveProject = (values: any) => {
     setLoading(true);
     if (!projectId) {
       projects
         .create({
-          ...values,
+          name: values.name,
+          dataDir: values.dataDir,
+          description: values.description,
           taskCategoryId: createInfo[props.taskCategory].id,
+          allOptions: values,
         })
         .catch((err) => {
           message.error(intlJsx('creationFail'));
@@ -84,34 +141,35 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
             history.push(`/${camel2snake(props.taskCategory)}?projectId=${project.projectId}`);
         });
     } else {
-      projects.update(projectId, { ...values, otherSettings: otherSettings }).then(() => {
-        history.push(`/project_overview?projectId=${projectId}`);
-      });
+      projects
+        .update(projectId, {
+          name: values.name,
+          dataDir: values.dataDir,
+          description: values.description,
+          taskCategoryId: createInfo[props.taskCategory].id,
+          allOptions: values,
+        })
+        .then(() => {
+          history.push(`/project_overview?projectId=${projectId}`);
+        });
     }
   };
 
-  const [form] = Form.useForm();
-
   useEffect(() => {
-    if (!projectId) {
-      return;
-    }
-
+    if (!projectId) return;
     projects.getCurr(projectId).then(() => {});
   }, [projectId]);
+
   useEffect(() => {
-    if (!projects.curr) {
-      return;
-    }
+    if (!projects.curr) return;
+
     const project = projects.curr;
     const values = {
       name: project?.name,
       description: project?.description,
       dataDir: project?.dataDir,
       labelFormat: project?.labelFormat,
-      segMaskType: project?.otherSettings?.segMaskType,
     };
-    // if (project?.labelFormat) setLabelFormat(project.labelFormat);
     form.setFieldsValue(values);
   }, [projects.curr]);
 
@@ -124,9 +182,8 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
   };
 
   function getSampleFolderStructure() {
-    if (sampleFiles.length == 0) {
-      return <img src={props.imgSrc} style={{ width: '40rem' }} />;
-    } else {
+    if (sampleFiles.length == 0) return <img src={props.imgSrc} style={{ width: '40rem' }} />;
+    else
       return (
         <div>
           <div className={styles.DirectoryTitle}>{intlJsx('folderStructureSample')}</div>
@@ -143,48 +200,36 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
           </div>
         </div>
       );
-    }
   }
 
   return (
     <div className={styles.shadow} style={props.style}>
       <Spin tip={intlJsx('importInProgress')} spinning={loading} size="large">
-        {/* TODO: increase left width and decrease right */}
         <div id="left" className={styles.block_l}>
           <_PPBlock
             title={intl(props.taskCategory, 'global') + intl('project')}
             content={intlJsx('titleContent')}
             docUrl={`/static/doc/CN/manual/${camel2snake(props.taskCategory)}.html`}
             style={{ height: 760, padding: '1.25rem 0' }}
+            reload={reload}
           >
             <Form
               form={form}
               layout="horizontal"
               size="large"
               style={{ marginTop: '5.69rem' }}
-              onFinish={(values) => {
-                saveProject(values);
-              }}
+              onFinish={(values) => saveProject(values)}
             >
               <Form.Item
                 name="name"
                 label={intl('projectName')}
-                labelCol={{
-                  span: 6,
-                }}
-                wrapperCol={{
-                  span: 16,
-                }}
-                rules={[
-                  {
-                    required: true,
-                    message: intlJsx('requireProjectName'),
-                  },
-                ]}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 16 }}
+                rules={[{ required: true, message: intlJsx('requireProjectName') }]}
                 style={{ fontSize: '1.5rem' }}
               >
                 <Input
-                  autoComplete="off"
+                  // autoComplete="off"
                   size="large"
                   placeholder={intl('anyString', 'global')}
                   style={{ height: '3.13rem' }}
@@ -192,53 +237,38 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
               </Form.Item>
               <Form.Item
                 name="dataDir"
-                label={intl('datasePath')}
-                labelCol={{
-                  span: 6,
-                }}
-                wrapperCol={{
-                  span: 16,
-                }}
-                rules={[
-                  {
-                    required: true,
-                    message: intlJsx('requireDatasePath'),
-                  },
-                ]}
+                label={intl('datasetPath')}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 16 }}
+                rules={[{ required: true, message: intlJsx('requireDatasetPath') }]}
                 style={{ fontSize: '1.5rem' }}
               >
                 <Input
-                  autoComplete="off"
+                  // autoComplete="off"
                   size="large"
                   placeholder={intl('absolutePath', 'global')}
                   style={{ height: '3.13rem' }}
-                  disabled={projectId == undefined ? false : true}
+                  disabled={projectId == undefined ? false : true} // doesn't allow changing this during edit
                 />
               </Form.Item>
               <Form.Item
                 name="description"
                 label={intl('description')}
-                labelCol={{
-                  span: 6,
-                }}
-                wrapperCol={{
-                  span: 16,
-                }}
-                rules={[
-                  {
-                    required: false,
-                  },
-                ]}
+                labelCol={{ span: 6 }}
+                wrapperCol={{ span: 16 }}
+                rules={[{ required: false }]}
                 style={{ fontSize: '1.5rem' }}
               >
                 <Input
-                  autoComplete="off"
+                  // autoComplete="off"
                   size="large"
                   placeholder={intl('anyString', 'global')}
                   style={{ height: '3.13rem' }}
                 />
               </Form.Item>
-              <Form.Item
+              {renderImportOptions()}
+
+              {/* <Form.Item
                 name="labelFormat"
                 label={
                   <p
@@ -247,7 +277,7 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
                     }}
                   >
                     {props.taskCategory == 'classification'
-                      ? intlJsx('clasSubCags')
+                      ? intlJsx('clasSubCatg')
                       : intlJsx('labelFormat')}{' '}
                     <QuestionCircleOutlined
                       style={{ fontSize: '12px' }}
@@ -305,7 +335,7 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
                     </Radio>
                   ))}
                 </Radio.Group>
-              </Form.Item>
+              </Form.Item> */}
 
               {/* <Form.Item
                 name="segMaskType"

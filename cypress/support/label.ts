@@ -110,10 +110,8 @@ export const labelIt = {
       name: `Tour project ${projectId}, ${clear ? 'clear' : 'wont clear'} anns`,
       func: () => {
         label.to(projectId, projectType, skipAnnTest);
-        // cy.wait(1000);
         for (var idx = 1; idx < taskCount; idx++) {
           if (clear) label.clear();
-          console.log('asdf', skipAnnTest, idx, taskCount - 1, skipAnnTest || idx != taskCount - 1);
           label.next(projectType, skipAnnTest || idx == taskCount - 1);
         }
         if (clear) label.clear();
