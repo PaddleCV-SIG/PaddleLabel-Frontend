@@ -78,6 +78,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     // Add loading status
     // Can accept props as 2nd param
     childrenRender: (children) => {
+      console.log('children', children);
+
       if (initialState?.loading) return <PageLoading />;
       return <>{children}</>;
     },

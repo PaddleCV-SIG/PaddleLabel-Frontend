@@ -18,6 +18,7 @@ export type PPLabelListProps = {
   onLabelAdd: (label: Label) => void;
   onLabelSelect: (label: Label) => void;
   onHideLabel: (change: boolean, id: number) => void;
+  handleLabel: () => void;
   disabled?: boolean;
   refresh?: number;
 };
@@ -65,6 +66,7 @@ const Component: React.FC<PPLabelListProps> = (props) => {
               hideEye={props.hideEye}
               onClick={props.onLabelSelect}
               label={item}
+              handleLabel={props.handleLabel}
               active={props.activeIds?.has(item.labelId)}
               onLabelDelete={props.onLabelDelete}
               onLabelModify={props.onLabelModify}

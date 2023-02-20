@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Button, Space, Spin, message } from 'antd';
 import { history } from 'umi';
+import Guide from '@/components/Guide';
 import PPContainer from '@/components/PPContainer';
 import PPCard from '@/components/PPCard';
 import PPBlock from '@/components/PPBlock';
@@ -9,24 +10,21 @@ import PPButton from '@/components/PPButton';
 import PPSampleButton from '@/components/PPSampleButton';
 import PPOverlapCol from '@/components/PPOverlapCol';
 import { toDict, ProjectUtils, getVersion, snake2camel } from '@/services/utils';
-import { IntlInitJsx } from '@/components/PPIntl';
 import { createInfo } from '@/services/utils';
+import { IntlInitJsx } from '@/components/PPIntl';
 import type { ColumnsType } from 'antd/es/table';
 import type { Project } from '@/services/web/models';
 // import classNames from 'classnames';
 
 const Projects: React.FC = (props) => {
   const intlJsx = IntlInitJsx('pages.welcome');
-
   const projects = ProjectUtils(useState);
   useEffect(() => {
     getVersion().then((version) => {
       if (version != false) projects.getAll();
     });
   }, []);
-  const reset = () => {
-    console.log('项目重置');
-  };
+
   const columns: ColumnsType<Project> = [
     {
       title: 'ID',
@@ -93,13 +91,12 @@ const Projects: React.FC = (props) => {
       ),
     },
   ];
-
   if (!projects.all?.length) return '';
 
   return (
     <Row style={{ marginTop: 20 }}>
       <Col span={24}>
-        <PPBlock title={intlJsx('myProjects')} reset={reset}>
+        <PPBlock title={intlJsx('myProjects')}>
           <PPTable columns={columns} dataSource={toDict(projects.all)} showHeader={false} />
         </PPBlock>
       </Col>
@@ -110,7 +107,28 @@ const Projects: React.FC = (props) => {
 const Welcome: React.FC = () => {
   const intlJsx = IntlInitJsx('pages.welcome');
 
+  const [isGuideComplete, setIsGuideComplete] = useState(true);
   const [deleting, setDeleting] = useState<boolean>(false);
+  const guideSteps = [
+    {
+      element: '#step1',
+      intro: 'This is step 1.',
+      position: 'bottom',
+    },
+    {
+      element: '#step2',
+      intro: 'This is step 2.',
+      position: 'bottom',
+    },
+    {
+      element: '#step3',
+      intro: 'This is step 2.',
+      position: 'bottom',
+    },
+  ];
+  const handleGuideComplete = () => {
+    setIsGuideComplete(true);
+  };
   function createButtons() {
     const creators = [];
     for (const [taskCategory, info] of Object.entries(createInfo)) {
@@ -134,11 +152,32 @@ const Welcome: React.FC = () => {
     }
     return creators;
   }
-
+  useEffect(() => {
+    const { pathname } = history.location;
+    const strings = localStorage.getItem('FirstPath');
+    if (strings) {
+      const pathObject = JSON.parse(strings);
+      if (!pathObject[pathname]) {
+        setIsGuideComplete(false);
+        const newPathObject = {
+          ...pathObject,
+          [pathname]: true,
+        };
+        localStorage.setItem('FirstPath', JSON.stringify(newPathObject));
+      }
+    } else {
+      setIsGuideComplete(false);
+      const newPathObject = {
+        [pathname]: true,
+      };
+      localStorage.setItem('FirstPath', JSON.stringify(newPathObject));
+    }
+  }, []);
   return (
     <PPContainer>
       <Row gutter={[20, 20]}>
-        <Col span={24}>
+        {/* 样例项目 */}
+        <Col id="step1" span={24}>
           <PPSampleButton
             className="step1"
             onClick={() => {
@@ -150,13 +189,16 @@ const Welcome: React.FC = () => {
           </PPSampleButton>
         </Col>
       </Row>
+
       <Row gutter={[20, 20]} style={{ marginTop: 20 }}>
-        <Col span={17}>
+        {/* 卡片区域 */}
+        <Col id="step2" span={17}>
           <PPBlock classNames="step4" title={intlJsx('createProject')} style={{ height: 430 }}>
             <Row>{createButtons()}</Row>
           </PPBlock>
         </Col>
-        <Col span={7}>
+        {/* 按钮区域 */}
+        <Col id="step3" span={7}>
           <PPBlock classNames="step3" title={intlJsx('trainingKnowledge')} style={{ height: 430 }}>
             <Space direction="vertical" style={{ width: '100%' }} size={10}>
               <Button
@@ -206,6 +248,7 @@ const Welcome: React.FC = () => {
       <Spin tip="Deleting" spinning={deleting}>
         {Projects({ setDeleting: setDeleting })}
       </Spin>
+      {!isGuideComplete && <Guide steps={guideSteps} onGuideComplete={handleGuideComplete} />}
     </PPContainer>
   );
 };

@@ -41,11 +41,12 @@ export function HistoryUtils(useState: UseStateType, rpcApi) {
     const diff: rdiffResult[] = getDiff(currState, prevState);
     if (diff.length == 0) return;
     setPrev(currState);
+    debugger;
+    console.log('diff', diff);
     const historyStr = localStorage.getItem('history');
     const history: HistoryType = historyStr ? JSON.parse(historyStr) : { undos: [], redos: [] };
     history.redos = [];
     history.undos.push(await recDiff(diff));
-    console.log('history', history);
 
     localStorage.setItem('history', JSON.stringify(history));
   }
@@ -62,8 +63,8 @@ export function HistoryUtils(useState: UseStateType, rpcApi) {
       return;
     }
     const diff = await parseDiff(history.redos.pop());
-    console.log('history redo', diff);
     const curr = applyDiff(JSON.parse(JSON.stringify(prevState)), diff);
+    console.log('history redo', await recDiff(getDiff(curr, prevState)));
     history.undos.push(await recDiff(getDiff(curr, prevState)));
     setPrev(curr);
     localStorage.setItem('history', JSON.stringify(history));

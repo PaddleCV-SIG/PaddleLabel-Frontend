@@ -16,13 +16,15 @@ import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { ModelUtils, PageInit } from '@/services/utils';
 import { ColorMaker } from '@/services/ColorMaker';
-
+import LabelModel from '@/components/LabelModel';
 import type { pageRef } from '@/components/PPLabelPage/PPStage';
 import type { Annotation } from '@/models/';
 import PPAIButton from '@/components/PPLabelPage/PPAIButton';
 import PPInteractor, { interactorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
 import Keyevent from 'react-keyevent';
 import { IntlInitJsx } from '@/components/PPIntl';
+import { labelApi } from '@/services/utils';
+import { result } from 'lodash';
 const Page: React.FC = () => {
   const tbIntl = IntlInitJsx('pages.toolBar');
   const [frontendId, setFrontendId] = useState<number>(0);
@@ -33,6 +35,7 @@ const Page: React.FC = () => {
   const [isLabel, setisLabel] = useState<string>('label');
   const [brushSize, setBrushSize] = useState(10);
   const [threshold, setThreshold] = useState(0.7);
+  const [detas, setDeta] = useState(0);
   const [newAnnotation, setNewAnnotation] = useState<Annotation[]>();
   const [transparency, setTransparency] = useState(60);
   const { radius, setRadius } = useModel('VisualRadius');
@@ -42,6 +45,8 @@ const Page: React.FC = () => {
   const [mousepoint2, setMousepoint2] = useState(false);
   const [hideLabel, setHideLabel] = useState<number[]>([]);
   const [isClick, setisClick] = useState<boolean>(true);
+  const [visible, setVisible] = useState(false);
+  const [formData, setFormData] = useState({});
   const model = ModelUtils(useState);
   const page = useRef<pageRef>(null);
   const { tool, loading, scale, annotation, task, data, project, label, refreshVar, annHistory } =
@@ -212,14 +217,20 @@ const Page: React.FC = () => {
     setCurrentAnnotation(anno);
     annotation.setAll(newAnnos);
   };
-  const annotationDelete = (newAnnos: Annotation[]) => {
+  const annotationDelete = (newAnnos: Annotation[], flag: boolean) => {
     annotation.setAll(newAnnos);
-    annotation.pushToBackend(data.curr?.dataId, newAnnos);
+    if (flag) {
+      annotation.pushToBackend(data.curr?.dataId, newAnnos, flag);
+    } else {
+      annotation.pushToBackend(data.curr?.dataId, newAnnos);
+    }
   };
   const onStartEdit = () => {
     setisClick(true);
   };
   const onEndEdit = () => {
+    // if (interactorData.active) return;
+    // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     setisClick(false);
   };
   const drawToolParam = {
@@ -261,16 +272,61 @@ const Page: React.FC = () => {
     rubber: PPRubber(drawToolParam),
   };
   useEffect(() => {
-    if (!isClick) return;
     if (interactorData.active) return;
+    if (!isClick) {
+      // debugger;
+      annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+    }
     // debugger;
-    // await annotation.pushToBackend(data.curr?.dataId, annotation.all);
+    // annotation.pushToBackend(data.curr?.dataId, annotation.all);
     // annotation.setAll(annotation.all);
-    annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+    // annotation.setAll(annotation.all);
+    // let results;
+    // const all = annotation.all || [];
+    // const lastAnno = all[all.length - 1];
+    // if (history?.location?.pathname === '/optical_character_recognition') {
+    //   if (lastAnno) {
+    //     const datass: string = lastAnno?.result?.split('||')[0] as string;
+    //     results = datass.split('|').join(',');
+    //   }
+    // } else {
+    //   if (lastAnno) {
+    //     results = lastAnno?.result;
+    //   }
+    // }
+    // const resultLength = results?.split(',');
+    // if (resultLength && resultLength.length > 4) {
+    //   annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+    // }
   }, [isClick]);
   const handleChange = (value: string) => {
     setisLabel(value);
   };
+  const handleSave = (datas) => {
+    setFormData(datas);
+    const newLabel = {
+      ...label.curr,
+      color: datas.color,
+      name: datas.name,
+    };
+    if (label.curr?.labelId && newLabel && project.curr.projectId) {
+      labelApi.update(label.curr?.labelId, newLabel).then(
+        (res: any) => {
+          // selet
+          label.getAll(project.curr.projectId);
+          annotation.getAll(data.curr?.dataId);
+          setVisible(false);
+        },
+        (err) => {
+          message.error(err);
+        },
+      );
+    }
+  };
+  const handleLabel = () => {
+    setVisible(true);
+  };
+
   const onG = () => {
     // if (interactorData.active) saveInteractorData();
     const flag = task.nextTask();
@@ -313,7 +369,6 @@ const Page: React.FC = () => {
   const onB = () => {
     annHistory.backward().then((res) => {
       if (res) {
-        debugger;
         // annotation.setAll(res.annos);
         // setCurrentAnnotation(res.currAnno);
         // annotation.pushToBackend(data.curr?.dataId, res.annos);
@@ -342,11 +397,14 @@ const Page: React.FC = () => {
   };
   const handleWheel = (event) => {
     const deta = event.deltaY;
+
     if (deta > 0) {
       scale.change(-0.1);
+      setDeta(-0.1);
     }
     if (deta < 0) {
       scale.change(0.1);
+      setDeta(0.1);
     }
   };
   const onHideLabel = (change: boolean, id: number) => {
@@ -362,7 +420,7 @@ const Page: React.FC = () => {
     }
   };
   const selectedAnnos = (annotation: Annotation) => {
-    debugger;
+    // debugger;
     if (!annotation?.delete) setCurrentAnnotation(annotation);
   };
   return (
@@ -494,18 +552,25 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
             annHistory.backward().then((res) => {
+              // if (res) {
+              //   const all = res.annos;
+              //   if (all.length) {
+              //     all[all.length - 1] = res.currAnno;
+              //     annotation.setAll(all);
+              //     setCurrentAnnotation(res.currAnno);
+              //     annotation.pushToBackend(data.curr?.dataId, all);
+              //   } else {
+              //     annotation.setAll(all);
+              //     setCurrentAnnotation(null);
+              //     annotation.pushToBackend(data.curr?.dataId, all);
+              //   }
+              // }
               if (res) {
-                const all = res.annos;
-                if (all.length) {
-                  all[all.length - 1] = res.currAnno;
-                  annotation.setAll(all);
-                  setCurrentAnnotation(res.currAnno);
-                  annotation.pushToBackend(data.curr?.dataId, all);
-                } else {
-                  annotation.setAll(all);
-                  setCurrentAnnotation(null);
-                  annotation.pushToBackend(data.curr?.dataId, all);
-                }
+                console.log('resss', res);
+
+                annotation.setAll(res.annos);
+                setCurrentAnnotation(res.currAnno);
+                annotation.pushToBackend(data.curr?.dataId, res.annos);
               }
             });
           }}
@@ -550,6 +615,7 @@ const Page: React.FC = () => {
         </PPToolBarButton>
       </PPToolBar>
       {/* 主内容区域 */}
+      {/* <div id="dr" className="mainStage"> */}
       <div id="dr" className="mainStage" onWheel={handleWheel}>
         <Spin tip="loading" spinning={!!loading.curr}>
           <Keyevent
@@ -574,6 +640,7 @@ const Page: React.FC = () => {
                 annotations={
                   isLabel == 'label' ? annotation.all : newAnnotation ? newAnnotation : []
                 }
+                detas={detas}
                 currentTool={tool.curr}
                 labels={label.all}
                 tool={tool}
@@ -797,7 +864,7 @@ const Page: React.FC = () => {
           size={radius}
           maxSize={50}
           minSize={5}
-          step={5}
+          step={1}
           onChange={(newSize) => {
             setRadius(newSize);
           }}
@@ -865,6 +932,7 @@ const Page: React.FC = () => {
             });
           }}
           onHideLabel={onHideLabel}
+          handleLabel={handleLabel}
         />
         {pathNames ? (
           <PPAnnotationList
@@ -914,6 +982,11 @@ const Page: React.FC = () => {
           />
         )}
       </div>
+      <LabelModel
+        visible={visible}
+        onCancel={() => setVisible(false)}
+        onSave={handleSave}
+      ></LabelModel>
     </PPLabelPageContainer>
   );
 };

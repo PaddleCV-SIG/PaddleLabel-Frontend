@@ -201,10 +201,18 @@ const PaddleAi: React.FC = () => {
   // model.setMlBackendUrl(modelUrl);
   //   }
   // }, [modelUrl, model.setMlBackendUrl]);
+  const numVersion = (version) => {
+    const [major, ...rest] = version.split('.').map(Number);
+    const num = rest.reduce((acc, val, index) => {
+      const factor = Math.pow(10, (index + 1) * 2);
+      return acc + val / factor;
+    }, major);
+    return num;
+  };
   const blurChange = async () => {
     const errversion = 1.01;
-    const version: string = (await getVersion()) as string;
-    const versions = Number(version);
+    const versionss: string = (await getVersion()) as string;
+    const versions = numVersion(versionss);
     if (versions && errversion > versions) {
       message.error('ml版本过低,请升级到升级');
     }

@@ -215,6 +215,7 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
 
           // }
           if (props.currentTool !== 'polygon') {
+            // debugger;
             if (props.ChanegeTool) {
               props.ChanegeTool('editor');
               if (isMin) {
@@ -234,8 +235,10 @@ function drawRectangle(props: PPRenderFuncProps): ReactElement {
         // onDragMove={onDragEvt}
         // onDragEnd={onDragEvt}
         onMouseOver={() => {
-          if (props.stageRef?.current && props.currentTool !== 'polygon')
+          if (props.stageRef?.current && props.currentTool !== 'polygon') {
+            // debugger;
             props.stageRef.current.container().style.cursor = 'cell';
+          }
         }}
         onMouseOut={() => {
           if (props.stageRef?.current) props.stageRef.current.container().style.cursor = 'default';
@@ -344,7 +347,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       p1.x = param.mouseX;
       p1.y = param.mouseY;
       // debugger;
-      if (!props.currentAnnotation) {
+      if (!param.currentAnnotation) {
         startNewRectangle(mouseX, mouseY, param.pathName);
       }
 

@@ -84,8 +84,9 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
           <Form.Item
             name={option.label}
             label={intlJsx(option.label)}
-            labelCol={{ span: 6 }}
-            wrapperCol={{ span: 16 }}
+            labelCol={{ span: 9 }}
+            wrapperCol={{ span: 15 }}
+            className="labelWrap"
             style={{ fontSize: '1.5rem' }}
             rules={[
               {

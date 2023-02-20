@@ -12,6 +12,7 @@ export type PPLabelListItemProps = {
   // Currently, only support modify visibility and color
   onLabelModify?: (label: Label) => void;
   onLabelDelete: (label: Label) => void;
+  handleLabel: () => void;
   onClick: (label: Label) => void;
   onHideLabel: (change: boolean, id: number) => void;
 };
@@ -67,6 +68,14 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
         {label.name}
         {colorPicker}
       </Space>
+      <div
+        onClick={() => {
+          props.handleLabel();
+          // props.onClick(label);
+        }}
+      >
+        编辑
+      </div>
       <a
         className={styles.delete}
         onClick={(e) => {

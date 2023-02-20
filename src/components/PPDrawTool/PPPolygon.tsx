@@ -33,11 +33,23 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
     }
   });
   console.log('points', points, points.length);
+  const path = props?.pathName;
+  const pathNames = !path.includes('/instance_segmentation');
 
+  console.log('pathNames', props?.pathName);
   const color = annotation.label.color;
   const rgb = hexToRgb(color);
   if (!rgb) return <></>;
-  const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
+  console.log(
+    'props.currentAnnotation?.frontendId',
+    props.currentAnnotation?.frontendId,
+    annotation.frontendId,
+  );
+
+  // const selected = props.currentAnnotation?.frontendId == annotation.frontendId;
+  const selected =
+    (pathNames && props.currentAnnotation?.labelId == annotation.labelId) ||
+    (!pathNames && props.currentAnnotation?.frontendId == annotation.frontendId);
   const transparency = selected ? 0.5 : 0.2;
   let x: number | undefined = undefined;
   const pointElements: ReactElement[] = [];

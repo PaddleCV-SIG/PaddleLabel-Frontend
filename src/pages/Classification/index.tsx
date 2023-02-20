@@ -16,7 +16,7 @@ import { IntlInitJsx } from '@/components/PPIntl/';
 import { IntlInit } from '@/services/utils';
 import useImage from 'use-image';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
-
+import Keyevent from 'react-keyevent';
 const port = window.location.port == '8000' ? '1234' : window.location.port;
 const baseUrl = `http://${window.location.hostname}:${port}/`;
 const Page: React.FC = () => {
@@ -27,6 +27,7 @@ const Page: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [otherSetting, setotherSetting] = useState();
   // const [flags, setflags] = useState<boolean>(false);
+  const [preTools, setPreTools] = useState<string>('');
   const { interactorData, setInteractorData } = useModel('InteractorData');
   const [threshold, setThreshold] = useState(0.9);
   const [hideLabel, setHideLabel] = useState<number[]>([]);
@@ -253,6 +254,26 @@ const Page: React.FC = () => {
       setHideLabel(ids);
     }
   };
+  const onG = () => {
+    if (!label.activeIds.size) {
+      message.info(intl('preNext'));
+    }
+    task.nextTask();
+    page?.current?.setDragEndPos({ x: 0, y: 0 });
+  };
+  const onF = () => {
+    if (!label.activeIds.size) {
+      message.info(intl('preNext'));
+    }
+    task.prevTask();
+    page?.current?.setDragEndPos({
+      x: 0,
+      y: 0,
+    });
+  };
+  const onCtrlS = () => {
+    message.success(tbIntl('autoSave'));
+  };
   return (
     <PPLabelPageContainer className={styles.classes}>
       <PPToolBar>
@@ -285,6 +306,7 @@ const Page: React.FC = () => {
           active={tool.curr == 'mover'}
           onClick={() => {
             tool.setCurr('mover');
+            setPreTools('mover');
           }}
         >
           {tbIntl('move')}
@@ -292,6 +314,7 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/clear_mark.png"
           onClick={() => {
+            tool.setCurr(preTools);
             annotation.clear();
           }}
         >
@@ -300,21 +323,31 @@ const Page: React.FC = () => {
       </PPToolBar>
       <div id="dr" className="mainStage">
         <Spin tip={tbIntl('loading', 'global')} spinning={loading.curr}>
-          <div className="draw">
-            <PPStage
-              ref={page}
-              scale={scale.curr}
-              currentTool={tool.curr}
-              scaleChange={scale.setScale}
-              taskIndex={task.currIdx}
-              hideLabel={hideLabel}
-              setCurrentAnnotation={() => {}}
-              onAnnotationModify={() => {}}
-              onAnnotationModifyComplete={() => {}}
-              imgSrc={data.imgSrc}
-              annotations={annotation.all}
-            />
-          </div>
+          <Keyevent
+            className="TopSide"
+            events={{
+              onG,
+              onF,
+              onCtrlS,
+            }}
+            needFocusing
+          >
+            <div className="draw">
+              <PPStage
+                ref={page}
+                scale={scale.curr}
+                currentTool={tool.curr}
+                scaleChange={scale.setScale}
+                taskIndex={task.currIdx}
+                hideLabel={hideLabel}
+                setCurrentAnnotation={() => {}}
+                onAnnotationModify={() => {}}
+                onAnnotationModifyComplete={() => {}}
+                imgSrc={data.imgSrc}
+                annotations={annotation.all}
+              />
+            </div>
+          </Keyevent>
           <div
             className="pblock"
             style={{

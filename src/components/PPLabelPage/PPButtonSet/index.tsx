@@ -55,7 +55,7 @@ const Component: React.FC<Props> = (props) => {
               onChange={(newSize) => {
                 props.onChange?.call(0, newSize);
               }}
-              step={0.01}
+              step={step}
               tooltipVisible={false}
             />
           </Col>

@@ -12,6 +12,7 @@ import PPStage from '@/components/PPLabelPage/PPStage';
 import useImage from 'use-image';
 import { ectInteractorToAnnotation } from '@/components/PPDrawTool/PPInteractor';
 // import type { Label } from '@/models/';
+import LabelModel from '@/components/LabelModel';
 import PPAnnotationList from '@/components/PPLabelPage/PPAnnotationList';
 import { PageInit, ModelUtils } from '@/services/utils';
 import type { Annotation } from '@/models/Annotation';
@@ -20,6 +21,7 @@ import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { IntlInitJsx } from '@/components/PPIntl';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import Keyevent from 'react-keyevent';
+import { labelApi } from '@/services/utils';
 const port = window.location.port == '8000' ? '1234' : window.location.port;
 const baseUrl = `http://${window.location.hostname}:${port}/`;
 const Page = () => {
@@ -36,7 +38,8 @@ const Page = () => {
   const [preTools, setPreTools] = useState<string>('');
   const [hideLabel, setHideLabel] = useState<number[]>([]);
   // const [onSelect, setOnSelect] = useState<Annotation>();
-
+  const [visible, setVisible] = useState(false);
+  const [formData, setFormData] = useState({});
   const model = ModelUtils(useState, baseUrl);
   const page = useRef<pageRef>(null);
   const tbIntl = IntlInitJsx('pages.toolBar');
@@ -433,6 +436,31 @@ const Page = () => {
   //   scale.change(curr);
   //   scale.setScales
   // }
+  const handleSave = (datas) => {
+    setFormData(datas);
+    const newLabel = {
+      ...label.curr,
+      color: datas.color,
+      name: datas.name,
+    };
+    console.log('labelApi.update', labelApi.update);
+    if (label.curr?.labelId && newLabel && project.curr.projectId) {
+      labelApi.update(label.curr?.labelId, newLabel).then(
+        (res: any) => {
+          // selet
+          label.getAll(project.curr.projectId);
+          annotation.getAll(data.curr?.dataId);
+          setVisible(false);
+        },
+        (err) => {
+          message.error(err);
+        },
+      );
+    }
+  };
+  const handleLabel = () => {
+    setVisible(true);
+  };
   const onG = () => {
     if (!task.nextTask()) {
       return;
@@ -814,6 +842,7 @@ const Page = () => {
             });
           }}
           onHideLabel={onHideLabel}
+          handleLabel={handleLabel}
         />
         <PPAnnotationList
           disabled={false}
@@ -837,6 +866,11 @@ const Page = () => {
           }}
         />
       </div>
+      <LabelModel
+        visible={visible}
+        onCancel={() => setVisible(false)}
+        onSave={handleSave}
+      ></LabelModel>
     </PPLabelPageContainer>
   );
 };

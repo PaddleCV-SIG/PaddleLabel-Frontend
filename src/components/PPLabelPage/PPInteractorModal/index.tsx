@@ -1,8 +1,7 @@
 import { Form, Input, message, Modal, Space } from 'antd';
 import { Button } from 'antd';
 import React, { useEffect } from 'react';
-import { IntlInit } from '@/services/utils';
-
+import { IntlInit, getVersion } from '@/services/utils';
 export type PPInteractorModalProps = {
   visible?: boolean;
   onCancel?: () => void;
@@ -76,6 +75,28 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
         },
       );
   }
+  const numVersion = (version) => {
+    const [major, ...rest] = version.split('.').map(Number);
+    const num = rest.reduce((acc, val, index) => {
+      const factor = Math.pow(10, (index + 1) * 2);
+      return acc + val / factor;
+    }, major);
+    return num;
+  };
+  const handleUrlChange = async (value: string) => {
+    const errversion = '1.0.0';
+    const versionss: string = (await getVersion()) as string;
+    const versions = numVersion(versionss);
+    if (versions && errversion > versions) {
+      message.error('eiseg版本过低,请升级到升级');
+    }
+    form.setFields([
+      {
+        name: 'mlBackendUrl',
+        value: value,
+      },
+    ]);
+  };
 
   return (
     <Modal
@@ -108,7 +129,13 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
           initialValue={DEFAULT_ML_URL}
           style={{ fontSize: '1.5rem' }}
         >
-          <Input autoComplete="off" placeholder={DEFAULT_ML_URL} />
+          <Input
+            onBlur={(e) => {
+              handleUrlChange(e.target.value);
+            }}
+            autoComplete="off"
+            placeholder={DEFAULT_ML_URL}
+          />
         </Form.Item>
         <Form.Item
           name={'modelFilePath'}

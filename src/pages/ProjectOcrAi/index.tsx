@@ -3,6 +3,7 @@ import { Form, Input, Button, Select } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
+import { message } from 'antd';
 import { ProjectUtils, ModelUtils, IntlInit, getVersion } from '@/services/utils';
 import serviceUtils from '@/services/serviceUtils';
 import styles from './index.less';
@@ -130,8 +131,21 @@ const PaddleAi: React.FC = () => {
         alert(errorInfo);
       });
   };
+  const numVersion = (version) => {
+    const [major, ...rest] = version.split('.').map(Number);
+    const num = rest.reduce((acc, val, index) => {
+      const factor = Math.pow(10, (index + 1) * 2);
+      return acc + val / factor;
+    }, major);
+    return num;
+  };
   const handleUrlChange = async (value: string) => {
-    if (!(await getVersion())) return;
+    const errversion = 1.01;
+    const versionss: string = (await getVersion()) as string;
+    const versions = numVersion(versionss);
+    if (versions && errversion > versions) {
+      message.error('ml版本过低,请升级到升级');
+    }
     form.setFields([
       {
         name: 'mlBackendUrl',

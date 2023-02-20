@@ -31,7 +31,7 @@ const projectApi = new ProjectApi(config);
 const taskApi = new TaskApi(config);
 const dataApi = new DataApi(config);
 const annotationApi = new AnnotationApi(config);
-const labelApi = new LabelApi(config);
+export const labelApi = new LabelApi(config);
 export const manageApi = new ManageApi(config);
 export const sampleApi = new SampleApi(config);
 
@@ -652,14 +652,16 @@ export function AnnotationUtils(
     else await update(annotation);
   }
 
-  async function pushToBackend(dataId?: number, anns?: Annotation[]) {
+  async function pushToBackend(dataId?: number, anns?: Annotation[], flag?: boolean) {
     if (dataId == undefined || dataId == null) return;
     const newAll = anns ? anns : all;
     try {
       const res = await dataApi.setAnnotations(dataId + '', newAll);
 
       setAllRaw(res);
-      message.success(tbIntl('saveSuccess'));
+      if (!flag) {
+        message.success(tbIntl('saveSuccess'));
+      }
       return res;
     } catch (err) {
       return serviceUtils.parseError(err, message);

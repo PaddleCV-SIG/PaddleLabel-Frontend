@@ -11,11 +11,14 @@ import { IntlInitJsx } from '@/components/PPIntl';
 
 const SampleProject: React.FC = () => {
   const intlJsx = IntlInitJsx('pages.welcome');
+  const reset = () => {
+    sampleApi.resetAll();
+  };
   return (
     <PPContainer>
       <Row style={{ marginTop: 20 }}>
         <Col span={24}>
-          <PPBlock style={{ height: 500 }} title={intlJsx('sampleProject')}>
+          <PPBlock reset={reset} style={{ height: 500 }} title={intlJsx('sampleProject')}>
             <Row>
               {Object.entries(createInfo).map((entry) => {
                 const key = entry[0];

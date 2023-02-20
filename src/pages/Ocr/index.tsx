@@ -22,6 +22,7 @@ import PPPolygon from '@/components/PPDrawTool/PPPolygon';
 import Keyevent from 'react-keyevent';
 import PPProgress from '@/components/PPLabelPage/PPProgress';
 import { IntlInitJsx } from '@/components/PPIntl';
+// import LabelModel from '@/components/LabelModel';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 const port = window.location.port == '8000' ? '1234' : window.location.port;
 const baseUrl = `http://${window.location.hostname}:${port}/`;
@@ -43,6 +44,9 @@ const Page = () => {
   const [preTools, setPreTools] = useState<string>('mover');
   // const [onSelect, setOnSelect] = useState<Annotation>();
   const [transparency, setTransparency] = useState(60);
+  const [detas, setDeta] = useState(0);
+  // const [visible, setVisible] = useState(false);
+  // const [formData, setFormData] = useState({});
   // const [drawTool, setDrawTool] = useState<DrawToolType>();
   const model = ModelUtils(useState, baseUrl);
   const page = useRef<pageRef>(null);
@@ -155,7 +159,7 @@ const Page = () => {
     setisClick(false);
   };
   const onFinishEdit = async () => {
-    annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+    // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     if (!annotation.curr) return;
     if (!annotation.curr.result) return;
     if (annotation.curr.type === 'ocr_polygon') {
@@ -426,6 +430,13 @@ const Page = () => {
     annotation.setAll(newAnnos);
     annotation.pushToBackend(data.curr?.dataId, newAnnos);
   };
+  // const handleSave = (data) => {
+  //   setFormData(data);
+  //   setVisible(false);
+  // };
+  // const handleLabel = () => {
+  //   setVisible(true);
+  // };
   const onG = () => {
     if (!task.nextTask()) {
       return;
@@ -463,11 +474,13 @@ const Page = () => {
   const onB = () => {
     annHistory.backward().then((res) => {
       if (res) {
+        console.log('resss', res);
         annotation.setAll(res.annos);
         setCurrentAnnotation(res.currAnno);
         annotation.pushToBackend(data.curr?.dataId, res.annos);
       }
     });
+    // backwardHistory;
   };
   const onCtrlS = () => {
     annotation.pushToBackend(data.curr?.dataId);
@@ -479,9 +492,11 @@ const Page = () => {
     const deta = event.deltaY;
     if (deta > 0) {
       scale.change(-0.1);
+      setDeta(-0.1);
     }
     if (deta < 0) {
       scale.change(0.1);
+      setDeta(0.1);
     }
   };
   return (
@@ -642,6 +657,7 @@ const Page = () => {
                   const newAnnos = annotation.all.concat([anno]);
                   annotation.setAll(newAnnos);
                 }}
+                detas={detas}
                 preTools={preTools}
                 changePreTools={(tools: string) => {
                   setPreTools(tools);
@@ -873,6 +889,11 @@ const Page = () => {
           </div> */}
         </div>
       </div>
+      {/* <LabelModel
+        visible={visible}
+        onCancel={() => setVisible(false)}
+        onSave={handleSave}
+      ></LabelModel> */}
     </PPLabelPageContainer>
   );
 };

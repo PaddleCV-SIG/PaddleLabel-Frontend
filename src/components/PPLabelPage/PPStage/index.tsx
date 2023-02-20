@@ -125,6 +125,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     drawToolTemp = props.drawTool?.rubber;
   } else if (props.currentTool === 'interactor') drawToolTemp = props.drawTool?.interactor;
   const drawTool = drawToolTemp;
+  console.log('drawTool', drawTool);
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
@@ -186,22 +187,28 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   }
   const renderShape = () => {
     const newShapes: React.ReactElement[] = [];
-    props.annotations.forEach((annotation, index) => {
+    if (props.currentAnnotation) {
+    }
+    const annos = props.annotations;
+    const index = annos.findIndex(
+      (item) => item.annotationId === props.currentAnnotation?.annotationId,
+    ); // 找到数组中 id 相等的对象的下标
+    if (index !== -1) {
+      // 如果找到了
+      annos.push(annos.splice(index, 1)[0]); // 将找到的对象从原来的位置转移到数组最后一位
+    }
+    annos.forEach((annotation) => {
       const flagss = props.hideLabel.includes(annotation.labelId);
+      console.log('props.annotations', annotation, flags, props.hideLabel);
 
       if (annotation && !flagss) {
         param.annotation = annotation;
         let shape;
         if (annotation.type === 'polygon') {
-          // const flag = index === length - 1 ? true : false;
           const flag = flags || props.currentAnnotation?.result !== annotation.result;
           shape = props.drawTool?.polygon.drawAnnotation(param, flag);
         } else if (annotation.type === 'rectangle') {
-          // debugger;
           shape = props.drawTool?.rectangle.drawAnnotation(param);
-          // debugger;
-          // shape.scaleX(0.1);
-          // shape.scaleY(0.1);
         } else if (annotation.type === 'ocr_rectangle') {
           shape = props.drawTool?.rectangle.drawAnnotation(param);
         } else if (annotation.type === 'ocr_polygon') {
@@ -216,22 +223,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           shape = props.drawTool?.polygon.drawAnnotation(param, flag, address);
         }
         if (annotation.type === 'brush') {
-          // const flag = index === length - 1 ? true : false;
-          shape = props.drawTool?.brush?.drawAnnotation(
-            param,
-            // flag,
-            // -imageWidth / 2,
-            // -imageHeight / 2,
-          );
+          shape = props.drawTool?.brush?.drawAnnotation(param);
           layerRef.current?.batchDraw();
         } else if (annotation.type === 'rubber') {
-          // const flag = index === length - 1 ? true : false;
-          shape = props.drawTool?.rubber?.drawAnnotation(
-            param,
-            // flag,
-            // -imageWidth / 2,
-            // -imageHeight / 2,
-          );
+          shape = props.drawTool?.rubber?.drawAnnotation(param);
           layerRef.current?.batchDraw();
         }
         if (shape && shape?.key !== null) {
@@ -345,7 +340,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     props.drawTool?.interactor?.drawAnnotation(param);
     layerRef.current?.batchDraw();
-  }, [interactorData, props.threshold]);
+  }, [interactorData, props.threshold, radius]);
   const renderReact = (endPos: any) => {
     const width = Math.abs(startPos.x - endPos.x);
     const height = Math.abs(startPos.y - endPos.y);
@@ -407,6 +402,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   };
   // 多边形画点
   const makearc = (ctx, x, y, r, s, e, color) => {
+    console.log('makearc函数执行了', ctx, x, y, r, s, e, color);
+
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); //清空画布
     ctx.beginPath();
     ctx.fillStyle = color;
@@ -432,6 +429,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   };
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // debugger;
+    console.log('onMouseDowns', e, props?.tool?.curr);
 
     if (e.evt.button === 1) {
       if (props?.tool?.curr === 'polygon') {
@@ -467,8 +465,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
               return item;
             }
           });
-          // 传入后端
-          props.annotationDelete(newAnnotaions);
+          props.annotationDelete(newAnnotaions, true);
         } else {
           if (props.annotationDelete) {
             props.annotationDelete(props.annotations);
@@ -496,6 +493,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           const pointArrs = [];
           for (let index = 0; index < finly.length; index += 2) {
             pointArrs.push({
+              // x: finly[index] - 0 + imageWidth / 2,
+              // y: finly[index + 1] - 0 + imageHeight / 2,
               x: finly[index],
               y: finly[index + 1],
             });
@@ -530,6 +529,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       }
     } else {
       if (props.currentTool === 'editor') {
+        console.log('props.currentTool', props.currentTool === 'editor');
+
         let resulsts: any = [];
         if (history?.location?.pathname === '/optical_character_recognition') {
           if (props.currentAnnotation) {
@@ -595,6 +596,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
     const ctx = canvasRef.current?.getContext('2d');
     const ctx3 = canvasRef3.current?.getContext('2d');
+    console.log('props.currentTool', props?.currentTool, isClick);
     if (props?.currentTool === 'rectangle' || props?.currentTool === 'editor') {
       if (history?.location?.pathname === '/optical_character_recognition') {
         if (
@@ -629,6 +631,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         setRefoce(newrefoce);
       }
     } else if (props?.currentTool === 'polygon' && ctx3 && !flags) {
+      console.log('props.currentTool3', props?.currentTool, pointArr);
+
       ctx3.strokeStyle = props.currentLabel?.color; //线条颜色
       ctx3.lineWidth = 4; //线条粗细
       // ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
@@ -707,9 +711,11 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       const newanno = props.currentAnnotation;
       newanno.result = results;
       props.onAnnotationModifyUP(newanno);
+
       props.setCurrentAnnotation(undefined);
       setpointArr([]);
       if (!flags) {
+        // debugger;
         setflags(true);
       }
       setPointIndex(null);
@@ -752,6 +758,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   // }
   // Re-draw layer
   // 自动重绘制的次数
+  console.log('annos all', props.annotations);
 
   const draggable = props.currentTool === 'mover';
   useImperativeHandle(ref, () => ({
@@ -808,14 +815,14 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           if (props.currentTool != 'mover') return;
         }}
         onDragEnd={(evt) => {
-          setDragEndPos({
-            x: evt.target.x(),
-            y: evt.target.y(),
-          });
           if (props.currentTool != 'mover') {
             // onDragEnd(evt);
             return;
           }
+          setDragEndPos({
+            x: evt.target.x(),
+            y: evt.target.y(),
+          });
         }}
         x={dragEndPos.x}
         y={dragEndPos.y}
