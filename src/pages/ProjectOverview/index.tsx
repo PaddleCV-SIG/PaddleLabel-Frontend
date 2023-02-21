@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Image, message } from 'antd';
+import { Table, Button, Image, message, Popover } from 'antd';
 import { history } from 'umi';
 import PPContainer from '@/components/PPContainer';
 import PPBlock from '@/components/PPBlock';
@@ -32,6 +32,33 @@ const TaskList: React.FC = () => {
     localStorage.setItem('orderBy', sorter.field + ' ' + sorter.order);
     // localStorage.setItem('currentTasks', JSON.stringify(extra.currentDataSource));
   };
+  const renderContent = (anns: any) => {
+    const labels = new Map();
+    anns.forEach((item: any) => {
+      if (labels.has(item.label.name)) {
+        const id = labels.get(item.label.name) + 1;
+        labels.set(item.label.name, id);
+      } else {
+        labels.set(item.label.name, 1);
+      }
+    });
+    const arrs = [...labels];
+    console.log('arrs', arrs);
+    const projects = project.curr;
+    console.log('projects', projects);
+    const flag = projects.taskCategory?.name === 'classification';
+    return (
+      <div>
+        {arrs.length &&
+          arrs.map((arry: any) => {
+            const key = arry[0];
+            const name = arry[1];
+            const strings = !flag ? `${key}:${name}` : key;
+            return <p>{strings}</p>;
+          })}
+      </div>
+    );
+  };
   const columns: ColumnsType<Task> = [
     {
       title: intl('id'),
@@ -43,12 +70,21 @@ const TaskList: React.FC = () => {
       sorter: (a, b) => a.taskId - b.taskId,
     },
     {
-      title: intl('annotationCount'),
+      title: () => {
+        return intl('annotationCount');
+      },
       dataIndex: 'annotations',
       key: 'taskId',
       width: '25%',
       align: 'center',
-      render: (anns: list) => <>{anns.length}</>,
+      render: (anns: list) => {
+        console.log('anns', anns);
+        return (
+          <Popover content={anns.length && renderContent(anns)}>
+            <div>{anns.length}</div>
+          </Popover>
+        );
+      },
       sorter: (a, b) => a.annotations.length - b.annotations.length,
     },
     {

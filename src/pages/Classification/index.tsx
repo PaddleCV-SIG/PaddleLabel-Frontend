@@ -345,6 +345,11 @@ const Page: React.FC = () => {
                 onAnnotationModifyComplete={() => {}}
                 imgSrc={data.imgSrc}
                 annotations={annotation.all}
+                tool={tool}
+                preTools={preTools}
+                changePreTools={(tools: string) => {
+                  setPreTools(tools);
+                }}
               />
             </div>
           </Keyevent>

@@ -68,14 +68,16 @@ const Component: React.FC<PPLabelListItemProps> = (props) => {
         {label.name}
         {colorPicker}
       </Space>
-      <div
-        onClick={() => {
-          props.handleLabel();
-          // props.onClick(label);
-        }}
-      >
-        编辑
-      </div>
+      {props.handleLabel && (
+        <div
+          onClick={() => {
+            props.handleLabel();
+            // props.onClick(label);
+          }}
+        >
+          编辑
+        </div>
+      )}
       <a
         className={styles.delete}
         onClick={(e) => {

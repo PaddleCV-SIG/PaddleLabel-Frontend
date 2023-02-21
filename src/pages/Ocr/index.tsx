@@ -657,6 +657,9 @@ const Page = () => {
                   const newAnnos = annotation.all.concat([anno]);
                   annotation.setAll(newAnnos);
                 }}
+                onAnnotationChange={(annos) => {
+                  annotation.setAll(annos);
+                }}
                 detas={detas}
                 preTools={preTools}
                 changePreTools={(tools: string) => {

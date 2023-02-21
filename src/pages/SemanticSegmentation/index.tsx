@@ -369,18 +369,11 @@ const Page: React.FC = () => {
   const onB = () => {
     annHistory.backward().then((res) => {
       if (res) {
-        // annotation.setAll(res.annos);
-        // setCurrentAnnotation(res.currAnno);
-        // annotation.pushToBackend(data.curr?.dataId, res.annos);
         const all = res.annos;
-        if (all.length) {
+        if (all.length && all[all.length - 1] && res.currAnno) {
           all[all.length - 1] = res.currAnno;
           annotation.setAll(all);
           setCurrentAnnotation(res.currAnno);
-          annotation.pushToBackend(data.curr?.dataId, all);
-        } else {
-          annotation.setAll(all);
-          setCurrentAnnotation(null);
           annotation.pushToBackend(data.curr?.dataId, all);
         }
       }
@@ -388,6 +381,11 @@ const Page: React.FC = () => {
   };
   const onM = () => {
     savefinlyList();
+  };
+  const onN = () => {
+    if (tool?.curr === 'interactor') {
+      setMousepoint(!mousepoint);
+    }
   };
   const onCtrlS = () => {
     annotation.pushToBackend(data.curr?.dataId);
@@ -552,25 +550,14 @@ const Page: React.FC = () => {
           imgSrc="./pics/buttons/prev.png"
           onClick={() => {
             annHistory.backward().then((res) => {
-              // if (res) {
-              //   const all = res.annos;
-              //   if (all.length) {
-              //     all[all.length - 1] = res.currAnno;
-              //     annotation.setAll(all);
-              //     setCurrentAnnotation(res.currAnno);
-              //     annotation.pushToBackend(data.curr?.dataId, all);
-              //   } else {
-              //     annotation.setAll(all);
-              //     setCurrentAnnotation(null);
-              //     annotation.pushToBackend(data.curr?.dataId, all);
-              //   }
-              // }
               if (res) {
-                console.log('resss', res);
-
-                annotation.setAll(res.annos);
-                setCurrentAnnotation(res.currAnno);
-                annotation.pushToBackend(data.curr?.dataId, res.annos);
+                const all = res.annos;
+                if (all.length && all[all.length - 1] && res.currAnno) {
+                  all[all.length - 1] = res.currAnno;
+                  annotation.setAll(all);
+                  setCurrentAnnotation(res.currAnno);
+                  annotation.pushToBackend(data.curr?.dataId, all);
+                }
               }
             });
           }}
@@ -585,8 +572,18 @@ const Page: React.FC = () => {
           onClick={() => {
             annHistory.forward().then((res) => {
               if (res) {
-                annotation.pushToBackend(data.curr?.dataId, res.annos);
-                setCurrentAnnotation(res.currAnno);
+                console.log('ressss', res);
+                // if (res.currAnno) {
+                //   annotation.pushToBackend(data.curr?.dataId, res.annos);
+                //   setCurrentAnnotation(res.currAnno);
+                // }
+                const all = res.annos;
+                if (all.length && all[all.length - 1] && res.currAnno) {
+                  all[all.length - 1] = res.currAnno;
+                  // annotation.setAll(all);
+                  annotation.pushToBackend(data.curr?.dataId, all);
+                  setCurrentAnnotation(res.currAnno);
+                }
               }
             });
           }}
@@ -944,8 +941,9 @@ const Page: React.FC = () => {
             }}
             onAnnotationModify={() => {}}
             onAnnotationDelete={async (anno: Annotation) => {
+              const curr = annotation.all.find((x) => x.frontendId === anno.frontendId);
               const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
-              annHistory.record({ annos: newAll });
+              annHistory.record({ annos: newAll, currAnno: curr });
               annotation.setAll(newAll);
               setCurrentAnnotation(undefined);
               await annotation.pushToBackend(data.curr?.dataId, newAll);
@@ -969,9 +967,12 @@ const Page: React.FC = () => {
             }}
             onAnnotationModify={() => {}}
             onAnnotationDelete={async (anno: Annotation) => {
+              const curr = annotation.all.find((x) => x.frontendId === anno.frontendId);
               const newAll = annotation.all.filter((x) => x.frontendId != anno.frontendId);
               const newfinlyList = finlyList.filter((x) => x.frontendId != anno.frontendId);
-              annHistory.record({ annos: newAll });
+              // annHistory.record({ annos: newAll });
+
+              annHistory.record({ annos: newAll, currAnno: curr });
               annotation.setAll(newAll);
               setfinlyList(newfinlyList);
               setCurrentAnnotation(undefined);

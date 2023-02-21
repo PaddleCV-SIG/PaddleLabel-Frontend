@@ -666,6 +666,9 @@ const Page = () => {
                   const newAnnos = annotation.all.concat([anno]);
                   annotation.setAll(newAnnos);
                 }}
+                onAnnotationChange={(annos) => {
+                  annotation.setAll(annos);
+                }}
                 drawTool={drawTool}
                 hideLabel={hideLabel}
                 threshold={0}
@@ -673,6 +676,11 @@ const Page = () => {
                 onAnnotationModifyUP={onAnnotationModifyUP}
                 ChanegeTool={(tools: any) => {
                   tool.setCurr(tools);
+                }}
+                tool={tool}
+                preTools={preTools}
+                changePreTools={(tools: string) => {
+                  setPreTools(tools);
                 }}
               />
             </div>

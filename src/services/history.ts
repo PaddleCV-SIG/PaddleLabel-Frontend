@@ -41,7 +41,7 @@ export function HistoryUtils(useState: UseStateType, rpcApi) {
     const diff: rdiffResult[] = getDiff(currState, prevState);
     if (diff.length == 0) return;
     setPrev(currState);
-    debugger;
+    // debugger;
     console.log('diff', diff);
     const historyStr = localStorage.getItem('history');
     const history: HistoryType = historyStr ? JSON.parse(historyStr) : { undos: [], redos: [] };
