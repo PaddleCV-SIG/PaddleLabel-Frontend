@@ -152,6 +152,7 @@ export default {
   'pages.projectOverview.label': '去标注',
   'pages.projectOverview.projectSettings': '项目设置',
   'pages.projectOverview.annotationCount': '标注数量',
+  'pages.projectOverview.annotationLabel': '标注类别',
   'pages.projectOverview.split': '子集',
   'pages.projectOverview.image': '图像',
   'pages.projectOverview.tasks': '任务',

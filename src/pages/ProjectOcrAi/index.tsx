@@ -68,7 +68,14 @@ const PaddleAi: React.FC = () => {
     'devanagari',
   ]);
   const project = ProjectUtils(useState);
-
+  const numVersion = (version) => {
+    const [major, ...rest] = version.split('.').map(Number);
+    const num = rest.reduce((acc, val, index) => {
+      const factor = Math.pow(10, (index + 1) * 2);
+      return acc + val / factor;
+    }, major);
+    return num;
+  };
   const model = ModelUtils(useState, modelUrl);
   const projectId = serviceUtils.getQueryVariable('projectId');
 
@@ -91,6 +98,15 @@ const PaddleAi: React.FC = () => {
       project.setAllPredicted(false, projectId);
     }
   };
+  const blurChange = async () => {
+    const errversion = 1.01;
+    const versionss: string = (await getVersion()) as string;
+    const versions = numVersion(versionss);
+    if (versions && errversion > versions) {
+      message.error('ml版本过低,请升级到升级');
+    }
+  };
+
   useEffect(() => {
     form.setFields([
       {
@@ -98,6 +114,9 @@ const PaddleAi: React.FC = () => {
         value: DEFAULT_ML_URL,
       },
     ]);
+  }, []);
+  useEffect(() => {
+    blurChange();
   }, []);
   useEffect(() => {
     if (projectId) {
@@ -130,14 +149,6 @@ const PaddleAi: React.FC = () => {
       .catch((errorInfo) => {
         alert(errorInfo);
       });
-  };
-  const numVersion = (version) => {
-    const [major, ...rest] = version.split('.').map(Number);
-    const num = rest.reduce((acc, val, index) => {
-      const factor = Math.pow(10, (index + 1) * 2);
-      return acc + val / factor;
-    }, major);
-    return num;
   };
   const handleUrlChange = async (value: string) => {
     const errversion = 1.01;

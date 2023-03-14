@@ -202,6 +202,7 @@ const Page: React.FC = () => {
     setCurrentAnnotation(anno);
     annotation.setAll(newAnnos);
     annotation.update(anno);
+    annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     message.success(tbIntl('saveSuccess'));
   };
 
@@ -273,8 +274,9 @@ const Page: React.FC = () => {
   };
   useEffect(() => {
     if (interactorData.active) return;
+    console.log('isClick', isClick);
+
     if (!isClick) {
-      // debugger;
       annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     }
     // debugger;
@@ -551,11 +553,16 @@ const Page: React.FC = () => {
           onClick={() => {
             annHistory.backward().then((res) => {
               if (res) {
+                console.log(' prev ressss', res);
                 const all = res.annos;
                 if (all.length && all[all.length - 1] && res.currAnno) {
                   all[all.length - 1] = res.currAnno;
                   annotation.setAll(all);
                   setCurrentAnnotation(res.currAnno);
+                  annotation.pushToBackend(data.curr?.dataId, all);
+                } else if (all && !all.length && !res.currAnno) {
+                  annotation.setAll(all);
+                  setCurrentAnnotation(undefined);
                   annotation.pushToBackend(data.curr?.dataId, all);
                 }
               }
@@ -596,15 +603,13 @@ const Page: React.FC = () => {
         <PPToolBarButton
           imgSrc="./pics/buttons/clear_mark.png"
           onClick={() => {
+            setSelectFinly(null);
+            setfinlyList([]);
+            tool.setCurr(preTools);
+            label.setCurr(undefined);
             annotation.setCurr(undefined);
             annotation.clear();
             annHistory.record({ annos: [] });
-            setSelectFinly(null);
-            setfinlyList([]);
-            // tool.setCurr(undefined);
-            // setPreTools('');
-            tool.setCurr(preTools);
-            label.setCurr(undefined);
           }}
           disabled={interactorData.active}
         >
@@ -640,6 +645,7 @@ const Page: React.FC = () => {
                 detas={detas}
                 currentTool={tool.curr}
                 labels={label.all}
+                labelCurr={label.curr}
                 tool={tool}
                 preTools={preTools}
                 changePreTools={(tool: string) => {
@@ -661,6 +667,7 @@ const Page: React.FC = () => {
                 onMousepoint2={() => {
                   setMousepoint2(!mousepoint2);
                 }}
+                onStartEdit={onStartEdit}
                 annotationDelete={annotationDelete}
                 frontendIdOps={{ frontendId: frontendId, setFrontendId: setFrontendId }}
                 imgSrc={data.imgSrc}

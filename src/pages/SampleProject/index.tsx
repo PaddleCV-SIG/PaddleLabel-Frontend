@@ -13,6 +13,7 @@ const SampleProject: React.FC = () => {
   const intlJsx = IntlInitJsx('pages.welcome');
   const reset = () => {
     sampleApi.resetAll();
+    message.success('已经重置盘上所有样例项目文件，并删除了已创建的样例项目');
   };
   return (
     <PPContainer>

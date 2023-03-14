@@ -22,6 +22,7 @@ import { IntlInitJsx } from '@/components/PPIntl';
 import PPSetButton from '@/components/PPLabelPage/PPButtonSet';
 import Keyevent from 'react-keyevent';
 import { labelApi } from '@/services/utils';
+// import { label } from '../../../cypress/support/label';
 const port = window.location.port == '8000' ? '1234' : window.location.port;
 const baseUrl = `http://${window.location.hostname}:${port}/`;
 const Page = () => {
@@ -83,8 +84,10 @@ const Page = () => {
 
   const onAnnotationModify = (anno: Annotation) => {
     const newAnnos = [];
+    let flag = false;
     for (const item of annotation.all) {
       if (item.frontendId == anno.frontendId) {
+        flag = true;
         const result = anno?.result?.split(',').map((items: string) => {
           return Number(items);
         }) as number[];
@@ -97,9 +100,17 @@ const Page = () => {
         newAnnos.push(item);
       }
     }
+    if (!flag) {
+      newAnnos.push(anno);
+      annotation.setAll(newAnnos);
+      annotation.pushToBackend(data.curr?.dataId, newAnnos);
+      tool.setCurr('rectangle');
+      setPreTools('rectangle');
+    } else {
+      annotation.setAll(newAnnos);
+      annotation.update(anno);
+    }
     // annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
-    annotation.setAll(newAnnos);
-    annotation.update(anno);
   };
   const onAnnotationModifyUP = (anno: Annotation) => {
     const newAnnos = [];
@@ -139,11 +150,11 @@ const Page = () => {
     if (annotation?.curr?.annotationId == undefined) {
       annotation.create(annotation?.curr);
       annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
+      message.success(tbIntl('saveSuccess'));
     } else {
-      annotation.update(annotation?.curr);
+      // annotation.update(annotation?.curr);
       annHistory.record({ annos: annotation.all, currAnno: annotation.curr });
     }
-    message.success(tbIntl('saveSuccess'));
     if (tool.curr == 'rectangle') setCurrentAnnotation(undefined);
   };
 
@@ -531,6 +542,8 @@ const Page = () => {
       setHideLabel(ids);
     }
   };
+  console.log('label.activeIds', label.activeIds);
+
   return (
     <PPLabelPageContainer className={styles.det}>
       <PPToolBar>
@@ -625,9 +638,6 @@ const Page = () => {
           onClick={() => {
             annotation.clear();
             annHistory.record({ annos: [] });
-            tool.setCurr(preTools);
-            // setPreTools('');
-            label.setCurr(undefined);
           }}
         >
           {tbIntl('clearMark')}

@@ -69,11 +69,15 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
           // debugger;
           if (props.currentTool !== 'rectangle') {
             if (props.ChanegeTool) {
-              // debugger;
               props.ChanegeTool('polygon');
             }
             props.onSelect(annotation);
+
             props.onPointIndex(index);
+            // if (props.onStartEdit) {
+            //   // debugger;
+            //   props.onStartEdit;
+            // }
           }
           // if (props.ChanegeTool) {
           //   props.ChanegeTool('editor');
@@ -124,6 +128,7 @@ function drawPolygon(props: PPRenderFuncProps, flag: boolean, address?: string):
 
           points[index - 1] = newPositionX;
           points[index] = newPositionY;
+          // debugger;
           if (props.pathName === '/optical_character_recognition') {
             const strings = address ? `||${address}|0|` : '||待识别|0|';
             const newdata = points.join('|') + strings;
@@ -224,7 +229,6 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
     if (history?.location?.pathname === '/instance_segmentation') {
       if (props.finlyList && props.finlyList?.length > 0 && props.selectFinly) {
         // 有列表长度且有选中
-
         frontendId = props.selectFinly.frontendId;
       } else if (props.finlyList && props.finlyList?.length > 0 && !props.selectFinly) {
         // 有列表长度，无选中
@@ -288,19 +292,24 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
 
   const OnMouseDown = (param: EvtProps) => {
     // && props.currentTool != 'editor'
-    // debugger;
     if (props.currentTool != 'polygon') return;
     // const mouseX = param.mouseX + param.offsetX;
     // const mouseY = param.mouseY + param.offsetY;
     const mouseX = param.mouseX;
     const mouseY = param.mouseY;
     // if (!props.currentAnnotation && param.flags) {
+    // debugger;
     if (param.flags) {
       startNewPolygon(mouseX, mouseY, props.selectFinly, param.pathName, props.annotations);
     } else {
       addDotToPolygon(mouseX, mouseY, param.pathName);
     }
-    if (props.onMouseDown) props.onMouseDown();
+    // debugger;
+    if (props.onMouseDown) {
+      console.log('props.onMouseDown', 'props.onMouseDown');
+
+      props.onMouseDown();
+    }
 
     // isMove = false;
   };
@@ -354,7 +363,10 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       // debugger;
       return;
     }
-    if (props.onMouseUp) props.onMouseUp();
+    if (props.onMouseUp) {
+      console.log('props.onMouseUp()', 'props.onMouseUp()');
+      props.onMouseUp();
+    }
   };
   return {
     onMouseDown: OnMouseDown,

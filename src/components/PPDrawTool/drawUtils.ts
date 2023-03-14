@@ -10,6 +10,7 @@ import { InteractorData } from '@/models/InteractorData';
 export type PPRenderFuncProps = {
   annotation: Annotation;
   onDrag: (anntation: Annotation) => void;
+  onStartEdit: () => void;
   onDragEnd: () => void;
   scale: number;
   currentTool: ToolType;

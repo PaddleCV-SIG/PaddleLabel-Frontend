@@ -192,6 +192,7 @@ export function ToolUtils(
   };
 }
 export function projectHistory(Id: number, taskId: number) {
+  console.log('Ids', Id, taskId);
   const str = localStorage.getItem('projectHistory');
   if (str) {
     const historysData = JSON.parse(str);
@@ -199,13 +200,18 @@ export function projectHistory(Id: number, taskId: number) {
       ...historysData,
       [Id]: taskId,
     };
+    console.log('newData', newData);
+
     localStorage.setItem('projectHistory', JSON.stringify(newData));
   } else {
     const newData = {
       [Id]: taskId,
     };
+    console.log('newData', newData);
+
     localStorage.setItem('projectHistory', JSON.stringify(newData));
   }
+  localStorage.setItem('currTaskId', taskId);
 }
 export function LoadingUtils(useState: UseStateType) {
   const [curr, setCurr] = useState<boolean>(false);
@@ -371,6 +377,7 @@ export const LabelUtils = (
   }
 
   function unsetCurr() {
+    // debugger;
     activeIds.delete(curr?.labelId);
     setActiveIds(new Set(activeIds));
     if (preUnsetCurr) preUnsetCurr();
@@ -379,6 +386,7 @@ export const LabelUtils = (
   }
 
   function setCurr(label: Label) {
+    // debugger;
     if (label == undefined) return unsetCurr();
     setCurrRaw(label);
     if (isOneHot) activeIds.clear();
@@ -480,17 +488,22 @@ export const TaskUtils = (useState: UseStateType, props: { annotation: any; push
         return [allRes, allRes[turnToIdx]];
       } else {
         const HistoryData = JSON.parse(localStorage.getItem('projectHistory'));
-        const storeIndex = HistoryData[projectId];
-        if (storeIndex !== undefined) {
-          for (let index = 0; index < allRes.length; index++) {
-            const item = allRes[index];
-            if (item.taskId === storeIndex) {
-              localStorage.setItem('currTaskId', storeIndex);
-              turnTo(index);
-              return [allRes, allRes[index]];
+        projectApi.get(projectId).then((project) => {
+          const ids = project.upid;
+          const storeIndex = HistoryData[ids];
+          console.log('HistoryData', HistoryData, storeIndex);
+          if (storeIndex !== undefined) {
+            for (let index = 0; index < allRes.length; index++) {
+              const item = allRes[index];
+              if (item.taskId === storeIndex) {
+                // debugger;
+                localStorage.setItem('currTaskId', storeIndex);
+                turnTo(index);
+                return [allRes, allRes[index]];
+              }
             }
           }
-        }
+        });
       }
       return allRes;
     } catch (err) {
@@ -859,6 +872,7 @@ export function PageInit(
       if (currTaskId != null) {
         for (let idx = 0; idx < task.all.length; idx++) {
           if (task.all[idx].taskId == currTaskId) {
+            // debugger;
             task.turnTo(idx);
             break;
           }
@@ -877,6 +891,7 @@ export function PageInit(
     const onTaskChange = async () => {
       if (task.curr?.projectId) project.getFinished(task.curr.projectId);
       if (task.curr?.taskId) {
+        // debugger;
         projectHistory(project.curr.upid, task.curr?.taskId);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const [allData, currData] = await data.getAll(task.curr.taskId, 0);

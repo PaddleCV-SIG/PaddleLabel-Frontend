@@ -1,9 +1,9 @@
-import { Button, Popover } from 'antd';
-import React, { useState } from 'react';
+import { Button, Popover, message } from 'antd';
+import React, { useState, useEffect } from 'react';
 import PPInteractorModal from '../PPInteractorModal';
 import PPToolBarButton from '../PPToolBarButton';
 import styles from './index.less';
-import { IntlInit } from '@/services/utils';
+import { IntlInit, getVersion } from '@/services/utils';
 
 export type PPAIModalProps = {
   visible?: boolean;
@@ -23,6 +23,28 @@ const Component: React.FC<PPAIModalProps> = (props) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  useEffect(() => {
+    if (!modalVisible) {
+      return;
+    }
+    const numVersion = (version) => {
+      const [major, ...rest] = version.split('.').map(Number);
+      const num = rest.reduce((acc, val, index) => {
+        const factor = Math.pow(10, (index + 1) * 2);
+        return acc + val / factor;
+      }, major);
+      return num;
+    };
+    const blurchange = async () => {
+      const errversion = '1.0.0';
+      const versionss: string = (await getVersion()) as string;
+      const versions = numVersion(versionss);
+      if (versions && errversion > versions) {
+        message.error('eiseg版本过低,请升级到升级');
+      }
+    };
+    blurchange();
+  }, [modalVisible]);
   return (
     <>
       <Popover

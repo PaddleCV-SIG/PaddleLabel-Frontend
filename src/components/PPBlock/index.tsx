@@ -35,6 +35,7 @@ const PPBlock: React.FC<PPCardProps> = (props) => {
               lineHeight: '2.5rem',
               background: '#1727c2',
               padding: '0rem 0.5rem',
+              cursor: 'pointer',
             }}
             onClick={props.reset}
           >

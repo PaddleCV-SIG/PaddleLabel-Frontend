@@ -152,6 +152,7 @@ export default {
   'pages.projectOverview.tasks': 'Tasks',
   'pages.projectOverview.taskCount': 'Task Count',
   'pages.projectOverview.annotationCount': 'Annotation Count',
+  'pages.projectOverview.annotationLabel': 'Annotation Label',
   'pages.projectOverview.split': 'Data Split',
   'pages.projectOverview.image': 'Image',
   'pages.projectOverview.label': 'Label',

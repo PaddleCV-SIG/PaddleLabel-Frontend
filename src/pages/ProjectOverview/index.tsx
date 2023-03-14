@@ -71,7 +71,9 @@ const TaskList: React.FC = () => {
     },
     {
       title: () => {
-        return intl('annotationCount');
+        const projects = project.curr;
+        const flag = projects?.taskCategory?.name === 'classification';
+        return flag ? intl('annotationLabel') : intl('annotationCount');
       },
       dataIndex: 'annotations',
       key: 'taskId',

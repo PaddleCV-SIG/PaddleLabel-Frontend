@@ -38,7 +38,6 @@ const Component: React.FC<PPInteractorModalProps> = (props) => {
       model.load('EISeg', params);
     }
   }, [project.curr]);
-
   function saveMlsettings() {
     if (!project.curr) {
       message.error('Please select project first!');

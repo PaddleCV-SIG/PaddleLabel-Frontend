@@ -329,6 +329,7 @@ export default function (props: PPDrawToolProps): PPDrawToolRet {
       ...props.currentAnnotation,
       result: result,
     };
+    // debugger;
     props.onAnnotationModify(anno);
     if (props.ChanegeTool && props.preTool) {
       props.ChanegeTool(props.preTool);

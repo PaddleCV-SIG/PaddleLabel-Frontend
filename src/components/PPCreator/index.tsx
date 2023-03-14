@@ -81,36 +81,48 @@ const PPCreator: React.FC<PPCreatorProps> = (props) => {
 
       if (display)
         options.push(
-          <Form.Item
-            name={option.label}
-            label={intlJsx(option.label)}
-            labelCol={{ span: 9 }}
-            wrapperCol={{ span: 15 }}
-            className="labelWrap"
-            style={{ fontSize: '1.5rem' }}
-            rules={[
-              {
-                required: option.required,
-                message: intlJsx('require' + option.label[0].toUpperCase() + option.label.slice(1)),
-              },
-            ]}
-          >
-            {option.type == 'choice' ? (
-              <Radio.Group
-                size="large"
-                style={{ height: '3.13rem' }}
-                onChange={() => setReload(reload + 1)}
-              >
-                {option.choices.map((c) => (
-                  <Radio key={c[0]} value={c[0]}>
-                    {intlJsx(c[0])}
-                  </Radio>
-                ))}
-              </Radio.Group>
-            ) : (
-              <div />
-            )}
-          </Form.Item>,
+          <div>
+            <Form.Item
+              name={option.label}
+              label={
+                <div
+                  style={{
+                    height: 50,
+                  }}
+                >
+                  {intlJsx(option.label)}
+                </div>
+              }
+              labelCol={{ style: { width: 115, height: 60, whiteSpace: 'break-spaces' } }}
+              // wrapperCol={{ span: 16 }}
+              className="labelWrap"
+              style={{ fontSize: '1.5rem' }}
+              rules={[
+                {
+                  required: option.required,
+                  message: intlJsx(
+                    'require' + option.label[0].toUpperCase() + option.label.slice(1),
+                  ),
+                },
+              ]}
+            >
+              {option.type == 'choice' ? (
+                <Radio.Group
+                  size="large"
+                  style={{ height: '3.13rem' }}
+                  onChange={() => setReload(reload + 1)}
+                >
+                  {option.choices.map((c) => (
+                    <Radio key={c[0]} value={c[0]}>
+                      {intlJsx(c[0])}
+                    </Radio>
+                  ))}
+                </Radio.Group>
+              ) : (
+                <div />
+              )}
+            </Form.Item>
+          </div>,
         );
     }
     return options;

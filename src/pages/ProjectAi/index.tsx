@@ -219,6 +219,9 @@ const PaddleAi: React.FC = () => {
     model.setMlBackendUrl(modelUrl);
   };
   useEffect(() => {
+    blurChange();
+  }, []);
+  useEffect(() => {
     model.getAll();
   }, [model.backendUrl]);
   useEffect(() => {

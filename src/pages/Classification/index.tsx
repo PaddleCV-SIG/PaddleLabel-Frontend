@@ -86,6 +86,7 @@ const Page: React.FC = () => {
   function postTaskChange(labels: [Label], annotations: [Annotation]) {
     loading.setCurr(true);
     if (!labels || !annotations) return;
+    // debugger;
     label.initActive(annotations);
     loading.setCurr(false);
     console.log('post task change');

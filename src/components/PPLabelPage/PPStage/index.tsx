@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Annotation } from '@/models/Annotation';
 import type { ToolType } from '@/models/ToolType';
@@ -24,6 +25,7 @@ import { useModel } from 'umi';
 import type { Label } from '@/models';
 import { result } from 'lodash';
 import { YahooFilled } from '@ant-design/icons';
+import { message } from 'antd';
 
 // Mock Data
 // const imgSrc = './pics/32_23.jpg';
@@ -54,6 +56,7 @@ export type PPStageProps = {
   currentAnnotation?: Annotation;
   currentLabel?: Label;
   labels?: Label[];
+  labelCurr?: Label;
   setCurrentAnnotation: (anntation: Annotation) => void;
   onAnnotationAdd: (anntation: Annotation) => void;
   onAnnotationModify: (annotation: Annotation) => void;
@@ -159,6 +162,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     onPointIndex: (index: number) => {
       setPointIndex(index);
     },
+    // onStartEdit: props.onStartEdit,
     stageRef: stageRef,
     layerRef: layerRef,
     currentAnnotation: props.currentAnnotation,
@@ -235,6 +239,15 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       }
     });
     setShapes(newShapes);
+  };
+  const reforces = () => {
+    const ctx = canvasRef.current?.getContext('2d');
+    const ctx2 = canvasRef2.current?.getContext('2d');
+    const ctx3 = canvasRef2.current?.getContext('2d');
+    if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    if (ctx2) ctx2.clearRect(0, 0, ctx2.canvas.width, ctx2.canvas.height);
+    if (ctx3) ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height);
+    layerRef.current?.batchDraw();
   };
   useEffect(() => {
     layerRef?.current?.batchDraw();
@@ -341,6 +354,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     props.drawTool?.interactor?.drawAnnotation(param);
     layerRef.current?.batchDraw();
   }, [interactorData, props.threshold, radius]);
+  // useEffect(() => {
+  //   debugger;
+  //   reforces();
+  // }, [props.labelCurr]);
   const renderReact = (endPos: any) => {
     const width = Math.abs(startPos.x - endPos.x);
     const height = Math.abs(startPos.y - endPos.y);
@@ -427,10 +444,44 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       props.onMousepoint();
     }
   };
+  const labelTips = () => {
+    const path = history.location.pathname === '/optical_character_recognition' ? false : true;
+    const tools = props.tool.curr === 'polygon' ? true : false;
+    console.log('paths', path);
+
+    if (!props.labels?.length && path && tools) {
+      message.error('没有选中标签，请先创建标签');
+      return false;
+    }
+    if (!props.labelCurr && path && tools) {
+      message.error('没有选中标签，请先创建标签');
+      return false;
+    }
+    if (props.labelCurr && props.labels?.length && path && tools) {
+      // debugger;
+      console.log('props.labelCurr.labelId', props.labelCurr.labelId, props.labels);
+      let flag = false;
+      for (const labelItem of props.labels) {
+        if (props.labelCurr.labelId === labelItem.labelId) {
+          flag = true;
+        }
+      }
+      if (!flag) {
+        message.error('没有选中标签，请先创建标签');
+        return false;
+      } else {
+        return true;
+      }
+    }
+    return true;
+  };
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // debugger;
+    const tips = labelTips();
+    if (!tips) {
+      return;
+    }
     console.log('onMouseDowns', e, props?.tool?.curr);
-
     if (e.evt.button === 1) {
       if (props?.tool?.curr === 'polygon') {
         props.changePreTools('polygon');
@@ -449,8 +500,6 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     const mouseX = (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
     const mouseY =
       (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
-    console.log('dragEndPos.x', dragEndPos.x, dragEndPos.y);
-    console.log('mouseX,mouseY', mouseX, mouseY);
     if (props?.tool?.curr === 'polygon' && ctx) {
       if (e.evt.button === 2) {
         let results = '';
@@ -568,7 +617,13 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
             y: y,
           });
           // debugger
-          props.onAnnotationChange(annos);
+          // 这里删除了一条
+          if (
+            history?.location?.pathname === '/optical_character_recognition' ||
+            history?.location?.pathname === '/detection'
+          ) {
+            props.onAnnotationChange(annos);
+          }
         }
       } else if (props.currentTool === 'rectangle') {
         // debugger;
@@ -645,10 +700,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       }
     } else if (props?.currentTool === 'polygon' && ctx3 && !flags) {
       console.log('props.currentTool3', props?.currentTool, pointArr);
-
+      // 绘制 虚拟多边形
       ctx3.strokeStyle = props.currentLabel?.color; //线条颜色
       ctx3.lineWidth = 4; //线条粗细
-      // ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
+      ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
       makearc(ctx3, mouseX, mouseY, GetRandomNum(4, 4), 0, 180, props.currentLabel?.color);
       if (pointArr.length > 0) {
         ctx3.beginPath();
@@ -699,6 +754,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     const mouseX = (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
     const mouseY =
       (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
+    // debugger;
     if (
       pointIndex !== null &&
       props.currentAnnotation &&
@@ -722,6 +778,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       }
       const newanno = props.currentAnnotation;
       newanno.result = results;
+
       props.onAnnotationModifyUP(newanno);
 
       props.setCurrentAnnotation(undefined);
@@ -732,10 +789,14 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       }
       setPointIndex(null);
     }
+    // reforces()
     const ctx3 = canvasRef3.current?.getContext('2d');
 
     drawTool?.onMouseUp(getEvtParam(e));
-    if (ctx3) {
+    console.log('e.evt.button', e.evt.button);
+
+    if (ctx3 && e.evt.button === 0) {
+      // reforces();
       ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
       // debugger;
       if (pointArr.length > 0 && ctx3) {
@@ -752,6 +813,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         ctx3.stroke(); //绘制
         layerRef.current?.batchDraw();
       }
+    } else {
+      ctx3 && ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
+      layerRef.current?.batchDraw();
     }
   };
   const onContextMenu = (e: Konva.KonvaEventObject<MouseEvent>) => {
