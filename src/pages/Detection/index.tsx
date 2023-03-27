@@ -485,11 +485,13 @@ const Page = () => {
   };
   const handleWheel = (event) => {
     const deta = event.deltaY;
-    if (deta > 0) {
-      scale.change(-0.1);
-    }
-    if (deta < 0) {
-      scale.change(0.1);
+    if (event.ctrlKey) {
+      if (deta > 0) {
+        scale.change(-0.05);
+      }
+      if (deta < 0) {
+        scale.change(0.05);
+      }
     }
   };
   const onHideLabel = (change: boolean, id: number) => {
