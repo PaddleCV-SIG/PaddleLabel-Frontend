@@ -52,6 +52,7 @@ export default {
   'component.PPCreator.importInProgress': '导入中，请稍候',
 
   'component.PPAnnotationList.annotationList': '标注列表',
+  'component.PPAnnotationList.addAnnotation': '添加标注',
 
   'component.PPLabelList.labelList': '类别列表',
   'component.PPLabelList.addLabel': '添加类别',
