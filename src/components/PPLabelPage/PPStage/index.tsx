@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { Annotation } from '@/models/Annotation';
-import type { ToolType } from '@/models/ToolType';
-import type Konva from 'konva';
-import { history } from 'umi';
-import { throttle } from 'lodash';
-import { useDeepCompareEffect } from 'ahooks';
-import type { Stage as StageType } from 'konva/lib/Stage';
-import type { Layer as LayerType } from 'konva/lib/Layer';
-import type { ForwardRefRenderFunction } from 'react';
+import type { Annotation } from "@/models/Annotation";
+import type { ToolType } from "@/models/ToolType";
+import type Konva from "konva";
+import { history } from "umi";
+import { throttle } from "lodash";
+import { useDeepCompareEffect } from "ahooks";
+import type { Stage as StageType } from "konva/lib/Stage";
+import type { Layer as LayerType } from "konva/lib/Layer";
+import type { ForwardRefRenderFunction } from "react";
 import React, {
   useEffect,
   useRef,
@@ -15,30 +15,33 @@ import React, {
   useMemo,
   useImperativeHandle,
   forwardRef,
-} from 'react';
-import { Layer, Stage, Image, Circle } from 'react-konva';
-import useImage from 'use-image';
-import type { PPDrawToolRet, PPRenderFuncProps } from '@/components/PPDrawTool/drawUtils';
-import { Threshold } from 'konva/lib/filters/Threshold';
-import { useModel } from 'umi';
-import type { Label } from '@/models';
-import { result } from 'lodash';
-import { YahooFilled } from '@ant-design/icons';
+} from "react";
+import { Layer, Stage, Image, Circle } from "react-konva";
+import useImage from "use-image";
+import type {
+  PPDrawToolRet,
+  PPRenderFuncProps,
+} from "@/components/PPDrawTool/drawUtils";
+import { Threshold } from "konva/lib/filters/Threshold";
+import { useModel } from "umi";
+import type { Label } from "@/models";
+import { result } from "lodash";
+import { YahooFilled } from "@ant-design/icons";
 
 // Mock Data
 // const imgSrc = './pics/32_23.jpg';
-const imgSrc = './pics/basketball.jpg';
+const imgSrc = "./pics/basketball.jpg";
 
 // Calculate current mouse pointer
 function getPointer(toolType: ToolType) {
   switch (toolType) {
-    case 'mover':
-      return 'move';
-    case 'rectangle':
-    case 'polygon':
-      return 'crosshair';
+    case "mover":
+      return "move";
+    case "rectangle":
+    case "polygon":
+      return "crosshair";
     default:
-      return 'default';
+      return "default";
   }
 }
 export type pageRef = {
@@ -84,48 +87,55 @@ export type PPStageProps = {
   ChanegeTool?: () => void;
 };
 
-const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) => {
-  const [image] = useImage(props.imgSrc || '', 'anonymous');
+const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (
+  props,
+  ref
+) => {
+  const [image] = useImage(props.imgSrc || "", "anonymous");
   // const image = props.image;
-  const transparency = props.transparency === undefined ? 0 : props.transparency * 0.01;
-  const interactorData = useModel('InteractorData', (x) => x.interactorData);
-  const radius = useModel('VisualRadius', (x) => x.radius);
+  const transparency =
+    props.transparency === undefined ? 0 : props.transparency * 0.01;
+  const interactorData = useModel("InteractorData", (x) => x.interactorData);
+  const radius = useModel("VisualRadius", (x) => x.radius);
   let drawToolTemp = undefined;
-  if (props.currentTool === 'polygon') {
+  if (props.currentTool === "polygon") {
     drawToolTemp = props.drawTool?.polygon;
   } else if (
-    props.currentTool === 'editor' &&
-    (props.currentAnnotation?.type === 'ocr_polygon' || props.currentAnnotation?.type === 'polygon')
+    props.currentTool === "editor" &&
+    (props.currentAnnotation?.type === "ocr_polygon" ||
+      props.currentAnnotation?.type === "polygon")
   ) {
     drawToolTemp = props.drawTool?.polygon;
-  } else if (history?.location?.pathname === '/detection') {
+  } else if (history?.location?.pathname === "/detection") {
     drawToolTemp = props.drawTool?.rectangle;
-  } else if (history?.location?.pathname === '/optical_character_recognition') {
+  } else if (history?.location?.pathname === "/optical_character_recognition") {
     if (
-      props.currentTool === 'editor' &&
-      (props.currentAnnotation?.type === 'ocr_rectangle' ||
-        props.currentAnnotation?.type === 'rectangle')
+      props.currentTool === "editor" &&
+      (props.currentAnnotation?.type === "ocr_rectangle" ||
+        props.currentAnnotation?.type === "rectangle")
     ) {
       drawToolTemp = props.drawTool?.rectangle;
     } else if (
-      props.currentTool === 'editor' &&
-      (props.currentAnnotation?.type === 'ocr_polygon' ||
-        props.currentAnnotation?.type === 'polygon')
+      props.currentTool === "editor" &&
+      (props.currentAnnotation?.type === "ocr_polygon" ||
+        props.currentAnnotation?.type === "polygon")
     ) {
       drawToolTemp = props.drawTool?.polygon;
-    } else if (props.currentTool === 'polygon') {
+    } else if (props.currentTool === "polygon") {
       drawToolTemp = props.drawTool?.polygon;
-    } else if (props.currentTool === 'rectangle') {
+    } else if (props.currentTool === "rectangle") {
       drawToolTemp = props.drawTool?.rectangle;
     }
-  } else if (props.currentTool === 'rectangle') {
+  } else if (props.currentTool === "rectangle") {
     drawToolTemp = props.drawTool?.rectangle;
-  } else if (props.currentTool === 'brush') drawToolTemp = props.drawTool?.brush;
-  else if (props.currentTool === 'rubber') {
+  } else if (props.currentTool === "brush")
+    drawToolTemp = props.drawTool?.brush;
+  else if (props.currentTool === "rubber") {
     drawToolTemp = props.drawTool?.rubber;
-  } else if (props.currentTool === 'interactor') drawToolTemp = props.drawTool?.interactor;
+  } else if (props.currentTool === "interactor")
+    drawToolTemp = props.drawTool?.interactor;
   const drawTool = drawToolTemp;
-  console.log('drawTool', drawTool);
+  console.log("drawTool", drawTool);
 
   const [canvasWidth, setCanvasWidth] = useState<number>(0);
   const [canvasHeight, setCanvasHeight] = useState<number>(0);
@@ -141,7 +151,8 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const [scaleFlag, setScaleFlag] = useState(0);
   const [pointIndex, setPointIndex] = useState(null);
   const [refoce, setRefoce] = useState(0);
-  const [DrawingSurfaceImageData, setDrawingSurfaceImageData] = useState<ImageData>();
+  const [DrawingSurfaceImageData, setDrawingSurfaceImageData] =
+    useState<ImageData>();
   const stageRef = useRef<StageType>(null);
   const layerRef = useRef<LayerType>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -175,11 +186,11 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     pathName: history?.location?.pathname,
     ChanegeTool: props.ChanegeTool,
     pointIndex: pointIndex,
-    ctx3: canvasRef3.current?.getContext('2d'),
+    ctx3: canvasRef3.current?.getContext("2d"),
     pointArr: pointArr,
   };
   function handleWindowResize() {
-    const parent = document.getElementById('dr');
+    const parent = document.getElementById("dr");
     if (parent) {
       setCanvasWidth(parent.clientWidth);
       setCanvasHeight(parent.clientHeight);
@@ -189,47 +200,49 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     const newShapes: React.ReactElement[] = [];
     props.annotations.forEach((annotation, index) => {
       const flagss = props.hideLabel.includes(annotation.labelId);
-      console.log('props.annotations', annotation, flags, props.hideLabel);
+      console.log("props.annotations", annotation, flags, props.hideLabel);
 
       if (annotation && !flagss) {
         param.annotation = annotation;
         let shape;
-        if (annotation.type === 'polygon') {
+        if (annotation.type === "polygon") {
           // const flag = index === length - 1 ? true : false;
-          const flag = flags || props.currentAnnotation?.result !== annotation.result;
+          const flag =
+            flags || props.currentAnnotation?.result !== annotation.result;
           shape = props.drawTool?.polygon.drawAnnotation(param, flag);
-        } else if (annotation.type === 'rectangle') {
+        } else if (annotation.type === "rectangle") {
           // debugger;
           shape = props.drawTool?.rectangle.drawAnnotation(param);
           // debugger;
           // shape.scaleX(0.1);
           // shape.scaleY(0.1);
-        } else if (annotation.type === 'ocr_rectangle') {
+        } else if (annotation.type === "ocr_rectangle") {
           shape = props.drawTool?.rectangle.drawAnnotation(param);
-        } else if (annotation.type === 'ocr_polygon') {
-          const datass = annotation.result?.split('||')[0];
-          const address = annotation.result?.split('||')[1].split('|')[0];
-          const results2 = datass && datass.split('|').join(',');
+        } else if (annotation.type === "ocr_polygon") {
+          const datass = annotation.result?.split("||")[0];
+          const address = annotation.result?.split("||")[1].split("|")[0];
+          const results2 = datass && datass.split("|").join(",");
           param.annotation = {
             ...annotation,
             result: results2,
           };
-          const flag = flags || props.currentAnnotation?.result !== annotation.result;
+          const flag =
+            flags || props.currentAnnotation?.result !== annotation.result;
           shape = props.drawTool?.polygon.drawAnnotation(param, flag, address);
         }
-        if (annotation.type === 'brush') {
+        if (annotation.type === "brush") {
           // const flag = index === length - 1 ? true : false;
           shape = props.drawTool?.brush?.drawAnnotation(
-            param,
+            param
             // flag,
             // -imageWidth / 2,
             // -imageHeight / 2,
           );
           layerRef.current?.batchDraw();
-        } else if (annotation.type === 'rubber') {
+        } else if (annotation.type === "rubber") {
           // const flag = index === length - 1 ? true : false;
           shape = props.drawTool?.rubber?.drawAnnotation(
-            param,
+            param
             // flag,
             // -imageWidth / 2,
             // -imageHeight / 2,
@@ -248,10 +261,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   }, [props.drawTool, layerRef]);
   useEffect(() => {
     // Listen to window resize event
-    window.removeEventListener('resize', handleWindowResize);
-    window.addEventListener('resize', handleWindowResize);
+    window.removeEventListener("resize", handleWindowResize);
+    window.addEventListener("resize", handleWindowResize);
     // Set inital canvas size
-    const parent = document.getElementById('dr');
+    const parent = document.getElementById("dr");
     if (parent) {
       setCanvasWidth(parent.clientWidth);
       setCanvasHeight(parent.clientHeight);
@@ -262,7 +275,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       canvasHeight &&
       canvasWidth &&
       image &&
-      typeof image !== 'string' &&
+      typeof image !== "string" &&
       props.scaleChange &&
       props.taskIndex !== undefined
     ) {
@@ -304,7 +317,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   useEffect(() => {
     if (!stageRef.current) return;
     stageRef.current.container().style.cursor = getPointer(props.currentTool);
-    const ctx3 = canvasRef3.current?.getContext('2d');
+    const ctx3 = canvasRef3.current?.getContext("2d");
     if (ctx3) ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height);
     setisClick(false);
   }, [props.currentTool]);
@@ -313,9 +326,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   }, [props.scale]);
   useEffect(() => {
     if (props.annotations) {
-      const ctx = canvasRef.current?.getContext('2d');
-      const ctx2 = canvasRef2.current?.getContext('2d');
-      const ctx3 = canvasRef2.current?.getContext('2d');
+      const ctx = canvasRef.current?.getContext("2d");
+      const ctx2 = canvasRef2.current?.getContext("2d");
+      const ctx3 = canvasRef2.current?.getContext("2d");
 
       if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
       if (ctx2) ctx2.clearRect(0, 0, ctx2.canvas.width, ctx2.canvas.height);
@@ -343,7 +356,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     layerRef.current?.batchDraw();
   }, [shapes]);
   useEffect(() => {
-    const ctx = canvasRef.current?.getContext('2d');
+    const ctx = canvasRef.current?.getContext("2d");
     if (ctx) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     props.drawTool?.interactor?.drawAnnotation(param);
     layerRef.current?.batchDraw();
@@ -351,7 +364,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const renderReact = (endPos: any) => {
     const width = Math.abs(startPos.x - endPos.x);
     const height = Math.abs(startPos.y - endPos.y);
-    const ctx = canvasRef.current?.getContext('2d');
+    const ctx = canvasRef.current?.getContext("2d");
     if (!ctx) return <></>;
     ctx.beginPath();
     if (endPos.x >= startPos.x) {
@@ -367,23 +380,23 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         ctx.rect(startPos.x, startPos.y, -width, -height);
       }
     }
-    ctx.strokeStyle = 'red'; //将线条颜色设置为蓝色
+    ctx.strokeStyle = "red"; //将线条颜色设置为蓝色
     ctx.stroke();
     layerRef.current?.batchDraw();
     // ctx.save();
   };
   function restoreDrawingSurface(drawingSurfaceImageData: any) {
-    const ctx = canvasRef.current?.getContext('2d');
+    const ctx = canvasRef.current?.getContext("2d");
     ctx?.putImageData(drawingSurfaceImageData, 0, 0);
   }
   function saveDrawingSurface() {
-    const ctx = canvasRef.current?.getContext('2d');
+    const ctx = canvasRef.current?.getContext("2d");
     if (canvasRef?.current?.width && canvasRef?.current?.height) {
       const drawingSurfaceImageDatas = ctx?.getImageData(
         0,
         0,
         canvasRef?.current?.width,
-        canvasRef?.current?.height,
+        canvasRef?.current?.height
       );
       setDrawingSurfaceImageData(drawingSurfaceImageDatas);
     }
@@ -391,8 +404,12 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const getEvtParam = (e: Konva.KonvaEventObject<MouseEvent>) => {
     return {
       e: e,
-      mouseX: (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2,
-      mouseY: (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2,
+      mouseX:
+        (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale +
+        imageWidth / 2,
+      mouseY:
+        (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale +
+        imageHeight / 2,
       offsetX: -imageWidth / 2,
       offsetY: -imageHeight / 2,
       canvasRef: canvasRef,
@@ -409,7 +426,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   };
   // 多边形画点
   const makearc = (ctx, x, y, r, s, e, color) => {
-    console.log('makearc函数执行了', ctx, x, y, r, s, e, color);
+    console.log("makearc函数执行了", ctx, x, y, r, s, e, color);
 
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); //清空画布
     ctx.beginPath();
@@ -436,12 +453,12 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   };
   const onMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     // debugger;
-    console.log('onMouseDowns', e, props?.tool?.curr);
+    console.log("onMouseDowns", e, props?.tool?.curr);
 
     if (e.evt.button === 1) {
-      if (props?.tool?.curr === 'polygon') {
-        props.changePreTools('polygon');
-        props.tool.setCurr('mover');
+      if (props?.tool?.curr === "polygon") {
+        props.changePreTools("polygon");
+        props.tool.setCurr("mover");
         return;
       } else {
         onMousepoint();
@@ -449,23 +466,28 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       }
     }
     setisClick(true);
-    const ctx = canvasRef.current?.getContext('2d');
-    const mouseX = (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
+    const ctx = canvasRef.current?.getContext("2d");
+    const mouseX =
+      (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale +
+      imageWidth / 2;
     const mouseY =
-      (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
-    if (props?.tool?.curr === 'polygon' && ctx) {
+      (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale +
+      imageHeight / 2;
+    if (props?.tool?.curr === "polygon" && ctx) {
       if (e.evt.button === 2) {
-        let results = '';
-        if (history?.location?.pathname === '/optical_character_recognition') {
-          const datass: string = props.currentAnnotation?.result?.split('||')[0] as string;
-          results = datass.split('|').join(',');
+        let results = "";
+        if (history?.location?.pathname === "/optical_character_recognition") {
+          const datass: string = props.currentAnnotation?.result?.split(
+            "||"
+          )[0] as string;
+          results = datass.split("|").join(",");
         } else {
           results = props.currentAnnotation?.result as string;
         }
         if (
           props.currentAnnotation?.result &&
           props.annotationDelete &&
-          results.split(',').length < 5
+          results.split(",").length < 5
         ) {
           const newAnnotaions = props.annotations?.filter((item) => {
             if (item.result !== props.currentAnnotation?.result) {
@@ -490,7 +512,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           // 开始编辑
           // 编辑
           const newAnno = props.currentAnnotation;
-          const newAnnos = props.currentAnnotation?.result?.split(',');
+          const newAnnos = props.currentAnnotation?.result?.split(",");
 
           const starts = newAnnos?.slice(pointIndex + 1, newAnnos?.length);
           const ends = newAnnos?.slice(0, pointIndex - 1);
@@ -506,17 +528,19 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
               y: finly[index + 1],
             });
           }
-          if (history?.location?.pathname === '/optical_character_recognition') {
+          if (
+            history?.location?.pathname === "/optical_character_recognition"
+          ) {
             const datass: any = [];
             for (const item of props.annotations) {
               if (item.annotationId == props.currentAnnotation?.annotationId) {
                 datass.push(item);
               }
             }
-            const datas: string = datass[0].result?.split('||')[1] as string;
-            newAnno.result = finly.join('|') + '||' + datas;
+            const datas: string = datass[0].result?.split("||")[1] as string;
+            newAnno.result = finly.join("|") + "||" + datas;
           } else {
-            newAnno.result = finly.join(',');
+            newAnno.result = finly.join(",");
           }
 
           if (flags) {
@@ -535,18 +559,20 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         }
       }
     } else {
-      if (props.currentTool === 'editor') {
-        console.log('props.currentTool', props.currentTool === 'editor');
+      if (props.currentTool === "editor") {
+        console.log("props.currentTool", props.currentTool === "editor");
 
         let resulsts: any = [];
-        if (history?.location?.pathname === '/optical_character_recognition') {
+        if (history?.location?.pathname === "/optical_character_recognition") {
           if (props.currentAnnotation) {
-            const datass: string = props.currentAnnotation?.result?.split('||')[0] as string;
-            resulsts = datass.split('|');
+            const datass: string = props.currentAnnotation?.result?.split(
+              "||"
+            )[0] as string;
+            resulsts = datass.split("|");
           }
         } else {
           if (props.currentAnnotation) {
-            resulsts = props.currentAnnotation?.result?.split(',');
+            resulsts = props.currentAnnotation?.result?.split(",");
           }
         }
         if (resulsts && pointIndex) {
@@ -566,7 +592,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
             y: y,
           });
         }
-      } else if (props.currentTool === 'rectangle') {
+      } else if (props.currentTool === "rectangle") {
         // debugger;
         setStartPos({
           x: mouseX,
@@ -579,16 +605,19 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         onMousepoint2();
       }
       if (
-        (props.currentTool != 'brush' && props.currentTool != 'rubber') ||
+        (props.currentTool != "brush" && props.currentTool != "rubber") ||
         !props.brushSize ||
         !ctx
       )
         return;
       ctx.beginPath();
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
       ctx.lineWidth = props.brushSize;
-      ctx.strokeStyle = props.currentTool === 'brush' ? props.currentLabel?.color : 'rgba(0,0,0,0)';
+      ctx.strokeStyle =
+        props.currentTool === "brush"
+          ? props.currentLabel?.color
+          : "rgba(0,0,0,0)";
       // ctx.globalCompositeOperation =
       //   props.currentTool === 'brush' ? 'source-over' : 'destination-out';
       ctx.moveTo(mouseX, mouseY);
@@ -598,17 +627,20 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     //  const { canvasRef } = param;
   };
   const onMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
-    const mouseX = (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
+    const mouseX =
+      (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale +
+      imageWidth / 2;
     const mouseY =
-      (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
-    const ctx = canvasRef.current?.getContext('2d');
-    const ctx3 = canvasRef3.current?.getContext('2d');
-    console.log('props.currentTool', props?.currentTool, isClick);
-    if (props?.currentTool === 'rectangle' || props?.currentTool === 'editor') {
-      if (history?.location?.pathname === '/optical_character_recognition') {
+      (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale +
+      imageHeight / 2;
+    const ctx = canvasRef.current?.getContext("2d");
+    const ctx3 = canvasRef3.current?.getContext("2d");
+    console.log("props.currentTool", props?.currentTool, isClick);
+    if (props?.currentTool === "rectangle" || props?.currentTool === "editor") {
+      if (history?.location?.pathname === "/optical_character_recognition") {
         if (
-          props.currentAnnotation?.type === 'rectangle' ||
-          props.currentAnnotation?.type === 'ocr_rectangle'
+          props.currentAnnotation?.type === "rectangle" ||
+          props.currentAnnotation?.type === "ocr_rectangle"
         ) {
           restoreDrawingSurface(DrawingSurfaceImageData);
           drawTool?.drawGuidewires(mouseX, mouseY, ctx);
@@ -623,7 +655,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
           const newrefoce = refoce + 1;
           setRefoce(newrefoce);
         }
-      } else if (history?.location?.pathname === '/detection') {
+      } else if (history?.location?.pathname === "/detection") {
         restoreDrawingSurface(DrawingSurfaceImageData);
         drawTool?.drawGuidewires(mouseX, mouseY, ctx);
         const endpos = {
@@ -637,13 +669,21 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         const newrefoce = refoce + 1;
         setRefoce(newrefoce);
       }
-    } else if (props?.currentTool === 'polygon' && ctx3 && !flags) {
-      console.log('props.currentTool3', props?.currentTool, pointArr);
+    } else if (props?.currentTool === "polygon" && ctx3 && !flags) {
+      console.log("props.currentTool3", props?.currentTool, pointArr);
 
       ctx3.strokeStyle = props.currentLabel?.color; //线条颜色
       ctx3.lineWidth = 4; //线条粗细
       // ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
-      makearc(ctx3, mouseX, mouseY, GetRandomNum(4, 4), 0, 180, props.currentLabel?.color);
+      makearc(
+        ctx3,
+        mouseX,
+        mouseY,
+        GetRandomNum(4, 4),
+        0,
+        180,
+        props.currentLabel?.color
+      );
       if (pointArr.length > 0) {
         ctx3.beginPath();
         ctx3.moveTo(pointArr[0].x, pointArr[0].y);
@@ -658,7 +698,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         ctx3.stroke(); //绘制
         layerRef.current?.batchDraw();
       }
-    } else if (props?.currentTool === 'brush' || props?.currentTool === 'rubber') {
+    } else if (
+      props?.currentTool === "brush" ||
+      props?.currentTool === "rubber"
+    ) {
       if (isClick && ctx) {
         if (
           !props.currentTool ||
@@ -669,13 +712,14 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         ) {
           return;
         }
-        makearc(ctx3, mouseX, mouseY, props.brushSize / 2, 0, 180, 'white');
+        makearc(ctx3, mouseX, mouseY, props.brushSize / 2, 0, 180, "white");
         ctx.lineTo(mouseX, mouseY);
-        ctx.strokeStyle = props.currentTool === 'brush' ? props.currentLabel?.color : '#ccc';
+        ctx.strokeStyle =
+          props.currentTool === "brush" ? props.currentLabel?.color : "#ccc";
         ctx?.stroke();
         layerRef.current?.batchDraw();
       } else {
-        makearc(ctx3, mouseX, mouseY, props.brushSize / 2, 0, 180, 'white');
+        makearc(ctx3, mouseX, mouseY, props.brushSize / 2, 0, 180, "white");
         layerRef.current?.batchDraw();
       }
     }
@@ -688,32 +732,38 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
     }
     setisClick(false);
     const types =
-      props.currentAnnotation?.type === 'polygon' ||
-      props.currentAnnotation?.type === 'ocr_polygon';
+      props.currentAnnotation?.type === "polygon" ||
+      props.currentAnnotation?.type === "ocr_polygon";
     if (
       pointIndex !== null &&
       props.currentAnnotation &&
       !flags &&
-      props.currentAnnotation.type === 'polygon' &&
+      props.currentAnnotation.type === "polygon" &&
       types
     ) {
       const mouseX =
-        (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale + imageWidth / 2;
+        (e.evt.offsetX - dragEndPos.x - canvasWidth / 2) / props.scale +
+        imageWidth / 2;
       const mouseY =
-        (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale + imageHeight / 2;
+        (e.evt.offsetY - dragEndPos.y - canvasHeight / 2) / props.scale +
+        imageHeight / 2;
       // 编辑中
-      let results = '';
-      if (history?.location?.pathname === '/optical_character_recognition') {
-        const datass: string = props.currentAnnotation?.result?.split('||')[0] as string;
-        results = datass.split('|').join(',');
+      let results = "";
+      if (history?.location?.pathname === "/optical_character_recognition") {
+        const datass: string = props.currentAnnotation?.result?.split(
+          "||"
+        )[0] as string;
+        results = datass.split("|").join(",");
       } else {
         results = props.currentAnnotation?.result;
       }
       results = results + `,${mouseX},${mouseY}`;
-      if (history?.location?.pathname === '/optical_character_recognition') {
-        const datass: string = props.currentAnnotation?.result?.split('||')[1] as string;
+      if (history?.location?.pathname === "/optical_character_recognition") {
+        const datass: string = props.currentAnnotation?.result?.split(
+          "||"
+        )[1] as string;
 
-        results = results.split(',').join('|') + '||' + datass;
+        results = results.split(",").join("|") + "||" + datass;
       }
       const newanno = props.currentAnnotation;
       newanno.result = results;
@@ -728,7 +778,7 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       setPointIndex(null);
     }
     drawTool?.onMouseUp(getEvtParam(e));
-    const ctx3 = canvasRef3.current?.getContext('2d');
+    const ctx3 = canvasRef3.current?.getContext("2d");
     if (ctx3) {
       ctx3.clearRect(0, 0, ctx3.canvas.width, ctx3.canvas.height); //清空画布
     }
@@ -736,6 +786,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const onContextMenu = (e: Konva.KonvaEventObject<MouseEvent>) => {
     e.cancelBubble = true;
     e.evt.preventDefault();
+    if (props.currentAnnotation?.type === "rectangle" && props.ChanegeTool) {
+      props.ChanegeTool("mover");
+    }
   };
   // useEffect(() => {
   //   const newrefoce = refoce + 1;
@@ -765,9 +818,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   // }
   // Re-draw layer
   // 自动重绘制的次数
-  console.log('annos all', props.annotations);
+  console.log("annos all", props.annotations);
 
-  const draggable = props.currentTool === 'mover';
+  const draggable = props.currentTool === "mover";
   useImperativeHandle(ref, () => ({
     image,
     setDragEndPos,
@@ -780,27 +833,27 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
       data-image-src={props.imgSrc}
     >
       <canvas
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         id="canvasId"
         ref={canvasRef}
         width={imageWidth}
         height={imageHeight}
       />
       <canvas
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         id="canvasId"
         ref={canvasRef2}
         width={imageWidth}
         height={imageHeight}
       />
       <canvas
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         id="canvasId"
         ref={canvasRef3}
         width={imageWidth}
         height={imageHeight}
       />
-      <svg width="0" height="0" style={{ position: 'absolute', zIndex: '-1' }}>
+      <svg width="0" height="0" style={{ position: "absolute", zIndex: "-1" }}>
         <defs>
           <filter id="remove-alpha" x="0" y="0" width="100%" height="100%">
             <feComponentTransfer>
@@ -819,10 +872,10 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
         // Can not apply scale on Stage cuz it always scale from left corner
         draggable={draggable}
         onDragMove={(evt) => {
-          if (props.currentTool != 'mover') return;
+          if (props.currentTool != "mover") return;
         }}
         onDragEnd={(evt) => {
-          if (props.currentTool != 'mover') {
+          if (props.currentTool != "mover") {
             // onDragEnd(evt);
             return;
           }
