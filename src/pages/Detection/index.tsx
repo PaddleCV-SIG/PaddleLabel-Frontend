@@ -33,7 +33,7 @@ const Page = () => {
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const [otherSetting, setotherSetting] = useState();
   const [flags, setflags] = useState<boolean>(false);
-  const [preTools, setPreTools] = useState<string>('');
+  const [preTools, setPreTools] = useState<string>('mover');
   const [hideLabel, setHideLabel] = useState<number[]>([]);
   // const [onSelect, setOnSelect] = useState<Annotation>();
 
