@@ -736,6 +736,9 @@ const Component: ForwardRefRenderFunction<pageRef, PPStageProps> = (props, ref) 
   const onContextMenu = (e: Konva.KonvaEventObject<MouseEvent>) => {
     e.cancelBubble = true;
     e.evt.preventDefault();
+    if (props.currentAnnotation?.type === 'rectangle' && props.ChanegeTool) {
+      props.ChanegeTool('mover');
+    }
   };
   // useEffect(() => {
   //   const newrefoce = refoce + 1;
